@@ -1,0 +1,680 @@
+import React, { useState } from 'react';
+import { Check, CheckCircle2, Circle, Calendar, Weight, Smile, Activity, HelpCircle, History, Trash2, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare } from 'lucide-react';
+import { Compound, DoseLog, DailyMetric } from '../types';
+import { motion, AnimatePresence } from 'motion/react';
+
+interface CycleDashboardProps {
+  compounds: Compound[];
+  logs: DoseLog[];
+  metrics: DailyMetric[];
+  onLogDose: (log: DoseLog) => void;
+  onUndoDose: (id: string) => void;
+  onSaveMetrics: (metric: DailyMetric) => void;
+}
+
+export default function CycleDashboard({
+  compounds,
+  logs,
+  metrics,
+  onLogDose,
+  onUndoDose,
+  onSaveMetrics
+}: CycleDashboardProps) {
+  // Navigation for Daily Checklist Date (default is today)
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [selectedDate, setSelectedDate] = useState(todayStr);
+
+  // Wellness Log State for selectedDate
+  const currentMetric = metrics.find(m => m.date === selectedDate) || {
+    date: selectedDate,
+    weightKg: undefined,
+    mood: 3,
+    fatigue: 3,
+    sideEffects: '',
+    notes: ''
+  };
+
+  const [weight, setWeight] = useState<string>(currentMetric.weightKg ? currentMetric.weightKg.toString() : '');
+  const [mood, setMood] = useState<number>(currentMetric.mood || 3);
+  const [fatigue, setFatigue] = useState<number>(currentMetric.fatigue || 3);
+  const [sideEffects, setSideEffects] = useState<string>(currentMetric.sideEffects || '');
+  const [metricNotes, setMetricNotes] = useState<string>(currentMetric.notes || '');
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Disclaimer dismissal state stored in localStorage
+  const [disclaimerDismissed, setDisclaimerDismissed] = useState(() => {
+    return localStorage.getItem('labrat_dashboard_disclaimer_dismissed') === 'true';
+  });
+
+  // Sync state if selectedDate changes
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+    const m = metrics.find(item => item.date === date);
+    if (m) {
+      setWeight(m.weightKg ? m.weightKg.toString() : '');
+      setMood(m.mood || 3);
+      setFatigue(m.fatigue || 3);
+      setSideEffects(m.sideEffects || '');
+      setMetricNotes(m.notes || '');
+    } else {
+      setWeight('');
+      setMood(3);
+      setFatigue(3);
+      setSideEffects('');
+      setMetricNotes('');
+    }
+  };
+
+  // Check if a compound is due on selectedDate
+  const getDoseScheduleForDate = (comp: Compound, dateStr: string) => {
+    const start = new Date(comp.startDate + 'T00:00:00');
+    const curr = new Date(dateStr + 'T00:00:00');
+    
+    // Day difference
+    const diffTime = curr.getTime() - start.getTime();
+    if (diffTime < 0) return { isDue: false, weekNo: 0, dayNo: 0 };
+    
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const weekNo = Math.floor(diffDays / 7) + 1;
+    
+    if (weekNo > comp.durationWeeks) {
+      return { isDue: false, weekNo, dayNo: diffDays }; // Cycle ended
+    }
+
+    let isDue = false;
+    switch (comp.frequency) {
+      case 'daily':
+        isDue = true;
+        break;
+      case 'eod':
+        isDue = diffDays % 2 === 0;
+        break;
+      case 'twice_weekly':
+        // Due on Day 1 and Day 4 of the weekly intervals (e.g. Mon, Thu style)
+        const weeklyOffset = diffDays % 7;
+        isDue = weeklyOffset === 0 || weeklyOffset === 3;
+        break;
+      case 'weekly':
+        isDue = diffDays % 7 === 0;
+        break;
+      case 'custom':
+        const delay = comp.customDays || 3;
+        isDue = diffDays % delay === 0;
+        break;
+    }
+
+    return { isDue, weekNo, dayNo: diffDays };
+  };
+
+  // Compile active compounds scheduled for today the user can log
+  const scheduledCompounds = compounds
+    .map(comp => {
+      const schedule = getDoseScheduleForDate(comp, selectedDate);
+      return {
+        compound: comp,
+        ...schedule
+      };
+    })
+    .filter(item => item.isDue);
+
+  const handleAdministerDose = (comp: Compound) => {
+    // Check if already logged for this date
+    const alreadyLogged = logs.some(l => l.compoundId === comp.id && l.date === selectedDate);
+    if (alreadyLogged) return;
+
+    const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    
+    let calculatedQtyText = undefined;
+    if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
+      const units = Math.round(((comp.doseAmount) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10;
+      calculatedQtyText = `${units} Units`;
+    } else if (comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') {
+      if (comp.steroidForm === 'pill' && comp.pillSizeMg) {
+        const pills = Math.round((comp.doseAmount / comp.pillSizeMg) * 100) / 100;
+        calculatedQtyText = `${pills} ${pills === 1 ? 'pill' : 'pills'} (${comp.pillSizeMg}mg each)`;
+      } else if (comp.steroidForm === 'oil' && comp.oilConcMgMl) {
+        const mlStr = (comp.doseAmount / comp.oilConcMgMl).toFixed(2);
+        calculatedQtyText = `${mlStr} ml / cc (${comp.oilConcMgMl}mg/ml)`;
+      }
+    }
+
+    const newLog: DoseLog = {
+      id: crypto.randomUUID(),
+      compoundId: comp.id,
+      compoundName: comp.name,
+      date: selectedDate,
+      time: timeStr,
+      doseAmount: comp.doseAmount,
+      doseUnit: comp.doseUnit,
+      reconstitutedRatio: comp.vialSizeMg && comp.bacWaterMl ? {
+        vialSizeMg: comp.vialSizeMg,
+        bacWaterMl: comp.bacWaterMl,
+        syringeUnits: Math.round(((comp.doseAmount) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10
+      } : undefined,
+      calculatedQtyText
+    };
+
+    onLogDose(newLog);
+  };
+
+  const handleSaveWellness = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const updatedMetric: DailyMetric = {
+      date: selectedDate,
+      weightKg: weight ? parseFloat(weight) : undefined,
+      mood,
+      fatigue,
+      sideEffects: sideEffects.trim(),
+      notes: metricNotes.trim()
+    };
+
+    onSaveMetrics(updatedMetric);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2000);
+  };
+
+  return (
+    <div className="space-y-6 flex flex-col" id="dashboard-wrapper">
+      
+      {/* Conspicuous Educational & Harm Mitigation Legal Warning Box */}
+      {!disclaimerDismissed && (
+        <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg backdrop-blur-sm" id="dashboard-legal-banner">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-4">
+            <div className="flex items-start gap-4">
+              <div className="p-2.5 bg-amber-500/20 rounded-xl text-amber-400 shrink-0 mt-0.5 sm:mt-0">
+                <AlertCircle className="w-5 h-5 text-amber-400" />
+              </div>
+              <div className="space-y-1">
+                <h5 className="text-[11px] font-black text-amber-400 uppercase tracking-widest font-mono">
+                  Educational & Legal Safe-Harbor Information
+                </h5>
+                <p className="text-[11.5px] text-slate-300 leading-relaxed max-w-5xl">
+                  <strong>LabRat is purely a mathematical logging application for tracking self-directed biological observations.</strong> It does not design clinical regimens, disperse medical recommendations, or recommend substance abuse. Compounding, administering, or obtaining research chemicals carry extreme systemic toxicity and legal penalties. User assumes full liability of action.
+                </p>
+              </div>
+            </div>
+
+            {/* Dismiss Checkbox Action Button */}
+            <div className="flex items-center gap-2 pl-1 lg:pl-0 shrink-0 select-none w-full lg:w-auto">
+              <label className="flex items-center justify-center gap-2.5 px-3.5 py-2 w-full lg:w-auto bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/35 rounded-xl text-xs text-amber-400 font-bold tracking-wide cursor-pointer transition">
+                <input
+                  type="checkbox"
+                  className="accent-amber-500 rounded border-amber-500/30 text-slate-900 focus:ring-0 w-4 h-4 cursor-pointer"
+                  checked={disclaimerDismissed}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      localStorage.setItem('labrat_dashboard_disclaimer_dismissed', 'true');
+                      setDisclaimerDismissed(true);
+                    }
+                  }}
+                />
+                <span className="font-mono text-[10px] uppercase tracking-wider">Acknowledge & Dismiss</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6" id="dashboard-main-grid">
+      
+      {/* Left Columns (Checklist and Log Ledger) */}
+      <div className="xl:col-span-7 flex flex-col gap-6">
+        
+        {/* Date Navigator Header Card */}
+        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4" id="dashboard-header-navigator">
+          <div>
+            <span className="text-xs text-cyan-400 font-mono tracking-wider font-semibold uppercase">Daily Cockpit & Verification Log</span>
+            <h3 className="text-lg font-bold text-slate-100 flex items-center gap-1.5 mt-0.5">
+              <CalendarDays className="w-5 h-5 text-cyan-400" />
+              <span>Current Log Target Date</span>
+            </h3>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                const prev = new Date(selectedDate + 'T00:00:00');
+                prev.setDate(prev.getDate() - 1);
+                handleDateChange(prev.toISOString().split('T')[0]);
+              }}
+              className="py-1.5 px-3 bg-[#1e293b] hover:bg-slate-800 border border-slate-700/60 rounded-xl text-xs font-semibold text-slate-300 transition"
+              id="prev-day-btn"
+            >
+              ← Previous Day
+            </button>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => handleDateChange(e.target.value)}
+              className="bg-[#1e293b]/50 border border-slate-700/60 text-slate-200 text-xs py-1 px-3 rounded-xl focus:outline-none focus:border-cyan-500 font-mono"
+              id="selected-date-picker"
+            />
+            <button
+              onClick={() => {
+                const next = new Date(selectedDate + 'T00:00:00');
+                next.setDate(next.getDate() + 1);
+                handleDateChange(next.toISOString().split('T')[0]);
+              }}
+              className="py-1.5 px-3 bg-[#1e293b] hover:bg-slate-800 border border-slate-700/60 rounded-xl text-xs font-semibold text-slate-300 transition"
+              id="next-day-btn"
+            >
+              Next Day →
+            </button>
+          </div>
+        </div>
+
+        {/* Today's Checklist */}
+        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md flex-1" id="daily-checklist-card">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <CheckSquare className="w-4 h-4 text-cyan-400" /> Administrative Administration Checklist
+            </h4>
+            <span className="text-[10px] bg-cyan-950 text-cyan-400 px-2.5 py-0.5 rounded-full border border-cyan-500/10 font-bold font-mono">
+              {scheduledCompounds.length} Scheduled
+            </span>
+          </div>
+
+          {scheduledCompounds.length === 0 ? (
+            <div className="text-center py-10 text-slate-500 border border-dashed border-slate-800 rounded-xl space-y-2">
+              <p className="text-sm font-semibold text-slate-400">Rest Day / Empty Slate</p>
+              <p className="text-xs text-slate-600 max-w-xs mx-auto">No substance administration is scheduled for this date. Check cycle configurations in the planner if you believe this is a systematic math error.</p>
+            </div>
+          ) : (
+            <div className="space-y-4" id="checklist-conglomerate">
+              {scheduledCompounds.map(({ compound, weekNo }) => {
+                const isLogged = logs.some(l => l.compoundId === compound.id && l.date === selectedDate);
+                const matchedLog = logs.find(l => l.compoundId === compound.id && l.date === selectedDate);
+                
+                // Calculate needle unit draws if applicable
+                let needleDrawUnits: number | null = null;
+                if (compound.vialSizeMg && compound.bacWaterMl) {
+                  // doseAmount (mcg) / (vialSizeMg * 1000 / (bacWaterMl * 100))
+                  const perUnit = (compound.vialSizeMg * 1000) / (compound.bacWaterMl * 100);
+                  needleDrawUnits = Math.round((compound.doseAmount / perUnit) * 10) / 10;
+                }
+
+                return (
+                  <div
+                    key={`checklist-item-${compound.id}`}
+                    className={`border rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-300 ${
+                      isLogged 
+                        ? 'bg-emerald-500/5 border-emerald-500/20 text-slate-400' 
+                        : 'bg-[#1e293b]/25 border-slate-800/80 hover:border-slate-700/80'
+                    }`}
+                    id={`checklist-item-${compound.id}`}
+                  >
+                    <div className="flex items-start gap-3.5">
+                      <button
+                        onClick={() => handleAdministerDose(compound)}
+                        disabled={isLogged}
+                        className={`mt-1.5 shrink-0 transition-transform active:scale-95 cursor-pointer`}
+                        id={`log-checkbox-${compound.id}`}
+                      >
+                        {isLogged ? (
+                          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                        ) : (
+                          <Circle className="w-5 h-5 text-slate-500 hover:text-cyan-400" />
+                        )}
+                      </button>
+
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: compound.color }}></span>
+                          <span className={`text-sm font-bold ${isLogged ? 'text-slate-500 line-through' : 'text-slate-200'}`}>{compound.name}</span>
+                          <span className="text-[9px] font-mono bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded uppercase">{compound.type}</span>
+                        </div>
+
+                        {/* Schedule detail line */}
+                        <div className="text-[11px] text-slate-500 font-mono">
+                          Week {weekNo} of {compound.durationWeeks} • Target: {compound.doseAmount} {compound.doseUnit} ({compound.frequency.replace('_', ' ')})
+                        </div>
+
+                        {/* Physical Guidance inline */}
+                        {!isLogged && (
+                          <>
+                            {needleDrawUnits !== null && (
+                              <div className="flex items-center gap-1.5 text-[10px] text-cyan-400 bg-cyan-950/20 border border-cyan-900/10 py-1 px-2 rounded-md font-mono mt-2 w-fit">
+                                <Syringe className="w-3.5 h-3.5" />
+                                <span>Draw exactly <strong className="font-extrabold text-cyan-300">{needleDrawUnits}</strong> Syringe Units</span>
+                              </div>
+                            )}
+                            {(compound.type === 'steroid' || compound.type === 'supplement' || compound.type === 'compound') && compound.steroidForm === 'pill' && compound.pillSizeMg && (
+                              <div className="flex items-center gap-1.5 text-[10px] text-cyan-400 bg-cyan-950/20 border border-cyan-900/10 py-1 px-2 rounded-md font-mono mt-2 w-fit">
+                                <CheckSquare className="w-3.5 h-3.5" />
+                                <span>Take exactly <strong className="font-extrabold text-cyan-300">{Math.round((compound.doseAmount / compound.pillSizeMg) * 100) / 100}</strong> {Math.round((compound.doseAmount / compound.pillSizeMg) * 100) / 100 === 1 ? 'pill' : 'pills'} ({compound.pillSizeMg}mg each)</span>
+                              </div>
+                            )}
+                            {(compound.type === 'steroid' || compound.type === 'supplement' || compound.type === 'compound') && compound.steroidForm === 'oil' && compound.oilConcMgMl && (
+                              <div className="flex items-center gap-1.5 text-[10px] text-cyan-400 bg-cyan-950/20 border border-cyan-900/10 py-1 px-2 rounded-md font-mono mt-2 w-fit">
+                                <Syringe className="w-3.5 h-3.5" />
+                                <span>Draw exactly <strong className="font-extrabold text-cyan-300">{(compound.doseAmount / compound.oilConcMgMl).toFixed(2)}</strong> ml / cc ({compound.oilConcMgMl}mg/ml)</span>
+                              </div>
+                            )}
+                          </>
+                        )}
+
+                        {isLogged && matchedLog && (
+                          <span className="text-[11px] text-emerald-400 font-medium block mt-1.5">
+                            ✓ Administered & Logged at {matchedLog.time}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {!isLogged && (
+                      <button
+                        onClick={() => handleAdministerDose(compound)}
+                        className="py-1.5 px-3 bg-[#1e293b] hover:bg-cyan-500 hover:text-slate-950 text-slate-300 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 border border-slate-700/60 transition"
+                        id={`administer-btn-${compound.id}`}
+                      >
+                        Log Administration
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Administration History Ledger Log */}
+        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="administration-ledger-card">
+          <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <History className="w-4 h-4 text-cyan-400" /> Chronological Inoculation Ledgers
+          </h4>
+
+          {logs.length === 0 ? (
+            <p className="text-center py-10 text-slate-600 text-xs">Ledger database is currently empty. Run administrative checks to generate clinical logs.</p>
+          ) : (
+            <div className="overflow-x-auto" id="ledger-scrolling-container">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-[#1e293b]/80 text-[#475569] font-mono text-[10px] uppercase font-bold">
+                    <th className="py-2.5 px-2">Timestamp Date</th>
+                    <th className="py-2.5 px-2">Substance</th>
+                    <th className="py-2.5 px-2">Dosage</th>
+                    <th className="py-2.5 px-2">Physical Qty / Draw</th>
+                    <th className="py-2.5 px-2 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/40 text-slate-300 font-mono">
+                  {logs.slice().reverse().slice(0, 10).map((log) => (
+                    <tr key={log.id} className="hover:bg-slate-900/10">
+                      <td className="py-2.5 px-2 text-slate-400">{log.date} at {log.time}</td>
+                      <td className="py-2.5 px-2 text-slate-200 font-semibold">{log.compoundName}</td>
+                      <td className="py-2.5 px-2">{log.doseAmount} {log.doseUnit}</td>
+                      <td className="py-2.5 px-2 text-cyan-400">
+                        {log.calculatedQtyText ? log.calculatedQtyText : (log.reconstitutedRatio ? `${log.reconstitutedRatio.syringeUnits} Units` : 'Standard Draw')}
+                      </td>
+                      <td className="py-2.5 px-2 text-right">
+                        <button
+                          onClick={() => onUndoDose(log.id)}
+                          className="p-1 px-2 rounded-md text-[10px] font-bold text-slate-500 hover:text-rose-400 transition"
+                          title="Undo / Delete log"
+                          id={`undo-log-${log.id}`}
+                        >
+                          Undo
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <span className="text-[10px] text-slate-500 block text-center mt-3 pt-3 border-t border-slate-800/40">Showing up to the 10 most recent administrative logs</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Right Column (Wellness Logs and Progress Records) */}
+      <div className="xl:col-span-5 flex flex-col gap-6" id="dashboard-wellness-panel">
+        
+        {/* Active Cycle Progress Monitors */}
+        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="active-progress-monitors-card">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Activity className="w-5 h-5 text-cyan-400" />
+              <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider text-left">Active Cycle Progress</h4>
+            </div>
+            <span className="text-[10px] bg-indigo-950 text-indigo-400 px-2.5 py-0.5 rounded-full border border-indigo-500/10 font-bold font-mono">
+              {compounds.filter(c => !c.isCompleted).length} Running
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {compounds.length === 0 ? (
+              <p className="text-xs text-slate-600 text-center py-6">No cycle compounds configured. Navigate to Cycle Architect to initiate a plan.</p>
+            ) : (
+              compounds.map((comp) => {
+                const start = new Date(comp.startDate + 'T00:00:00');
+                const today = new Date();
+                const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                
+                const totalDays = comp.durationWeeks * 7;
+                const diffTime = todayMidnight.getTime() - start.getTime();
+                const elapsedDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                let percentage = 0;
+                if (elapsedDays > 0) {
+                  percentage = Math.min(100, Math.max(0, (elapsedDays / totalDays) * 100));
+                }
+                const roundedPct = Math.round(percentage);
+
+                const daysRemaining = Math.max(0, totalDays - elapsedDays);
+                const weeksCompleted = Math.max(0, Math.floor(elapsedDays / 7));
+
+                return (
+                  <div key={`progress-card-${comp.id}`} className="bg-[#1e293b]/15 border border-[#1e293b]/45 rounded-xl p-3.5 space-y-2.5" id={`progress-card-${comp.id}`}>
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="text-left">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: comp.color }}></span>
+                          <span className="text-xs font-bold text-slate-200">{comp.name}</span>
+                          {comp.isCompleted ? (
+                            <span className="text-[8px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 px-1 py-0.2 rounded font-semibold font-mono">
+                              FIN
+                            </span>
+                          ) : elapsedDays >= totalDays ? (
+                            <span className="text-[8px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 px-1 py-0.2 rounded font-semibold font-mono">
+                              ELAPSED
+                            </span>
+                          ) : elapsedDays < 0 ? (
+                            <span className="text-[8px] bg-amber-500/10 text-amber-500 border border-amber-500/10 px-1 py-0.2 rounded font-semibold font-mono">
+                              PENDING
+                            </span>
+                          ) : (
+                            <span className="text-[8px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/10 px-1 py-0.2 rounded font-semibold font-mono">
+                              RUNNING
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-slate-500 font-mono block mt-0.5">Week {Math.min(comp.durationWeeks, Math.max(1, weeksCompleted + 1))} of {comp.durationWeeks} • Started {comp.startDate}</span>
+                      </div>
+                      
+                      <div className="text-right font-mono text-[10px] sm:text-xs">
+                        <span className="font-bold text-slate-300">{comp.isCompleted ? '100' : roundedPct}%</span>
+                        <span className="text-slate-500 text-[10px] block font-normal">
+                          {comp.isCompleted ? 'Completed' : daysRemaining === 0 ? 'Completed' : `${daysRemaining} days left`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar Container */}
+                    <div className="w-full bg-[#0f172a] h-1.5 rounded-full overflow-hidden border border-[#1e293b]/40">
+                      <div 
+                        className="h-full rounded-full transition-all duration-500" 
+                        style={{ 
+                          width: `${comp.isCompleted ? 100 : roundedPct}%`,
+                          backgroundColor: comp.isCompleted ? '#10b981' : comp.color
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Wellness and Biomarker Daily Forms */}
+        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="wellness-form-card">
+          <div className="flex items-center gap-2 mb-4">
+            <Activity className="w-5 h-5 text-indigo-400" />
+            <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">Labor Wellness & Biomarkers</h4>
+          </div>
+
+          <form onSubmit={handleSaveWellness} className="space-y-5">
+            {/* Weight entry */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                <span>Body Weight</span>
+                <span className="text-[10px] font-mono text-slate-500">Lbs</span>
+              </label>
+              <div className="flex gap-2 items-center bg-[#1e293b]/45 border border-slate-700/60 rounded-xl pr-3">
+                <input
+                  type="number"
+                  step="0.1"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  placeholder="e.g. 180"
+                  className="w-full bg-transparent border-0 rounded-l-xl py-2.5 px-3.5 text-sm text-slate-200 focus:outline-none"
+                  id="wellness-weight-input"
+                />
+                <Weight className="w-4 h-4 text-slate-500" />
+              </div>
+            </div>
+
+            {/* Mood score */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                <span>Core Mood Indicator</span>
+                <span className="text-[11px] text-indigo-400 font-bold font-mono">Score: {mood}/5</span>
+              </label>
+              <div className="grid grid-cols-5 gap-2" id="mood-scores-selector">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <button
+                    key={`mood-${num}`}
+                    type="button"
+                    onClick={() => setMood(num)}
+                    className={`py-2 px-1 text-center font-mono rounded-lg border text-sm transition-all cursor-pointer ${
+                      mood === num
+                        ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/50 scale-105'
+                        : 'bg-[#1e293b]/25 border-slate-800 text-slate-400'
+                    }`}
+                    id={`mood-btn-${num}`}
+                  >
+                    {num === 1 ? '🙁 1' : num === 2 ? '😐 2' : num === 3 ? '🙂 3' : num === 4 ? '😊 4' : '🤩 5'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Fatigue score */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                <span>Physical Energy / Fatigue level</span>
+                <span className="text-[11px] text-indigo-400 font-bold font-mono">Score: {fatigue}/5</span>
+              </label>
+              <div className="grid grid-cols-5 gap-2" id="fatigue-scores-selector">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <button
+                    key={`fatigue-${num}`}
+                    type="button"
+                    onClick={() => setFatigue(num)}
+                    className={`py-2 px-1 text-center font-mono rounded-lg border text-sm transition-all cursor-pointer ${
+                      fatigue === num
+                        ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/50 scale-105'
+                        : 'bg-[#1e293b]/25 border-slate-800 text-slate-400'
+                    }`}
+                    id={`fatigue-btn-${num}`}
+                  >
+                    {num === 1 ? '😴 1' : num === 2 ? '🥱 2' : num === 3 ? '💪 3' : num === 4 ? '⚡ 4' : '🔥 5'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Side effects field */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300">Transient Side Effects (Allergies, Nausea, Site Sting)</label>
+              <input
+                type="text"
+                value={sideEffects}
+                onChange={(e) => setSideEffects(e.target.value)}
+                placeholder="List any reactions or symptoms..."
+                className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80"
+                id="wellness-side-effects-input"
+              />
+            </div>
+
+            {/* Text Notes */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300">Journal notes</label>
+              <textarea
+                value={metricNotes}
+                onChange={(e) => setMetricNotes(e.target.value)}
+                placeholder="Insert focus points, sleep measurements, diet changes..."
+                className="w-full h-18 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/80"
+                id="wellness-notes-textarea"
+              />
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-[#1e293b]/60">
+              <span className="text-[10px] text-slate-500 font-mono">Date: {selectedDate}</span>
+              {saveSuccess && <span className="text-emerald-400 text-[11px] font-semibold">✓ Metric Journal Recorded</span>}
+              <button
+                type="submit"
+                className="py-2 px-4 bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-lg shadow-indigo-500/10"
+                id="submit-wellness-btn"
+              >
+                Save Journal Entry
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Historic Wellness Logs Entries list */}
+        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md flex-1" id="metrics-ledger-card">
+          <div className="flex items-center gap-2 mb-4">
+            <History className="w-5 h-5 text-indigo-400" />
+            <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">Historical Biomarker ledger</h4>
+          </div>
+
+          <div className="space-y-3" id="wellness-ledgers-list">
+            {metrics.length === 0 ? (
+              <p className="text-xs text-slate-600 text-center py-6">Your daily biometrics ledger is empty. Save some measurements above to list logs.</p>
+            ) : (
+              metrics.slice().reverse().slice(0, 5).map((m) => (
+                <div key={`metric-row-${m.date}`} className="bg-[#1e293b]/20 border border-slate-800/80 p-3.5 rounded-xl text-xs space-y-1.5" id={`metric-row-${m.date}`}>
+                  <div className="flex justify-between items-center font-mono font-bold text-slate-300">
+                    <span>{m.date}</span>
+                    {m.weightKg && <span className="text-cyan-400">Weight: {m.weightKg} Lbs</span>}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-slate-400 text-[11px] font-mono">
+                    <span>Mood: {Array(m.mood).fill('⭐').join('') || '—'}</span>
+                    <span>Energy: {Array(m.fatigue).fill('⚡').join('') || '—'}</span>
+                  </div>
+                  {m.sideEffects && (
+                    <div className="text-[10px] text-rose-300 font-mono">
+                      <strong>Reaction:</strong> {m.sideEffects}
+                    </div>
+                  )}
+                  {m.notes && (
+                    <p className="text-[11px] text-slate-400 italic">
+                      &ldquo;{m.notes}&rdquo;
+                    </p>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    </div>
+  );
+}

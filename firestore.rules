@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default catch-all security net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Secure sandboxed user directory structure
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /compounds/{compoundId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /doseLogs/{doseLogId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /metrics/{metricId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /notifications/{notificationId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}

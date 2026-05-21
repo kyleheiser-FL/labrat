@@ -1,0 +1,98 @@
+{
+  "entities": {
+    "compound": {
+      "title": "Compound",
+      "description": "An active cycle compound or anabolic/peptide dosage schedule.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "vialSizeMg": { "type": "number" },
+        "bacWaterMl": { "type": "number" },
+        "doseAmount": { "type": "number" },
+        "doseUnit": { "type": "string" },
+        "frequency": { "type": "string" },
+        "customDays": { "type": "number" },
+        "startDate": { "type": "string" },
+        "durationWeeks": { "type": "number" },
+        "notes": { "type": "string" },
+        "color": { "type": "string" },
+        "isCompleted": { "type": "boolean" },
+        "steroidForm": { "type": "string" },
+        "pillSizeMg": { "type": "number" },
+        "oilConcMgMl": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "name", "type", "doseAmount", "doseUnit", "frequency", "startDate", "durationWeeks", "color"]
+    },
+    "doseLog": {
+      "title": "DoseLog",
+      "description": "Historic dose administration tracker.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "compoundId": { "type": "string" },
+        "compoundName": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "doseAmount": { "type": "number" },
+        "doseUnit": { "type": "string" },
+        "calculatedQtyText": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "userId", "compoundId", "compoundName", "date", "time", "doseAmount", "doseUnit"]
+    },
+    "dailyMetric": {
+      "title": "DailyMetric",
+      "description": "Daily biometrics tracking card.",
+      "type": "object",
+      "properties": {
+        "userIdAndDate": { "type": "string" },
+        "userId": { "type": "string" },
+        "date": { "type": "string" },
+        "weightKg": { "type": "number" },
+        "mood": { "type": "number" },
+        "fatigue": { "type": "number" },
+        "sideEffects": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["userIdAndDate", "userId", "date"]
+    },
+    "notification": {
+      "title": "Notification",
+      "description": "In-app system notification or custom reminder.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "type": { "type": "string" },
+        "isRead": { "type": "boolean" }
+      },
+      "required": ["id", "userId", "title", "message", "timestamp", "type", "isRead"]
+    }
+  },
+  "firestore": {
+    "users/{userId}/compounds/{compoundId}": {
+      "schema": "compound",
+      "description": "Subcollection of compounds per user"
+    },
+    "users/{userId}/doseLogs/{doseLogId}": {
+      "schema": "doseLog",
+      "description": "Subcollection of historic dosage logs per user"
+    },
+    "users/{userId}/metrics/{metricId}": {
+      "schema": "dailyMetric",
+      "description": "Subcollection of daily metrics logs per user"
+    },
+    "users/{userId}/notifications/{notificationId}": {
+      "schema": "notification",
+      "description": "Subcollection of notification items per user"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "short_name": "LabRat",
+  "name": "LabRat - Cycle Tracker & Peptide Library",
+  "description": "Track peptide & compound cycles, calculate reconstitution dosages with a syringe model, log injections, and browse chemical information.",
+  "icons": [
+    {
+      "src": "/liver_support_icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/vitamins_icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#090d16",
+  "theme_color": "#06b6d4",
+  "display": "standalone",
+  "orientation": "portrait",
+  "categories": ["medical", "health", "fitness"]
+}
