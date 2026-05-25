@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Filter, Info, ShieldAlert, CheckCircle, Zap, ArrowUpRight, BookOpen, Clock, Layers } from 'lucide-react';
+import { Search, Filter, Info, ShieldAlert, CheckCircle, Zap, ArrowUpRight, BookOpen, Clock, Layers, Apple, Dumbbell } from 'lucide-react';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
 import { LibraryItem, Compound } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -16,14 +16,48 @@ const CATEGORIES: { value: string; label: string; color: string }[] = [
   { value: 'cognitive', label: 'Nootropics & Cognitive', color: 'bg-pink-500/10 text-pink-400 border-pink-500/30' },
   { value: 'muscle', label: 'Muscle Development', color: 'bg-rose-500/10 text-rose-400 border-rose-500/30' },
   { value: 'lifestyle', label: 'Tanning & Vitality', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' },
+  { value: 'sexual_health', label: 'Sexual Health & Libido', color: 'bg-purple-500/10 text-purple-400 border-purple-500/30' },
+  { value: 'hormones', label: 'Hormones & Optimization', color: 'bg-violet-500/10 text-violet-400 border-violet-500/30' },
+  { value: 'immune', label: 'Immune & Gut Resilience', color: 'bg-teal-500/10 text-teal-400 border-teal-500/30' },
+  { value: 'supplements', label: 'Vitamins & Supplements', color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' },
 ];
 
 export default function PeptideLibrary({ onAddToCycle }: PeptideLibraryProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Filter items
+  // Suggested matches list based on keyword matches (name, synonym or benefit)
+  const suggestions = searchTerm.trim()
+    ? PEPTIDE_LIBRARY.filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.chemicalName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.benefits.some((b) => b.toLowerCase().includes(searchTerm.toLowerCase()))
+      ).slice(0, 5)
+    : [];
+
+  const handleSelectSuggestion = (item: LibraryItem) => {
+    setSearchTerm(item.name);
+    setSelectedCategory('all');
+    setExpandedId(item.id);
+    setShowSuggestions(false);
+
+    // Dynamic scroll-and-glow highlighter
+    setTimeout(() => {
+      const element = document.getElementById(`peptide-card-${item.id}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Glow impact animation
+        element.classList.add('ring-2', 'ring-cyan-400', 'shadow-[0_0_25px_rgba(6,182,212,0.2)]', 'border-cyan-400');
+        setTimeout(() => {
+          element.classList.remove('ring-2', 'ring-cyan-400', 'shadow-[0_0_25px_rgba(6,182,212,0.2)]', 'border-cyan-400');
+        }, 2200);
+      }
+    }, 150);
+  };
+
+  // Filter items for main view list
   const filteredItems = PEPTIDE_LIBRARY.filter((item) => {
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -48,10 +82,70 @@ export default function PeptideLibrary({ onAddToCycle }: PeptideLibraryProps) {
               type="text"
               placeholder="Search by name, synonym, or physiological benefit (e.g., joint, satiety)..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
               className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/30 transition shadow-inner"
               id="library-search-input"
             />
+
+            {/* Transparent click-outside backplate to close dropdown easily */}
+            {showSuggestions && searchTerm.trim().length > 0 && (
+              <div 
+                className="fixed inset-0 z-40 cursor-default" 
+                onClick={() => setShowSuggestions(false)} 
+              />
+            )}
+
+            {/* High-fidelity autocomplete popup dropdown */}
+            {showSuggestions && searchTerm.trim().length > 0 && (
+              <div 
+                className="absolute top-full left-0 right-0 mt-2 bg-[#0b1329]/95 border border-cyan-500/40 rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.85)] overflow-hidden z-50 divide-y divide-slate-800/80 backdrop-blur-md"
+                id="library-suggestions-dropdown"
+              >
+                {suggestions.length > 0 ? (
+                  <div className="py-1">
+                    <div className="px-3.5 py-1.5 text-[10px] font-bold text-cyan-400 uppercase tracking-widest bg-[#131e38]/70 flex justify-between items-center border-b border-slate-800/60">
+                      <span>Suggested Matches ({suggestions.length})</span>
+                      <span className="text-[9px] text-slate-500 font-normal">Tap to expand and view</span>
+                    </div>
+                    {suggestions.map((item) => {
+                      const categoryBadge = CATEGORIES.find(c => c.value === item.category);
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleSelectSuggestion(item)}
+                          className="w-full text-left px-3.5 py-3 hover:bg-[#1e293b]/90 active:bg-slate-800/90 transition flex items-center justify-between gap-3 text-slate-200 cursor-pointer select-none border-0 group/suggest"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="font-bold text-xs text-white group-hover/suggest:text-cyan-400 flex items-center gap-1.5 transition-colors">
+                              <span>{item.name}</span>
+                              {item.chemicalName && (
+                                <span className="text-[10px] text-slate-400 font-mono font-normal truncate">({item.chemicalName})</span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-slate-400 truncate mt-0.5 max-w-[220px] sm:max-w-md">
+                              {item.benefits.join(' • ')}
+                            </div>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded text-[8px] font-bold border uppercase shrink-0 font-sans ${categoryBadge?.color || 'bg-slate-700/50 text-slate-300'}`}>
+                            {categoryBadge?.label.split(' & ')[0]}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="px-4 py-4 text-xs text-slate-400 text-center flex flex-col items-center gap-1">
+                    <span>No suggested compounds matches</span>
+                    <span className="text-[10px] text-slate-500 font-mono">&ldquo;{searchTerm}&rdquo;</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -193,6 +287,56 @@ export default function PeptideLibrary({ onAddToCycle }: PeptideLibraryProps) {
                             {item.clinicalResearch}
                           </p>
                         </div>
+
+                        {/* Peer-Reviewed Journal Studies */}
+                        {item.clinicalStudies && item.clinicalStudies.length > 0 && (
+                          <div className="bg-cyan-500/5 p-4 rounded-xl border border-cyan-500/10 space-y-3" id={`clinical-studies-container-${item.id}`}>
+                            <h5 className="text-[10px] uppercase font-mono tracking-wider text-cyan-400 font-extrabold flex items-center gap-1.5">
+                              <BookOpen className="w-3.5 h-3.5" /> Peer-Reviewed Journal Studies & Clinical Trials
+                            </h5>
+                            <div className="space-y-3">
+                              {item.clinicalStudies.map((study, idx) => (
+                                <div key={`study-${item.id}-${idx}`} className="bg-[#0f172a]/60 border border-[#1e293b]/60 p-3 rounded-lg space-y-1">
+                                  <div className="flex justify-between items-start gap-1.5 flex-wrap sm:flex-nowrap">
+                                    <h6 className="text-[11px] font-bold text-slate-100 leading-snug">{study.studyTitle}</h6>
+                                    <span className="text-[8px] font-mono font-bold text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-800/20 shrink-0">
+                                      CITED STUDY
+                                    </span>
+                                  </div>
+                                  <div className="text-[9px] font-mono text-slate-500 italic">{study.citation}</div>
+                                  <p className="text-[11px] text-slate-300 mt-1.5 leading-relaxed bg-[#1e293b]/20 p-2 rounded-md border border-slate-800/30">
+                                    <span className="text-cyan-400 font-bold font-mono text-[10px] uppercase mr-1">Finding:</span>
+                                    {study.keyFinding}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Realistic Gains & Performance Expectations */}
+                        {item.realisticGains && (
+                          <div className="bg-amber-500/5 p-4 rounded-xl border border-amber-500/10 space-y-2 mt-3" id={`gains-container-${item.id}`}>
+                            <h5 className="text-[10px] uppercase font-mono tracking-wider text-amber-400 font-extrabold flex items-center gap-1.5 matches-title-styling">
+                              <Dumbbell className="w-3.5 h-3.5 text-amber-500 animate-pulse" /> Realistic Gains & Performance Expectations
+                            </h5>
+                            <p className="text-slate-300 text-xs leading-relaxed bg-[#1e293b]/10 p-3 rounded-lg border border-slate-800/40">
+                              {item.realisticGains}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Food, Nutrition & Dietary Protocols */}
+                        {item.dietaryInteraction && (
+                          <div className="bg-emerald-500/5 p-4 rounded-xl border border-emerald-500/10 space-y-2 mt-3" id={`dietary-container-${item.id}`}>
+                            <h5 className="text-[10px] uppercase font-mono tracking-wider text-emerald-400 font-extrabold flex items-center gap-1.5 matches-title-styling">
+                              <Apple className="w-3.5 h-3.5 text-emerald-500" /> Food, Nutrition & Dietary Protocols
+                            </h5>
+                            <p className="text-slate-300 text-xs leading-relaxed bg-[#1e293b]/10 p-3 rounded-lg border border-slate-800/40">
+                              {item.dietaryInteraction}
+                            </p>
+                          </div>
+                        )}
 
                         {/* Reconstitution Guide */}
                         {item.reconstitutionText && (

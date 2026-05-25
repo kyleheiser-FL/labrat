@@ -53,7 +53,7 @@
         "userIdAndDate": { "type": "string" },
         "userId": { "type": "string" },
         "date": { "type": "string" },
-        "weightKg": { "type": "number" },
+        "weightLb": { "type": "number" },
         "mood": { "type": "number" },
         "fatigue": { "type": "number" },
         "sideEffects": { "type": "string" },
@@ -75,6 +75,54 @@
         "isRead": { "type": "boolean" }
       },
       "required": ["id", "userId", "title", "message", "timestamp", "type", "isRead"]
+    },
+    "member": {
+      "title": "Member",
+      "description": "Approved retail store member access profile.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "blocked"] },
+        "shippingAddress": { "type": "string" },
+        "phone": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "email", "status"]
+    },
+    "shopItem": {
+      "title": "ShopItem",
+      "description": "Premium product offered in the members only store.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "inventory": { "type": "number" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["id", "name", "price", "inventory"]
+    },
+    "order": {
+      "title": "Order",
+      "description": "Shopping order submitted by members.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "items": { "type": "array" },
+        "total": { "type": "number" },
+        "shippingInfo": { "type": "object" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "email", "items", "total", "shippingInfo", "status"]
     }
   },
   "firestore": {
@@ -93,6 +141,18 @@
     "users/{userId}/notifications/{notificationId}": {
       "schema": "notification",
       "description": "Subcollection of notification items per user"
+    },
+    "members/{userId}": {
+      "schema": "member",
+      "description": "Central collection tracking approved shop accounts"
+    },
+    "shopItems/{itemId}": {
+      "schema": "shopItem",
+      "description": "Central catalog listing premium biochemical inventory"
+    },
+    "orders/{orderId}": {
+      "schema": "order",
+      "description": "Central history registry for checkout requests"
     }
   }
 }

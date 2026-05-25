@@ -40,7 +40,7 @@ export interface DoseLog {
 
 export interface DailyMetric {
   date: string;               // YYYY-MM-DD
-  weightKg?: number;          // Bodyweight
+  weightLb?: number;          // Bodyweight
   mood?: number;              // 1-5
   fatigue?: number;           // 1-5
   sideEffects?: string;
@@ -51,7 +51,7 @@ export interface LibraryItem {
   id: string;
   name: string;
   chemicalName?: string;
-  category: 'weight_loss' | 'healing' | 'longevity' | 'cognitive' | 'muscle' | 'lifestyle';
+  category: 'weight_loss' | 'healing' | 'longevity' | 'cognitive' | 'muscle' | 'lifestyle' | 'sexual_health' | 'hormones' | 'immune' | 'supplements';
   description: string;
   clinicalResearch: string;   // Clinical context or brief research bio
   typicalDosage: string;      // Recommended dosage ranges
@@ -62,6 +62,9 @@ export interface LibraryItem {
   sideEffects: string[];
   suggestedCycleWeeks: string;
   deliveryForm?: 'peptide' | 'oil' | 'pill'; // Physical format of the substance
+  clinicalStudies?: { studyTitle: string; citation: string; keyFinding: string; }[]; // Scientific studies & trials
+  dietaryInteraction?: string; // Guidance on meals, carbs, protein, fasting, etc.
+  realisticGains?: string;     // What to realistically expect (muscle, fat, recovery, tissue)
 }
 
 export interface AppNotification {
@@ -71,5 +74,40 @@ export interface AppNotification {
   timestamp: string;          // ISO Date
   type: 'info' | 'success' | 'warning' | 'reminder';
   isRead: boolean;
+}
+
+// Helper to format 24-hour style HH:MM to 12-hour AM/PM general time format
+export function formatTimeTo12Hour(timeStr: string): string {
+  if (!timeStr) return '';
+  const clean = timeStr.trim();
+  if (clean.toLowerCase().includes('am') || clean.toLowerCase().includes('pm')) {
+    return clean;
+  }
+  const match = clean.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if (match) {
+    let hours = parseInt(match[1], 10);
+    const minutes = match[2];
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 becomes 12
+    return `${hours}:${minutes} ${ampm}`;
+  }
+  try {
+    const parts = clean.split(':');
+    if (parts.length >= 2) {
+      let hours = parseInt(parts[0], 10);
+      let minutes = parseInt(parts[1], 10);
+      if (!isNaN(hours) && !isNaN(minutes)) {
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const minutesStr = minutes.toString().padStart(2, '0');
+        return `${hours}:${minutesStr} ${ampm}`;
+      }
+    }
+  } catch (e) {
+    // Ignore fallback
+  }
+  return clean;
 }
 

@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckSquare, Sparkles, HelpCircle, ArrowLeftRight, Save, Info, Edit, Check, Heart, Shield, Apple, Sun, Activity } from 'lucide-react';
-import { Compound, LibraryItem } from '../types';
+import { Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckSquare, Sparkles, HelpCircle, ArrowLeftRight, Save, Info, Edit, Check, Heart, Shield, Apple, Sun, Activity, CheckCircle, History, Clock } from 'lucide-react';
+import { Compound, LibraryItem, DoseLog, formatTimeTo12Hour } from '../types';
+import { triggerHaptic } from '../lib/haptics';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
+import ReconstitutionCalculator from './ReconstitutionCalculator';
 
 interface CyclePlannerProps {
   compounds: Compound[];
+  logs?: DoseLog[];
+  onLogDose?: (log: DoseLog) => void;
+  onBatchLogDoses?: (newLogs: DoseLog[]) => void;
+  onUndoDose?: (id: string) => void;
   onAddCompound: (compound: Compound) => void;
   onUpdateCompound: (compound: Compound) => void;
   onDeleteCompound: (id: string) => void;
@@ -13,6 +19,7 @@ interface CyclePlannerProps {
   onResetData: () => void;
   activeFromLibrary?: LibraryItem | null;
   clearActiveFromLibrary?: () => void;
+  onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop') => void;
 }
 
 const PRESET_COLORS = [
@@ -28,25 +35,56 @@ const PRESET_COLORS = [
 
 export default function CyclePlanner({
   compounds,
+  logs = [],
+  onLogDose,
+  onBatchLogDoses,
+  onUndoDose,
   onAddCompound,
   onUpdateCompound,
   onDeleteCompound,
   onImportData,
   onResetData,
   activeFromLibrary,
-  clearActiveFromLibrary
+  clearActiveFromLibrary,
+  onNavigateToTab
 }: CyclePlannerProps) {
   // Form modal triggers
   const [showForm, setShowForm] = useState(false);
+  const [showCalcModal, setShowCalcModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  
+  // Success Prompt overlay state
+  const [showAddSuccessPrompt, setShowAddSuccessPrompt] = useState(false);
+  const [addedCompoundId, setAddedCompoundId] = useState<string | null>(null);
+  const [addedCompoundName, setAddedCompoundName] = useState<string | null>(null);
+
+  // Retroactive Dose Sync states
+  const [retroactiveCompId, setRetroactiveCompId] = useState<string | null>(null);
+  const [retroTab, setRetroTab] = useState<'single' | 'batch'>('single');
+  const [retroSingleDate, setRetroSingleDate] = useState(new Date().toISOString().split('T')[0]);
+  const [retroSingleTime, setRetroSingleTime] = useState('08:00');
+  const [retroSingleAmount, setRetroSingleAmount] = useState('');
+
+  // Batch logging states
+  const [retroBatchStart, setRetroBatchStart] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30); // 30 days ago
+    return d.toISOString().split('T')[0];
+  });
+  const [retroBatchEnd, setRetroBatchEnd] = useState(new Date().toISOString().split('T')[0]);
+  const [retroBatchFreq, setRetroBatchFreq] = useState<'daily' | 'eod' | 'twice_weekly' | 'weekly'>('daily');
+  
+  // Inline confirmation states (to avoid native browser alert blocks in iframe)
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
+  const [confirmingReset, setConfirmingReset] = useState(false);
 
   // Form Fields State
   const [name, setName] = useState('');
   const [type, setType] = useState<'peptide' | 'compound' | 'supplement' | 'steroid'>('peptide');
   const [vialSizeMg, setVialSizeMg] = useState('');
   const [bacWaterMl, setBacWaterMl] = useState('');
-  const [doseAmount, setDoseAmount] = useState('250');
-  const [doseUnit, setDoseUnit] = useState<'mcg' | 'mg' | 'IU' | 'ml'>('mcg');
+  const [doseAmount, setDoseAmount] = useState('1');
+  const [doseUnit, setDoseUnit] = useState<'mcg' | 'mg' | 'IU' | 'ml'>('mg');
   const [frequency, setFrequency] = useState<'daily' | 'eod' | 'twice_weekly' | 'weekly' | 'custom'>('daily');
   const [customDays, setCustomDays] = useState('3');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
@@ -66,18 +104,137 @@ export default function CyclePlanner({
   const [importSuccess, setImportSuccess] = useState(false);
   const [copiedData, setCopiedData] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(-1);
 
   // Suggestions list matched from PEPTIDE_LIBRARY
   const suggestions = name.trim()
-    ? PEPTIDE_LIBRARY.filter(item =>
-        item.name.toLowerCase().includes(name.toLowerCase()) ||
-        item.chemicalName?.toLowerCase().includes(name.toLowerCase())
-      )
+    ? PEPTIDE_LIBRARY.filter(item => {
+        const query = name.toLowerCase().trim();
+        const matchName = (item.name || '').toLowerCase().includes(query);
+        const matchChemical = (item.chemicalName || '').toLowerCase().includes(query);
+        const matchId = (item.id || '').toLowerCase().includes(query);
+        const matchCategory = (item.category || '').toLowerCase().includes(query);
+        const matchDesc = (item.description || '').toLowerCase().includes(query);
+        const matchBenefits = (item.benefits || []).some(b => (b || '').toLowerCase().includes(query));
+        return matchName || matchChemical || matchId || matchCategory || matchDesc || matchBenefits;
+      }).slice(0, 8)
     : [];
 
   const handleSelectSuggestion = (item: LibraryItem) => {
     triggerAutoFill(item);
     setShowSuggestions(false);
+    setFocusedSuggestionIndex(-1);
+  };
+
+  // Helper to dynamically update dose unit and form when name matches a compound
+  const autoDetectDoseUnitAndFormFromName = (enteredName: string) => {
+    if (!enteredName.trim()) return;
+    const cleanName = enteredName.toLowerCase().trim();
+    
+    // Find absolute closest or exact match in library
+    const matchedItem = PEPTIDE_LIBRARY.find(
+      item => 
+        item.name.toLowerCase() === cleanName ||
+        item.id.toLowerCase() === cleanName ||
+        item.chemicalName?.toLowerCase() === cleanName
+    ) || PEPTIDE_LIBRARY.find(
+      item => 
+        item.name.toLowerCase().includes(cleanName) ||
+        (item.chemicalName && item.chemicalName.toLowerCase().includes(cleanName))
+    );
+
+    if (matchedItem) {
+      const typical = matchedItem.typicalDosage.toLowerCase();
+      let detectedUnit: 'mcg' | 'mg' | 'IU' | 'ml' = 'mg';
+      
+      const idMap: Record<string, 'mcg' | 'mg' | 'IU' | 'ml'> = {
+        'bpc-157': 'mcg',
+        'tb-500': 'mg',
+        'semaglutide': 'mg',
+        'tirzepatide': 'mg',
+        'retatrutide': 'mg',
+        'retatrutide-shred-peptide': 'mg',
+        'ipamorelin': 'mcg',
+        'cjc-1295-no-dac': 'mcg',
+        'ghk-cu': 'mg',
+        'human-growth-hormone': 'IU',
+        'igf-1-lr3': 'mcg',
+        'pt-141': 'mg',
+        'tesamorelin': 'mg',
+        'epitalon': 'mg',
+        'melanotan-ii': 'mcg',
+        'testosterone-cypionate': 'mg',
+        'testosterone-enanthate': 'mg',
+        'testosterone-propionate': 'mg',
+        'deca-durabolin': 'mg',
+        'trenbolone-acetate': 'mg',
+        'primobolan-enanthate': 'mg',
+        'masteron-propionate': 'mg',
+        'masteron-prop': 'mg',
+        'anavar-oxandrolone': 'mg',
+        'dianabol-methandrostenolone': 'mg',
+        'dianabol-muscle': 'mg',
+        'winstrol-stanozolol': 'mg',
+        'winstrol-dry': 'mg',
+        'clenbuterol-hydrochloride': 'mcg',
+        'tudca-liver-guard': 'mg',
+        'tudca-protect': 'mg',
+        'nac-antioxidant': 'mg',
+        'nac-ultimate-glutathione': 'mg',
+        'arimidex-anastrozole': 'mg',
+        'anastrozole-estrogen-control': 'mg',
+        'nolvadex-tamoxifen': 'mg',
+        'nolvadex-gyno-protection': 'mg',
+        'tesofensine-metabolic-pill': 'mcg',
+        'kisspeptin-10-hormone': 'mcg',
+        'thymosin-alpha-1-immune': 'mg',
+        'hcg-hormone': 'IU',
+        'l-carnitine': 'mg',
+        'exemestane-suicide-aromasin': 'mg',
+        'clomid-pct-stimulator': 'mg',
+        'dsip-delta-sleep': 'mcg',
+        'thymulin-immune-node': 'mcg',
+        'sermorelin-growth-peptide': 'mcg',
+        'theanine-ashwagandha-synergy': 'mg',
+        'citrus-bergamot-lipids': 'mg',
+        'citrus-bergamot-lipids-supp': 'mg',
+        'ghk-cu-epitalon-glow-blend': 'mg',
+        'semaglutide-l-carnitine-shred-blend': 'mg',
+        'pt141-melanotan2-synergy-blend': 'mg',
+        'ta1-thymulin-immune-blend': 'mg',
+      };
+
+      if (idMap[matchedItem.id]) {
+        detectedUnit = idMap[matchedItem.id];
+      } else if (typical.includes('mcg')) {
+        detectedUnit = 'mcg';
+      } else if (typical.includes('iu')) {
+        detectedUnit = 'IU';
+      } else if (typical.includes('ml')) {
+        detectedUnit = 'ml';
+      } else {
+        detectedUnit = 'mg';
+      }
+
+      setDoseUnit(detectedUnit);
+      
+      // Auto set type and delivery form helpers as well
+      if (matchedItem.deliveryForm === 'peptide') {
+        setType('peptide');
+      } else if (matchedItem.deliveryForm === 'oil') {
+        setType('steroid');
+        setSteroidForm('oil');
+      } else if (matchedItem.deliveryForm === 'pill') {
+        setSteroidForm('pill');
+        if (matchedItem.id === 'tudca-liver-guard' || matchedItem.id === 'nac-antioxidant' || matchedItem.category === 'supplements') {
+          setType('supplement');
+        } else if (matchedItem.category === 'muscle') {
+          setType('steroid');
+        } else {
+          setType('compound');
+        }
+      }
+    }
   };
 
   // Auto-fill form from library trigger
@@ -101,7 +258,7 @@ export default function CyclePlanner({
       resolvedForm = 'oil';
     } else if (item.deliveryForm === 'pill') {
       resolvedForm = 'pill';
-      if (item.id === 'tudca-liver-guard' || item.id === 'nac-antioxidant') {
+      if (item.id === 'tudca-liver-guard' || item.id === 'nac-antioxidant' || item.category === 'supplements') {
         resolvedType = 'supplement';
       } else if (item.category === 'muscle') {
         resolvedType = 'steroid';
@@ -117,12 +274,13 @@ export default function CyclePlanner({
       'semaglutide': { dose: '0.25', unit: 'mg' },
       'tirzepatide': { dose: '2.5', unit: 'mg' },
       'retatrutide': { dose: '1', unit: 'mg' },
+      'retatrutide-shred-peptide': { dose: '2', unit: 'mg' },
       'ipamorelin': { dose: '200', unit: 'mcg' },
       'cjc-1295-no-dac': { dose: '100', unit: 'mcg' },
       'ghk-cu': { dose: '2', unit: 'mg' },
       'human-growth-hormone': { dose: '2', unit: 'IU' },
       'igf-1-lr3': { dose: '50', unit: 'mcg' },
-      'pt-141': { dose: '1', unit: 'mg' },
+      'pt-141': { dose: '1.5', unit: 'mg' },
       'tesamorelin': { dose: '2', unit: 'mg' },
       'epitalon': { dose: '5', unit: 'mg' },
       'melanotan-ii': { dose: '250', unit: 'mcg' },
@@ -133,14 +291,38 @@ export default function CyclePlanner({
       'trenbolone-acetate': { dose: '100', unit: 'mg', oilConc: '100' },
       'primobolan-enanthate': { dose: '100', unit: 'mg', oilConc: '100' },
       'masteron-propionate': { dose: '100', unit: 'mg', oilConc: '100' },
+      'masteron-prop': { dose: '100', unit: 'mg', oilConc: '100' },
       'anavar-oxandrolone': { dose: '20', unit: 'mg', pillSize: '10' },
       'dianabol-methandrostenolone': { dose: '25', unit: 'mg', pillSize: '10' },
+      'dianabol-muscle': { dose: '25', unit: 'mg', pillSize: '10' },
       'winstrol-stanozolol': { dose: '25', unit: 'mg', pillSize: '10' },
+      'winstrol-dry': { dose: '50', unit: 'mg', pillSize: '50' },
       'clenbuterol-hydrochloride': { dose: '40', unit: 'mcg', pillSize: '40' },
       'tudca-liver-guard': { dose: '250', unit: 'mg', pillSize: '250' },
+      'tudca-protect': { dose: '500', unit: 'mg', pillSize: '500' },
       'nac-antioxidant': { dose: '600', unit: 'mg', pillSize: '600' },
+      'nac-ultimate-glutathione': { dose: '600', unit: 'mg', pillSize: '600' },
       'arimidex-anastrozole': { dose: '0.5', unit: 'mg', pillSize: '1' },
+      'anastrozole-estrogen-control': { dose: '0.5', unit: 'mg', pillSize: '1' },
       'nolvadex-tamoxifen': { dose: '20', unit: 'mg', pillSize: '20' },
+      'nolvadex-gyno-protection': { dose: '20', unit: 'mg', pillSize: '20' },
+      'tesofensine-metabolic-pill': { dose: '500', unit: 'mcg', pillSize: '500' },
+      'kisspeptin-10-hormone': { dose: '100', unit: 'mcg' },
+      'thymosin-alpha-1-immune': { dose: '1.5', unit: 'mg' },
+      'hcg-hormone': { dose: '250', unit: 'IU' },
+      'l-carnitine': { dose: '1000', unit: 'mg', pillSize: '500' },
+      'exemestane-suicide-aromasin': { dose: '12.5', unit: 'mg', pillSize: '25' },
+      'clomid-pct-stimulator': { dose: '50', unit: 'mg', pillSize: '50' },
+      'dsip-delta-sleep': { dose: '100', unit: 'mcg' },
+      'thymulin-immune-node': { dose: '100', unit: 'mcg' },
+      'sermorelin-growth-peptide': { dose: '250', unit: 'mcg' },
+      'theanine-ashwagandha-synergy': { dose: '1', unit: 'mg', pillSize: '1' },
+      'citrus-bergamot-lipids': { dose: '500', unit: 'mg', pillSize: '500' },
+      'citrus-bergamot-lipids-supp': { dose: '500', unit: 'mg', pillSize: '500' },
+      'ghk-cu-epitalon-glow-blend': { dose: '1.5', unit: 'mg' },
+      'semaglutide-l-carnitine-shred-blend': { dose: '0.25', unit: 'mg' },
+      'pt141-melanotan2-synergy-blend': { dose: '1.5', unit: 'mg' },
+      'ta1-thymulin-immune-blend': { dose: '1.5', unit: 'mg' },
     };
 
     if (idMap[item.id]) {
@@ -211,6 +393,25 @@ export default function CyclePlanner({
     }
   }, [activeFromLibrary, clearActiveFromLibrary]);
 
+  // Reset success state if modal is closed
+  React.useEffect(() => {
+    if (!showForm) {
+      setShowAddSuccessPrompt(false);
+      setAddedCompoundName(null);
+    }
+  }, [showForm]);
+
+  // Handle Reconstitution math application from integrated calculator modal
+  const handleApplyCalcConfig = (config: { vialSizeMg: number; bacWaterMl: number; doseUnit: string; doseAmount: number }) => {
+    setVialSizeMg(config.vialSizeMg.toString());
+    setBacWaterMl(config.bacWaterMl.toString());
+    setDoseAmount(config.doseAmount.toString());
+    setDoseUnit(config.doseUnit as any);
+    setType('peptide'); // Automatically categorize as a peptide
+    setShowCalcModal(false);
+    triggerHaptic('success');
+  };
+
   // Handle edit selection
   const handleStartEdit = (comp: Compound) => {
     setEditingId(comp.id);
@@ -256,30 +457,53 @@ export default function CyclePlanner({
       oilConcMgMl: (type === 'steroid' || type === 'supplement' || type === 'compound') && steroidForm === 'oil' && oilConcMgMl ? parseFloat(oilConcMgMl) : undefined
     };
 
+    const submittedName = data.name;
+
     if (editingId) {
       onUpdateCompound(data);
+      // Reset Form Fields
+      setName('');
+      setType('peptide');
+      setVialSizeMg('');
+      setBacWaterMl('');
+      setDoseAmount('1');
+      setDoseUnit('mg');
+      setFrequency('daily');
+      setCustomDays('3');
+      setStartDate(new Date().toISOString().split('T')[0]);
+      setDurationWeeks(8);
+      setNotes('');
+      setColor(PRESET_COLORS[0]);
+      setSteroidForm('oil');
+      setPillSizeMg('10');
+      setOilConcMgMl('250');
+      setShowForm(false);
+      setEditingId(null);
     } else {
       onAddCompound(data);
-    }
+      setAddedCompoundId(data.id);
+      setAddedCompoundName(submittedName);
+      setShowAddSuccessPrompt(true);
 
-    // Reset Form Fields
-    setName('');
-    setType('peptide');
-    setVialSizeMg('');
-    setBacWaterMl('');
-    setDoseAmount('250');
-    setDoseUnit('mcg');
-    setFrequency('daily');
-    setCustomDays('3');
-    setStartDate(new Date().toISOString().split('T')[0]);
-    setDurationWeeks(8);
-    setNotes('');
-    setColor(PRESET_COLORS[0]);
-    setSteroidForm('oil');
-    setPillSizeMg('10');
-    setOilConcMgMl('250');
-    setShowForm(false);
-    setEditingId(null);
+      // Reset Form Fields in background
+      setName('');
+      setType('peptide');
+      setVialSizeMg('');
+      setBacWaterMl('');
+      setDoseAmount('1');
+      setDoseUnit('mg');
+      setFrequency('daily');
+      setCustomDays('3');
+      setStartDate(new Date().toISOString().split('T')[0]);
+      setDurationWeeks(8);
+      setNotes('');
+      setColor(PRESET_COLORS[0]);
+      setSteroidForm('oil');
+      setPillSizeMg('10');
+      setOilConcMgMl('250');
+      setEditingId(null);
+    }
+    triggerHaptic('success');
   };
 
   const handleExportData = () => {
@@ -422,8 +646,8 @@ export default function CyclePlanner({
               setName('');
               setVialSizeMg('');
               setBacWaterMl('');
-              setDoseAmount('250');
-              setDoseUnit('mcg');
+              setDoseAmount('1');
+              setDoseUnit('mg');
               setFrequency('daily');
               setStartDate(new Date().toISOString().split('T')[0]);
               setDurationWeeks(8);
@@ -443,13 +667,44 @@ export default function CyclePlanner({
         <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="data-controls-panel">
           <div className="flex items-center justify-between border-b border-[#1e293b]/60 pb-3">
             <h4 className="text-sm font-semibold text-slate-200">Local Cycle Syncing & Backup Data</h4>
-            <button 
-              onClick={onResetData}
-              className="px-2.5 py-1 bg-red-950/20 hover:bg-red-950/60 text-red-400 border border-red-500/10 hover:border-red-500/20 text-[10px] font-mono rounded transition cursor-pointer"
-              id="reset-cycle-btn"
-            >
-              Reset All Cycle Data
-            </button>
+            {confirmingReset ? (
+              <div className="flex items-center gap-1.5 bg-red-950/20 border border-red-500/20 p-1 rounded-lg text-[10px]">
+                <span className="text-red-400 font-bold font-mono uppercase tracking-wider text-[9px] shrink-0">Wipe all cycles?</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic('warning');
+                    onResetData();
+                    setConfirmingReset(false);
+                  }}
+                  className="px-2 py-0.5 bg-red-600 hover:bg-red-700 active:scale-[0.95] text-white rounded text-[9px] font-bold uppercase transition"
+                >
+                  Yes, Wipe
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic('light');
+                    setConfirmingReset(false);
+                  }}
+                  className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 active:scale-[0.95] text-slate-300 rounded text-[9px] font-bold uppercase transition"
+                >
+                  No
+                </button>
+              </div>
+            ) : (
+              <button 
+                type="button"
+                onClick={() => {
+                  triggerHaptic('light');
+                  setConfirmingReset(true);
+                }}
+                className="px-2.5 py-1 bg-red-950/20 hover:bg-red-950/60 text-red-100 hover:text-red-400 border border-red-500/10 hover:border-red-500/20 text-[10px] font-mono rounded transition cursor-pointer"
+                id="reset-cycle-btn"
+              >
+                Reset All Cycle Data
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -691,39 +946,73 @@ export default function CyclePlanner({
                   </h4>
                   <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-slate-500">{comp.type}</span>
                 </div>
-                <div className="flex gap-1 shrink-0">
-                  <button
-                    onClick={() => {
-                      const updated = { ...comp, isCompleted: !comp.isCompleted };
-                      onUpdateCompound(updated);
-                    }}
-                    className={`p-1.5 transition rounded-lg border cursor-pointer ${
-                      comp.isCompleted 
-                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
-                        : 'bg-[#1e293b]/30 border-transparent text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/5'
-                    }`}
-                    title={comp.isCompleted ? "Mark schedule as running and active" : "Mark schedule as successfully completed"}
-                    id={`toggle-complete-comp-${comp.id}`}
-                  >
-                    <CheckSquare className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => handleStartEdit(comp)}
-                    className="p-1.5 text-slate-400 hover:text-cyan-400 transition"
-                    title="Edit compound features"
-                    id={`edit-comp-${comp.id}`}
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => onDeleteCompound(comp.id)}
-                    className="p-1.5 text-slate-400 hover:text-rose-400 transition"
-                    title="Terminate compound"
-                    id={`delete-comp-${comp.id}`}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                {confirmingDeleteId === comp.id ? (
+                  <div className="flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/20 p-1.5 rounded-xl text-[10px] select-none shrink-0" id={`confirm-delete-actions-${comp.id}`}>
+                    <span className="text-rose-400 font-bold font-mono uppercase tracking-widest text-[9px]">Delete?</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        triggerHaptic('warning');
+                        onDeleteCompound(comp.id);
+                        setConfirmingDeleteId(null);
+                      }}
+                      className="px-2 py-1 bg-rose-600 hover:bg-rose-700 active:scale-[0.95] text-white rounded text-[9px] font-bold uppercase transition"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        triggerHaptic('light');
+                        setConfirmingDeleteId(null);
+                      }}
+                      className="px-2 py-1 bg-[#1e293b] hover:bg-slate-800 active:scale-[0.95] text-slate-300 border border-slate-700/50 rounded text-[9px] font-bold uppercase transition"
+                    >
+                      No
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-1 shrink-0">
+                    <button
+                      onClick={() => {
+                        triggerHaptic('light');
+                        const updated = { ...comp, isCompleted: !comp.isCompleted };
+                        onUpdateCompound(updated);
+                      }}
+                      className={`p-1.5 transition rounded-lg border cursor-pointer ${
+                        comp.isCompleted 
+                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
+                          : 'bg-[#1e293b]/30 border-transparent text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/5'
+                      }`}
+                      title={comp.isCompleted ? "Mark schedule as running and active" : "Mark schedule as successfully completed"}
+                      id={`toggle-complete-comp-${comp.id}`}
+                    >
+                      <CheckSquare className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        triggerHaptic('light');
+                        handleStartEdit(comp);
+                      }}
+                      className="p-1.5 text-slate-400 hover:text-cyan-400 transition"
+                      title="Edit compound features"
+                      id={`edit-comp-${comp.id}`}
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        triggerHaptic('warning');
+                        setConfirmingDeleteId(comp.id);
+                      }}
+                      className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/5 rounded transition"
+                      title="Terminate compound"
+                      id={`delete-comp-${comp.id}`}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Chemical properties stats */}
@@ -792,7 +1081,11 @@ export default function CyclePlanner({
                   <div>
                     <span className="font-semibold block text-[11px]">Formula Reconstituted Ratio</span>
                     Units required: <span className="font-bold underline">
-                      {Math.round(((comp.doseAmount) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10} Units
+                      {(() => {
+                        const doseInMcg = comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount;
+                        const mcgPerUnit = (comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100);
+                        return Math.round((doseInMcg / mcgPerUnit) * 10) / 10;
+                      })()} Units
                     </span> on standard syringe ({comp.vialSizeMg}mg in {comp.bacWaterMl}ml).
                   </div>
                 </div>
@@ -829,6 +1122,24 @@ export default function CyclePlanner({
                   &ldquo;{comp.notes}&rdquo;
                 </p>
               )}
+
+              {/* Retroactive logger button */}
+              <div className="pt-2.5 border-t border-slate-800/40 mt-1 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic('light');
+                    setRetroactiveCompId(comp.id);
+                    setRetroSingleAmount(comp.doseAmount.toString());
+                    setRetroBatchFreq(comp.frequency === 'custom' ? 'daily' : comp.frequency);
+                  }}
+                  className="w-full py-2 px-3 bg-[#1e293b]/55 hover:bg-[#1e293b]/90 text-slate-300 hover:text-cyan-400 border border-slate-800 hover:border-cyan-500/30 text-[10.5px] font-extrabold uppercase tracking-wide font-mono rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  id={`sync-past-doses-btn-${comp.id}`}
+                >
+                  <History className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} />
+                  <span>Retroactive Dose Sync</span>
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -854,120 +1165,299 @@ export default function CyclePlanner({
             <span className="text-[9px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono font-bold border border-cyan-500/10">PREMIUM PROTOCOLS</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Liver Support Category */}
-            <div className="bg-[#0f172a]/80 border border-slate-800 p-3 rounded-xl flex items-center gap-3.5 hover:border-cyan-500/30 transition-all duration-300" id="preset-card-liver-support">
-              <img 
-                src="/liver_support_icon.png" 
-                alt="Liver Support Icon" 
-                className="w-12 h-12 rounded-lg bg-black/40 border border-cyan-500/20 object-cover shrink-0" 
-                referrerPolicy="no-referrer"
-              />
-              <div className="space-y-1 flex-1 text-left">
-                <span className="text-[9px] font-mono text-cyan-400 font-bold tracking-wider uppercase block">Liver Support</span>
-                <span className="text-xs font-extrabold text-slate-200 block">TUDCA & NAC</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const preset: Compound = {
-                      id: `supp-liver-${Date.now()}`,
-                      name: "TUDCA + NAC Liver Protection",
-                      type: "supplement",
-                      doseAmount: 1100,
-                      doseUnit: "mg",
-                      frequency: "daily",
-                      startDate: new Date().toISOString().split('T')[0],
-                      durationWeeks: 8,
-                      color: "#ec4899",
-                      isCompleted: false,
-                      steroidForm: "pill",
-                      pillSizeMg: 500,
-                      notes: "Hepatoprotective supplement formulation. Added to optimize safe AST/ALT liver enzyme ranges during suppressive actions."
-                    };
-                    onAddCompound(preset);
-                  }}
-                  className="bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 text-cyan-300 text-[10px] px-2.5 py-0.5 rounded-lg font-bold transition cursor-pointer inline-block"
-                  id="add-preset-liver-btn"
-                >
-                  + Add Preset
-                </button>
-              </div>
-            </div>
+          {(() => {
+            const hasOral = compounds.some(c => 
+              (c.type === 'steroid' && c.steroidForm === 'pill') ||
+              c.name.toLowerCase().includes('dianabol') || 
+              c.name.toLowerCase().includes('dbol') || 
+              c.name.toLowerCase().includes('winstrol') || 
+              c.name.toLowerCase().includes('stanozolol') || 
+              c.name.toLowerCase().includes('anavar') || 
+              c.name.toLowerCase().includes('oxandrolone') || 
+              c.name.toLowerCase().includes('tesofensine') || 
+              c.name.toLowerCase().includes('clenbuterol')
+            );
 
-            {/* Vitamins Category */}
-            <div className="bg-[#0f172a]/80 border border-slate-800 p-3 rounded-xl flex items-center gap-3.5 hover:border-purple-500/30 transition-all duration-300" id="preset-card-vitamins">
-              <img 
-                src="/vitamins_icon.png" 
-                alt="Vitamins Icon" 
-                className="w-12 h-12 rounded-lg bg-black/40 border border-purple-500/20 object-cover shrink-0" 
-                referrerPolicy="no-referrer"
-              />
-              <div className="space-y-1 flex-1 text-left">
-                <span className="text-[9px] font-mono text-purple-400 font-bold tracking-wider uppercase block">Vitamins</span>
-                <span className="text-xs font-extrabold text-slate-200 block font-sans">CoQ10 + Omega-3</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const preset: Compound = {
-                      id: `supp-vit-${Date.now()}`,
-                      name: "CoQ10 + Omega-3 Vital Complex",
-                      type: "supplement",
-                      doseAmount: 2000,
-                      doseUnit: "mg",
-                      frequency: "daily",
-                      startDate: new Date().toISOString().split('T')[0],
-                      durationWeeks: 12,
-                      color: "#a855f7",
-                      isCompleted: false,
-                      notes: "Mitigates cardiovascular load, stabilizes vascular flexibility, and keeps blood-lipid indices optimized."
-                    };
-                    onAddCompound(preset);
-                  }}
-                  className="bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-300 text-[10px] px-2.5 py-0.5 rounded-lg font-bold transition cursor-pointer inline-block"
-                  id="add-preset-vitamins-btn"
-                >
-                  + Add Preset
-                </button>
-              </div>
-            </div>
+            const hasInjectable = compounds.some(c => 
+              (c.type === 'steroid' && c.steroidForm === 'oil') ||
+              c.name.toLowerCase().includes('testosterone') || 
+              c.name.toLowerCase().includes('trenbolone') || 
+              c.name.toLowerCase().includes('primobolan') || 
+              c.name.toLowerCase().includes('masteron') || 
+              c.name.toLowerCase().includes('deca') || 
+              c.name.toLowerCase().includes('boldenone')
+            );
 
-            {/* Joint Health Category */}
-            <div className="bg-[#0f172a]/80 border border-slate-800 p-3 rounded-xl flex items-center gap-3.5 hover:border-emerald-500/30 transition-all duration-300" id="preset-card-joint">
-              <img 
-                src="/joint_health_icon.png" 
-                alt="Joint Health Icon" 
-                className="w-12 h-12 rounded-lg bg-black/40 border border-emerald-500/20 object-cover shrink-0" 
-                referrerPolicy="no-referrer"
-              />
-              <div className="space-y-1 flex-1 text-left">
-                <span className="text-[9px] font-mono text-emerald-400 font-bold tracking-wider uppercase block">Joint Health</span>
-                <span className="text-xs font-extrabold text-slate-200 block">Glucosamine Complex</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const preset: Compound = {
-                      id: `supp-joint-${Date.now()}`,
-                      name: "Glucosamine + Joint MSM Cure",
-                      type: "supplement",
-                      doseAmount: 1500,
-                      doseUnit: "mg",
-                      frequency: "daily",
-                      startDate: new Date().toISOString().split('T')[0],
-                      durationWeeks: 12,
-                      color: "#10b981",
-                      isCompleted: false,
-                      notes: "Formulated to guard articular connective tissue, safeguard joint fluid viscosity, and bolster general healing."
-                    };
-                    onAddCompound(preset);
-                  }}
-                  className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 text-[10px] px-2.5 py-0.5 rounded-lg font-bold transition cursor-pointer inline-block"
-                  id="add-preset-joint-btn"
-                >
-                  + Add Preset
-                </button>
+            const hasAromatizing = compounds.some(c => 
+              c.name.toLowerCase().includes('testosterone') || 
+              c.name.toLowerCase().includes('dianabol') || 
+              c.name.toLowerCase().includes('dbol')
+            );
+
+            const hasJointStrain = compounds.some(c => 
+              c.name.toLowerCase().includes('winstrol') || 
+              c.name.toLowerCase().includes('stanozolol') || 
+              c.name.toLowerCase().includes('masteron') || 
+              c.name.toLowerCase().includes('trenbolone') ||
+              c.name.toLowerCase().includes('deca')
+            );
+
+            const hasSuppressive = compounds.some(c => 
+              c.type === 'steroid' || 
+              c.name.toLowerCase().includes('tren') || 
+              c.name.toLowerCase().includes('test') || 
+              c.name.toLowerCase().includes('deca') || 
+              c.name.toLowerCase().includes('primo') || 
+              c.name.toLowerCase().includes('mast') || 
+              c.name.toLowerCase().includes('var') || 
+              c.name.toLowerCase().includes('winstrol') || 
+              c.name.toLowerCase().includes('dianabol') || 
+              c.name.toLowerCase().includes('dbol')
+            );
+
+            const hasStimulant = compounds.some(c => 
+              c.name.toLowerCase().includes('clenbuterol') || 
+              c.name.toLowerCase().includes('tesofensine')
+            );
+
+            const isCycleEmpty = compounds.length === 0;
+
+            const allSuites = [
+              {
+                id: 'liver-support',
+                category: 'Liver Support',
+                title: 'TUDCA & NAC',
+                imgSrc: '/liver_support_icon.png',
+                themeColorText: 'text-cyan-400',
+                themeColorBtn: 'bg-cyan-500/10 hover:bg-cyan-500/20 border-cyan-500/20 text-cyan-300',
+                themeColorHoverBorder: 'hover:border-cyan-500/30',
+                badgeText: 'ORGAN PROTECTION',
+                isTriggered: hasOral,
+                isAlreadyInCycle: compounds.some(c => 
+                  c.name.toLowerCase().includes('tudca') || 
+                  c.name.toLowerCase().includes('liver protection') || 
+                  c.name.toLowerCase().includes('nac')
+                ),
+                compoundPreset: {
+                  name: "TUDCA + NAC Liver Protection",
+                  type: "supplement",
+                  doseAmount: 1100,
+                  doseUnit: "mg",
+                  frequency: "daily",
+                  durationWeeks: 8,
+                  color: "#ec4899",
+                  isCompleted: false,
+                  steroidForm: "pill",
+                  pillSizeMg: 500,
+                  notes: "Oral hepatotoxicity guard. Added to keep AST/ALT liver enzyme markers in clinical ranges during active cycles."
+                }
+              },
+              {
+                id: 'vitamins',
+                category: 'Vitamins',
+                title: 'CoQ10 + Omega-3',
+                imgSrc: '/vitamins_icon.png',
+                themeColorText: 'text-purple-400',
+                themeColorBtn: 'bg-purple-500/10 hover:bg-purple-500/20 border-purple-500/20 text-purple-300',
+                themeColorHoverBorder: 'hover:border-purple-500/30',
+                badgeText: 'CARDIO DEFENSE',
+                isTriggered: hasInjectable || isCycleEmpty,
+                isAlreadyInCycle: compounds.some(c => 
+                  c.name.toLowerCase().includes('coq10') || 
+                  c.name.toLowerCase().includes('omega-3') || 
+                  c.name.toLowerCase().includes('fish oil')
+                ),
+                compoundPreset: {
+                  name: "CoQ10 + Omega-3 Vital Complex",
+                  type: "supplement",
+                  doseAmount: 2000,
+                  doseUnit: "mg",
+                  frequency: "daily",
+                  durationWeeks: 12,
+                  color: "#a855f7",
+                  isCompleted: false,
+                  notes: "Supports healthy fluid pressure and optimizes lipid ratios (HDL/LDL) during active cycles."
+                }
+              },
+              {
+                id: 'joint-health',
+                category: 'Joint Health',
+                title: 'Glucosamine Complex',
+                imgSrc: '/joint_health_icon.png',
+                themeColorText: 'text-emerald-400',
+                themeColorBtn: 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/20 text-emerald-300',
+                themeColorHoverBorder: 'hover:border-emerald-500/30',
+                badgeText: 'ARTICULAR CARE',
+                isTriggered: hasJointStrain,
+                isAlreadyInCycle: compounds.some(c => 
+                  c.name.toLowerCase().includes('glucosamine') || 
+                  c.name.toLowerCase().includes('joint')
+                ),
+                compoundPreset: {
+                  name: "Glucosamine + Joint MSM Cure",
+                  type: "supplement",
+                  doseAmount: 1500,
+                  doseUnit: "mg",
+                  frequency: "daily",
+                  durationWeeks: 12,
+                  color: "#10b981",
+                  isCompleted: false,
+                  notes: "Preserves joint synovial fluid and connective tissues against high structural load/dryness side effects."
+                }
+              },
+              {
+                id: 'estrogen-control',
+                category: 'Estrogen Control',
+                title: 'Arimidex AI Shield',
+                imgSrc: '/vitamins_icon.png',
+                themeColorText: 'text-amber-400',
+                themeColorBtn: 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/20 text-amber-300',
+                themeColorHoverBorder: 'hover:border-amber-500/30',
+                badgeText: 'ESTROGEN DEFENSE',
+                isTriggered: hasAromatizing,
+                isAlreadyInCycle: compounds.some(c => 
+                  c.name.toLowerCase().includes('arimidex') || 
+                  c.name.toLowerCase().includes('anastrozole') ||
+                  c.name.toLowerCase().includes('aromasin') ||
+                  c.name.toLowerCase().includes('exemestane')
+                ),
+                compoundPreset: {
+                  name: "Arimidex (Anastrozole) Estrogen Control",
+                  type: "supplement",
+                  doseAmount: 0.5,
+                  doseUnit: "mg",
+                  frequency: "eod",
+                  durationWeeks: 12,
+                  color: "#f59e0b",
+                  isCompleted: false,
+                  steroidForm: "pill",
+                  pillSizeMg: 1,
+                  notes: "Blocks conversion of excess circulating androgens into Estradiol. Prevents water retention and gynecomastia."
+                }
+              },
+              {
+                id: 'endocrine-shield',
+                category: 'Endocrine Support',
+                title: 'HCG Endocrine Shield',
+                imgSrc: '/joint_health_icon.png',
+                themeColorText: 'text-indigo-400',
+                themeColorBtn: 'bg-indigo-500/10 hover:bg-indigo-500/20 border-indigo-500/20 text-indigo-300',
+                themeColorHoverBorder: 'hover:border-indigo-500/30',
+                badgeText: 'HPTA RECOVERY',
+                isTriggered: hasSuppressive,
+                isAlreadyInCycle: compounds.some(c => 
+                  c.name.toLowerCase().includes('hcg') || 
+                  c.name.toLowerCase().includes('gonadotropin')
+                ),
+                compoundPreset: {
+                  name: "hCG Endocrine Shield",
+                  type: "peptide",
+                  doseAmount: 250,
+                  doseUnit: "IU",
+                  frequency: "twice_weekly",
+                  durationWeeks: 12,
+                  color: "#6366f1",
+                  isCompleted: false,
+                  notes: "Endogenous LH agonist. Prevents testicular cellular shutdown and ensures smooth high-success PCT recovery."
+                }
+              },
+              {
+                id: 'jitter-rescue',
+                category: 'CNS Calm Support',
+                title: 'Theanine & Ashwagandha',
+                imgSrc: '/liver_support_icon.png',
+                themeColorText: 'text-rose-400',
+                themeColorBtn: 'bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/20 text-rose-300',
+                themeColorHoverBorder: 'hover:border-rose-500/30',
+                badgeText: 'STIMULANT MITIGATION',
+                isTriggered: hasStimulant,
+                isAlreadyInCycle: compounds.some(c => 
+                  c.name.toLowerCase().includes('theanine') || 
+                  c.name.toLowerCase().includes('ashwagandha') ||
+                  c.name.toLowerCase().includes('calm-cycle')
+                ),
+                compoundPreset: {
+                  name: "Theanine & Ashwagandha Synergy",
+                  type: "supplement",
+                  doseAmount: 1,
+                  doseUnit: "mg",
+                  frequency: "daily",
+                  durationWeeks: 8,
+                  color: "#f43f5e",
+                  isCompleted: false,
+                  steroidForm: "pill",
+                  pillSizeMg: 1,
+                  notes: "Soothes elevated cortisol, balances core pulse, and alleviates central nervous jitters from thermogenic compounds."
+                }
+              }
+            ];
+
+            const visibleSuites = allSuites.filter(suite => {
+              if (suite.isAlreadyInCycle) return false;
+              if (isCycleEmpty) {
+                return ['liver-support', 'vitamins', 'joint-health'].includes(suite.id);
+              }
+              return suite.isTriggered;
+            });
+
+            if (visibleSuites.length === 0) {
+              return (
+                <div className="bg-cyan-950/15 border border-cyan-500/25 p-4.5 rounded-2xl flex items-center gap-3.5 text-left max-w-2xl mx-auto" id="all-presets-added-card">
+                  <div className="p-2.5 bg-cyan-950/60 border border-cyan-500/20 rounded-xl h-fit shrink-0">
+                    <CheckCircle className="w-5 h-5 text-cyan-400" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-cyan-200 block">All Suggested Protectants Instantiated</span>
+                    <p className="text-[11px] text-slate-400 leading-normal mt-0.5">
+                      Your current active cycle is fully safeguarded! All dynamic support suites matching your compounds have been added to your cycle.
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {visibleSuites.map((suite) => (
+                  <div 
+                    key={suite.id}
+                    className={`bg-[#0f172a]/80 border border-slate-800 p-3 rounded-xl flex items-center gap-3.5 ${suite.themeColorHoverBorder} transition-all duration-300`} 
+                    id={`preset-card-${suite.id}`}
+                  >
+                    <img 
+                      src={suite.imgSrc} 
+                      alt={`${suite.category} Icon`} 
+                      className="w-12 h-12 rounded-lg bg-black/40 border border-[#1e293b]/80 object-cover shrink-0" 
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="space-y-1 flex-1 text-left">
+                      <span className={`text-[9px] font-mono font-bold tracking-wider uppercase block ${suite.themeColorText}`}>
+                        {suite.category}
+                      </span>
+                      <span className="text-xs font-extrabold text-slate-200 block">
+                        {suite.title}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const preset: Compound = {
+                            id: `supp-${suite.id}-${Date.now()}`,
+                            ...suite.compoundPreset,
+                            startDate: new Date().toISOString().split('T')[0],
+                          } as any;
+                          onAddCompound(preset);
+                        }}
+                        className={`text-[10px] px-2.5 py-0.5 rounded-lg border font-bold transition cursor-pointer inline-block ${suite.themeColorBtn}`}
+                        id={`add-preset-${suite.id}-btn`}
+                      >
+                        + Add Preset
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          </div>
+            );
+          })()}
         </div>
 
         {(() => {
@@ -1027,7 +1517,7 @@ export default function CyclePlanner({
               concern: 'Gastric Slowdown & Visceral Dehydration',
               negatives: 'Slowing stomach motility stops healthy water absorption, provokes dry bowel blockage, and can lead to immediate lean muscle tissue wasting.',
               supplement: 'Psyllium Husk Fiber + Active Electrolytes + Whey Protein',
-              dosage: 'Fiber: 5-10 g, Whey: 1.5g per kg weight daily',
+              dosage: 'Fiber: 5-10 g, Whey: 0.7g per lb weight daily',
               protocol: 'Assures gastrointestinal motility, maintains muscular nitrogen balance, and keeps core hydration indexes topped up.',
               icon: <Apple className="w-5 h-5 text-emerald-400" />,
               badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
@@ -1109,24 +1599,98 @@ export default function CyclePlanner({
       {showForm && typeof window !== 'undefined' && createPortal(
         <div className="fixed inset-0 bg-[#020617]/75 backdrop-blur-sm flex items-start sm:items-center justify-center p-2.5 sm:p-4 z-50 overflow-y-auto" id="planner-form-overlay">
           <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-4 sm:p-6 w-full max-w-xl shadow-2xl relative space-y-5 my-4 sm:my-0" id="planner-form-card" onClick={(e) => e.stopPropagation()}>
-            {/* Title / Description */}
-            <div className="flex justify-between items-start pb-4 border-b border-[#1e293b]">
-              <div>
-                <h4 className="text-lg font-bold text-slate-100 flex items-center gap-1.5">
-                  <Sparkles className="w-5 h-5 text-cyan-400" />
-                  {editingId ? 'Refine Active Compound Specification' : 'Formulate New Enhancer Sequence'}
-                </h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">Define standard dosages, scheduling matrices, and chemical details.</p>
+            {showAddSuccessPrompt ? (
+              <div className="space-y-6 py-4 text-center flex flex-col items-center justify-center" id="add-success-screen">
+                <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center animate-bounce shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                  <CheckCircle className="w-8 h-8 font-extrabold" />
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="text-xl font-bold text-slate-100 uppercase tracking-wider font-mono">Compound Added!</h4>
+                  <p className="text-sm text-slate-300 px-6 leading-relaxed">
+                    <strong className="text-cyan-400 font-black">{addedCompoundName}</strong> has been successfully added to your active biological schedule.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 w-full pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      triggerHaptic('medium');
+                      setShowForm(false);
+                      if (onNavigateToTab) {
+                        onNavigateToTab('dashboard');
+                      }
+                    }}
+                    className="flex-1 py-3 px-4 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm tracking-wide transition shadow-[0_0_15px_rgba(34,211,238,0.15)] flex items-center justify-center gap-2 cursor-pointer"
+                    id="success-go-to-cycle-btn"
+                  >
+                    <span>Go to My Cycle Checklist</span>
+                    <ArrowLeftRight className="w-4 h-4 shrink-0" strokeWidth={2.5} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      triggerHaptic('light');
+                      setShowAddSuccessPrompt(false);
+                      setAddedCompoundName(null);
+                    }}
+                    className="flex-1 py-3 px-4 bg-[#1e293b]/85 border border-[#1e293b] hover:border-slate-700 text-slate-300 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer"
+                    id="success-add-another-btn"
+                  >
+                    <span>Add Another Compound</span>
+                    <Plus className="w-4 h-4 shrink-0" strokeWidth={2.5} />
+                  </button>
+                </div>
+
+                {/* Highly discoverable, professional retro-sync option */}
+                <div className="bg-[#1e293b]/35 border border-[#1e293b] p-4.5 rounded-2xl text-left w-full space-y-2.5 mt-2" id="success-retro-sync-card">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">
+                    <History className="w-4 h-4 text-cyan-400" />
+                    <span>Sync Historic Administrations?</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
+                    Are you transferring record state from another logging system? You can retroactively fill past doses now to automatically balance and calibrate your cycle start date.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      triggerHaptic('light');
+                      setShowForm(false);
+                      setShowAddSuccessPrompt(false);
+                      setAddedCompoundName(null);
+                      if (addedCompoundId) {
+                        setRetroactiveCompId(addedCompoundId);
+                      }
+                    }}
+                    className="w-full py-2.5 bg-cyan-700/20 hover:bg-cyan-600/30 text-cyan-300 hover:text-white border border-cyan-500/30 rounded-xl text-xs font-bold font-mono uppercase transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    id="success-retro-sync-btn"
+                  >
+                    <span>Configure Historical Dose Logs</span>
+                  </button>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="p-1 px-2 border border-[#1e293b] hover:border-slate-700 bg-[#1e293b]/45 text-slate-400 hover:text-slate-200 text-xs font-semibold rounded-lg transition"
-                id="close-form-btn"
-              >
-                Close
-              </button>
-            </div>
+            ) : (
+              <>
+                {/* Title / Description */}
+                <div className="flex justify-between items-start pb-4 border-b border-[#1e293b]">
+                  <div>
+                    <h4 className="text-lg font-bold text-slate-100 flex items-center gap-1.5">
+                      <Sparkles className="w-5 h-5 text-cyan-400" />
+                      {editingId ? 'Refine Active Compound Specification' : 'Formulate New Enhancer Sequence'}
+                    </h4>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Define standard dosages, scheduling matrices, and chemical details.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className="p-1 px-2 border border-[#1e293b] hover:border-slate-700 bg-[#1e293b]/45 text-slate-400 hover:text-slate-200 text-xs font-semibold rounded-lg transition"
+                    id="close-form-btn"
+                  >
+                    Close
+                  </button>
+                </div>
 
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -1139,34 +1703,67 @@ export default function CyclePlanner({
                     onChange={(e) => {
                       setName(e.target.value);
                       setShowSuggestions(true);
+                      setFocusedSuggestionIndex(-1);
+                      if (!editingId) {
+                        autoDetectDoseUnitAndFormFromName(e.target.value);
+                      }
                     }}
-                    onFocus={() => setShowSuggestions(true)}
+                    onKeyDown={(e) => {
+                      if (!showSuggestions || suggestions.length === 0) return;
+                      if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        setFocusedSuggestionIndex(prev => (prev + 1) % suggestions.length);
+                      } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        setFocusedSuggestionIndex(prev => (prev - 1 + suggestions.length) % suggestions.length);
+                      } else if (e.key === 'Enter') {
+                        if (focusedSuggestionIndex >= 0 && focusedSuggestionIndex < suggestions.length) {
+                          e.preventDefault();
+                          handleSelectSuggestion(suggestions[focusedSuggestionIndex]);
+                        }
+                      } else if (e.key === 'Escape') {
+                        setShowSuggestions(false);
+                      }
+                    }}
+                    onFocus={() => {
+                      setShowSuggestions(true);
+                      setFocusedSuggestionIndex(-1);
+                    }}
                     onBlur={() => {
                       // Slight delay to allow clicking suggestion item mouse events to fire successfully
                       setTimeout(() => setShowSuggestions(false), 200);
                     }}
                     placeholder="Enter chemical title or starting letters..."
-                    className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80"
+                    className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/30 transition shadow-inner"
                     id="form-name-input"
                     autoComplete="off"
                   />
                   {showSuggestions && suggestions.length > 0 && (
                     <div className="absolute top-full left-0 w-full mt-1.5 bg-[#0f172a] border border-[#1e293b] rounded-xl shadow-2xl overflow-y-auto max-h-48 z-50 divide-y divide-slate-800/60 custom-scrollbar" id="name-autocomplete-dropdown">
                       <div className="px-3 py-1 bg-slate-900/45 text-[9px] font-mono text-slate-500 tracking-wider uppercase font-semibold">Matched Encyclopedia Suggestions</div>
-                      {suggestions.map((item) => (
+                      {suggestions.map((item, idx) => (
                         <button
                           key={`autocomplete-${item.id}`}
                           type="button"
                           onMouseDown={() => handleSelectSuggestion(item)}
-                          className="w-full text-left p-2.5 hover:bg-cyan-500/10 hover:text-cyan-200 transition-colors flex items-center justify-between text-xs cursor-pointer group"
+                          onMouseEnter={() => setFocusedSuggestionIndex(idx)}
+                          className={`w-full text-left p-2.5 transition-colors flex items-center justify-between text-xs cursor-pointer group ${
+                            focusedSuggestionIndex === idx 
+                              ? 'bg-cyan-500/10 text-cyan-200 border-l-2 border-cyan-500 pl-2' 
+                              : 'hover:bg-cyan-500/10 hover:text-cyan-200'
+                          }`}
                         >
                           <div>
-                            <span className="font-bold text-slate-200 group-hover:text-cyan-300 block">{item.name}</span>
+                            <span className={`font-bold transition-colors block ${focusedSuggestionIndex === idx ? 'text-cyan-300' : 'text-slate-200 group-hover:text-cyan-300'}`}>{item.name}</span>
                             {item.chemicalName && (
-                              <span className="text-[10px] text-slate-400 group-hover:text-slate-300 font-mono block mt-0.5">{item.chemicalName}</span>
+                              <span className={`text-[10px] font-mono block mt-0.5 transition-colors ${focusedSuggestionIndex === idx ? 'text-slate-300' : 'text-slate-400 group-hover:text-slate-300'}`}>{item.chemicalName}</span>
                             )}
                           </div>
-                          <span className="px-2 py-0.5 rounded text-[9px] font-semibold bg-cyan-950/45 text-cyan-400 border border-cyan-500/25 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-colors uppercase shrink-0">
+                          <span className={`px-2 py-0.5 rounded text-[9px] font-semibold border transition-colors uppercase shrink-0 ${
+                            focusedSuggestionIndex === idx
+                              ? 'bg-cyan-500 text-slate-950 border-cyan-500'
+                              : 'bg-cyan-950/45 text-cyan-400 border-cyan-500/25 group-hover:bg-cyan-500 group-hover:text-slate-950'
+                          }`}>
                             Auto-Fill
                           </span>
                         </button>
@@ -1330,35 +1927,63 @@ export default function CyclePlanner({
               )}
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Dose Quantity</label>
-                  <div className="flex gap-1 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl pr-2">
-                    <input
-                      type="number"
-                      required
-                      step="any"
-                      value={doseAmount}
-                      onChange={(e) => setDoseAmount(e.target.value)}
-                      placeholder="e.g. 250"
-                      className="w-full bg-transparent border-0 rounded-l-xl py-2 px-3 text-sm text-slate-200 focus:outline-none"
-                      id="form-dose-amount-input"
-                    />
-                    <select
-                      value={doseUnit}
-                      onChange={(e) => setDoseUnit(e.target.value as any)}
-                      className="bg-[#1e293b] border border-slate-700/60 rounded-lg text-xs py-1 px-2 my-1 text-slate-300 focus:outline-none"
-                      id="form-dose-unit-select"
+                <div className="space-y-1.5 col-span-2 sm:col-span-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-semibold text-slate-300">Dose Quantity</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        triggerHaptic('light');
+                        setShowCalcModal(true);
+                      }}
+                      className="text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-mono bg-cyan-950/45 border border-cyan-500/25 hover:border-cyan-500/45 px-2 py-0.5 rounded transition-all cursor-pointer"
+                      id="form-open-recalc-helper"
+                      title="Open integrated Peptide Mix Helper and auto-populate results"
                     >
-                      <option value="mcg">mcg</option>
-                      <option value="mg">mg</option>
-                      <option value="IU">IU</option>
-                      <option value="ml">ml</option>
-                    </select>
+                      <Sparkles className="w-3 h-3 text-cyan-400 animate-pulse" />
+                      Peptide Mix Helper
+                    </button>
                   </div>
+                  <div 
+                    className={`relative group transition-all duration-300 rounded-xl ${
+                      type === 'peptide' 
+                        ? 'border border-dashed border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-500/50 hover:bg-cyan-500/10 p-1' 
+                        : ''
+                    }`}
+                  >
+                    <div className="flex gap-1 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl pr-2 items-center">
+                      <input
+                        type="number"
+                        required
+                        step="any"
+                        value={doseAmount}
+                        onChange={(e) => setDoseAmount(e.target.value)}
+                        placeholder="e.g. 250"
+                        className="w-full bg-transparent border-0 rounded-l-xl py-2 px-3 text-sm text-slate-200 focus:outline-none"
+                        id="form-dose-amount-input"
+                      />
+                      <select
+                        value={doseUnit}
+                        onChange={(e) => setDoseUnit(e.target.value as any)}
+                        className="bg-[#1e293b] border border-slate-700/60 rounded-lg text-xs py-1 px-2 my-1 text-slate-300 focus:outline-none"
+                        id="form-dose-unit-select"
+                      >
+                        <option value="mcg">mcg</option>
+                        <option value="mg">mg</option>
+                        <option value="IU">IU</option>
+                        <option value="ml">ml</option>
+                      </select>
+                    </div>
+                  </div>
+                  {type === 'peptide' && (
+                    <p className="text-[10px] text-cyan-400 flex items-center gap-1.5 leading-normal opacity-90 mt-1">
+                      <span>💡 Reconstitution active. Tap <span className="underline font-bold cursor-pointer hover:text-cyan-300" onClick={() => setShowCalcModal(true)}>Peptide Mix Helper</span> to calculate syringe tick marks.</span>
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Inoculation Frequency</label>
+                  <label className="text-xs font-semibold text-slate-300">Administration Frequency</label>
                   <select
                     value={frequency}
                     onChange={(e) => setFrequency(e.target.value as any)}
@@ -1446,10 +2071,410 @@ export default function CyclePlanner({
                 </button>
               </div>
             </form>
+          </>
+        )}
           </div>
         </div>,
         document.body
       )}
+
+      {/* Reconstitution Calculator integration popup helper */}
+      {showCalcModal && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 bg-[#020617]/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-[60]" id="calc-helper-overlay">
+          <div className="bg-[#0f172a] border border-[#1e293b] rounded-3xl p-4 sm:p-6 w-full max-w-5xl shadow-2xl relative space-y-4 my-2 sm:my-0 flex flex-col max-h-[95vh] text-left" id="calc-helper-modal">
+            {/* Header */}
+            <div className="flex justify-between items-center pb-3 border-b border-[#1e293b] shrink-0">
+              <div>
+                <h4 className="text-base sm:text-lg font-black text-slate-100 flex items-center gap-1.5 uppercase tracking-wider font-mono">
+                  <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
+                  Peptide Mix Helper
+                </h4>
+                <p className="text-[10px] text-slate-400 mt-0.5 font-mono">Configure peptide/compound titration, inspect visual syringe scale tick marks, and apply to formulation state instantly.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic('light');
+                  setShowCalcModal(false);
+                }}
+                className="p-1.5 px-3 border border-[#1e293b] hover:border-slate-700 bg-[#1e293b]/45 text-slate-400 hover:text-slate-200 text-xs font-semibold rounded-lg transition shrink-0 cursor-pointer"
+                id="close-calc-helper-btn"
+              >
+                Close
+              </button>
+            </div>
+
+            {/* Scrollable container with the active calculator */}
+            <div className="overflow-y-auto flex-grow pr-1 custom-scrollbar">
+              <ReconstitutionCalculator
+                onApplyConfig={handleApplyCalcConfig}
+                initialVialMg={parseFloat(vialSizeMg) || 5}
+                initialWaterMl={parseFloat(bacWaterMl) || 2}
+                initialDoseMcg={
+                  doseUnit === 'mcg'
+                    ? (parseFloat(doseAmount) || 250)
+                    : (doseUnit === 'mg' ? (parseFloat(doseAmount) * 1000 || 250) : 250)
+                }
+              />
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Retroactive Dose Sync Modal integration portal */}
+      {retroactiveCompId && (() => {
+        const retroComp = compounds.find(c => c.id === retroactiveCompId);
+        if (!retroComp) return null;
+
+        const retroLogs = logs.filter(l => l.compoundId === retroactiveCompId);
+        const sortedRetroLogs = [...retroLogs].sort((a, b) => {
+          const dDiff = b.date.localeCompare(a.date);
+          if (dDiff !== 0) return dDiff;
+          return b.time.localeCompare(a.time);
+        });
+
+        const getDatesRangeForFrequency = (start: string, end: string, freq: 'daily' | 'eod' | 'twice_weekly' | 'weekly') => {
+          const dates: string[] = [];
+          const curr = new Date(start + 'T00:00:00');
+          const last = new Date(end + 'T00:00:00');
+          if (curr > last) return [];
+
+          let count = 0;
+          while (curr <= last && count < 200) {
+            dates.push(curr.toISOString().split('T')[0]);
+            count++;
+            if (freq === 'daily') {
+              curr.setDate(curr.getDate() + 1);
+            } else if (freq === 'eod') {
+              curr.setDate(curr.getDate() + 2);
+            } else if (freq === 'twice_weekly') {
+              curr.setDate(curr.getDate() + 3);
+            } else if (freq === 'weekly') {
+              curr.setDate(curr.getDate() + 7);
+            }
+          }
+          return dates;
+        };
+
+        const batchDates = getDatesRangeForFrequency(retroBatchStart, retroBatchEnd, retroBatchFreq);
+
+        const handleAddSingle = (e: React.FormEvent) => {
+          e.preventDefault();
+          if (!onLogDose) return;
+
+          const calculatedQtyText = (() => {
+            if (retroComp.vialSizeMg && retroComp.bacWaterMl) {
+              const units = Math.round(((retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10;
+              return `${units} Units`;
+            } else if (retroComp.type === 'steroid' || retroComp.type === 'supplement' || retroComp.type === 'compound') {
+              if (retroComp.steroidForm === 'pill' && retroComp.pillSizeMg) {
+                const pills = Math.round((retroComp.doseAmount / retroComp.pillSizeMg) * 100) / 100;
+                return `${pills} ${pills === 1 ? 'pill' : 'pills'} (${retroComp.pillSizeMg}mg each)`;
+              } else if (retroComp.steroidForm === 'oil' && retroComp.oilConcMgMl) {
+                const mlStr = (retroComp.doseAmount / retroComp.oilConcMgMl).toFixed(2);
+                return `${mlStr} ml / cc (${retroComp.oilConcMgMl}mg/ml)`;
+              }
+            }
+            return undefined;
+          })();
+
+          const newLog: DoseLog = {
+            id: crypto.randomUUID(),
+            compoundId: retroComp.id,
+            compoundName: retroComp.name,
+            date: retroSingleDate,
+            time: retroSingleTime,
+            doseAmount: parseFloat(retroSingleAmount) || retroComp.doseAmount,
+            doseUnit: retroComp.doseUnit,
+            reconstitutedRatio: retroComp.vialSizeMg && retroComp.bacWaterMl ? {
+              vialSizeMg: retroComp.vialSizeMg,
+              bacWaterMl: retroComp.bacWaterMl,
+              syringeUnits: Math.round(((retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10
+            } : undefined,
+            calculatedQtyText
+          };
+
+          triggerHaptic('success');
+          onLogDose(newLog);
+          triggerHaptic('light');
+        };
+
+        const handleAddBatch = () => {
+          if (batchDates.length === 0 || !onBatchLogDoses) return;
+
+          const calculatedQtyText = (() => {
+            if (retroComp.vialSizeMg && retroComp.bacWaterMl) {
+              const units = Math.round(((retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10;
+              return `${units} Units`;
+            } else if (retroComp.type === 'steroid' || retroComp.type === 'supplement' || retroComp.type === 'compound') {
+              if (retroComp.steroidForm === 'pill' && retroComp.pillSizeMg) {
+                const pills = Math.round((retroComp.doseAmount / retroComp.pillSizeMg) * 100) / 100;
+                return `${pills} ${pills === 1 ? 'pill' : 'pills'} (${retroComp.pillSizeMg}mg each)`;
+              } else if (retroComp.steroidForm === 'oil' && retroComp.oilConcMgMl) {
+                const mlStr = (retroComp.doseAmount / retroComp.oilConcMgMl).toFixed(2);
+                return `${mlStr} ml / cc (${retroComp.oilConcMgMl}mg/ml)`;
+              }
+            }
+            return undefined;
+          })();
+
+          const newLogs: DoseLog[] = batchDates.map(dStr => ({
+            id: crypto.randomUUID(),
+            compoundId: retroComp.id,
+            compoundName: retroComp.name,
+            date: dStr,
+            time: '08:00',
+            doseAmount: parseFloat(retroSingleAmount) || retroComp.doseAmount,
+            doseUnit: retroComp.doseUnit,
+            reconstitutedRatio: retroComp.vialSizeMg && retroComp.bacWaterMl ? {
+              vialSizeMg: retroComp.vialSizeMg,
+              bacWaterMl: retroComp.bacWaterMl,
+              syringeUnits: Math.round(((retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10
+            } : undefined,
+            calculatedQtyText
+          }));
+
+          triggerHaptic('success');
+          onBatchLogDoses(newLogs);
+          triggerHaptic('light');
+        };
+
+        return createPortal(
+          <div className="fixed inset-0 bg-[#020617]/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-[60]" id="retroactive-sync-overlay">
+            <div className="bg-[#0f172a] border border-[#1e293b] rounded-3xl p-4 sm:p-6 w-full max-w-2xl shadow-2xl relative flex flex-col max-h-[92vh] text-left" id="retroactive-sync-modal" onClick={(e) => e.stopPropagation()}>
+              {/* Header */}
+              <div className="flex justify-between items-start pb-4 border-b border-[#1e293b] shrink-0">
+                <div>
+                  <h4 className="text-base sm:text-lg font-black text-slate-100 flex items-center gap-1.5 uppercase tracking-wider font-mono">
+                    <History className="w-5 h-5 text-cyan-400" />
+                    <span>Retroactive Sync</span>
+                  </h4>
+                  <p className="text-[10.5px] text-cyan-400 font-bold font-mono mt-0.5 uppercase tracking-wide">
+                    {retroComp.name} ({retroComp.type})
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic('light');
+                    setRetroactiveCompId(null);
+                  }}
+                  className="p-1 px-3 border border-slate-800 hover:border-slate-700 bg-[#1e293b]/40 hover:bg-[#1e293b] text-slate-400 hover:text-slate-200 text-xs font-bold rounded-lg transition"
+                  id="close-retro-sync-btn"
+                >
+                  Close
+                </button>
+              </div>
+
+              {/* Informational Hero Card */}
+              <div className="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-800/80 text-[11px] text-slate-400 mt-3 leading-relaxed flex items-start gap-2.5 shrink-0">
+                <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <div>
+                  <p>
+                    Your cycle schedule automatically centers on your <strong>first documented dosing log</strong>. Log past data below to backdate your cycle safely without losing historical synchronization.
+                  </p>
+                  {sortedRetroLogs.length > 0 && (
+                    <div className="mt-1 text-cyan-300 font-mono font-bold">
+                      Earliest Dose Detected: {sortedRetroLogs[sortedRetroLogs.length - 1].date} &rarr; Cycle has automatically shifted its start parameters to match.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Tab Toggles */}
+              <div className="flex bg-[#0f172a] border border-[#1e293b] rounded-xl p-1 mt-4 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => { triggerHaptic('light'); setRetroTab('single'); }}
+                  className={`flex-1 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
+                    retroTab === 'single'
+                      ? 'bg-[#1e293b] text-slate-100 shadow'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Single past dose
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { triggerHaptic('light'); setRetroTab('batch'); }}
+                  className={`flex-1 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
+                    retroTab === 'batch'
+                      ? 'bg-[#1e293b] text-slate-100 shadow'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Batch Generate Range
+                </button>
+              </div>
+
+              {/* Form Content - Scrollable */}
+              <div className="overflow-y-auto flex-grow my-4 pr-1 custom-scrollbar space-y-4 font-sans">
+                {retroTab === 'single' ? (
+                  <form onSubmit={handleAddSingle} className="bg-slate-900/20 p-4 border border-slate-800/60 rounded-2xl space-y-4">
+                    <h5 className="text-xs font-bold text-slate-200 uppercase tracking-widest font-mono">Input Single Past Dose Log</h5>
+                    <div className="grid grid-cols-2 gap-3.5">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase font-mono">Date</label>
+                        <input
+                          type="date"
+                          required
+                          value={retroSingleDate}
+                          onChange={(e) => setRetroSingleDate(e.target.value)}
+                          className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80 transition"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase font-mono">Time</label>
+                        <input
+                          type="time"
+                          required
+                          value={retroSingleTime}
+                          onChange={(e) => setRetroSingleTime(e.target.value)}
+                          className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80 transition"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3.5">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase font-mono">Dose Amount ({retroComp.doseUnit})</label>
+                        <input
+                          type="number"
+                          step="any"
+                          required
+                          value={retroSingleAmount}
+                          onChange={(e) => setRetroSingleAmount(e.target.value)}
+                          className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80 transition"
+                        />
+                      </div>
+                      <div className="flex items-end">
+                        <button
+                          type="submit"
+                          className="w-full py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider font-mono rounded-xl transition cursor-pointer"
+                        >
+                          Append Log
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="bg-slate-900/20 p-4 border border-slate-800/60 rounded-2xl space-y-4">
+                    <h5 className="text-xs font-bold text-slate-200 uppercase tracking-widest font-mono font-medium">Historical Sequence Generator</h5>
+                    <div className="grid grid-cols-2 gap-3.5">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase font-mono">Start Date</label>
+                        <input
+                          type="date"
+                          required
+                          value={retroBatchStart}
+                          onChange={(e) => setRetroBatchStart(e.target.value)}
+                          className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80 transition"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase font-mono">End Date</label>
+                        <input
+                          type="date"
+                          required
+                          value={retroBatchEnd}
+                          onChange={(e) => setRetroBatchEnd(e.target.value)}
+                          className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80 transition"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3.5">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase font-mono">Administration Frequency</label>
+                        <select
+                          value={retroBatchFreq}
+                          onChange={(e: any) => setRetroBatchFreq(e.target.value)}
+                          className="w-full bg-[#1e293b] border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80"
+                        >
+                          <option value="daily">Daily</option>
+                          <option value="eod">Every Other Day (EOD)</option>
+                          <option value="twice_weekly">Twice Weekly (Every 3 Days)</option>
+                          <option value="weekly">Weekly</option>
+                        </select>
+                      </div>
+                      <div className="space-y-1 text-left">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase font-mono block mb-1">Dose per Entry ({retroComp.doseUnit})</label>
+                        <span className="text-xs font-bold text-slate-300 block pt-1.5">{retroSingleAmount || retroComp.doseAmount} {retroComp.doseUnit}</span>
+                      </div>
+                    </div>
+
+                    {/* Generation preview panel */}
+                    <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-[11px] font-mono">
+                      <div>
+                        <span className="text-slate-500">Scheduled Logs To Fill:</span>{' '}
+                        <span className="font-bold text-cyan-400 text-xs">{batchDates.length} entries</span>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={batchDates.length === 0}
+                        onClick={handleAddBatch}
+                        className={`px-4 py-2 text-xs font-bold uppercase tracking-wide rounded-xl transition font-mono cursor-pointer ${
+                          batchDates.length === 0
+                            ? 'bg-slate-800 text-slate-600 border border-slate-700 pointer-events-none'
+                            : 'bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black'
+                        }`}
+                      >
+                        Populate Chronology
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Already logged doses for this compound */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <h5 className="text-xs font-bold text-slate-200 uppercase tracking-widest font-mono flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Documented Logs Sync ({sortedRetroLogs.length})</span>
+                    </h5>
+                  </div>
+
+                  {sortedRetroLogs.length === 0 ? (
+                    <div className="text-center py-6 border border-dashed border-slate-800 rounded-2xl text-xs text-slate-500 font-mono">
+                      No matching historical logs found in device registers.
+                    </div>
+                  ) : (
+                    <div className="border border-slate-800/80 rounded-xl overflow-hidden divide-y divide-slate-800/60 max-h-48 overflow-y-auto custom-scrollbar">
+                      {sortedRetroLogs.map((log) => (
+                        <div key={log.id} className="flex items-center justify-between p-2.5 bg-slate-900/10 hover:bg-slate-900/30 text-xs font-mono">
+                          <div className="flex items-center gap-2.5">
+                            <span className="text-slate-300 font-bold">{log.date}</span>
+                            <span className="text-slate-500 text-[10px]">{formatTimeTo12Hour(log.time)}</span>
+                            <span className="text-cyan-400 text-[11px] font-bold">
+                              {log.doseAmount} {log.doseUnit}
+                            </span>
+                            {log.calculatedQtyText && (
+                              <span className="text-slate-500 text-[9px] font-bold">({log.calculatedQtyText})</span>
+                            )}
+                          </div>
+                          {onUndoDose && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                triggerHaptic('warning');
+                                onUndoDose(log.id);
+                              }}
+                              className="p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-all cursor-pointer"
+                              title="Delete dose record"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body
+        );
+      })()}
     </div>
   );
 }

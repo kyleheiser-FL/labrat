@@ -6,6 +6,13 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Helper to determine if the user is the bootstrapped admin
+    function isAdmin() {
+      return request.auth != null && 
+             (request.auth.token.email == "KyleHeiser@gmail.com" || 
+              request.auth.token.email == "kyleheiser@gmail.com");
+    }
+
     // Secure sandboxed user directory structure
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
@@ -25,6 +32,69 @@ service cloud.firestore {
       match /notifications/{notificationId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
+    }
+
+    // Members verification and access approval system
+    match /members/{memberId} {
+      allow read: if request.auth != null && (request.auth.uid == memberId || isAdmin());
+      
+      // Creating a request: status must start as 'pending'
+      allow create: if request.auth != null && 
+                    request.auth.uid == memberId && 
+                    request.resource.data.status == "pending";
+      
+      // Updates: user can change shipping details/phone, but status can only be modified by Admin
+      allow update: if request.auth != null && (
+                      isAdmin() || 
+                      (request.auth.uid == memberId && request.resource.data.status == resource.data.status)
+                    );
+                    
+      allow delete: if isAdmin();
+    }
+
+    // Premium Shop Inventory catalog
+    match /shopItems/{itemId} {
+      // Allowed if Admin, or if authenticated and approved member in the members collection
+      allow read: if request.auth != null && (
+                    isAdmin() || 
+                    (
+                      exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
+                      get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved"
+                    )
+                  );
+      
+      allow write: if isAdmin();
+    }
+
+    // Global system configuration settings
+    match /systemConfig/{configId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Orders checkout data
+    match /orders/{orderId} {
+      // Allow read to own orders, admin, or any approved member to compute dynamic inventory stock
+      allow read: if request.auth != null && (
+                    resource.data.userId == request.auth.uid || 
+                    isAdmin() || 
+                    (
+                      exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
+                      get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved"
+                    )
+                  );
+      
+      // Members must be approved to place orders
+      allow create: if request.auth != null && (
+                      isAdmin() || 
+                      (
+                        request.resource.data.userId == request.auth.uid && 
+                        exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved"
+                      )
+                    );
+                    
+      allow update, delete: if isAdmin();
     }
   }
 }

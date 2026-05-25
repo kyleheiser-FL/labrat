@@ -20,8 +20,8 @@ export default function ReconstitutionCalculator({
   const [bacWaterMl, setBacWaterMl] = useState<number>(initialWaterMl);
   const [targetDoseMcg, setTargetDoseMcg] = useState<number>(initialDoseMcg);
   const [syringeSize, setSyringeSize] = useState<number>(100); // 100 units = 1.0cc, support up to 3.0cc (300 units)
-  const [doseUnit, setDoseUnit] = useState<'mcg' | 'mg'>('mcg');
-  const [typedDose, setTypedDose] = useState<string>(initialDoseMcg.toString());
+  const [doseUnit, setDoseUnit] = useState<'mcg' | 'mg'>('mg');
+  const [typedDose, setTypedDose] = useState<string>((initialDoseMcg / 1000).toString());
 
   // Presets
   const vialPresets = [2, 5, 10, 15, 20];
@@ -90,16 +90,16 @@ export default function ReconstitutionCalculator({
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Syringe className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-lg font-medium text-slate-100">Lab Reconstitution Math</h3>
+            <h3 className="text-lg font-medium text-slate-100">Peptide Mix Helper</h3>
           </div>
           <button
             onClick={() => {
               setVialSizeMg(5);
               setBacWaterMl(2);
-              setTargetDoseMcg(250);
+              setTargetDoseMcg(1000); // 1 mg
               setSyringeSize(100);
-              setDoseUnit('mcg');
-              setTypedDose('250');
+              setDoseUnit('mg');
+              setTypedDose('1');
             }}
             className="text-xs text-slate-400 hover:text-cyan-400 flex items-center gap-1 transition"
             title="Reset to defaults"
@@ -397,7 +397,7 @@ export default function ReconstitutionCalculator({
                   vialSizeMg,
                   bacWaterMl,
                   doseUnit,
-                  doseAmount: targetDoseMcg
+                  doseAmount: doseUnit === 'mg' ? (targetDoseMcg / 1000) : targetDoseMcg
                 })}
                 className="flex-1 py-2.5 px-4 bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition"
                 id="apply-calc-btn"

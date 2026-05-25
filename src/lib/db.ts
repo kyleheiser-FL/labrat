@@ -38,7 +38,7 @@ export interface FirestoreErrorInfo {
 /**
  * Handles Firestore errors by wrapping them into a descriptive JSON payload
  */
-function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null): never {
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null): never {
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
@@ -153,6 +153,15 @@ export async function saveUserMetric(userId: string, metric: DailyMetric): Promi
   }
 }
 
+export async function deleteUserMetric(userId: string, date: string): Promise<void> {
+  const path = `users/${userId}/metrics`;
+  try {
+    await deleteDoc(doc(db, path, date));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `${path}/${date}`);
+  }
+}
+
 // --- Notifications Collection Sync ---
 
 export async function fetchUserNotifications(userId: string): Promise<AppNotification[]> {
@@ -201,8 +210,11 @@ export async function uploadLocalDataToCloud(
     const batch = writeBatch(db);
 
     compounds.forEach((item) => {
-      const ref = doc(db, `users/${userId}/compounds`, item.id);
-      batch.set(ref, item);
+      // Do not upload template seed compounds to real cloud profiles
+      if (item.id !== 'seed-bpc-157' && item.id !== 'seed-ghk-cu') {
+        const ref = doc(db, `users/${userId}/compounds`, item.id);
+        batch.set(ref, item);
+      }
     });
 
     logs.forEach((item) => {
