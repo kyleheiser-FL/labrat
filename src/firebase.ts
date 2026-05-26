@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { initializeFirestore } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
@@ -44,6 +44,3 @@ export const db = initializeFirestore(app, {
   ignoreUndefinedProperties: true
 }, resolvedConfig.firestoreDatabaseId || undefined);
 export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-
-export { signInWithPopup };

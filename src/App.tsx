@@ -42,14 +42,15 @@ import BloodAnalyzer from './components/BloodAnalyzer';
 import MembersShop from './components/MembersShop';
 
 // Firebase Setup
-import { auth, db, signInWithPopup, googleProvider } from './firebase';
+import { auth, db } from './firebase';
 import { 
   onAuthStateChanged, 
   signOut, 
   User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  updateProfile
+  updateProfile,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { 
@@ -369,35 +370,35 @@ export default function App() {
     }, 4500);
   };
 
-  // Google Provider Auth Trigger Actions
-  const handleGoogleLogin = async () => {
+  // Password Reset / Account Transition Trigger Actions
+  const handleForgotPassword = async () => {
+    const emailStr = authEmail.trim();
+    if (!emailStr) {
+      setAuthError('To transition an existing account or reset a password, please type your email address in the input above first.');
+      triggerNotification('Email Required', 'Please enter your email address in the Email field above.', 'warning');
+      return;
+    }
+
     try {
-      setAuthLoading(true);
-      safeLocalStorage.setItem('labrat_just_clicked_signin', 'true');
-      await signInWithPopup(auth, googleProvider);
+      setAuthSubmitting(true);
+      await sendPasswordResetEmail(auth, emailStr);
+      triggerNotification(
+        'Reset Link Sent',
+        `A password reset/transition link has been dispatched to ${emailStr}. Click the email link to easily set a password for your account.`,
+        'success'
+      );
     } catch (err: any) {
-      safeLocalStorage.removeItem('labrat_just_clicked_signin');
-      console.error('Failed to authenticate Google user:', err);
-      setAuthLoading(false);
-      
-      let title = 'Authentication Failed';
-      let msg = 'Unable to complete sign in. Please verify popup blockers are deactivated.';
-      
-      if (err && typeof err === 'object') {
-        const code = err.code || '';
-        const message = err.message || '';
-        if (code === 'auth/unauthorized-domain') {
-          title = 'Domain Not Authorized';
-          msg = `This domain (${window.location.hostname}) is not allowed in Firebase. Please add "${window.location.hostname}" to Firebase Console -> Authentication -> Settings -> Authorized Domains.`;
-        } else if (code === 'auth/popup-closed-by-user') {
-          title = 'Login Cancelled';
-          msg = 'The login popup was closed before completion.';
-        } else if (code) {
-          msg = `[${code}]: ${message}`;
-        }
+      console.error('Password reset dispatch failed:', err);
+      let errMsg = 'Failed to transmit reset email.';
+      if (err?.code === 'auth/user-not-found') {
+        errMsg = 'No registered profile matching this email was found. You can easily create a new account instead.';
+      } else if (err?.message) {
+        errMsg = err.message;
       }
-      
-      triggerNotification(title, msg, 'warning');
+      setAuthError(errMsg);
+      triggerNotification('Transfer Failed', errMsg, 'warning');
+    } finally {
+      setAuthSubmitting(false);
     }
   };
 
@@ -584,7 +585,7 @@ export default function App() {
               setTimeout(() => {
                 triggerNotification(
                   'Cloud Sync Configured',
-                  'Successfully initialised Google cloud database backups for your active records.',
+                  'Successfully initialised secure cloud database backups for your active records.',
                   'success',
                   false
                 );
@@ -1737,6 +1738,18 @@ export default function App() {
                     required
                     id="auth-input-password"
                   />
+                  {!isSignUpMode && (
+                    <div className="flex justify-end pt-1">
+                      <button
+                        type="button"
+                        onClick={() => { triggerHaptic('light'); handleForgotPassword(); }}
+                        className="text-[10px] text-cyan-400 hover:text-cyan-300 transition hover:underline cursor-pointer"
+                        id="auth-btn-forgot-password"
+                      >
+                        Forgot Password / Transition Google Login?
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {authError && (
@@ -1763,34 +1776,20 @@ export default function App() {
                 </button>
               </form>
 
-              {/* Developer / Owner Config Notice */}
-              <div className="bg-slate-950/40 border border-slate-800/60 p-3 rounded-xl space-y-1 text-[9.5px] leading-relaxed text-slate-400 text-left">
-                <span className="text-cyan-400 font-bold block uppercase tracking-wider text-[10px]">🔐 Setup Integration Guide</span>
-                <p>
-                  To sync successfully with Email & Password, ensure the <strong>Email/Password</strong> provider is enabled in your Firebase Console (Authentication &rarr; Sign-in method).
-                </p>
-              </div>
-
-              {/* Divider & Google Login Failures Alternate Tunnel */}
-              <div className="relative py-2 flex items-center" id="auth-divider">
-                <div className="flex-grow border-t border-[#1e293b]/70 font-sans"></div>
-                <span className="flex-shrink mx-3 text-[9px] text-slate-500 font-bold tracking-widest uppercase font-mono">Or Alternative Access</span>
-                <div className="flex-grow border-t border-[#1e293b]/70 font-sans"></div>
-              </div>
-
-              <div className="space-y-2 text-left">
-                <button
-                  type="button"
-                  onClick={() => { triggerHaptic('light'); handleGoogleLogin(); }}
-                  className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer border border-[#1e293b]"
-                  id="auth-google-alternate-btn"
-                >
-                  <LogIn className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Use Google Login Provider</span>
-                </button>
-                <p className="text-[9px] text-slate-500 text-center leading-normal">
-                  If Google Auth complains about browser redirect parameters or domains, Email/Password login completely bypasses this issue.
-                </p>
+              {/* Developer / Owner Config & Account Transfer Notice */}
+              <div className="bg-[#030712]/40 border border-[#1e293b] p-3.5 rounded-xl space-y-2 text-[10px] leading-relaxed text-slate-400 text-left">
+                <div>
+                  <span className="text-cyan-400 font-bold block uppercase tracking-wider text-[10.5px]">🔄 Transitioning from Google?</span>
+                  <p className="mt-1">
+                    If you originally signed in using Google, simply type your email address above, leave the password blank, and click the <strong>&quot;Forgot Password / Transition Google Login&quot;</strong> link. A secure password setup link will be dispatched directly to your inbox so you can login with your password.
+                  </p>
+                </div>
+                <div className="border-t border-slate-900 pt-2 text-[9.5px]">
+                  <span className="text-slate-400 font-bold block uppercase tracking-wider">🔐 Setup Integration Guide</span>
+                  <p className="mt-0.5">
+                    Ensure the <strong>Email/Password</strong> provider is enabled in Firebase Console (Authentication &rarr; Sign-in method).
+                  </p>
+                </div>
               </div>
             </motion.div>
           </motion.div>

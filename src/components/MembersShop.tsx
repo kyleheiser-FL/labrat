@@ -2532,7 +2532,7 @@ export default function MembersShop() {
           </div>
           <h2 className="text-xl font-bold text-white tracking-tight">Login Credentials Required</h2>
           <p className="text-slate-400 text-sm mt-2 max-w-sm mx-auto">
-            Viewing and placing chemical requests on the LabRat network requires authenticating with Google in the checklist tab.
+            Viewing and placing chemical requests on the LabRat network requires authenticating with your account in the checklist tab.
           </p>
         </div>
       ) : !isAdminUser && !memberProfile ? (
