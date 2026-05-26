@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Beaker, 
   Syringe, 
@@ -43,7 +43,14 @@ import MembersShop from './components/MembersShop';
 
 // Firebase Setup
 import { auth, db, signInWithPopup, googleProvider } from './firebase';
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { 
+  onAuthStateChanged, 
+  signOut, 
+  User,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { 
   fetchUserCompounds, 
@@ -261,6 +268,15 @@ export default function App() {
   const [isStandalone, setIsStandalone] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
 
+  // Email & Password Auth States
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authUsername, setAuthUsername] = useState('');
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const [authSubmitting, setAuthSubmitting] = useState(false);
+
   useEffect(() => {
     const checkStandalone = () => {
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || 
@@ -382,6 +398,101 @@ export default function App() {
       }
       
       triggerNotification(title, msg, 'warning');
+    }
+  };
+
+  // Email and Password Auth Actions
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    setAuthSubmitting(true);
+    triggerHaptic('light');
+
+    const emailStr = authEmail.trim();
+    const passwordStr = authPassword.trim();
+    const usernameStr = authUsername.trim();
+
+    if (!emailStr || !passwordStr) {
+      setAuthError('Please fill in all access credentials fields.');
+      setAuthSubmitting(false);
+      return;
+    }
+
+    if (passwordStr.length < 6) {
+      setAuthError('Password validation failed: Must contain at least 6 characters.');
+      setAuthSubmitting(false);
+      return;
+    }
+
+    try {
+      // Prior to sign up / validation, mark sign-in flag to merge offline user cache sandbox
+      safeLocalStorage.setItem('labrat_just_clicked_signin', 'true');
+
+      if (isSignUpMode) {
+        if (!usernameStr) {
+          setAuthError('Please choose a username for your profile.');
+          setAuthSubmitting(false);
+          safeLocalStorage.removeItem('labrat_just_clicked_signin');
+          return;
+        }
+
+        const userCredential = await createUserWithEmailAndPassword(auth, emailStr, passwordStr);
+        await updateProfile(userCredential.user, {
+          displayName: usernameStr
+        });
+        
+        // Feed updated user parameters instantly into active session
+        setUser({
+          ...userCredential.user,
+          displayName: usernameStr
+        });
+
+        triggerNotification(
+          'Account Created',
+          `Welcome to LabRat, ${usernameStr}! Your secure data sync register has been activated.`,
+          'success'
+        );
+        setShowAuthModal(false);
+        setAuthEmail('');
+        setAuthPassword('');
+        setAuthUsername('');
+      } else {
+        const userCredential = await signInWithEmailAndPassword(auth, emailStr, passwordStr);
+        const activeName = userCredential.user.displayName || userCredential.user.email?.split('@')[0] || 'Active Agent';
+
+        triggerNotification(
+          'Login Access Granted',
+          `Welcome back, ${activeName}! Seamlessly restoring secure cloud backups.`,
+          'success'
+        );
+        setShowAuthModal(false);
+        setAuthEmail('');
+        setAuthPassword('');
+      }
+    } catch (err: any) {
+      safeLocalStorage.removeItem('labrat_just_clicked_signin');
+      console.error('Email authentication process failed:', err);
+      let errMsg = 'Unable to authenticate with provided details.';
+      const code = err?.code;
+      if (code === 'auth/invalid-email') {
+        errMsg = 'Invalid email address syntax.';
+      } else if (code === 'auth/email-already-in-use') {
+        errMsg = 'This email address is already registered to another active profile.';
+      } else if (code === 'auth/weak-password') {
+        errMsg = 'The selected password is too weak. Must contain at least 6 characters.';
+      } else if (
+        code === 'auth/user-not-found' || 
+        code === 'auth/wrong-password' || 
+        code === 'auth/invalid-credential'
+      ) {
+        errMsg = 'Incorrect email or password credentials. Please verify your details.';
+      } else if (err?.message) {
+        errMsg = err.message;
+      }
+      setAuthError(errMsg);
+      triggerNotification('Access Error', errMsg, 'warning');
+    } finally {
+      setAuthSubmitting(false);
     }
   };
 
@@ -1135,12 +1246,12 @@ export default function App() {
                 </div>
               ) : (
                 <button
-                  onClick={handleGoogleLogin}
-                  className="flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-slate-950 font-extrabold px-3 py-1.5 rounded-xl text-xs transition duration-300 shadow-[0_0_15px_rgba(34,211,238,0.15)] flex-nowrap cursor-pointer"
+                  onClick={() => { triggerHaptic('light'); setShowAuthModal(true); }}
+                  className="flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-slate-950 font-extrabold px-3.5 py-2 rounded-xl text-xs transition duration-300 shadow-[0_0_15px_rgba(34,211,238,0.15)] flex-nowrap cursor-pointer animate-pulse"
                   id="google-sign-in"
                 >
                   <LogIn className="w-3.5 h-3.5 shrink-0" />
-                  <span>Google Login</span>
+                  <span>Sync / Login</span>
                 </button>
               )}
 
@@ -1149,7 +1260,7 @@ export default function App() {
                 <div className={`w-1.5 h-1.5 rounded-full ${user ? 'bg-cyan-500 shadow-[0_0_6px_rgba(34,211,238,0.7)] animate-pulse' : 'bg-amber-500'}`}></div>
                 <span className="text-slate-400">Database Status: </span>
                 <span className={user ? 'text-cyan-400 font-bold' : 'text-amber-400'}>
-                  {user ? 'Google Cloud Sync Active' : 'Offline Cache Sandbox'}
+                  {user ? 'Firebase Cloud Sync Active' : 'Offline Cache Sandbox'}
                 </span>
               </div>
 
@@ -1502,6 +1613,184 @@ export default function App() {
                 >
                   Acknowledge & Close
                 </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Unified Secure Authentication & Cloud-Sync Modal Dialog */}
+      <AnimatePresence>
+        {showAuthModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-[#020617]/90 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto"
+            id="auth-modal-overlay"
+            onClick={() => setShowAuthModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 10 }}
+              className="bg-[#0f172a] border border-cyan-500/20 rounded-2xl p-5 sm:p-7 w-full max-w-md shadow-2xl relative space-y-5 my-6 leading-relaxed text-slate-200 font-mono text-left"
+              id="auth-modal-card"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header Title Accent */}
+              <div className="flex items-start justify-between pb-4 border-b border-[#1e293b]">
+                <div className="flex items-start gap-3.5 text-cyan-400">
+                  <div className="p-2.5 bg-cyan-950/40 border border-cyan-500/30 rounded-2xl shadow-[0_0_15px_rgba(6,182,212,0.15)] flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-5 h-5 text-cyan-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black uppercase tracking-widest font-mono text-cyan-400">
+                      LabRat Cloud Sync
+                    </h4>
+                    <p className="text-[10px] text-slate-400 font-medium uppercase font-mono mt-0.5">
+                      Secure Authentication Center
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowAuthModal(false)}
+                  className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-200 transition cursor-pointer"
+                  id="auth-modal-close-icon"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Mode Selection Tabs Selector */}
+              <div className="flex bg-[#030712]/50 border border-slate-800 p-1 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => { triggerHaptic('light'); setIsSignUpMode(false); setAuthError(''); }}
+                  className={`flex-1 text-center py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    !isSignUpMode
+                      ? 'bg-cyan-500 text-slate-950 shadow-md'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  id="auth-tab-signin"
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { triggerHaptic('light'); setIsSignUpMode(true); setAuthError(''); }}
+                  className={`flex-1 text-center py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    isSignUpMode
+                      ? 'bg-cyan-500 text-slate-950 shadow-md'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  id="auth-tab-signup"
+                >
+                  Create Account
+                </button>
+              </div>
+
+              {/* Input Forms */}
+              <form onSubmit={handleEmailAuth} className="space-y-4">
+                {isSignUpMode && (
+                  <div className="space-y-1.5 text-left">
+                    <label className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
+                      Laboratory Username / Handle
+                    </label>
+                    <input
+                      type="text"
+                      value={authUsername}
+                      onChange={(e) => setAuthUsername(e.target.value)}
+                      placeholder="e.g. BioChemistRx"
+                      className="w-full bg-[#030712]/60 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/40 font-mono transition"
+                      required={isSignUpMode || undefined}
+                      id="auth-input-username"
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={authEmail}
+                    onChange={(e) => setAuthEmail(e.target.value)}
+                    placeholder="agent@labrat.io"
+                    className="w-full bg-[#030712]/60 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/40 font-mono transition"
+                    required
+                    id="auth-input-email"
+                  />
+                </div>
+
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
+                    Security Password
+                  </label>
+                  <input
+                    type="password"
+                    value={authPassword}
+                    onChange={(e) => setAuthPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-[#030712]/60 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/40 font-mono transition"
+                    required
+                    id="auth-input-password"
+                  />
+                </div>
+
+                {authError && (
+                  <div className="bg-rose-500/10 border border-rose-500/25 p-3 rounded-xl text-[11px] text-rose-400 leading-normal flex items-start gap-2" id="auth-error-banner">
+                    <span className="shrink-0 font-bold">⚠️</span>
+                    <span>{authError}</span>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={authSubmitting}
+                  className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 disabled:bg-cyan-800 text-slate-950 font-black rounded-xl text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-[0_0_20px_rgba(6,182,212,0.25)] cursor-pointer flex items-center justify-center gap-2 uppercase tracking-wider font-sans"
+                  id="auth-submit-btn"
+                >
+                  {authSubmitting ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Synchronizing...</span>
+                    </>
+                  ) : (
+                    <span>{isSignUpMode ? 'Establish Account' : 'Authenticate Access'}</span>
+                  )}
+                </button>
+              </form>
+
+              {/* Developer / Owner Config Notice */}
+              <div className="bg-slate-950/40 border border-slate-800/60 p-3 rounded-xl space-y-1 text-[9.5px] leading-relaxed text-slate-400 text-left">
+                <span className="text-cyan-400 font-bold block uppercase tracking-wider text-[10px]">🔐 Setup Integration Guide</span>
+                <p>
+                  To sync successfully with Email & Password, ensure the <strong>Email/Password</strong> provider is enabled in your Firebase Console (Authentication &rarr; Sign-in method).
+                </p>
+              </div>
+
+              {/* Divider & Google Login Failures Alternate Tunnel */}
+              <div className="relative py-2 flex items-center" id="auth-divider">
+                <div className="flex-grow border-t border-[#1e293b]/70 font-sans"></div>
+                <span className="flex-shrink mx-3 text-[9px] text-slate-500 font-bold tracking-widest uppercase font-mono">Or Alternative Access</span>
+                <div className="flex-grow border-t border-[#1e293b]/70 font-sans"></div>
+              </div>
+
+              <div className="space-y-2 text-left">
+                <button
+                  type="button"
+                  onClick={() => { triggerHaptic('light'); handleGoogleLogin(); }}
+                  className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer border border-[#1e293b]"
+                  id="auth-google-alternate-btn"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Use Google Login Provider</span>
+                </button>
+                <p className="text-[9px] text-slate-500 text-center leading-normal">
+                  If Google Auth complains about browser redirect parameters or domains, Email/Password login completely bypasses this issue.
+                </p>
               </div>
             </motion.div>
           </motion.div>
