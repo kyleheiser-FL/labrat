@@ -11,7 +11,12 @@
   "orientation": "portrait-primary",
   "dir": "ltr",
   "lang": "en-US",
-  "categories": ["medical", "health", "fitness", "productivity"],
+  "categories": [
+    "medical",
+    "health",
+    "fitness",
+    "productivity"
+  ],
   "icons": [
     {
       "src": "/labrat_icon.svg",
