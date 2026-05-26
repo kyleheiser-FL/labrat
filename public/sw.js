@@ -1,12 +1,14 @@
 // Minimal service worker to satisfy PWA installability requirements
-const CACHE_NAME = 'labrat-v2.6';
+const CACHE_NAME = "labrat-v2.7";
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/vitamins_icon.png',
-  '/liver_support_icon.png',
-  '/joint_health_icon.png'
+  "/",
+  "/index.html",
+  "/manifest.json",
+  "/labrat_icon.svg",
+  "/icon_192.png",
+  "/icon_512.png",
+  "/screenshot1.png",
+  "/screenshot_mobile.png"
 ];
 
 self.addEventListener('install', (event) => {
