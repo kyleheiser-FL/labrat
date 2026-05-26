@@ -2,7 +2,7 @@
   "id": "/",
   "name": "LabRat Portal - Advanced Bio-Log & Calculator",
   "short_name": "LabRat",
-  "description": "Securely track peptide & compound cycles, calculate precise reconstitution biochemistry, plan researched schedules, and log biosafety records.",
+  "description": "Securely track peptide and compound cycles, calculate precise reconstitution values, plan schedules, and log biosafety records.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -11,12 +11,7 @@
   "orientation": "portrait-primary",
   "dir": "ltr",
   "lang": "en-US",
-  "categories": [
-    "medical",
-    "health",
-    "fitness",
-    "productivity"
-  ],
+  "categories": ["medical", "health", "fitness", "productivity"],
   "icons": [
     {
       "src": "/labrat_icon.svg",
@@ -81,18 +76,34 @@
   "prefer_related_applications": false,
   "screenshots": [
     {
-      "src": "/screenshot1.png",
-      "sizes": "1280x720",
+      "src": "/screenshot_tablet.png",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "LabRat Portal - Active Cycle Dashboard"
+      "label": "LabRat Portal - Tablet Dashboard"
     },
     {
       "src": "/screenshot_mobile.png",
-      "sizes": "540x960",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "LabRat Portal - Mobile View"
+      "label": "LabRat Portal - Mobile Daily View"
+    },
+    {
+      "src": "/screenshot_cycle.png",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat Portal - Cycle Planner"
+    },
+    {
+      "src": "/screenshot_compound.png",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat Portal - Compound Encyclopedia"
+    },
+    {
+      "src": "/screenshot_profile.png",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat Portal - Health Dossier"
     }
   ]
 }
