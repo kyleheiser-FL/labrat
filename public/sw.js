@@ -1,4 +1,5 @@
 // Minimal service worker to satisfy PWA installability requirements
+importScripts("https://progressier.app/8KBcaWU5kRnoxqhxaPba/sw.js" );
 const CACHE_NAME = 'labrat-v2.6';
 const ASSETS_TO_CACHE = [
   '/',
