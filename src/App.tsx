@@ -359,15 +359,29 @@ export default function App() {
       setAuthLoading(true);
       safeLocalStorage.setItem('labrat_just_clicked_signin', 'true');
       await signInWithPopup(auth, googleProvider);
-    } catch (err) {
+    } catch (err: any) {
       safeLocalStorage.removeItem('labrat_just_clicked_signin');
       console.error('Failed to authenticate Google user:', err);
       setAuthLoading(false);
-      triggerNotification(
-        'Authentication Blocked',
-        'Unable to complete sign in. Please verify popup blockers are deactivated.',
-        'warning'
-      );
+      
+      let title = 'Authentication Failed';
+      let msg = 'Unable to complete sign in. Please verify popup blockers are deactivated.';
+      
+      if (err && typeof err === 'object') {
+        const code = err.code || '';
+        const message = err.message || '';
+        if (code === 'auth/unauthorized-domain') {
+          title = 'Domain Not Authorized';
+          msg = `This domain (${window.location.hostname}) is not allowed in Firebase. Please add "${window.location.hostname}" to Firebase Console -> Authentication -> Settings -> Authorized Domains.`;
+        } else if (code === 'auth/popup-closed-by-user') {
+          title = 'Login Cancelled';
+          msg = 'The login popup was closed before completion.';
+        } else if (code) {
+          msg = `[${code}]: ${message}`;
+        }
+      }
+      
+      triggerNotification(title, msg, 'warning');
     }
   };
 

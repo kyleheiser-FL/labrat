@@ -7,11 +7,13 @@ import firebaseConfig from '../firebase-applet-config.json';
 const rawAuthDomain = (import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN || (import.meta as any).env.VITE_CUSTOM_AUTH_DOMAIN || firebaseConfig.authDomain;
 
 // Convert default firebaseapp.com domains to web.app to prevent local ISP/DNS lookup and filtering blocks (NXDOMAIN)
-const resolvedAuthDomain = typeof rawAuthDomain === 'string' && rawAuthDomain.endsWith('.firebaseapp.com')
+// If VITE_USE_FIREBASEAPP_DOMAIN is set to 'true', we keep the original firebaseapp.com authDomain.
+const useFirebaseAppDomain = (import.meta as any).env.VITE_USE_FIREBASEAPP_DOMAIN === 'true';
+const resolvedAuthDomain = typeof rawAuthDomain === 'string' && rawAuthDomain.endsWith('.firebaseapp.com') && !useFirebaseAppDomain
   ? rawAuthDomain.replace('.firebaseapp.com', '.web.app')
   : rawAuthDomain;
 
-const resolvedConfig = {
+export const resolvedConfig = {
   apiKey: (import.meta as any).env.VITE_FIREBASE_API_KEY || firebaseConfig.apiKey,
   authDomain: resolvedAuthDomain,
   projectId: (import.meta as any).env.VITE_FIREBASE_PROJECT_ID || firebaseConfig.projectId,
