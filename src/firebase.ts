@@ -6,9 +6,9 @@ import firebaseConfig from '../firebase-applet-config.json';
 // Use custom auth domain or full config overrides if configured in the environment (e.g. for Vercel production hosting)
 const rawAuthDomain = (import.meta as any).env.VITE_FIREBASE_AUTH_DOMAIN || (import.meta as any).env.VITE_CUSTOM_AUTH_DOMAIN || firebaseConfig.authDomain;
 
-// Convert default firebaseapp.com domains to firebaseauth.app to prevent local ISP/DNS lookup and filtering blocks (NXDOMAIN)
+// Convert default firebaseapp.com domains to web.app to prevent local ISP/DNS lookup and filtering blocks (NXDOMAIN)
 const resolvedAuthDomain = typeof rawAuthDomain === 'string' && rawAuthDomain.endsWith('.firebaseapp.com')
-  ? rawAuthDomain.replace('.firebaseapp.com', '.firebaseauth.app')
+  ? rawAuthDomain.replace('.firebaseapp.com', '.web.app')
   : rawAuthDomain;
 
 const resolvedConfig = {
