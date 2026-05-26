@@ -1,0 +1,93 @@
+{
+  "id": "/",
+  "name": "LabRat Portal - Advanced Bio-Log & Calculator",
+  "short_name": "LabRat",
+  "description": "Securely track peptide & compound cycles, calculate precise reconstitution biochemistry, plan researched schedules, and log biosafety records.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#22d3ee",
+  "orientation": "portrait-primary",
+  "dir": "ltr",
+  "lang": "en-US",
+  "categories": ["medical", "health", "fitness", "productivity"],
+  "icons": [
+    {
+      "src": "/labrat_icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon_192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon_512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Reconstitution Calculator",
+      "short_name": "Calculator",
+      "description": "Calculate peptide reconstitution volume and syringe doses instantly",
+      "url": "/?shortcut=calculator",
+      "icons": [
+        {
+          "src": "/icon_192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Cycle Planner",
+      "short_name": "Planner",
+      "description": "Plan your compound schedules and peptide cycles",
+      "url": "/?shortcut=planner",
+      "icons": [
+        {
+          "src": "/icon_192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Members Shop",
+      "short_name": "Shop",
+      "description": "Browse premium certified inventory",
+      "url": "/?shortcut=shop",
+      "icons": [
+        {
+          "src": "/icon_192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LabRat Portal - Active Cycle Dashboard"
+    },
+    {
+      "src": "/screenshot_mobile.png",
+      "sizes": "540x960",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat Portal - Mobile View"
+    }
+  ]
+}
