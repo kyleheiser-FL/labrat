@@ -2,6 +2,10 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/__/auth/:path*",
+      "destination": "https://gen-lang-client-0024879682.firebaseapp.com/__/auth/:path*"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api"
     },
