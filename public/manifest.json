@@ -81,18 +81,39 @@
   "prefer_related_applications": false,
   "screenshots": [
     {
-      "src": "/screenshot1.png",
-      "sizes": "1280x720",
+      "src": "/screenshot_tablet.png",
+      "sizes": "1536 x 2048",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "LabRat Portal - Active Cycle Dashboard"
+      "label": "LabRat Portal - Tablet Dashboard"
     },
     {
       "src": "/screenshot_mobile.png",
-      "sizes": "540x960",
+      "sizes": "1080 x 1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "LabRat Portal - Mobile View"
+      "label": "LabRat Portal - Mobile Daily View"
+    },
+    {
+      "src": "/screenshot_cycle.png",
+      "sizes": "1080 x 1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat Portal - Cycle Planner"
+    },
+    {
+      "src": "/screenshot_compound.png",
+      "sizes": "1080 x 1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat Portal - Compound Encyclopedia"
+    },
+    {
+      "src": "/screenshot_profile.png",
+      "sizes": "1080 x 1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat Portal - Health Dossier"
     }
   ]
 }
