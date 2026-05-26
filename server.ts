@@ -1,9 +1,20 @@
 import express from "express";
 import path from "path";
 import { GoogleGenAI, Type } from "@google/genai";
+import { createProxyMiddleware } from "http-proxy-middleware";
+import firebaseConfig from "./firebase-applet-config.json";
 
 const app = express();
 const PORT = 3000;
+
+// Re-route Firebase auth flows through the custom domain proxy
+app.use(
+  "/__/auth",
+  createProxyMiddleware({
+    target: `https://${firebaseConfig.authDomain}`,
+    changeOrigin: true,
+  })
+);
 
 // Safely get a fresh Gemini client using the latest environment variables
 function getGeminiClient(): GoogleGenAI {
