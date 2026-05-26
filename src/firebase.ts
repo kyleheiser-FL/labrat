@@ -24,6 +24,8 @@ export const resolvedConfig = {
   firestoreDatabaseId: (import.meta as any).env.VITE_FIREBASE_DATABASE_ID || firebaseConfig.firestoreDatabaseId
 };
 
+console.log("[Firebase Hub] Initializing with auth domain:", resolvedConfig.authDomain);
+
 const app = initializeApp(resolvedConfig);
 export const db = initializeFirestore(app, {
   ignoreUndefinedProperties: true
