@@ -1,7 +1,9 @@
 import express from "express";
 import path from "path";
-import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
+
+const app = express();
+const PORT = 3000;
 
 // Safely get a fresh Gemini client using the latest environment variables
 function getGeminiClient(): GoogleGenAI {
@@ -43,12 +45,8 @@ function handleGeminiError(err: any, endpointName: string): { status: number; me
   };
 }
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
-
-  // Middleware
-  app.use(express.json());
+// Middleware
+app.use(express.json());
 
   // API endpoints
   app.get("/api/health", (req, res) => {
@@ -292,24 +290,35 @@ Provide your response in a structured JSON schema matching our required output. 
     }
   });
 
-  // Vite middleware for development, static serve for production
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
+  async function setupServer() {
+    // Vite middleware for development, static serve for production
+    if (process.env.NODE_ENV !== "production") {
+      const { createServer: createViteServer } = await import("vite");
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+    } else {
+      // On Vercel, static files are served automatically by Vercel's edge network,
+      // so we don't need Express to serve static files or handle fallback.
+      if (!process.env.VERCEL) {
+        const distPath = path.join(process.cwd(), 'dist');
+        app.use(express.static(distPath));
+        app.get('*', (req, res) => {
+          res.sendFile(path.join(distPath, 'index.html'));
+        });
+      }
+    }
+
+    // Only start the local port listener if we're not running as a Vercel serverless function
+    if (!process.env.VERCEL) {
+      app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Express server listening on port ${PORT}`);
+      });
+    }
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Express server listening on port ${PORT}`);
-  });
-}
+  setupServer();
 
-startServer();
+  export default app;
