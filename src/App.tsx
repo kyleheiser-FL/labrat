@@ -1080,15 +1080,31 @@ export default function App() {
           
           {/* Top Row: Brand Header and Indicators */}
           <div className="flex flex-row items-center justify-between gap-3">
-            {/* Logo Brand Title */}
+{/* Logo Brand Title */}
 <div className="flex items-center gap-2">
-  <img
-    src="/labrat_top_left_logo_transparent.png"
-    alt="LabRat logo"
-    className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-[0_0_14px_rgba(34,211,238,0.45)]"
-  />
+  {labratBranding === 'mascot' && (
+    <img
+      src="/labrat_top_left_logo_transparent.png"
+      alt="LabRat logo"
+      className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-[0_0_14px_rgba(34,211,238,0.45)]"
+    />
+  )}
 
-  <span className="text-2xl sm:text-3xl font-black tracking-tighter bg-gradient-to-r from-[#00c5f5] via-[#2176ff] to-[#a05eff] bg-clip-text text-transparent font-sans uppercase">
+  {labratBranding === 'lr' && (
+    <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-[#0b1220] border border-slate-600/70 flex items-center justify-center shadow-[0_0_14px_rgba(148,163,184,0.16)]">
+      <span className="text-lg sm:text-xl font-black tracking-tighter text-slate-100">
+        LR
+      </span>
+    </div>
+  )}
+
+  <span
+    className={`labrat-brand-wordmark text-2xl sm:text-3xl font-black tracking-tighter font-sans uppercase ${
+      labratTheme === 'neon'
+        ? 'bg-gradient-to-r from-[#00c5f5] via-[#2176ff] to-[#a05eff] bg-clip-text text-transparent'
+        : 'text-slate-100'
+    }`}
+  >
     LABRAT
   </span>
 
