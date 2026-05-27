@@ -6,7 +6,16 @@
    LABRAT THEMATIC STYLING OVERRIDES (LIGHT MODE)
    Triggers when the 'dark' variant is ABSENT from document element.
    ========================================== */
+html,
+body,
+#root {
+  background: #030712;
+  min-height: 100%;
+}
 
+body {
+  margin: 0;
+}
 html:not(.dark) {
   background-color: #f8fafc !important;
   color: #0f172a !important;
