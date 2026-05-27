@@ -613,6 +613,211 @@ html[data-labrat-theme="clinical"] body,
 html[data-labrat-theme="neon"] #root,
 html[data-labrat-theme="clinical"] #root {
   background-color: var(--labrat-bg) !important;
+}/* ==========================================================================
+   LABRAT TWO-THEME SYSTEM
+   Theme 1: Neon Lab Command Center
+   Theme 2: Clinical Dark / Professional
+   Visual-only layer. Does not affect app logic, data, shop stock, auth, PWA.
+   ========================================================================== */
+
+:root {
+  --labrat-bg: #030712;
+  --labrat-bg-soft: #050816;
+  --labrat-panel: rgba(15, 23, 42, 0.72);
+  --labrat-panel-strong: rgba(15, 23, 42, 0.92);
+  --labrat-border: rgba(30, 41, 59, 0.8);
+  --labrat-border-strong: rgba(34, 211, 238, 0.32);
+  --labrat-text: #f8fafc;
+  --labrat-muted: #94a3b8;
+  --labrat-primary: #22d3ee;
+  --labrat-secondary: #2176ff;
+  --labrat-accent: #a05eff;
+  --labrat-success: #22c55e;
+  --labrat-warning: #facc15;
+  --labrat-danger: #fb7185;
+  --labrat-card-shadow: 0 0 24px rgba(34, 211, 238, 0.08), 0 18px 60px rgba(0, 0, 0, 0.45);
+  --labrat-glow: 0 0 18px rgba(34, 211, 238, 0.28);
+  --labrat-radius: 1.25rem;
+}
+
+html[data-labrat-theme="neon"] {
+  --labrat-bg: #030712;
+  --labrat-bg-soft: #050816;
+  --labrat-panel: rgba(15, 23, 42, 0.72);
+  --labrat-panel-strong: rgba(15, 23, 42, 0.92);
+  --labrat-border: rgba(30, 41, 59, 0.8);
+  --labrat-border-strong: rgba(34, 211, 238, 0.36);
+  --labrat-text: #f8fafc;
+  --labrat-muted: #94a3b8;
+  --labrat-primary: #22d3ee;
+  --labrat-secondary: #2176ff;
+  --labrat-accent: #a05eff;
+  --labrat-card-shadow: 0 0 24px rgba(34, 211, 238, 0.1), 0 18px 60px rgba(0, 0, 0, 0.5);
+  --labrat-glow: 0 0 18px rgba(34, 211, 238, 0.3);
+}
+
+html[data-labrat-theme="clinical"] {
+  --labrat-bg: #07111d;
+  --labrat-bg-soft: #0b1623;
+  --labrat-panel: rgba(15, 26, 39, 0.92);
+  --labrat-panel-strong: rgba(17, 29, 43, 0.98);
+  --labrat-border: rgba(71, 85, 105, 0.36);
+  --labrat-border-strong: rgba(125, 154, 184, 0.35);
+  --labrat-text: #f8fafc;
+  --labrat-muted: #a8b3c2;
+  --labrat-primary: #60a5fa;
+  --labrat-secondary: #93c5fd;
+  --labrat-accent: #cbd5e1;
+  --labrat-success: #4ade80;
+  --labrat-warning: #fbbf24;
+  --labrat-danger: #f87171;
+  --labrat-card-shadow: 0 16px 44px rgba(0, 0, 0, 0.38);
+  --labrat-glow: none;
+}
+
+#labrat-app-shell {
+  background:
+    radial-gradient(circle at 20% -10%, rgba(34, 211, 238, 0.08), transparent 34%),
+    radial-gradient(circle at 82% 8%, rgba(160, 94, 255, 0.08), transparent 32%),
+    linear-gradient(180deg, var(--labrat-bg), #020617 100%) !important;
+}
+
+html[data-labrat-theme="clinical"] #labrat-app-shell {
+  background:
+    radial-gradient(circle at 30% -10%, rgba(96, 165, 250, 0.055), transparent 34%),
+    linear-gradient(180deg, #07111d, #050b13 100%) !important;
+}
+
+#app-header {
+  background: color-mix(in srgb, var(--labrat-bg) 92%, transparent) !important;
+  border-color: var(--labrat-border) !important;
+}
+
+#navigation-tabs-rail {
+  background: var(--labrat-panel) !important;
+  border-color: var(--labrat-border) !important;
+  box-shadow: var(--labrat-card-shadow);
+}
+
+html[data-labrat-theme="clinical"] #navigation-tabs-rail {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
+}
+
+.bg-\[\#0f172a\],
+.bg-\[\#0f172a\]\/60,
+.bg-\[\#0f172a\]\/70,
+.bg-\[\#0f172a\]\/75 {
+  background-color: var(--labrat-panel) !important;
+}
+
+.border-\[\#1e293b\],
+.border-\[\#1e293b\]\/40,
+.border-\[\#1e293b\]\/45,
+.border-\[\#1e293b\]\/50,
+.border-\[\#1e293b\]\/60,
+.border-\[\#1e293b\]\/70,
+.border-\[\#1e293b\]\/80,
+.border-slate-800,
+.border-slate-800\/80,
+.border-slate-700,
+.border-slate-700\/60 {
+  border-color: var(--labrat-border) !important;
+}
+
+html[data-labrat-theme="clinical"] [class*="shadow-\[0_0"],
+html[data-labrat-theme="clinical"] [class*="drop-shadow-\[0_0"] {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical"] .bg-cyan-500 {
+  background-color: #60a5fa !important;
+}
+
+html[data-labrat-theme="clinical"] .text-cyan-400,
+html[data-labrat-theme="clinical"] .text-cyan-300,
+html[data-labrat-theme="clinical"] .text-cyan-500 {
+  color: #93c5fd !important;
+}
+
+html[data-labrat-theme="clinical"] .border-cyan-500\/20,
+html[data-labrat-theme="clinical"] .border-cyan-500\/25,
+html[data-labrat-theme="clinical"] .border-cyan-500\/30,
+html[data-labrat-theme="clinical"] .border-cyan-500\/35,
+html[data-labrat-theme="clinical"] .border-cyan-500\/40,
+html[data-labrat-theme="clinical"] .border-cyan-500\/45,
+html[data-labrat-theme="clinical"] .border-cyan-500\/60 {
+  border-color: rgba(147, 197, 253, 0.32) !important;
+}
+
+html[data-labrat-theme="clinical"] .bg-cyan-500\/5,
+html[data-labrat-theme="clinical"] .bg-cyan-500\/10,
+html[data-labrat-theme="clinical"] .bg-cyan-500\/20,
+html[data-labrat-theme="clinical"] .bg-cyan-950\/40,
+html[data-labrat-theme="clinical"] .bg-cyan-950\/45 {
+  background-color: rgba(96, 165, 250, 0.1) !important;
+}
+
+html[data-labrat-theme="clinical"] .text-purple-300,
+html[data-labrat-theme="clinical"] .text-purple-400,
+html[data-labrat-theme="clinical"] .text-indigo-300,
+html[data-labrat-theme="clinical"] .text-indigo-400 {
+  color: #cbd5e1 !important;
+}
+
+html[data-labrat-theme="clinical"] .bg-purple-500\/10,
+html[data-labrat-theme="clinical"] .bg-indigo-950\/40,
+html[data-labrat-theme="clinical"] .bg-indigo-950\/45 {
+  background-color: rgba(148, 163, 184, 0.1) !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-brand-wordmark {
+  color: #f8fafc !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+.labrat-card {
+  background: var(--labrat-panel);
+  border: 1px solid var(--labrat-border);
+  border-radius: var(--labrat-radius);
+  box-shadow: var(--labrat-card-shadow);
+  backdrop-filter: blur(16px);
+}
+
+.labrat-card-strong {
+  background: var(--labrat-panel-strong);
+  border: 1px solid var(--labrat-border-strong);
+  border-radius: var(--labrat-radius);
+  box-shadow: var(--labrat-card-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.labrat-primary-text {
+  color: var(--labrat-primary);
+}
+
+.labrat-muted-text {
+  color: var(--labrat-muted);
+}
+
+@media (max-width: 640px) {
+  main {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  #site-footer {
+    display: none;
+  }
+}
+
+html[data-labrat-theme="neon"],
+html[data-labrat-theme="clinical"],
+html[data-labrat-theme="neon"] body,
+html[data-labrat-theme="clinical"] body,
+html[data-labrat-theme="neon"] #root,
+html[data-labrat-theme="clinical"] #root {
+  background-color: var(--labrat-bg) !important;
 }
 
 
