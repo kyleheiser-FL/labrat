@@ -615,3 +615,141 @@ html[data-labrat-theme="neon"] #root,
 html[data-labrat-theme="clinical"] #root {
   background-color: var(--labrat-bg) !important;
 }
+
+/* ==========================================================================
+   LABRAT VISIBLE THEME CORRECTION PASS
+   This pass makes the two themes visually obvious without touching React logic,
+   Firebase, PWA, compounds, shop data, cart/order flow, or analyzer behavior.
+   ========================================================================== */
+
+html[data-labrat-theme="neon"] #labrat-app-shell {
+  background:
+    radial-gradient(circle at 18% 2%, rgba(34, 211, 238, 0.14), transparent 34%),
+    radial-gradient(circle at 75% 0%, rgba(168, 85, 247, 0.13), transparent 32%),
+    radial-gradient(circle at 50% 92%, rgba(59, 130, 246, 0.08), transparent 40%),
+    #030712 !important;
+}
+
+html[data-labrat-theme="neon"] #app-header {
+  background: rgba(3, 7, 18, 0.94) !important;
+  border-bottom: 1px solid rgba(34, 211, 238, 0.16) !important;
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.42), 0 0 26px rgba(34, 211, 238, 0.08) !important;
+}
+
+html[data-labrat-theme="neon"] main > div,
+html[data-labrat-theme="neon"] [id$="-panel"],
+html[data-labrat-theme="neon"] [id$="-card"],
+html[data-labrat-theme="neon"] [id$="-container"] > .bg-\[\#0f172a\]\/70,
+html[data-labrat-theme="neon"] .bg-\[\#0f172a\]\/70 {
+  border-color: rgba(34, 211, 238, 0.18) !important;
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.035), 0 18px 60px rgba(0, 0, 0, 0.42), 0 0 22px rgba(34, 211, 238, 0.055) !important;
+}
+
+html[data-labrat-theme="clinical"] #labrat-app-shell {
+  background:
+    linear-gradient(180deg, rgba(12, 20, 31, 0.98), rgba(5, 10, 18, 1)),
+    #08111d !important;
+}
+
+html[data-labrat-theme="clinical"] #labrat-app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    linear-gradient(rgba(148, 163, 184, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.022) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+html[data-labrat-theme="clinical"] #app-header {
+  background: rgba(8, 17, 29, 0.98) !important;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.34) !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.34) !important;
+}
+
+html[data-labrat-theme="clinical"] #navigation-tabs-rail {
+  background: rgba(14, 25, 39, 0.92) !important;
+  border-color: rgba(100, 116, 139, 0.34) !important;
+  box-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical"] #navigation-tabs-rail button.bg-cyan-500,
+html[data-labrat-theme="clinical"] #navigation-tabs-rail button[class*="bg-cyan-500"] {
+  background: linear-gradient(180deg, #7db7ff, #4e8fe3) !important;
+  color: #06111f !important;
+  box-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-brand-wordmark,
+html[data-labrat-theme="clinical"] header span.labrat-brand-wordmark {
+  color: #f8fafc !important;
+  background: none !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  text-shadow: none !important;
+  letter-spacing: 0.02em !important;
+}
+
+html[data-labrat-theme="clinical"] .bg-\[\#0f172a\]\/70,
+html[data-labrat-theme="clinical"] .bg-\[\#0f172a\]\/75,
+html[data-labrat-theme="clinical"] .bg-\[\#0f172a\]\/60,
+html[data-labrat-theme="clinical"] .bg-\[\#0f172a\],
+html[data-labrat-theme="clinical"] .bg-slate-900,
+html[data-labrat-theme="clinical"] .bg-slate-900\/95 {
+  background: rgba(14, 25, 39, 0.86) !important;
+  border-color: rgba(100, 116, 139, 0.30) !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.24) !important;
+}
+
+html[data-labrat-theme="clinical"] .bg-\[\#1e293b\]\/45,
+html[data-labrat-theme="clinical"] .bg-\[\#1e293b\]\/50,
+html[data-labrat-theme="clinical"] .bg-\[\#1e293b\]\/40,
+html[data-labrat-theme="clinical"] .bg-\[\#1e293b\]\/30,
+html[data-labrat-theme="clinical"] .bg-\[\#1e293b\]\/25,
+html[data-labrat-theme="clinical"] .bg-slate-800\/80,
+html[data-labrat-theme="clinical"] .bg-slate-800,
+html[data-labrat-theme="clinical"] input,
+html[data-labrat-theme="clinical"] textarea,
+html[data-labrat-theme="clinical"] select {
+  background-color: rgba(20, 33, 49, 0.86) !important;
+  border-color: rgba(100, 116, 139, 0.34) !important;
+  color: #e5edf7 !important;
+  box-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical"] .text-cyan-400,
+html[data-labrat-theme="clinical"] .text-cyan-300,
+html[data-labrat-theme="clinical"] .text-cyan-500 {
+  color: #8ec5ff !important;
+}
+
+html[data-labrat-theme="clinical"] .text-purple-300,
+html[data-labrat-theme="clinical"] .text-purple-400,
+html[data-labrat-theme="clinical"] .text-indigo-300,
+html[data-labrat-theme="clinical"] .text-indigo-400,
+html[data-labrat-theme="clinical"] .text-pink-400 {
+  color: #cbd5e1 !important;
+}
+
+html[data-labrat-theme="clinical"] [class*="shadow-\[0_0"],
+html[data-labrat-theme="clinical"] [class*="drop-shadow-\[0_0"] {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+html[data-labrat-theme="clinical"] button.bg-gradient-to-r,
+html[data-labrat-theme="clinical"] .bg-gradient-to-r {
+  background-image: linear-gradient(180deg, #7db7ff, #4e8fe3) !important;
+}
+
+html[data-labrat-theme="clinical"] .rounded-2xl {
+  border-radius: 1rem !important;
+}
+
+html[data-labrat-theme="clinical"] footer,
+html[data-labrat-theme="clinical"] #site-footer {
+  background: #07111d !important;
+  border-color: rgba(100, 116, 139, 0.30) !important;
+}
