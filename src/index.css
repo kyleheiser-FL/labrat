@@ -1162,3 +1162,49 @@ html[data-labrat-theme="clinical"] .labrat-real-vial-visual,
 html[data-labrat-theme="clinical"] .labrat-real-vial-photo {
   filter: none !important;
 }
+
+/* ========================================================================== 
+   LABRAT TABLET DASHBOARD DEAD-SPOT FIX
+   Keeps the Daily Checklist / main dashboard clean on tablet-size browsers.
+   The command hero can create an empty left-side dead zone at tablet widths,
+   so tablet layouts use a compact single-column dashboard flow.
+   This is layout-only and does not touch Firebase, PWA, shop data, prices,
+   compounds, bloodwork logic, recommendations, or vial artwork.
+   ========================================================================== */
+@media (min-width: 768px) and (max-width: 1400px) {
+  #dashboard-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #dashboard-wrapper > .labrat-command-hero {
+    display: none !important;
+  }
+
+  #dashboard-main-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.35rem !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  #dashboard-main-grid > div,
+  #dashboard-wellness-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #dashboard-header-navigator,
+  #daily-checklist-card,
+  #administration-ledger-card,
+  #active-progress-monitors-card,
+  #push-reminders-card,
+  #wellness-biomarkers-card,
+  #historical-biomarker-ledger-card,
+  #bio-timeline-phase-mapper-card {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
