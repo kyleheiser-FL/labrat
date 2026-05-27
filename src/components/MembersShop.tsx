@@ -3012,8 +3012,21 @@ export default function MembersShop() {
                   });
 
                   return (
-                    <div className="labrat-product-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {groupedDisplayItems.map(group => {
+                    <div className="labrat-inventory-vault-section">
+                      <div className="labrat-inventory-vault-header">
+                        <div>
+                          <span className="labrat-page-eyebrow">Certified Inventory Vault</span>
+                          <h3>LabRat-Branded Research Vial Catalog</h3>
+                          <p>Every product card now stages the same inventory as a premium vial tile with Norway Peptides QA, COA trace messaging, active stock, strength selection, and a hardened buy bar.</p>
+                        </div>
+                        <div className="labrat-vault-header-tags" aria-hidden="true">
+                          <span>NP QA</span>
+                          <span>COA</span>
+                          <span>LR VIAL</span>
+                        </div>
+                      </div>
+                      <div className="labrat-product-grid labrat-product-grid-v2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {groupedDisplayItems.map(group => {
                         const prices = group.options.map(o => o.price);
                         const minPrice = Math.min(...prices);
                         const maxPrice = Math.max(...prices);
@@ -3188,6 +3201,7 @@ export default function MembersShop() {
                           </div>
                         );
                       })}
+                      </div>
                     </div>
                   );
                 })()
