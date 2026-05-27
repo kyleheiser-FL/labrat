@@ -623,23 +623,7 @@ export default function CyclePlanner({
   };
 
   return (
-    <div className="space-y-6 labrat-page-shell labrat-planner-page" id="planner-main-container">
-      <section className="labrat-page-hero labrat-planner-hero">
-        <div>
-          <span className="labrat-page-eyebrow">Cycle Architect</span>
-          <h2>Protocol Builder Command Deck</h2>
-          <p>Plan compound schedules, log historical entries, and keep reconstitution tools close without changing stored compounds, dose calculations, or logging logic.</p>
-          <div className="labrat-page-stat-row">
-            <span><strong>{compounds.length}</strong> compounds</span>
-            <span><strong>{logs?.length || 0}</strong> logs</span>
-            <span><strong>Cloud</strong> safe</span>
-          </div>
-        </div>
-        <div className="labrat-hero-orb" aria-hidden="true">
-          <Calendar className="w-12 h-12" />
-        </div>
-      </section>
-
+    <div className="space-y-6" id="planner-main-container">
       {/* Top action bar buttons */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h3 className="text-base font-semibold text-slate-100 flex items-center gap-2">

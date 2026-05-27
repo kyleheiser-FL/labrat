@@ -70,23 +70,7 @@ export default function PeptideLibrary({ onAddToCycle }: PeptideLibraryProps) {
   });
 
   return (
-    <div className="space-y-6 labrat-page-shell labrat-library-page" id="peptide-library-container">
-      <section className="labrat-page-hero labrat-library-hero">
-        <div>
-          <span className="labrat-page-eyebrow">Compound Encyclopedia</span>
-          <h2>Research Intelligence Library</h2>
-          <p>Search compounds, compare categories, and send selected items into Cycle Architect without changing the underlying recommendation or library data.</p>
-          <div className="labrat-page-stat-row">
-            <span><strong>{PEPTIDE_LIBRARY.length}</strong> profiles</span>
-            <span><strong>{CATEGORIES.length - 1}</strong> categories</span>
-            <span><strong>{filteredItems.length}</strong> visible</span>
-          </div>
-        </div>
-        <div className="labrat-hero-orb" aria-hidden="true">
-          <BookOpen className="w-12 h-12" />
-        </div>
-      </section>
-
+    <div className="space-y-6" id="peptide-library-container">
       {/* Search and Category Filter Controls */}
       <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-lg backdrop-blur-md" id="library-controls">
         <div className="flex flex-col md:flex-row gap-4">
