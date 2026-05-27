@@ -1816,7 +1816,7 @@ export default function App() {
                 <div>
                   <h3 className="text-lg font-black tracking-tight">Appearance</h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Choose theme and in-app branding.
+                    Choose your LabRat experience.
                   </p>
                 </div>
 
@@ -1877,58 +1877,8 @@ export default function App() {
                 </button>
               </div>
 
-              <div className="space-y-3 pt-2">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500">
-                  In-App Branding
-                </span>
-
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    onClick={() => applyBrandingSelection('mascot')}
-                    className={`rounded-xl border p-3 flex flex-col items-center gap-2 transition ${
-                      labratBranding === 'mascot'
-                        ? 'border-cyan-500/60 bg-cyan-500/10'
-                        : 'border-slate-800 bg-[#030712]/50 hover:border-slate-600'
-                    }`}
-                  >
-                    <img
-                      src="/labrat_top_left_logo_transparent.png"
-                      alt="Mascot"
-                      className="h-10 w-10 object-contain"
-                    />
-                    <span className="text-[10px] text-slate-300">Mascot</span>
-                  </button>
-
-                  <button
-                    onClick={() => applyBrandingSelection('wordmark')}
-                    className={`rounded-xl border p-3 flex flex-col items-center justify-center gap-2 transition ${
-                      labratBranding === 'wordmark'
-                        ? 'border-sky-400/60 bg-sky-500/10'
-                        : 'border-slate-800 bg-[#030712]/50 hover:border-slate-600'
-                    }`}
-                  >
-                    <span className="text-sm font-black tracking-tight text-slate-100">LABRAT</span>
-                    <span className="text-[10px] text-slate-300">Wordmark</span>
-                  </button>
-
-                  <button
-                    onClick={() => applyBrandingSelection('lr')}
-                    className={`rounded-xl border p-3 flex flex-col items-center gap-2 transition ${
-                      labratBranding === 'lr'
-                        ? 'border-sky-400/60 bg-sky-500/10'
-                        : 'border-slate-800 bg-[#030712]/50 hover:border-slate-600'
-                    }`}
-                  >
-                    <div className="h-10 w-10 rounded-lg bg-[#0b1220] border border-slate-600 flex items-center justify-center">
-                      <span className="text-sm font-black text-slate-100">LR</span>
-                    </div>
-                    <span className="text-[10px] text-slate-300">LR</span>
-                  </button>
-                </div>
-              </div>
-
               <div className="rounded-xl border border-slate-800 bg-[#030712]/50 p-3 text-[11px] text-slate-400 leading-relaxed">
-                Phone launcher icon is controlled by <strong>manifest.json</strong>. For the professional app launcher, use the static LR icon files in <strong>public</strong>. The in-app logo can switch instantly.
+                Only two appearance modes are available: <strong>Neon Lab Command Center</strong> and <strong>Clinical Dark</strong>. Clinical Dark uses the clean LR presentation automatically.
               </div>
             </motion.div>
           </motion.div>

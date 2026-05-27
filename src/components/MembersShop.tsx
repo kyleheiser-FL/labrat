@@ -143,31 +143,38 @@ function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; c
   const glowClass = isSolvent ? 'labrat-real-vial-visual--solvent' : 'labrat-real-vial-visual--peptide';
 
   if (theme === 'clinical') {
+    const professionalVialSrc = isSolvent ? '/shop/labrat-professional-vial-solvent.png' : '/shop/labrat-professional-vial-peptide.png';
+
     return (
       <div className="w-full min-h-[300px] border-b border-slate-700/40 p-4 relative overflow-hidden select-none bg-gradient-to-br from-slate-950 via-[#0b1628] to-slate-900">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.05)_1px,transparent_1px)] bg-[size:1.35rem_1.35rem] opacity-80" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(96,165,250,0.14),transparent_30%),radial-gradient(circle_at_86%_16%,rgba(148,163,184,0.10),transparent_32%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(96,165,250,0.11),transparent_30%),radial-gradient(circle_at_86%_16%,rgba(148,163,184,0.08),transparent_32%)]" />
 
-        <div className="relative z-10 flex items-center justify-between gap-2 mb-3">
+        <div className="relative z-10 flex items-center justify-between gap-2 mb-2.5">
           <span className="px-2.5 py-1 rounded-full bg-slate-950/85 border border-slate-700/80 text-[9px] font-black tracking-[0.22em] uppercase text-sky-200">NP QA</span>
           <span className="px-3 py-1 rounded-full bg-white/90 border border-slate-300 text-[9px] font-black tracking-[0.22em] uppercase text-slate-800">{isSolvent ? '30ML' : '3ML'}</span>
           <span className="px-2.5 py-1 rounded-full bg-slate-950/85 border border-slate-700/80 text-[9px] font-black tracking-[0.22em] uppercase text-slate-100">LR VIAL</span>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-[310px] min-h-[230px] rounded-[1.35rem] overflow-hidden border border-slate-600/50 bg-slate-950 shadow-[0_24px_55px_rgba(2,6,23,0.42)]">
+        <div className="relative z-10 mx-auto max-w-[300px] min-h-[238px] rounded-[1.35rem] overflow-hidden border border-slate-600/50 bg-gradient-to-b from-slate-900 to-slate-950 shadow-[0_24px_55px_rgba(2,6,23,0.42)]">
           <img
-            src={professionalImageSrc}
+            src={professionalVialSrc}
             alt={`${cleanFullName} professional LabRat vial presentation`}
-            className="absolute inset-0 w-full h-full object-cover object-center"
+            className="absolute inset-0 w-full h-full object-contain object-top p-2.5"
             loading="lazy"
           />
-          <div className="absolute inset-x-3 bottom-3 rounded-2xl border border-slate-300/70 bg-white/92 backdrop-blur-sm shadow-[0_14px_28px_rgba(15,23,42,0.18)] p-3">
-            <div className="text-[10px] font-black tracking-[0.28em] uppercase text-sky-700">LABRAT</div>
-            <div className="mt-1 text-xl leading-none font-black text-slate-950 tracking-tight truncate">{firstWord}</div>
-            <div className="mt-1 text-xs leading-tight text-slate-600 line-clamp-2 min-h-[1.9rem]">{remainingWords || category}</div>
-            <div className="mt-3 flex items-end justify-between gap-3">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-700">{isSolvent ? 'Research Solvent' : 'Research Peptide'}</span>
-              <strong className="text-sm font-black uppercase tracking-[0.18em] text-sky-700 whitespace-nowrap">{sizeValue.toUpperCase()}</strong>
+
+          <div className="absolute left-3 right-3 bottom-3 rounded-xl border border-slate-300/75 bg-white/88 backdrop-blur-sm shadow-[0_10px_20px_rgba(15,23,42,0.16)] px-3 py-2.5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="text-[9px] font-black tracking-[0.24em] uppercase text-sky-700">LABRAT</div>
+                <div className="mt-0.5 text-base leading-none font-black text-slate-950 tracking-tight truncate">{firstWord}</div>
+                <div className="mt-0.5 text-[11px] leading-tight text-slate-600 truncate">{remainingWords || category}</div>
+              </div>
+              <div className="text-right shrink-0">
+                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-slate-600">{isSolvent ? 'Solvent' : 'Peptide'}</div>
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-sky-700 whitespace-nowrap">{sizeValue.toUpperCase()}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -4276,7 +4283,7 @@ export default function MembersShop() {
               initial={{ scale: 0.95, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 10 }}
-              className="bg-[#070d19] border border-slate-800 max-w-lg w-full rounded-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-y-auto"
+              className="bg-[#070d19] border border-slate-800 max-w-lg md:max-w-4xl w-full rounded-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-y-auto"
             >
               <div className="relative p-5 border-b border-slate-800/80 bg-slate-950/50 flex items-center justify-between">
                 <div className="text-left flex-1 min-w-0 pr-4">
@@ -4308,14 +4315,14 @@ export default function MembersShop() {
 
               <div className="p-5 space-y-5">
                 {/* Product Detail Header */}
-                <div className="flex flex-col sm:flex-row gap-4 items-center bg-slate-950/60 p-4 rounded-xl border border-slate-900">
-                  <div className="w-full sm:w-48 shrink-0">
+                <div className="flex flex-col md:flex-row gap-5 items-stretch md:items-center bg-slate-950/60 p-4 rounded-xl border border-slate-900">
+                  <div className="w-full md:w-[22rem] lg:w-[24rem] shrink-0">
                     {(() => {
                       const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
                       return <ProductVialVisual name={activeOpt ? activeOpt.name : selectedParentProductGroup.baseName} category={selectedParentProductGroup.category} theme={labratTheme} />;
                     })()}
                   </div>
-                  <div className="text-left flex-1">
+                  <div className="text-left flex-1 min-w-0">
                     <p className="text-xs text-slate-300 leading-relaxed font-medium">
                       {getCleanDescription(selectedParentProductGroup.description)}
                     </p>
