@@ -8,279 +8,289 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
   <link rel="manifest" href="/manifest.json" />
-    <link rel="icon" type="image/svg+xml" href="/labrat_icon.svg" />
-    <link rel="alternate icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="alternate icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <title>LabRat</title>
-  </head>
-  <body>
-    <script>
-      // Startup error diagnostics for older iOS WebKit/Safari and restricted environments
-      window.addEventListener('error', function(e) {
-        var root = document.getElementById('root');
-        if (!root || root.innerHTML === '' || root.children.length === 0) {
-          var div = document.createElement('div');
-          div.style.position = 'fixed';
-          div.style.inset = '0';
-          div.style.background = '#030712';
-          div.style.color = '#f1f5f9';
-          div.style.padding = '24px';
-          div.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-          div.style.zIndex = '999999';
-          div.style.display = 'flex';
-          div.style.flexDirection = 'column';
-          div.style.justifyContent = 'center';
-          div.style.alignItems = 'center';
-          div.style.textAlign = 'center';
-          div.innerHTML = '<div style="max-width:480px; background:#0b1329; border:1px solid #1e293b; padding:28px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">' +
-                          '<div style="text-align:center; font-size:42px; margin-bottom:12px;">🧪</div>' +
-                          '<h2 style="font-size:20px; font-weight:700; color:#22d3ee; margin:0 0 10px 0;">LabRat Startup Diagnostic</h2>' +
-                          '<p style="color:#ef4444; font-size:14px; margin-bottom:16px; font-family:monospace; word-break:break-all;">' + (e.message || 'JavaScript load failure') + '</p>' +
-                          '<div style="text-align:left; background:#1e293b/40; padding:12px; border-radius:8px; font-size:11px; font-family:monospace; color:#94a3b8; margin-bottom:16px;">' +
-                          'URL: ' + window.location.href + '<br>' +
-                          'File: ' + (e.filename ? e.filename.split('/').pop() : 'unknown') + '<br>' +
-                          'Line: ' + e.lineno + ':' + e.colno +
-                          '</div>' +
-                          '<p style="font-size:13px; color:#94a3b8; line-height:1.5;">This can be caused by restricted browser cookie settings blocking LocalStorage access, an outdated browser version, or private browsing mode constraints.</p>' +
-                          '<div style="margin-top:20px;"><button onclick="window.location.reload(true)" style="background:#22d3ee; color:#030712; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">Refresh Page</button></div>' +
-                          '</div>';
-          document.body.appendChild(div);
-        }
-      });
-      window.addEventListener('unhandledrejection', function(e) {
-        var root = document.getElementById('root');
-        if (!root || root.innerHTML === '' || root.children.length === 0) {
-          var div = document.createElement('div');
-          div.style.position = 'fixed';
-          div.style.inset = '0';
-          div.style.background = '#030712';
-          div.style.color = '#f1f5f9';
-          div.style.padding = '24px';
-          div.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-          div.style.zIndex = '999999';
-          div.style.display = 'flex';
-          div.style.flexDirection = 'column';
-          div.style.justifyContent = 'center';
-          div.style.alignItems = 'center';
-          div.style.textAlign = 'center';
-          div.innerHTML = '<div style="max-width:480px; background:#0b1329; border:1px solid #1e293b; padding:28px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">' +
-                          '<div style="text-align:center; font-size:42px; margin-bottom:12px;">🔒</div>' +
-                          '<h2 style="font-size:20px; font-weight:700; color:#22d3ee; margin:0 0 10px 0;">LabRat Sandboxed Context Alert</h2>' +
-                          '<p style="color:#f59e0b; font-size:14px; margin-bottom:16px; font-family:monospace; word-break:break-all;">Storage Security Restriction</p>' +
-                          '<p style="font-size:13px; color:#94a3b8; line-height:1.5;">Your browser or iframe wrapper has blocked cookie & local storage reads. Plase use a standard non-private tab of Safari, iOS Messages, or Google Chrome.</p>' +
-                          '</div>';
-          document.body.appendChild(div);
-        }
-      });
-    </script>
-    <script>
-      // Self-healing bootstrap watchdog check
-      (function() {
-        var nowTimestamp = Date.now();
-        var lastSelfHealingReload = sessionStorage.getItem('labrat_last_reloaded');
-        var recentReload = lastSelfHealingReload && (nowTimestamp - parseInt(lastSelfHealingReload, 10) < 15000);
+  <link rel="icon" type="image/svg+xml" href="/labrat_icon.svg" />
+  <link rel="alternate icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="alternate icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-        setTimeout(function() {
-          if (!window.__LABRAT_MOUNTED__) {
-            console.warn('[Watchdog] LabRat App failed to mount within 6.5s limit. Activating self-healing recovery...');
-            if (recentReload) {
-              console.error('[Watchdog] Self-healing reload attempted too recently. Aborting automatic reload to prevent loop.');
-              
-              // Render inline recovery prompt if we are in private mode or storage is blocked
-              var errDiv = document.createElement('div');
-              errDiv.style.position = 'fixed';
-              errDiv.style.inset = '0';
-              errDiv.style.background = '#030712';
-              errDiv.style.color = '#f1f5f9';
-              errDiv.style.padding = '24px';
-              errDiv.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-              errDiv.style.zIndex = '999999';
-              errDiv.style.display = 'flex';
-              errDiv.style.flexDirection = 'column';
-              errDiv.style.justifyContent = 'center';
-              errDiv.style.alignItems = 'center';
-              errDiv.style.textAlign = 'center';
-              errDiv.innerHTML = '<div style="max-width:480px; background:#0b1329; border:1px solid #1e293b; padding:28px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">' +
-                              '<div style="text-align:center; font-size:42px; margin-bottom:12px;">🧪</div>' +
-                              '<h2 style="font-size:20px; font-weight:700; color:#22d3ee; margin:0 0 10px 0;">LabRat Portal Connection</h2>' +
-                              '<p style="color:#f59e0b; font-size:14px; margin-bottom:16px; font-family:monospace;">Connection Stood by Safely</p>' +
-                              '<p style="font-size:13px; color:#94a3b8; line-height:1.5; margin-bottom:16px;">The secure environment cache needs to be refreshed. Purging local bundles will restore instant connectivity.</p>' +
-                              '<div><button id="purge-button" style="background:#22d3ee; color:#030712; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">Purge Cache & Reload</button></div>' +
-                              '</div>';
-              document.body.appendChild(errDiv);
-              
-              var btn = document.getElementById('purge-button');
-              if (btn) {
-                btn.addEventListener('click', function() {
-                  sessionStorage.removeItem('labrat_last_reloaded');
-                  if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                      for (var i = 0; i < registrations.length; i++) {
-                        registrations[i].unregister();
-                      }
-                    });
-                  }
-                  if ('caches' in window) {
-                    caches.keys().then(function(names) {
-                      for (var i = 0; i < names.length; i++) {
-                        caches.delete(names[i]);
-                      }
-                    });
-                  }
-                  setTimeout(function() { window.location.reload(true); }, 500);
-                });
-              }
-              return;
-            }
+  <title>LabRat</title>
+</head>
 
-            sessionStorage.setItem('labrat_last_reloaded', nowTimestamp.toString());
-            
-            // Purge Service Worker
-            if ('serviceWorker' in navigator) {
-              navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for (var i = 0; i < registrations.length; i++) {
-                  registrations[i].unregister();
+<body>
+  <script>
+    // Startup error diagnostics for older iOS WebKit/Safari and restricted environments
+    window.addEventListener('error', function(e) {
+      var root = document.getElementById('root');
+      if (!root || root.innerHTML === '' || root.children.length === 0) {
+        var div = document.createElement('div');
+        div.style.position = 'fixed';
+        div.style.inset = '0';
+        div.style.background = '#030712';
+        div.style.color = '#f1f5f9';
+        div.style.padding = '24px';
+        div.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+        div.style.zIndex = '999999';
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        div.style.justifyContent = 'center';
+        div.style.alignItems = 'center';
+        div.style.textAlign = 'center';
+        div.innerHTML = '<div style="max-width:480px; background:#0b1329; border:1px solid #1e293b; padding:28px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">' +
+                        '<div style="text-align:center; font-size:42px; margin-bottom:12px;">🧪</div>' +
+                        '<h2 style="font-size:20px; font-weight:700; color:#22d3ee; margin:0 0 10px 0;">LabRat Startup Diagnostic</h2>' +
+                        '<p style="color:#ef4444; font-size:14px; margin-bottom:16px; font-family:monospace; word-break:break-all;">' + (e.message || 'JavaScript load failure') + '</p>' +
+                        '<div style="text-align:left; background:rgba(30,41,59,0.4); padding:12px; border-radius:8px; font-size:11px; font-family:monospace; color:#94a3b8; margin-bottom:16px;">' +
+                        'URL: ' + window.location.href + '<br>' +
+                        'File: ' + (e.filename ? e.filename.split('/').pop() : 'unknown') + '<br>' +
+                        'Line: ' + e.lineno + ':' + e.colno +
+                        '</div>' +
+                        '<p style="font-size:13px; color:#94a3b8; line-height:1.5;">This can be caused by restricted browser cookie settings blocking LocalStorage access, an outdated browser version, or private browsing mode constraints.</p>' +
+                        '<div style="margin-top:20px;"><button onclick="window.location.reload(true)" style="background:#22d3ee; color:#030712; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">Refresh Page</button></div>' +
+                        '</div>';
+        document.body.appendChild(div);
+      }
+    });
+
+    window.addEventListener('unhandledrejection', function(e) {
+      var root = document.getElementById('root');
+      if (!root || root.innerHTML === '' || root.children.length === 0) {
+        var div = document.createElement('div');
+        div.style.position = 'fixed';
+        div.style.inset = '0';
+        div.style.background = '#030712';
+        div.style.color = '#f1f5f9';
+        div.style.padding = '24px';
+        div.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+        div.style.zIndex = '999999';
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        div.style.justifyContent = 'center';
+        div.style.alignItems = 'center';
+        div.style.textAlign = 'center';
+        div.innerHTML = '<div style="max-width:480px; background:#0b1329; border:1px solid #1e293b; padding:28px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">' +
+                        '<div style="text-align:center; font-size:42px; margin-bottom:12px;">🔒</div>' +
+                        '<h2 style="font-size:20px; font-weight:700; color:#22d3ee; margin:0 0 10px 0;">LabRat Sandboxed Context Alert</h2>' +
+                        '<p style="color:#f59e0b; font-size:14px; margin-bottom:16px; font-family:monospace; word-break:break-all;">Storage Security Restriction</p>' +
+                        '<p style="font-size:13px; color:#94a3b8; line-height:1.5;">Your browser or iframe wrapper has blocked cookie & local storage reads. Please use a standard non-private tab of Safari, iOS Messages, or Google Chrome.</p>' +
+                        '</div>';
+        document.body.appendChild(div);
+      }
+    });
+  </script>
+
+  <script>
+    // Register LabRat service worker for PWA install support.
+    // Do NOT unregister this automatically, or Android install can break.
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then(function () {
+            console.log("LabRat service worker registered");
+          })
+          .catch(function (error) {
+            console.warn("LabRat service worker registration failed:", error);
+          });
+      });
+    }
+  </script>
+
+  <script>
+    // Self-healing bootstrap watchdog check
+    (function() {
+      var nowTimestamp = Date.now();
+      var lastSelfHealingReload = sessionStorage.getItem('labrat_last_reloaded');
+      var recentReload = lastSelfHealingReload && (nowTimestamp - parseInt(lastSelfHealingReload, 10) < 15000);
+
+      setTimeout(function() {
+        if (!window.__LABRAT_MOUNTED__) {
+          console.warn('[Watchdog] LabRat App failed to mount within 6.5s limit. Activating recovery prompt...');
+
+          if (recentReload) {
+            console.error('[Watchdog] Recovery reload attempted too recently. Aborting automatic reload to prevent loop.');
+
+            var errDiv = document.createElement('div');
+            errDiv.style.position = 'fixed';
+            errDiv.style.inset = '0';
+            errDiv.style.background = '#030712';
+            errDiv.style.color = '#f1f5f9';
+            errDiv.style.padding = '24px';
+            errDiv.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+            errDiv.style.zIndex = '999999';
+            errDiv.style.display = 'flex';
+            errDiv.style.flexDirection = 'column';
+            errDiv.style.justifyContent = 'center';
+            errDiv.style.alignItems = 'center';
+            errDiv.style.textAlign = 'center';
+            errDiv.innerHTML = '<div style="max-width:480px; background:#0b1329; border:1px solid #1e293b; padding:28px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">' +
+                            '<div style="text-align:center; font-size:42px; margin-bottom:12px;">🧪</div>' +
+                            '<h2 style="font-size:20px; font-weight:700; color:#22d3ee; margin:0 0 10px 0;">LabRat Portal Connection</h2>' +
+                            '<p style="color:#f59e0b; font-size:14px; margin-bottom:16px; font-family:monospace;">Connection Stood by Safely</p>' +
+                            '<p style="font-size:13px; color:#94a3b8; line-height:1.5; margin-bottom:16px;">The secure environment cache may need to be refreshed.</p>' +
+                            '<div><button id="purge-button" style="background:#22d3ee; color:#030712; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">Clear Cache & Reload</button></div>' +
+                            '</div>';
+            document.body.appendChild(errDiv);
+
+            var btn = document.getElementById('purge-button');
+            if (btn) {
+              btn.addEventListener('click', function() {
+                sessionStorage.removeItem('labrat_last_reloaded');
+
+                if ('caches' in window) {
+                  caches.keys().then(function(names) {
+                    for (var i = 0; i < names.length; i++) {
+                      caches.delete(names[i]);
+                    }
+                  });
                 }
+
+                setTimeout(function() {
+                  window.location.reload(true);
+                }, 500);
               });
             }
 
-            // Purge Service Worker Caches
-            if ('caches' in window) {
-              caches.keys().then(function(names) {
-                for (var i = 0; i < names.length; i++) {
-                  caches.delete(names[i]);
-                }
-              });
-            }
+            return;
+          }
 
-            console.log('[Watchdog] Purged service worker and cache. Reloading page...');
-            setTimeout(function() {
-              window.location.reload(true);
-            }, 600);
-          }
-        }, 6500);
-      })();
-    </script>
-    <div id="root">
-      <div class="labrat-initial-loader">
-        <style>
-          .labrat-initial-loader {
-            position: fixed;
-            inset: 0;
-            background-color: #030712;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            color: #94a3b8;
-            z-index: 999999;
-            user-select: none;
-            overflow: hidden;
-          }
-          .loader-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-          .glow-ring {
-            position: absolute;
-            width: 104px;
-            height: 104px;
-            border-radius: 50%;
-            border: 2px dashed #1e293b;
-          }
-          .animated-ring {
-            position: absolute;
-            width: 104px;
-            height: 104px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: #22d3ee;
-            border-left-color: #3b82f6;
-            animation: lr-spin 1.2s cubic-bezier(0.53, 0.21, 0.29, 0.67) infinite;
-          }
-          .rat-icon {
-            z-index: 10;
-            filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.45));
-          }
-          .pulse-nose {
-            animation: lr-nose-glow 1.5s ease-in-out infinite alternate;
-          }
-          .pulse-text {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: #22d3ee;
-            text-shadow: 0 0 10px rgba(34, 211, 238, 0.45);
-            animation: lr-pulse 1.8s ease-in-out infinite;
-          }
-          .sub-text {
-            font-size: 9px;
-            color: #475569;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            animation: lr-pulse-slow 2.5s ease-in-out infinite;
-          }
-          @keyframes lr-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-          @keyframes lr-pulse {
-            0%, 100% { opacity: 0.60; transform: scale(0.98); }
-            50% { opacity: 1; transform: scale(1.02); }
-          }
-          @keyframes lr-pulse-slow {
-            0%, 100% { opacity: 0.45; }
-            50% { opacity: 0.75; }
-          }
-          @keyframes lr-nose-glow {
-            0% { fill: #f43f5e; filter: drop-shadow(0 0 2px #f43f5e); }
-            100% { fill: #ff2a51; filter: drop-shadow(0 0 8px #ff2a51); }
-          }
-        </style>
-        <div class="loader-container">
-          <div class="glow-ring"></div>
-          <div class="animated-ring"></div>
-          <!-- Futuristic sleek geometric LabRat SVG badge -->
-          <svg class="rat-icon" width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Left Cyber Ear -->
-            <path d="M30 40 C22 36, 18 48, 25 54 C30 58, 38 52, 38 48" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" fill="#030712" opacity="0.85"/>
-            <path d="M34 43 C30 40, 26 50, 31 54 C35 58, 40 52, 40 48" fill="#22d3ee" opacity="0.25"/>
-            
-            <!-- Right Cyber Ear -->
-            <path d="M70 40 C78 36, 82 48, 75 54 C70 58, 62 52, 62 48" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" fill="#030712" opacity="0.85"/>
-            <path d="M66 43 C70 40, 74 50, 69 54 C65 58, 60 52, 60 48" fill="#22d3ee" opacity="0.25"/>
-            
-            <!-- Sleek futuristic geometric face structure (beaker/flask hybrid outline) -->
-            <path d="M50 24 L34 52 L38 68 L62 68 L66 52 Z" fill="#0b1329" stroke="#22d3ee" stroke-width="2.5" stroke-linejoin="round"/>
-            
-            <!-- Glowing cyan tech eyes -->
-            <circle cx="42" cy="54" r="2.5" fill="#22d3ee" />
-            <circle cx="58" cy="54" r="2.5" fill="#22d3ee" />
-            
-            <!-- Sleek lab whiskers -->
-            <path d="M28 58 L14 56.5" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M28 62 L16 63.5" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M72 58 L86 56.5" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M72 62 L84 63.5" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
-            
-            <!-- Neon pink research bio-node nose -->
-            <circle class="pulse-nose" cx="50" cy="68" r="4.5" fill="#f43f5e"/>
-          </svg>
-        </div>
-        <div class="pulse-text">Initializing LabRat Portal</div>
-        <div class="sub-text">Securing Sterile Environment</div>
+          sessionStorage.setItem('labrat_last_reloaded', nowTimestamp.toString());
+
+          console.log('[Watchdog] Reloading page once for recovery...');
+          setTimeout(function() {
+            window.location.reload(true);
+          }, 600);
+        }
+      }, 6500);
+    })();
+  </script>
+
+  <div id="root">
+    <div class="labrat-initial-loader">
+      <style>
+        .labrat-initial-loader {
+          position: fixed;
+          inset: 0;
+          background-color: #030712;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 20px;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+          color: #94a3b8;
+          z-index: 999999;
+          user-select: none;
+          overflow: hidden;
+        }
+
+        .loader-container {
+          position: relative;
+          width: 120px;
+          height: 120px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .glow-ring {
+          position: absolute;
+          width: 104px;
+          height: 104px;
+          border-radius: 50%;
+          border: 2px dashed #1e293b;
+        }
+
+        .animated-ring {
+          position: absolute;
+          width: 104px;
+          height: 104px;
+          border-radius: 50%;
+          border: 3px solid transparent;
+          border-top-color: #22d3ee;
+          border-left-color: #3b82f6;
+          animation: lr-spin 1.2s cubic-bezier(0.53, 0.21, 0.29, 0.67) infinite;
+        }
+
+        .rat-icon {
+          z-index: 10;
+          filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.45));
+        }
+
+        .pulse-nose {
+          animation: lr-nose-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        .pulse-text {
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #22d3ee;
+          text-shadow: 0 0 10px rgba(34, 211, 238, 0.45);
+          animation: lr-pulse 1.8s ease-in-out infinite;
+        }
+
+        .sub-text {
+          font-size: 9px;
+          color: #475569;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          animation: lr-pulse-slow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes lr-spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        @keyframes lr-pulse {
+          0%, 100% { opacity: 0.60; transform: scale(0.98); }
+          50% { opacity: 1; transform: scale(1.02); }
+        }
+
+        @keyframes lr-pulse-slow {
+          0%, 100% { opacity: 0.45; }
+          50% { opacity: 0.75; }
+        }
+
+        @keyframes lr-nose-glow {
+          0% { fill: #f43f5e; filter: drop-shadow(0 0 2px #f43f5e); }
+          100% { fill: #ff2a51; filter: drop-shadow(0 0 8px #ff2a51); }
+        }
+      </style>
+
+      <div class="loader-container">
+        <div class="glow-ring"></div>
+        <div class="animated-ring"></div>
+
+        <svg class="rat-icon" width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M30 40 C22 36, 18 48, 25 54 C30 58, 38 52, 38 48" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" fill="#030712" opacity="0.85"/>
+          <path d="M34 43 C30 40, 26 50, 31 54 C35 58, 40 52, 40 48" fill="#22d3ee" opacity="0.25"/>
+
+          <path d="M70 40 C78 36, 82 48, 75 54 C70 58, 62 52, 62 48" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" fill="#030712" opacity="0.85"/>
+          <path d="M66 43 C70 40, 74 50, 69 54 C65 58, 60 52, 60 48" fill="#22d3ee" opacity="0.25"/>
+
+          <path d="M50 24 L34 52 L38 68 L62 68 L66 52 Z" fill="#0b1329" stroke="#22d3ee" stroke-width="2.5" stroke-linejoin="round"/>
+
+          <circle cx="42" cy="54" r="2.5" fill="#22d3ee" />
+          <circle cx="58" cy="54" r="2.5" fill="#22d3ee" />
+
+          <path d="M28 58 L14 56.5" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M28 62 L16 63.5" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M72 58 L86 56.5" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M72 62 L84 63.5" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+
+          <circle class="pulse-nose" cx="50" cy="68" r="4.5" fill="#f43f5e"/>
+        </svg>
       </div>
-    </div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
 
+      <div class="pulse-text">Initializing LabRat Portal</div>
+      <div class="sub-text">Securing Sterile Environment</div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
