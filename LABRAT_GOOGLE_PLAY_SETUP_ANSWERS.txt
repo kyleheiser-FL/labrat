@@ -1,0 +1,95 @@
+LabRat Google Play setup answers
+================================
+
+App name:
+LabRat Peptide Tracker
+
+Package name:
+app.labratapp.twa
+
+Default language:
+English (United States) - en-US
+
+App or game:
+App
+
+Free or paid:
+Free unless you plan to charge for the Android app download itself.
+
+Category:
+Primary recommendation: Health & Fitness
+Alternative if Google review flags health/medical scope: Productivity
+
+Privacy Policy URL:
+https://labratapp.app/privacy.html
+
+Account deletion URL:
+https://labratapp.app/delete-account.html
+
+Short description:
+Track cycles, doses, reconstitution math, bloodwork notes, and biosafety records in one secure LabRat dashboard.
+
+Full description:
+LabRat Peptide Tracker is a secure planning and record keeping app for organizing research-style peptide and compound tracking workflows. Create cycle schedules, calculate reconstitution values, manage compound notes, review bloodwork records, and keep biosafety logs in one dashboard.
+
+Features:
+• Cycle planning and schedule tracking
+• Reconstitution calculator
+• Compound and peptide reference organization
+• Bloodwork upload and record summaries
+• Personal biosafety and protocol notes
+• Member shop and order records where available
+• Progressive Web App install support
+
+Important disclaimer: LabRat is not a medical device and does not diagnose, treat, cure, or prevent any medical condition. Information in the app is for personal tracking, education, and record keeping only. Always consult a qualified healthcare professional for medical advice, diagnosis, or treatment.
+
+App access:
+Select: All or some functionality is restricted.
+Explanation: Users need to sign in to save personal tracking records, cycle plans, order records, and bloodwork data. Provide Google with a test login if required by Play Console review.
+
+Ads:
+Select: No, my app does not contain ads.
+
+Content rating:
+Category: All Other App Types, or Health/Fitness if shown.
+Use adult/health-related answers accurately. Recommended target audience is 18+.
+
+Target audience:
+Select: 18 and over.
+Do not select children/families.
+
+Data safety - collected data likely to disclose:
+• Personal info: email address / user IDs for account creation and authentication.
+• Health and fitness: bloodwork uploads, biomarker values, cycle notes, and related health-style records entered by the user.
+• App activity: app interactions, records created, schedules, orders, and feature usage needed to provide app functionality.
+• App info and performance: crash logs, diagnostics, device/browser/app version if collected by hosting/Firebase/platform tools.
+• Financial info: only if payment/order transaction details are processed in-app; do not claim full card data unless you directly collect it.
+
+Data safety - sharing:
+Do not say data is sold. Disclose service providers such as hosting, database, authentication, analytics, payment, security, and order fulfillment if used.
+
+Data safety - security:
+Select encrypted in transit if the app uses HTTPS.
+Select users can request deletion and use the deletion URL above.
+
+Government apps:
+Select: No.
+
+Financial features:
+Select: No, unless the app includes banking, loans, trading, insurance, crypto, money transfer, or similar regulated financial functionality.
+
+Health apps:
+Declare health-related features because the app includes bloodwork and health-style tracking. Recommended explanation:
+"LabRat allows adult users to manually enter or upload personal bloodwork records, biomarker values, cycle notes, and related tracking information for personal organization and record keeping. The app is not a medical device, does not diagnose, treat, cure, or prevent any medical condition, and reminds users to consult a qualified healthcare professional for medical advice, diagnosis, or treatment."
+
+Medical device question:
+Select: No, unless you have regulatory clearance/certification.
+
+Store listing contact email:
+support@labratapp.app
+
+Website:
+https://labratapp.app
+
+Phone:
+Use your business support phone if you have one; otherwise leave blank if optional.
