@@ -81,20 +81,28 @@
   </script>
 
   <script>
-    // Register LabRat service worker for PWA install support.
+    // Register LabRat service worker early for PWABuilder/Lighthouse detection.
     // Do NOT unregister this automatically, or Android install can break.
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker
-          .register("/sw.js")
-          .then(function () {
-            console.log("LabRat service worker registered");
+    (function () {
+      if (!("serviceWorker" in navigator)) return;
+      if (!window.isSecureContext) return;
+      if (window.location.hostname.indexOf("localhost") !== -1) return;
+
+      var registerLabRatServiceWorker = function () {
+        return navigator.serviceWorker
+          .register("/sw.js", { scope: "/", updateViaCache: "none" })
+          .then(function (registration) {
+            console.log("LabRat service worker registered:", registration.scope);
+            return registration;
           })
           .catch(function (error) {
             console.warn("LabRat service worker registration failed:", error);
           });
-      });
-    }
+      };
+
+      window.__registerLabRatServiceWorker = registerLabRatServiceWorker;
+      registerLabRatServiceWorker();
+    })();
   </script>
 
   <script>

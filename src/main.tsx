@@ -3,16 +3,20 @@ import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
-// Register PWA Service Worker for App Installability
+// Keep PWA service worker registration immediate and root-scoped for PWABuilder/Lighthouse.
+declare global {
+  interface Window {
+    __registerLabRatServiceWorker?: () => Promise<ServiceWorkerRegistration | void>;
+  }
+}
+
 if ('serviceWorker' in navigator && !window.location.hostname.includes('localhost')) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('[PWA] ServiceWorker registration successful with scope: ', registration.scope);
-      })
-      .catch((err) => {
-        console.error('[PWA] ServiceWorker registration failed: ', err);
-      });
+  const register = window.__registerLabRatServiceWorker || (() =>
+    navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' })
+  );
+
+  register().catch((err) => {
+    console.error('[PWA] ServiceWorker registration failed: ', err);
   });
 }
 

@@ -1,122 +1,90 @@
-// Minimal service worker to satisfy PWA installability requirements
-const CACHE_NAME = "labrat-v3.0";
-const ASSETS_TO_CACHE = [
+/* LabRat root service worker for PWA install, offline shell, and PWABuilder detection. */
+const CACHE_NAME = "labrat-pwa-v4";
+const APP_SHELL = [
   "/",
   "/index.html",
   "/manifest.json",
   "/labrat_icon.svg",
   "/icon_192.png",
   "/icon_512.png",
-  "/screenshot1.png",
-  "/screenshot_mobile.png"
+  "/icon_maskable_512.png"
 ];
 
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      // Allow soft-failures on non-critical assets to avoid breaking install
-      return Promise.allSettled(
-        ASSETS_TO_CACHE.map(url => 
-          cache.add(url).catch(err => {
-            console.warn(`[PWA] Failed to cache asset: ${url}`, err);
-          })
-        )
-      );
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then((cache) => Promise.allSettled(APP_SHELL.map((url) => cache.add(url))))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches.keys()
+      .then((cacheNames) => Promise.all(
+        cacheNames.map((cacheName) => cacheName === CACHE_NAME ? undefined : caches.delete(cacheName))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  // Only cache GET requests originating from our origin
-  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
-    return;
-  }
-  
-  // Exclude Firebase Auth endpoints, APIs or external requests
-  if (event.request.url.includes('/__/auth/') || event.request.url.includes('identitytoolkit') || event.request.url.includes('/api/')) {
-    return;
-  }
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  const requestUrl = new URL(request.url);
 
-  // Network-First strategy for documents to ensure we always load the latest hashed index.js in production updates
-  const isDoc = event.request.mode === 'navigate' || 
-                event.request.url === self.location.origin + '/' || 
-                event.request.url.split('?')[0].endsWith('/index.html');
+  if (request.method !== "GET") return;
+  if (requestUrl.origin !== self.location.origin) return;
+  if (requestUrl.pathname.startsWith("/api/") || requestUrl.pathname.startsWith("/__/auth/")) return;
 
-  if (isDoc) {
+  const isNavigation = request.mode === "navigate";
+
+  if (isNavigation) {
     event.respondWith(
-      fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-          }
-          return networkResponse;
+      fetch(request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put("/", copy));
+          return response;
         })
-        .catch(() => {
-          // If offline, retrieve the cached document page
-          return caches.match(event.request);
+        .catch(async () => {
+          return (await caches.match("/")) || (await caches.match("/index.html")) || new Response(
+            "LabRat is offline. Please reconnect and reload.",
+            { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" } }
+          );
         })
     );
     return;
   }
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch new version in background to update cache (stale-while-revalidate)
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
+    caches.match(request).then((cached) => {
+      const networkFetch = fetch(request)
+        .then((response) => {
+          if (response && response.status === 200 && response.type === "basic") {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
           }
-        }).catch(() => {/* Ignore network errors on background update */});
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
-        }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
+          return response;
+        })
+        .catch(async () => {
+          return cached || new Response("", { status: 504, statusText: "Offline" });
         });
-        return networkResponse;
-      }).catch(() => {
-        // Fail gracefully
-      });
+
+      return cached || networkFetch;
     })
   );
 });
 
-// Handle notification tap actions (focuses the active PWA on home screen)
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url.includes(self.location.origin) && 'focus' in client) {
+        if (client.url.startsWith(self.location.origin) && "focus" in client) {
           return client.focus();
         }
       }
-      if (self.clients.openWindow) {
-        return self.clients.openWindow('/');
-      }
+      if (self.clients.openWindow) return self.clients.openWindow("/");
     })
   );
 });
