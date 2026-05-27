@@ -1,45 +1,39 @@
 {
-  
   "id": "/",
   "name": "LabRat Portal - Advanced Bio-Log & Calculator",
   "short_name": "LabRat",
   "description": "Securely track peptide and compound cycles, calculate precise reconstitution values, plan schedules, and log biosafety records.",
   "start_url": "/",
   "scope": "/",
-  "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
+  "display": "standalone",
   "background_color": "#030712",
   "theme_color": "#030712",
-  "orientation": "portrait-primary"
-}
+  "orientation": "any",
   "dir": "ltr",
   "lang": "en-US",
-  "categories": [
-    "medical",
-    "health",
-    "fitness",
-    "productivity"
-  ],
+  "categories": ["medical", "health", "fitness", "productivity"],
   "icons": [
     {
-      "src": "/labrat_icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
+      "src": "/icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon_192.png",
+      "src": "/icon_512.png",
+      "sizes": "512x512",
       "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icon_512.png",
-      "type": "image/png",
+      "src": "/icon_maskable_512.png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
+  "prefer_related_applications": false
+}
   "shortcuts": [
     {
       "name": "Reconstitution Calculator",
