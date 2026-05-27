@@ -126,209 +126,96 @@ function resolveLabratTheme(): LabratThemeMode {
   return document.documentElement.getAttribute('data-labrat-theme') === 'clinical' ? 'clinical' : 'neon';
 }
 
-// Product Vial Visual Component (CSS + SVG) with dynamic colors and interactive "LABRAT" front labeling mimicking the uploaded high-quality vial mockup
+// Product Vial Visual Component using photo-real branded vial assets for both Neon and Clinical themes
 function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; category: string; theme?: LabratThemeMode }) {
   const lowerCat = category.toLowerCase();
   const lowerName = name.toLowerCase();
+  const isSolvent = lowerCat.includes('reconstitution') || lowerCat.includes('solvent') || lowerName.includes('water') || lowerName.includes('bacteriostatic');
 
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const serialNo = Math.abs(hash % 9000000) + 1000000;
-  const mfgYear = 2024 + Math.abs(hash % 3);
-  const mfgMonth = (Math.abs(hash % 12) + 1).toString().padStart(2, '0');
-  const expYear = mfgYear + 6;
-  const expMonth = mfgMonth;
-
-  let firstWord = 'Peptide';
-  let remainingWords = '';
   const cleanFullName = name.replace(/\(.*?\)/g, '').trim();
   const nameParts = cleanFullName.split(' ');
-  if (nameParts.length > 0) {
-    firstWord = nameParts[0];
-    remainingWords = nameParts.slice(1).join(' ');
-  }
-
-  const capMatch = name.match(/(\b\d+\s*m?g|\d+\s*m?l)/i);
-  const sizeValue = capMatch ? capMatch[1].trim() : '10 mg';
-  const labelType = lowerCat.includes('solvent') || lowerName.includes('water') ? 'Bottle' : 'Vial';
-  const dosageBadge = `${labelType}, ${sizeValue}`;
-  const isSolvent = lowerCat.includes('reconstitution') || lowerCat.includes('solvent') || lowerName.includes('water') || lowerName.includes('bacteriostatic');
-  const largeName = firstWord.length <= 12 ? firstWord : firstWord.slice(0, 12);
-  const subtitle = remainingWords || (isSolvent ? 'Sterile Diluent' : 'Research Peptide');
+  const firstWord = nameParts[0] || 'Peptide';
+  const remainingWords = nameParts.slice(1).join(' ');
+  const sizeMatch = name.match(/(\d+\s*m?g|\d+\s*m?l)/i);
+  const sizeValue = sizeMatch ? sizeMatch[1].trim() : (isSolvent ? '30 ml' : '10 mg');
+  const neonImageSrc = isSolvent ? '/shop/labrat-real-vial-solvent.png' : '/shop/labrat-real-vial-peptide.png';
+  const professionalImageSrc = isSolvent ? '/shop/labrat-professional-solvent-card.png' : '/shop/labrat-professional-product-card.png';
+  const glowClass = isSolvent ? 'labrat-real-vial-visual--solvent' : 'labrat-real-vial-visual--peptide';
 
   if (theme === 'clinical') {
     return (
-      <div className="w-full h-56 rounded-[1.7rem] border border-slate-400/35 bg-gradient-to-br from-slate-200 via-slate-100 to-slate-300 shadow-[0_20px_55px_rgba(15,23,42,0.16)] p-3.5 relative overflow-hidden select-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.9),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(148,163,184,0.20),transparent_32%),linear-gradient(to_right,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[length:auto,auto,1rem_1rem,1rem_1rem] opacity-95" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+      <div className="w-full min-h-[300px] border-b border-slate-700/40 p-4 relative overflow-hidden select-none bg-gradient-to-br from-slate-950 via-[#0b1628] to-slate-900">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.05)_1px,transparent_1px)] bg-[size:1.35rem_1.35rem] opacity-80" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(96,165,250,0.14),transparent_30%),radial-gradient(circle_at_86%_16%,rgba(148,163,184,0.10),transparent_32%)]" />
 
-        <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-slate-900/90 text-[10px] font-black tracking-[0.2em] uppercase text-sky-200 border border-slate-700 shadow-sm">
-          NP QA
-        </div>
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/75 text-[10px] font-black tracking-[0.22em] uppercase text-slate-700 border border-slate-300 shadow-sm">
-          {isSolvent ? '30ML' : '3ML'}
-        </div>
-        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-900/90 text-[10px] font-black tracking-[0.2em] uppercase text-slate-100 border border-slate-700 shadow-sm">
-          LR VIAL
+        <div className="relative z-10 flex items-center justify-between gap-2 mb-3">
+          <span className="px-2.5 py-1 rounded-full bg-slate-950/85 border border-slate-700/80 text-[9px] font-black tracking-[0.22em] uppercase text-sky-200">NP QA</span>
+          <span className="px-3 py-1 rounded-full bg-white/90 border border-slate-300 text-[9px] font-black tracking-[0.22em] uppercase text-slate-800">{isSolvent ? '30ML' : '3ML'}</span>
+          <span className="px-2.5 py-1 rounded-full bg-slate-950/85 border border-slate-700/80 text-[9px] font-black tracking-[0.22em] uppercase text-slate-100">LR VIAL</span>
         </div>
 
-        <div className="relative h-full flex flex-col justify-between pt-8">
-          <div className="flex-1 flex items-center justify-center px-2">
-            <div className="relative w-[7.25rem] h-[8.8rem]">
-              <div className="absolute inset-x-5 top-0 h-4 rounded-t-[0.85rem] bg-gradient-to-b from-slate-100 via-slate-300 to-slate-500 border border-slate-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_10px_16px_rgba(15,23,42,0.16)]" />
-              <div className="absolute inset-x-[1.6rem] top-[0.95rem] h-3 rounded-b-md bg-gradient-to-b from-slate-600 via-slate-500 to-slate-700 border-x border-slate-700" />
-              <div className="absolute inset-x-[2.2rem] top-[1.65rem] h-2 border-x border-slate-300/75 bg-white/15" />
-              <div className="absolute inset-x-[1.55rem] top-[2.1rem] h-[0.85rem] rounded-t-[1rem] border border-slate-300/70 bg-white/20" />
-              <div className="absolute inset-x-3 top-[2.7rem] bottom-1 rounded-[1.55rem] border border-slate-400/65 bg-[linear-gradient(180deg,rgba(255,255,255,0.38),rgba(226,232,240,0.12)_30%,rgba(241,245,249,0.20)_62%,rgba(148,163,184,0.12))] shadow-[inset_1px_0_0_rgba(255,255,255,0.45),inset_-1px_0_0_rgba(255,255,255,0.18),0_20px_32px_rgba(15,23,42,0.16)] overflow-hidden">
-                <div className="absolute inset-y-0 left-[10px] w-[3px] bg-gradient-to-r from-white/0 via-white/40 to-white/0" />
-                <div className="absolute inset-y-0 right-[9px] w-[2px] bg-white/20" />
-                {isSolvent ? (
-                  <div className="absolute inset-x-1.5 bottom-1.5 h-8 rounded-b-[1.2rem] bg-sky-100/70 border-t border-sky-300/70" />
-                ) : (
-                  <div className="absolute inset-x-1.5 bottom-1.5 h-7 rounded-t-[0.45rem] rounded-b-[1.2rem] bg-gradient-to-t from-slate-100 via-white to-slate-200 border-t border-slate-300/80" />
-                )}
-
-                <div className="absolute inset-x-[0.45rem] top-[0.6rem] bottom-[1.55rem] rounded-[1rem] overflow-hidden border border-slate-400/65 shadow-[0_8px_14px_rgba(15,23,42,0.1)]">
-                  <div className="h-[45%] bg-gradient-to-br from-[#0f172a] via-[#10213f] to-[#1e3a5f] border-b border-slate-500/30 px-2 py-2 flex flex-col justify-center items-center text-center">
-                    <div className="w-8 h-8 rounded-full border border-slate-300/60 bg-slate-200/10 flex items-center justify-center text-[11px] font-black tracking-tight text-slate-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                      LR
-                    </div>
-                    <div className="mt-1 text-[8px] leading-none font-black tracking-[0.22em] text-slate-100 uppercase">LABRAT</div>
-                  </div>
-                  <div className="h-[24%] bg-gradient-to-b from-white to-slate-100 border-y border-slate-300/90 px-2 py-1.5 text-left text-slate-900 flex flex-col justify-center">
-                    <div className="text-[8px] leading-none font-black uppercase tracking-tight truncate">{largeName}</div>
-                    <div className="mt-0.5 text-[5px] leading-tight font-semibold text-slate-600 line-clamp-2">{subtitle}</div>
-                  </div>
-                  <div className="flex-1 bg-gradient-to-b from-[#142640] to-[#0f172a] px-2 py-1.5 flex flex-col justify-between text-slate-100">
-                    <div className="text-[5px] font-black uppercase tracking-[0.22em]">{isSolvent ? 'Sterile Diluent' : 'Research Peptide'}</div>
-                    <div className="flex items-end justify-between gap-2">
-                      <div className="text-[4px] font-mono uppercase text-slate-300">SN {serialNo}</div>
-                      <div className="text-[8px] font-black uppercase tracking-[0.18em] text-sky-200">{sizeValue.toUpperCase()}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <div className="relative z-10 mx-auto max-w-[310px] min-h-[230px] rounded-[1.35rem] overflow-hidden border border-slate-600/50 bg-slate-950 shadow-[0_24px_55px_rgba(2,6,23,0.42)]">
+          <img
+            src={professionalImageSrc}
+            alt={`${cleanFullName} professional LabRat vial presentation`}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            loading="lazy"
+          />
+          <div className="absolute inset-x-3 bottom-3 rounded-2xl border border-slate-300/70 bg-white/92 backdrop-blur-sm shadow-[0_14px_28px_rgba(15,23,42,0.18)] p-3">
+            <div className="text-[10px] font-black tracking-[0.28em] uppercase text-sky-700">LABRAT</div>
+            <div className="mt-1 text-xl leading-none font-black text-slate-950 tracking-tight truncate">{firstWord}</div>
+            <div className="mt-1 text-xs leading-tight text-slate-600 line-clamp-2 min-h-[1.9rem]">{remainingWords || category}</div>
+            <div className="mt-3 flex items-end justify-between gap-3">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-700">{isSolvent ? 'Research Solvent' : 'Research Peptide'}</span>
+              <strong className="text-sm font-black uppercase tracking-[0.18em] text-sky-700 whitespace-nowrap">{sizeValue.toUpperCase()}</strong>
             </div>
           </div>
+        </div>
 
-          <div className="relative rounded-[1.35rem] border border-slate-400/55 bg-[linear-gradient(180deg,rgba(255,255,255,0.85),rgba(226,232,240,0.96))] shadow-[0_12px_24px_rgba(15,23,42,0.10),inset_0_1px_0_rgba(255,255,255,0.92)] px-4 py-3">
-            <div className="text-[11px] font-black tracking-[0.25em] uppercase text-sky-700">LABRAT</div>
-            <div className="mt-1 text-[1.72rem] leading-none font-black text-slate-950 tracking-tight truncate">{largeName}</div>
-            <div className="mt-1 text-sm leading-tight font-medium text-slate-600 line-clamp-2 min-h-[2.5rem]">{subtitle}</div>
-            <div className="mt-4 flex items-end justify-between gap-3">
-              <div className="text-xs font-black uppercase tracking-[0.22em] text-slate-700">
-                {isSolvent ? 'Research Solvent' : 'Research Peptide'}
-              </div>
-              <div className="text-lg font-black uppercase tracking-[0.2em] text-sky-700 whitespace-nowrap">{sizeValue.toUpperCase()}</div>
-            </div>
-            <div className="mt-2 flex items-center justify-between gap-2 text-[10px] font-mono text-slate-500">
-              <span>LOT {serialNo}</span>
-              <span>MFG {mfgMonth}/{mfgYear}</span>
-              <span>EXP {expMonth}/{expYear}</span>
-            </div>
-          </div>
+        <div className="relative z-10 mt-3 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+          <span>{category}</span>
+          <span className="text-sky-300">{sizeValue}</span>
+          <span>Professional Vial</span>
         </div>
       </div>
     );
   }
 
-  const cakeColor = isSolvent
-    ? 'bg-blue-400/10'
-    : 'bg-gradient-to-t from-neutral-100 via-white to-zinc-200/40 shadow-[inset_0_1px_2px_rgba(255,255,255,0.7)]';
-
   return (
-    <div className="w-full h-44 bg-[#02050f]/60 border-b border-[#1e293b]/50 p-4 flex items-center justify-center relative overflow-hidden select-none">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_0.5px,transparent_0.5px),linear-gradient(to_bottom,#0f172a_0.5px,transparent_0.5px)] bg-[size:1rem_1rem] opacity-35" />
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2176ff]/20 to-transparent" />
-      <div className="absolute w-32 h-32 bg-[#2176ff]/10 rounded-full blur-3xl pointer-events-none -translate-y-4" />
+    <div className={`labrat-real-vial-visual ${glowClass} w-full min-h-[300px] border-b border-cyan-400/10 p-4 relative overflow-hidden select-none`}>
+      <div className="labrat-real-vial-grid" aria-hidden="true" />
+      <div className="labrat-real-vial-orb" aria-hidden="true" />
 
-      <div className="relative w-24 flex flex-col items-center group-hover:scale-105 transition-transform duration-300">
-        <div className="w-10 h-1.5 rounded-t-sm bg-gradient-to-b from-white via-neutral-100 to-zinc-300 border-b border-black/30 z-20 shadow-sm" />
-        <div className="w-11 h-3 rounded-md bg-gradient-to-b from-neutral-200 via-neutral-50 to-neutral-400 border-b border-black/40 z-20 flex items-center justify-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]">
-          <div className="w-5 h-0.5 bg-white/20 rounded-full" />
-        </div>
-        <div className="w-8 h-1.5 bg-gradient-to-b from-slate-400 via-zinc-200 to-slate-500 border-x border-slate-600 z-10 shadow-[inset_0_-1px_1px_rgba(0,0,0,0.3)]" />
-        <div className="w-6 h-2 bg-white/[0.08] border-x border-white/25 relative z-10" />
-        <div className="w-16 h-2 bg-gradient-to-b from-white/12 to-white/5 border-t border-x border-white/25 rounded-t-lg relative z-10" />
+      <div className="labrat-real-vial-chip-row" aria-hidden="true">
+        <span>NP QA</span>
+        <span>{isSolvent ? 'STERILE' : '3ML'}</span>
+        <span>LR VIAL</span>
+      </div>
 
-        <div className="w-16 h-28 bg-white/[0.02] border-x border-b border-white/30 rounded-b-xl relative shadow-[0_12px_24px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col justify-between p-1 z-10">
-          <div className="absolute inset-y-0 left-[2px] w-[1.5px] bg-gradient-to-r from-white/25 to-transparent pointer-events-none z-30" />
-          <div className="absolute inset-y-0 right-[2px] w-[0.5px] bg-white/15 pointer-events-none z-30" />
-          <div className="absolute top-0 inset-x-0 h-1 bg-white/5 pointer-events-none z-30" />
-          <div className="absolute inset-y-0 left-[6px] w-[2px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent pointer-events-none z-30" />
-
-          {isSolvent ? (
-            <div className="absolute bottom-0 inset-x-0 h-6 bg-sky-400/10 border-t border-sky-400/20 rounded-b-xl flex items-end">
-              <div className="w-full h-[0.5px] bg-sky-300/15" />
-            </div>
-          ) : (
-            <div className={`absolute bottom-0.5 inset-x-[1.5px] h-5 ${cakeColor} border-t border-white/25 rounded-t-[3px] rounded-b-[10px] flex flex-col justify-end overflow-hidden`}>
-              <div className="h-[1px] bg-white/40 opacity-45 blur-[0.2px]" />
-            </div>
-          )}
-
-          <div className="absolute top-[4px] bottom-[16px] inset-x-0 flex flex-col z-20 border-y border-black/10 shadow-[0_2px_4px_rgba(0,0,0,0.35)]">
-            <div className="h-[43px] bg-[#020202] flex flex-col justify-center px-1 border-b border-black/80 relative">
-              <div className="flex flex-col items-center justify-center -mt-0.5 scale-[0.88]">
-                <span className="text-[6.5px] font-black tracking-tighter uppercase leading-none block font-sans bg-gradient-to-r from-[#00c5f5] via-[#2176ff] to-[#a05eff] bg-clip-text text-transparent italic" style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                  LABRAT
-                </span>
-                <div className="w-full h-[0.5px] bg-[#00c5f5] mt-[0.5px] opacity-75" />
-              </div>
-
-              <div className="text-center mt-[1px] leading-none truncate px-[0.5px]">
-                <span className="text-[4.2px] font-black text-[#00c5f5] tracking-tight uppercase leading-none block truncate">
-                  {firstWord}
-                </span>
-                {remainingWords ? (
-                  <span className="text-[2.2px] font-bold text-slate-300 leading-none block mt-[0.5px] truncate">
-                    {remainingWords}
-                  </span>
-                ) : null}
-              </div>
-
-              <div className="mx-auto mt-[1.5px] scale-[0.8] origin-top bg-gradient-to-r from-slate-300 via-neutral-100 to-slate-400 border border-slate-500/20 rounded-[1.5px] px-[1px] py-[0.5px]">
-                <span className="text-[1.8px] font-black text-slate-950 uppercase tracking-wide block leading-none whitespace-nowrap">
-                  {dosageBadge}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex-1 bg-gradient-to-r from-slate-300 via-neutral-100 to-slate-400 border-t border-slate-400/40 flex flex-col justify-between p-0.5 relative overflow-hidden text-neutral-950">
-              <div className="absolute right-[-1.5px] bottom-[-2.5px] text-[24px] font-extrabold text-slate-900/10 pointer-events-none italic select-none leading-none tracking-tighter">
-                LR
-              </div>
-              <div className="leading-[1.1] scale-[0.8] origin-left-top">
-                <div className="text-[2.2px] font-black text-neutral-900 tracking-tight uppercase">
-                  For Research
-                </div>
-                <div className="text-[2.2px] font-black text-neutral-900 tracking-tight uppercase -mt-[0.5px]">
-                  Use Only
-                </div>
-              </div>
-              <div className="leading-[1.1] scale-[0.85] origin-left-bottom pb-[0.5px]">
-                <div className="text-[1.6px] font-mono font-bold text-neutral-800 tracking-[0px]">
-                  SN: {serialNo}
-                </div>
-                <div className="text-[1.6px] font-mono font-bold text-neutral-800 tracking-[0px] -mt-[0.2px]">
-                  MFG: {mfgMonth}/{mfgYear}
-                </div>
-                <div className="text-[1.6px] font-mono font-bold text-neutral-800 tracking-[0px] -mt-[0.2px]">
-                  EXP: {expMonth}/{expYear}
-                </div>
-              </div>
+      <div className="labrat-real-vial-photo-shell">
+        <div className="labrat-real-vial-photo-frame">
+          <img
+            src={neonImageSrc}
+            alt={`${cleanFullName} LabRat branded research vial`}
+            className="labrat-real-vial-photo"
+            loading="lazy"
+          />
+          <div className="labrat-real-vial-overlay-card">
+            <div className="labrat-real-vial-overlay-brand">LABRAT</div>
+            <div className="labrat-real-vial-overlay-name">{firstWord}</div>
+            <div className="labrat-real-vial-overlay-sub">{remainingWords || category}</div>
+            <div className="labrat-real-vial-overlay-meta">
+              <span>{isSolvent ? 'Sterile Diluent' : 'Research Peptide'}</span>
+              <strong>{sizeValue.toUpperCase()}</strong>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-slate-900/80 border border-[#1e293b]/60 backdrop-blur-sm rounded-full py-0.5 px-2 select-none pointer-events-none z-30">
-        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-        <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider font-mono scale-[0.9]">
-          {category.toLowerCase().includes('solvent') ? '30ml Bottle' : '3ml Vial'}
-        </span>
+      <div className="labrat-real-vial-bottom-strip">
+        <span>{category}</span>
+        <strong>{sizeValue}</strong>
+        <em>{isSolvent ? 'STERILE LAB BOTTLE' : 'PHOTO-REAL 3ML VIAL'}</em>
       </div>
     </div>
   );
