@@ -466,7 +466,31 @@ export default function CycleDashboard({
 
   return (
     <div className="space-y-6 flex flex-col" id="dashboard-wrapper">
-      
+      <section className="labrat-command-hero" id="labrat-command-hero">
+        <div className="labrat-command-hero-copy">
+          <span className="labrat-command-eyebrow">Neon Lab Command Center</span>
+          <h2>Daily Cockpit</h2>
+          <p>Track today's active schedule, verify administrations, monitor cycle progress, and keep device reminders ready from one high-visibility command surface.</p>
+          <div className="labrat-command-metrics">
+            <div>
+              <strong>{scheduledCompounds.length}</strong>
+              <span>Scheduled Today</span>
+            </div>
+            <div>
+              <strong>{logs.filter(l => l.date === selectedDate).length}</strong>
+              <span>Logged Entries</span>
+            </div>
+            <div>
+              <strong>{compounds.filter(c => !c.isCompleted).length}</strong>
+              <span>Active Cycles</span>
+            </div>
+          </div>
+        </div>
+        <div className="labrat-command-hero-art" aria-hidden="true">
+          <img src="/labrat_top_left_logo_transparent.png" alt="" />
+        </div>
+      </section>
+
       {/* Conspicuous Educational & Harm Mitigation Legal Warning Box */}
       {!disclaimerDismissed && (
         <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg backdrop-blur-sm" id="dashboard-legal-banner">
