@@ -1209,27 +1209,28 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
     radial-gradient(circle at 82% 28%, rgba(160, 94, 255, 0.2), transparent 38%),
     linear-gradient(135deg, rgba(2, 6, 23, 0.98), rgba(8, 17, 38, 0.96) 48%, rgba(3, 8, 22, 0.98)) !important;
 }
-.labrat-v3-grid {
+/* LABRAT SHOP PRODUCT IMAGE V4 REAL VIAL PASS */
+.labrat-v4-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(34, 211, 238, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(34, 211, 238, 0.055) 1px, transparent 1px);
+    linear-gradient(to right, rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
   background-size: 22px 22px;
-  mask-image: radial-gradient(circle at center, black, transparent 76%);
+  mask-image: radial-gradient(circle at center, black, transparent 78%);
 }
-.labrat-v3-orb {
+.labrat-v4-orb {
   position: absolute;
-  width: 220px;
-  height: 220px;
+  width: 240px;
+  height: 240px;
   border-radius: 999px;
-  filter: blur(44px);
-  opacity: 0.28;
-  top: 28px;
-  left: 50%;
+  filter: blur(48px);
+  opacity: 0.22;
+  top: 34px;
+  left: 58%;
   transform: translateX(-50%);
 }
-.labrat-v3-cert-panel {
+.labrat-v4-cert-panel {
   position: absolute;
   top: 14px;
   left: 14px;
@@ -1239,9 +1240,9 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   gap: 8px;
   z-index: 4;
 }
-.labrat-v3-cert-panel span {
+.labrat-v4-cert-panel span {
   border: 1px solid rgba(34, 211, 238, 0.22);
-  background: rgba(2, 6, 23, 0.68);
+  background: rgba(2, 6, 23, 0.72);
   color: #67e8f9;
   border-radius: 999px;
   padding: 5px 8px;
@@ -1252,38 +1253,39 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   letter-spacing: 0.18em;
   box-shadow: 0 0 18px rgba(34, 211, 238, 0.08);
 }
-.labrat-v3-product-scene {
+.labrat-v4-product-scene {
   position: relative;
   z-index: 3;
-  min-height: 230px;
+  min-height: 238px;
   display: grid;
-  grid-template-columns: 0.8fr 1fr 0.72fr;
+  grid-template-columns: 0.78fr 1.22fr;
   align-items: end;
   justify-items: center;
-  gap: 10px;
-  padding-top: 32px;
+  gap: 16px;
+  padding-top: 34px;
 }
-.labrat-v3-carton {
-  width: 86px;
-  height: 150px;
-  border-radius: 14px 14px 9px 9px;
+.labrat-v4-carton {
+  position: relative;
+  width: 88px;
+  height: 154px;
+  border-radius: 14px 14px 10px 10px;
   background:
-    linear-gradient(90deg, rgba(255,255,255,0.06), transparent 18%, transparent 82%, rgba(255,255,255,0.05)),
-    linear-gradient(180deg, #111827 0%, #030712 48%, #e5e7eb 49%, #f8fafc 100%);
-  border: 1px solid rgba(148, 163, 184, 0.32);
-  box-shadow: 0 24px 46px rgba(0, 0, 0, 0.52), inset 0 1px rgba(255,255,255,0.1);
-  transform: perspective(500px) rotateY(12deg) rotateZ(-2deg);
+    linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02) 18%, rgba(255,255,255,0.02) 82%, rgba(255,255,255,0.08)),
+    linear-gradient(180deg, #111827 0%, #030712 45%, #111827 47%, #e5e7eb 48%, #f8fafc 100%);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  box-shadow: 0 24px 46px rgba(0,0,0,0.54), inset 0 1px rgba(255,255,255,0.12);
+  transform: perspective(640px) rotateY(16deg) rotateZ(-2deg) translateY(-2px);
   overflow: hidden;
   padding: 11px 9px;
   color: white;
 }
-.labrat-v3-carton-top {
+.labrat-v4-carton-top {
   color: #22d3ee;
   font-size: 9px;
   font-weight: 1000;
   letter-spacing: 0.16em;
 }
-.labrat-v3-carton-title {
+.labrat-v4-carton-title {
   margin-top: 16px;
   color: white;
   font-size: 12px;
@@ -1294,27 +1296,42 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.labrat-v3-carton-sub {
-  color: rgba(103, 232, 249, 0.74);
+.labrat-v4-carton-sub {
+  color: rgba(103, 232, 249, 0.76);
   font-size: 7px;
   font-weight: 800;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   margin-top: 5px;
-  height: 18px;
+  min-height: 18px;
   overflow: hidden;
 }
-.labrat-v3-carton-lines {
+.labrat-v4-carton-labelband {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  padding: 4px 7px;
+}
+.labrat-v4-carton-labelband span {
+  color: #a5f3fc;
+  font-size: 6px;
+  font-weight: 1000;
+  letter-spacing: 0.1em;
+}
+.labrat-v4-carton-lines {
   display: grid;
   gap: 4px;
-  margin-top: 26px;
+  margin-top: 18px;
 }
-.labrat-v3-carton-lines span {
+.labrat-v4-carton-lines span {
   height: 2px;
   background: rgba(15, 23, 42, 0.28);
   border-radius: 999px;
 }
-.labrat-v3-carton-footer {
+.labrat-v4-carton-footer {
   position: absolute;
   left: 9px;
   right: 9px;
@@ -1324,72 +1341,146 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   font-weight: 1000;
   letter-spacing: 0.1em;
 }
-.labrat-v3-vial-wrap {
+.labrat-v4-photo-set {
   position: relative;
-  width: 126px;
-  height: 196px;
+  width: 165px;
+  min-height: 206px;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+}
+.labrat-v4-backdrop-card {
+  position: absolute;
+  inset: 18px 16px 26px 16px;
+  border-radius: 28px;
+  background:
+    linear-gradient(140deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015)),
+    rgba(4, 10, 28, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  box-shadow: inset 0 1px rgba(255,255,255,0.08), 0 24px 44px rgba(0,0,0,0.44);
+}
+.labrat-v4-table-shadow {
+  position: absolute;
+  left: 20px;
+  right: 16px;
+  bottom: 12px;
+  height: 22px;
+  border-radius: 999px;
+  background: radial-gradient(circle at center, rgba(0,0,0,0.6), transparent 68%);
+  filter: blur(8px);
+}
+.labrat-v4-vial-wrap {
+  position: relative;
+  width: 132px;
+  height: 202px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  filter: drop-shadow(0 28px 28px rgba(0,0,0,0.55));
-  transform: translateY(3px);
+  filter: drop-shadow(0 28px 30px rgba(0,0,0,0.62));
+  transform: translateY(2px) rotate(-1.5deg);
+  z-index: 2;
 }
-.labrat-v3-vial-cap {
-  width: 66px;
-  height: 21px;
-  border-radius: 11px 11px 5px 5px;
-  background: linear-gradient(180deg, #ffffff, #d4d4d8 48%, #a1a1aa);
-  border: 1px solid rgba(255,255,255,0.65);
-  box-shadow: inset 0 2px rgba(255,255,255,0.8), 0 6px 12px rgba(0,0,0,0.35);
-  z-index: 5;
+.labrat-v4-cap-ridge {
+  width: 60px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(203,213,225,0.55));
+  opacity: 0.85;
+  z-index: 7;
 }
-.labrat-v3-vial-neck {
-  width: 42px;
-  height: 18px;
-  background: linear-gradient(90deg, rgba(226,232,240,0.18), rgba(255,255,255,0.42), rgba(226,232,240,0.16));
+.labrat-v4-cap-ridge.top { margin-bottom: -2px; }
+.labrat-v4-cap-ridge.bottom { margin-top: -2px; }
+.labrat-v4-vial-cap {
+  width: 64px;
+  height: 24px;
+  border-radius: 12px 12px 7px 7px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.5) 0 2px, rgba(148,163,184,0.2) 2px 4px),
+    linear-gradient(180deg, #f8fafc, #d4d4d8 52%, #a1a1aa);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: inset 0 2px rgba(255,255,255,0.85), 0 6px 12px rgba(0,0,0,0.38);
+  z-index: 6;
+}
+.labrat-v4-vial-neck {
+  position: relative;
+  width: 44px;
+  height: 22px;
+  background: linear-gradient(90deg, rgba(226,232,240,0.16), rgba(255,255,255,0.48), rgba(226,232,240,0.14));
   border-left: 1px solid rgba(255,255,255,0.3);
-  border-right: 1px solid rgba(255,255,255,0.22);
+  border-right: 1px solid rgba(255,255,255,0.24);
   margin-top: -1px;
   z-index: 4;
 }
-.labrat-v3-vial {
-  position: relative;
-  width: 92px;
-  height: 150px;
-  border-radius: 20px 20px 14px 14px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.16) 28%, rgba(255,255,255,0.04) 70%, rgba(255,255,255,0.12));
-  border: 1px solid rgba(226, 232, 240, 0.35);
-  overflow: hidden;
-  box-shadow: inset 0 0 18px rgba(255,255,255,0.06), 0 0 0 1px rgba(34,211,238,0.08);
-}
-.labrat-v3-glare {
+.labrat-v4-stopper {
   position: absolute;
-  top: 4px;
-  bottom: 6px;
-  left: 11px;
-  width: 9px;
+  inset: 2px 6px 0;
+  border-radius: 10px 10px 4px 4px;
+  background: radial-gradient(circle at 50% 30%, #6b7280, #1f2937 72%);
+  opacity: 0.92;
+}
+.labrat-v4-vial {
+  position: relative;
+  width: 96px;
+  height: 152px;
+  border-radius: 22px 22px 16px 16px;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255,255,255,0.18), transparent 18%),
+    linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.18) 26%, rgba(255,255,255,0.06) 55%, rgba(255,255,255,0.14) 82%, rgba(255,255,255,0.04));
+  border: 1px solid rgba(226, 232, 240, 0.44);
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 20px rgba(255,255,255,0.08),
+    inset 0 -18px 28px rgba(255,255,255,0.05),
+    0 0 0 1px rgba(34,211,238,0.08);
+}
+.labrat-v4-glass-highlight {
+  position: absolute;
+  top: 6px;
+  bottom: 8px;
   border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.48), rgba(255,255,255,0.05));
-  opacity: 0.55;
   z-index: 8;
 }
-.labrat-v3-label-black {
+.labrat-v4-glass-highlight.left {
+  left: 10px;
+  width: 9px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.04));
+  opacity: 0.55;
+}
+.labrat-v4-glass-highlight.center {
+  left: 25px;
+  width: 3px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.02));
+  opacity: 0.65;
+}
+.labrat-v4-glass-highlight.right {
+  right: 8px;
+  width: 6px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.03));
+  opacity: 0.4;
+}
+.labrat-v4-vial-label {
   position: absolute;
-  top: 22px;
-  left: 0;
-  right: 0;
-  min-height: 55px;
-  background: linear-gradient(180deg, #020617, #050816);
+  left: 8px;
+  right: 8px;
+  top: 24px;
+  bottom: 20px;
+  border-radius: 10px 10px 12px 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(2,6,23,0.3);
+  z-index: 5;
+}
+.labrat-v4-vial-label-black {
+  min-height: 57px;
+  background: linear-gradient(180deg, #050816, #050816 35%, #020617 100%);
   border-top: 1px solid rgba(34,211,238,0.35);
-  border-bottom: 1px solid rgba(34,211,238,0.26);
+  border-bottom: 1px solid rgba(34,211,238,0.24);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4px 5px;
-  z-index: 5;
+  padding: 7px 5px 5px;
 }
-.labrat-v3-brand {
+.labrat-v4-brand {
   font-size: 11px;
   font-weight: 1000;
   letter-spacing: 0.06em;
@@ -1399,8 +1490,8 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   background-clip: text;
   color: transparent;
 }
-.labrat-v3-compound {
-  margin-top: 5px;
+.labrat-v4-compound {
+  margin-top: 6px;
   color: #67e8f9;
   font-size: 8px;
   font-weight: 1000;
@@ -1410,8 +1501,8 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.labrat-v3-compound-sub {
-  color: rgba(226,232,240,0.75);
+.labrat-v4-compound-sub {
+  color: rgba(226,232,240,0.74);
   font-size: 5px;
   font-weight: 800;
   text-transform: uppercase;
@@ -1420,99 +1511,68 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.labrat-v3-label-white {
-  position: absolute;
-  top: 77px;
-  left: 0;
-  right: 0;
-  height: 48px;
-  background: linear-gradient(90deg, #cbd5e1, #ffffff 45%, #dbeafe 100%);
+.labrat-v4-vial-label-white {
+  height: 50px;
+  background:
+    linear-gradient(90deg, #cbd5e1 0%, #ffffff 42%, #f8fafc 62%, #dbeafe 100%),
+    linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0));
   color: #0f172a;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  z-index: 4;
 }
-.labrat-v3-label-white span,
-.labrat-v3-label-white b,
-.labrat-v3-label-white small {
+.labrat-v4-vial-label-white span,
+.labrat-v4-vial-label-white b,
+.labrat-v4-vial-label-white small {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   line-height: 1;
 }
-.labrat-v3-label-white span { font-size: 5px; font-weight: 1000; }
-.labrat-v3-label-white b { font-size: 6px; font-weight: 1000; }
-.labrat-v3-label-white small { font-size: 5px; font-weight: 800; color: #334155; }
-.labrat-v3-powder-cake,
-.labrat-v3-liquid-fill {
+.labrat-v4-vial-label-white span { font-size: 5px; font-weight: 1000; }
+.labrat-v4-vial-label-white b { font-size: 6px; font-weight: 1000; }
+.labrat-v4-vial-label-white small { font-size: 5px; font-weight: 800; color: #334155; }
+.labrat-v4-powder-cake,
+.labrat-v4-liquid-fill {
   position: absolute;
-  left: 7px;
-  right: 7px;
-  bottom: 6px;
-  height: 18px;
-  border-radius: 5px 5px 12px 12px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 6px 6px 13px 13px;
   z-index: 3;
 }
-.labrat-v3-powder-cake {
+.labrat-v4-powder-cake {
+  height: 18px;
   background: linear-gradient(180deg, #ffffff, #e5e7eb);
-  box-shadow: inset 0 2px rgba(255,255,255,0.75);
+  box-shadow: inset 0 2px rgba(255,255,255,0.84), 0 -1px 0 rgba(255,255,255,0.28);
 }
-.labrat-v3-liquid-fill {
-  height: 32px;
-  background: linear-gradient(180deg, rgba(125,211,252,0.08), rgba(56,189,248,0.32));
-  border-top: 1px solid rgba(125,211,252,0.32);
+.labrat-v4-liquid-fill {
+  height: 34px;
+  background:
+    linear-gradient(180deg, rgba(165,243,252,0.18), rgba(56,189,248,0.42)),
+    linear-gradient(90deg, rgba(255,255,255,0.15), transparent 30%, transparent 70%, rgba(255,255,255,0.12));
+  border-top: 1px solid rgba(125,211,252,0.36);
 }
-.labrat-v3-coa-card {
-  width: 82px;
-  height: 124px;
-  border-radius: 16px;
-  background: rgba(2, 6, 23, 0.7);
-  border: 1px solid rgba(34, 211, 238, 0.22);
-  padding: 10px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.42), inset 0 1px rgba(255,255,255,0.07);
-  transform: perspective(500px) rotateY(-13deg) rotateZ(2deg);
-}
-.labrat-v3-coa-header {
-  color: #67e8f9;
-  font-size: 8px;
-  font-weight: 1000;
-  letter-spacing: 0.12em;
-}
-.labrat-v3-qr {
-  width: 38px;
-  height: 38px;
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
-}
-.labrat-v3-qr span {
-  border-radius: 4px;
-  background: rgba(34,211,238,0.72);
-  box-shadow: 0 0 10px rgba(34,211,238,0.24);
-}
-.labrat-v3-coa-line,
-.labrat-v3-coa-line.short {
-  height: 3px;
-  border-radius: 999px;
-  margin-top: 10px;
-  background: rgba(148,163,184,0.35);
-}
-.labrat-v3-coa-line.short { width: 70%; margin-top: 6px; }
-.labrat-v3-coa-chip {
-  margin-top: 13px;
+.labrat-v4-vial-badge {
+  position: absolute;
+  right: 20px;
+  bottom: 26px;
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 999px;
-  padding: 4px 7px;
-  background: rgba(16,185,129,0.12);
-  color: #6ee7b7;
-  border: 1px solid rgba(16,185,129,0.22);
+  padding: 6px 10px;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  background: rgba(2, 6, 23, 0.78);
+  color: #a5f3fc;
   font-size: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-weight: 1000;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
+  box-shadow: 0 16px 28px rgba(0,0,0,0.28);
+  z-index: 4;
 }
-.labrat-v3-bottom-strip {
+.labrat-v4-bottom-strip {
   position: absolute;
   left: 14px;
   right: 14px;
@@ -1525,7 +1585,7 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   padding: 7px 9px;
   border-radius: 999px;
   border: 1px solid rgba(34, 211, 238, 0.18);
-  background: rgba(2, 6, 23, 0.75);
+  background: rgba(2, 6, 23, 0.76);
   backdrop-filter: blur(10px);
   color: #cbd5e1;
   font-size: 9px;
@@ -1534,38 +1594,48 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.labrat-v3-bottom-strip strong {
+.labrat-v4-bottom-strip strong {
   color: #67e8f9;
   font-size: 11px;
 }
-.labrat-v3-bottom-strip em {
+.labrat-v4-bottom-strip em {
   color: #94a3b8;
   font-style: normal;
 }
-html[data-labrat-theme="clinical"] .labrat-product-vial-stage-v3 {
+html[data-labrat-theme="clinical"] .labrat-product-vial-stage-v4 {
   background:
-    radial-gradient(circle at 50% 18%, rgba(59, 130, 246, 0.16), transparent 36%),
+    radial-gradient(circle at 50% 18%, rgba(59, 130, 246, 0.14), transparent 36%),
     linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(23, 37, 84, 0.58)) !important;
 }
-html[data-labrat-theme="clinical"] .labrat-v3-cert-panel span,
-html[data-labrat-theme="clinical"] .labrat-v3-coa-card,
-html[data-labrat-theme="clinical"] .labrat-v3-bottom-strip {
+html[data-labrat-theme="clinical"] .labrat-v4-cert-panel span,
+html[data-labrat-theme="clinical"] .labrat-v4-bottom-strip,
+html[data-labrat-theme="clinical"] .labrat-v4-backdrop-card,
+html[data-labrat-theme="clinical"] .labrat-v4-vial-badge {
   border-color: rgba(96, 165, 250, 0.2);
   box-shadow: none;
 }
-html[data-labrat-theme="clinical"] .labrat-v3-brand,
-html[data-labrat-theme="clinical"] .labrat-v3-compound,
-html[data-labrat-theme="clinical"] .labrat-v3-coa-header,
-html[data-labrat-theme="clinical"] .labrat-v3-bottom-strip strong {
+html[data-labrat-theme="clinical"] .labrat-v4-brand,
+html[data-labrat-theme="clinical"] .labrat-v4-compound,
+html[data-labrat-theme="clinical"] .labrat-v4-bottom-strip strong {
   color: #93c5fd;
   background: none;
   -webkit-text-fill-color: currentColor;
 }
 @media (max-width: 760px) {
-  .labrat-product-vial-stage-v3 { min-height: 250px !important; }
-  .labrat-v3-product-scene { grid-template-columns: 0.7fr 1fr 0.62fr; gap: 4px; min-height: 205px; }
-  .labrat-v3-carton { width: 68px; height: 125px; }
-  .labrat-v3-vial-wrap { transform: scale(0.86) translateY(14px); }
-  .labrat-v3-coa-card { width: 64px; height: 105px; padding: 8px; }
-  .labrat-v3-bottom-strip { font-size: 7px; }
+  .labrat-product-vial-stage-v4 { min-height: 266px !important; }
+  .labrat-v4-product-scene {
+    grid-template-columns: 0.62fr 1fr;
+    gap: 8px;
+    min-height: 212px;
+  }
+  .labrat-v4-carton {
+    width: 72px;
+    height: 132px;
+    transform: perspective(540px) rotateY(12deg) rotateZ(-2deg) translateY(4px);
+  }
+  .labrat-v4-photo-set { width: 138px; min-height: 188px; }
+  .labrat-v4-backdrop-card { inset: 18px 8px 24px 12px; }
+  .labrat-v4-vial-wrap { transform: scale(0.88) translateY(12px); }
+  .labrat-v4-vial-badge { right: 10px; bottom: 24px; font-size: 7px; padding: 5px 8px; }
+  .labrat-v4-bottom-strip { font-size: 7px; }
 }

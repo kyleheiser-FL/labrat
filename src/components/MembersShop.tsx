@@ -119,7 +119,7 @@ export interface OrderDetail {
   createdAt: any;
 }
 
-// Product Vial Visual Component (CSS + SVG) with dynamic colors and interactive "LABRAT" front labeling mimicking the uploaded high-quality vial mockup
+// Product Vial Visual Component with more realistic 3ml vial presentation and simplified branding (no repeated COA card)
 function ProductVialVisual({ name, category }: { name: string; category: string }) {
   const lowerCat = category.toLowerCase();
   const lowerName = name.toLowerCase();
@@ -146,63 +146,71 @@ function ProductVialVisual({ name, category }: { name: string; category: string 
   ][accentIndex];
 
   return (
-    <div className="labrat-product-vial-stage labrat-product-vial-stage-v3 w-full min-h-[290px] border-b border-cyan-400/10 p-5 relative overflow-hidden select-none">
-      <div className="labrat-v3-grid" aria-hidden="true" />
-      <div className={`labrat-v3-orb bg-gradient-to-br ${accentClass}`} aria-hidden="true" />
+    <div className="labrat-product-vial-stage labrat-product-vial-stage-v4 w-full min-h-[300px] border-b border-cyan-400/10 p-5 relative overflow-hidden select-none">
+      <div className="labrat-v4-grid" aria-hidden="true" />
+      <div className={`labrat-v4-orb bg-gradient-to-br ${accentClass}`} aria-hidden="true" />
 
-      <div className="labrat-v3-cert-panel" aria-hidden="true">
+      <div className="labrat-v4-cert-panel" aria-hidden="true">
         <span>NP QA</span>
-        <span>COA</span>
+        <span>3ML</span>
         <span>LR VIAL</span>
       </div>
 
-      <div className="labrat-v3-product-scene" aria-label="LabRat branded research vial and COA card visual">
-        <div className="labrat-v3-carton">
-          <div className="labrat-v3-carton-top">LABRAT</div>
-          <div className="labrat-v3-carton-title">{firstWord}</div>
-          <div className="labrat-v3-carton-sub">{remainingWords || category}</div>
-          <div className="labrat-v3-carton-lines">
+      <div className="labrat-v4-product-scene" aria-label="Photoreal LabRat branded 3ml research vial visual">
+        <div className="labrat-v4-carton">
+          <div className="labrat-v4-carton-top">LABRAT</div>
+          <div className="labrat-v4-carton-title">{firstWord}</div>
+          <div className="labrat-v4-carton-sub">{remainingWords || category}</div>
+          <div className="labrat-v4-carton-labelband">
+            <span>{isSolvent ? 'STERILE DILUENT' : 'RESEARCH PEPTIDE'}</span>
+          </div>
+          <div className="labrat-v4-carton-lines">
             <span />
             <span />
             <span />
           </div>
-          <div className="labrat-v3-carton-footer">NORWAY PEPTIDES QA</div>
+          <div className="labrat-v4-carton-footer">NORWAY PEPTIDES QA</div>
         </div>
 
-        <div className="labrat-v3-vial-wrap">
-          <div className="labrat-v3-vial-cap" />
-          <div className="labrat-v3-vial-neck" />
-          <div className="labrat-v3-vial">
-            <div className="labrat-v3-glare" />
-            <div className="labrat-v3-label-black">
-              <span className="labrat-v3-brand">LABRAT</span>
-              <span className="labrat-v3-compound">{firstWord}</span>
-              {remainingWords ? <span className="labrat-v3-compound-sub">{remainingWords}</span> : null}
-            </div>
-            <div className="labrat-v3-label-white">
-              <span>RESEARCH USE ONLY</span>
-              <b>{isSolvent ? 'STERILE DILUENT' : 'LYOPHILIZED PEPTIDE'}</b>
-              <small>SN {serialNo}</small>
-            </div>
-            <div className={isSolvent ? 'labrat-v3-liquid-fill' : 'labrat-v3-powder-cake'} />
-          </div>
-        </div>
+        <div className="labrat-v4-photo-set">
+          <div className="labrat-v4-backdrop-card" aria-hidden="true" />
+          <div className="labrat-v4-table-shadow" aria-hidden="true" />
 
-        <div className="labrat-v3-coa-card">
-          <div className="labrat-v3-coa-header">COA TRACE</div>
-          <div className="labrat-v3-qr">
-            <span />
-            <span />
-            <span />
-            <span />
+          <div className="labrat-v4-vial-wrap">
+            <div className="labrat-v4-cap-ridge top" />
+            <div className="labrat-v4-vial-cap" />
+            <div className="labrat-v4-cap-ridge bottom" />
+            <div className="labrat-v4-vial-neck">
+              <div className="labrat-v4-stopper" />
+            </div>
+            <div className="labrat-v4-vial">
+              <div className="labrat-v4-glass-highlight left" />
+              <div className="labrat-v4-glass-highlight center" />
+              <div className="labrat-v4-glass-highlight right" />
+
+              <div className="labrat-v4-vial-label">
+                <div className="labrat-v4-vial-label-black">
+                  <span className="labrat-v4-brand">LABRAT</span>
+                  <span className="labrat-v4-compound">{firstWord}</span>
+                  {remainingWords ? <span className="labrat-v4-compound-sub">{remainingWords}</span> : null}
+                </div>
+
+                <div className="labrat-v4-vial-label-white">
+                  <span>{isSolvent ? '3ML STERILE' : '3ML RESEARCH'}</span>
+                  <b>{isSolvent ? 'BAC WATER / DILUENT' : 'LYOPHILIZED VIAL'}</b>
+                  <small>SN {serialNo}</small>
+                </div>
+              </div>
+
+              <div className={isSolvent ? 'labrat-v4-liquid-fill' : 'labrat-v4-powder-cake'} />
+            </div>
           </div>
-          <div className="labrat-v3-coa-line" />
-          <div className="labrat-v3-coa-line short" />
-          <div className="labrat-v3-coa-chip">99% QA</div>
+
+          <div className="labrat-v4-vial-badge">REAL 3ML VIAL</div>
         </div>
       </div>
 
-      <div className="labrat-v3-bottom-strip">
+      <div className="labrat-v4-bottom-strip">
         <span>{category}</span>
         <strong>{sizeValue}</strong>
         <em>{isSolvent ? '30ML BOTTLE' : '3ML VIAL'}</em>
