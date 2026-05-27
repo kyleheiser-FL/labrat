@@ -530,10 +530,10 @@ export default function CycleDashboard({
         </div>
       )}
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6" id="dashboard-main-grid">
+      <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6" id="dashboard-main-grid">
       
       {/* Left Columns (Checklist and Log Ledger) */}
-      <div className="xl:col-span-7 flex flex-col gap-6">
+      <div className="2xl:col-span-7 flex flex-col gap-6">
         
         {/* Date Navigator Header Card */}
         <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4" id="dashboard-header-navigator">
@@ -933,7 +933,7 @@ export default function CycleDashboard({
       </div>
 
       {/* Right Column (Wellness Logs and Progress Records) */}
-      <div className="xl:col-span-5 flex flex-col gap-6" id="dashboard-wellness-panel">
+      <div className="2xl:col-span-5 flex flex-col gap-6" id="dashboard-wellness-panel">
 
         {/* Active Cycle Progress Monitors */}
         <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="active-progress-monitors-card">
