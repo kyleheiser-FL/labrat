@@ -161,7 +161,7 @@ function ProductVialVisual({ name, category }: { name: string; category: string 
     : 'bg-gradient-to-t from-neutral-100 via-white to-zinc-200/40 shadow-[inset_0_1px_2px_rgba(255,255,255,0.7)]';
 
   return (
-    <div className="w-full h-44 bg-[#02050f]/60 border-b border-[#1e293b]/50 p-4 flex items-center justify-center relative overflow-hidden select-none">
+    <div className="labrat-product-vial-stage w-full h-44 bg-[#02050f]/60 border-b border-[#1e293b]/50 p-4 flex items-center justify-center relative overflow-hidden select-none">
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_0.5px,transparent_0.5px),linear-gradient(to_bottom,#0f172a_0.5px,transparent_0.5px)] bg-[size:1rem_1rem] opacity-35" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2176ff]/20 to-transparent" />
       <div className="absolute w-32 h-32 bg-[#2176ff]/10 rounded-full blur-3xl pointer-events-none -translate-y-4" />
@@ -3012,7 +3012,7 @@ export default function MembersShop() {
                   });
 
                   return (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="labrat-product-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {groupedDisplayItems.map(group => {
                         const prices = group.options.map(o => o.price);
                         const minPrice = Math.min(...prices);
@@ -3027,7 +3027,7 @@ export default function MembersShop() {
                         return (
                           <div
                             key={group.baseName}
-                            className="bg-[#0b1329] border border-[#1e293b] hover:border-cyan-500/30 rounded-2xl flex flex-col justify-between hover:shadow-[0_0_20px_rgba(6,182,212,0.04)] transition-all overflow-hidden group text-left"
+                            className="labrat-product-card bg-[#0b1329] border border-[#1e293b] hover:border-cyan-500/30 rounded-2xl flex flex-col justify-between hover:shadow-[0_0_20px_rgba(6,182,212,0.04)] transition-all overflow-hidden group text-left"
                           >
                             {/* Tap image to open drawer */}
                             <div 
@@ -3047,7 +3047,7 @@ export default function MembersShop() {
                               <ProductVialVisual name={group.baseName} category={group.category} />
                             </div>
 
-                            <div className="p-5 flex-1 flex flex-col justify-between gap-4">
+                            <div className="labrat-product-card-body p-5 flex-1 flex flex-col justify-between gap-4">
                               {/* Tap text to open drawer */}
                               <div
                                 onClick={() => {
@@ -3099,9 +3099,15 @@ export default function MembersShop() {
                                 <p className="text-xs text-slate-400 mt-2 leading-normal min-h-[54px] line-clamp-3">
                                   {getCleanDescription(firstOption?.description)}
                                 </p>
+
+                                <div className="labrat-product-assurance-grid" aria-label="LabRat product quality summary">
+                                  <span><BadgeCheck className="w-3.5 h-3.5" /> Norway Peptides QA</span>
+                                  <span><Shield className="w-3.5 h-3.5" /> COA / batch trace</span>
+                                  <span><Package className="w-3.5 h-3.5" /> LabRat vial label</span>
+                                </div>
                               </div>
 
-                              <div className="border-t border-slate-800/50 pt-3 mt-1">
+                              <div className="labrat-strength-console border-t border-slate-800/50 pt-3 mt-1">
                                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Available Strengths:</span>
                                 <div className="flex flex-wrap gap-1.5">
                                   {group.options.map(opt => {
@@ -3144,7 +3150,7 @@ export default function MembersShop() {
                               const isOutOfStock = getProductAvailableStock(activeProduct.id, activeProduct.inventory) <= 0;
 
                               return (
-                                <div className="bg-slate-950 border-t border-[#1e293b]/70 p-4 flex items-center justify-between gap-4">
+                                <div className="labrat-product-buybar bg-slate-950 border-t border-[#1e293b]/70 p-4 flex items-center justify-between gap-4">
                                   <div className="flex flex-col text-left flex-1 min-w-0 pr-1">
                                     <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider truncate block">
                                       Research Price ({getProductBaseAndSize(activeProduct.name).size || 'each'})
@@ -3222,7 +3228,7 @@ export default function MembersShop() {
                     </button>
                   </div>
                 ) : (
-                  <div className="bg-[#10172a]/40 border border-[#1e293b]/80 rounded-2xl divide-y divide-[#1e293b]/50">
+                  <div className="labrat-cart-panel bg-[#10172a]/40 border border-[#1e293b]/80 rounded-2xl divide-y divide-[#1e293b]/50">
                     {cart.map(item => (
                       <div key={item.product.id} className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="max-w-xs text-left">

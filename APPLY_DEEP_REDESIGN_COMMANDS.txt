@@ -1,0 +1,20 @@
+Upload labrat_deep_shop_pages_redesign.zip to the repo root in Codespaces, then run:
+
+ZIP=labrat_deep_shop_pages_redesign.zip
+
+test -f package.json || { echo "STOP: package.json not found. Run this from the repo root."; exit 1; }
+test -f "$ZIP" || { echo "STOP: $ZIP not found in repo root."; exit 1; }
+
+find . -mindepth 1 -maxdepth 1 ! -name .git ! -name "$ZIP" -exec rm -rf {} +
+unzip -o "$ZIP" -d .
+
+grep -n "LABRAT DEEP MOCKUP REDESIGN PASS" src/index.css
+grep -n "labrat-product-card" src/components/MembersShop.tsx
+
+npm install
+npm run build
+
+git status
+git add .
+git commit -m "Apply deep LabRat page and shop redesign"
+git push origin main

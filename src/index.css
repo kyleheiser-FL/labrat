@@ -1198,3 +1198,225 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   .labrat-hero-orb, .labrat-shop-vial-cluster { display: none; }
   .labrat-page-stat-row span { flex: 1 1 8rem; min-width: 0; }
 }
+
+/* ==========================================================================
+   LABRAT DEEP MOCKUP REDESIGN PASS
+   Applies the mockup styling below the page heroes: shop product cards, lower panels,
+   product vial merchandising, cart rows, and stronger Clinical Dark separation.
+   ========================================================================== */
+
+.labrat-product-grid {
+  align-items: stretch;
+}
+
+.labrat-product-card {
+  position: relative;
+  isolation: isolate;
+  min-height: 100%;
+  border-radius: 1.65rem !important;
+  overflow: hidden !important;
+  transform: translateZ(0);
+  background:
+    linear-gradient(180deg, rgba(8, 14, 30, 0.96), rgba(3, 7, 18, 0.98)) padding-box,
+    linear-gradient(135deg, rgba(34,211,238,0.46), rgba(160,94,255,0.24), rgba(34,211,238,0.08)) border-box !important;
+  border: 1px solid transparent !important;
+  box-shadow:
+    0 24px 72px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+.labrat-product-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(34,211,238,0.16), transparent 32%),
+    radial-gradient(circle at 0% 88%, rgba(160,94,255,0.13), transparent 34%),
+    linear-gradient(to right, rgba(34,211,238,0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34,211,238,0.035) 1px, transparent 1px);
+  background-size: auto, auto, 24px 24px, 24px 24px;
+  opacity: 0.88;
+  pointer-events: none;
+}
+
+.labrat-product-card:hover {
+  transform: translateY(-5px) scale(1.006);
+  border-color: transparent !important;
+  box-shadow:
+    0 32px 90px rgba(6, 182, 212, 0.14),
+    0 22px 50px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+.labrat-product-vial-stage {
+  min-height: 18rem !important;
+  border-bottom: 1px solid rgba(34,211,238,0.18) !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(34,211,238,0.22), transparent 30%),
+    radial-gradient(circle at 50% 45%, rgba(160,94,255,0.16), transparent 42%),
+    linear-gradient(180deg, rgba(3,7,18,0.25), rgba(15,23,42,0.82)) !important;
+}
+
+.labrat-product-vial-stage::after {
+  content: "LABRAT CERTIFIED RESEARCH VIAL";
+  position: absolute;
+  left: 1rem;
+  bottom: 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(34,211,238,0.22);
+  background: rgba(2,6,23,0.65);
+  padding: 0.35rem 0.55rem;
+  color: rgba(34,211,238,0.78);
+  font-size: 0.52rem;
+  font-weight: 950;
+  letter-spacing: 0.16em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.labrat-product-vial-stage [class*="w-24"] {
+  transform: scale(1.34) translateY(0.22rem) !important;
+  filter: drop-shadow(0 26px 28px rgba(0,0,0,0.54)) drop-shadow(0 0 22px rgba(34,211,238,0.13));
+}
+
+.labrat-product-card-body {
+  background: linear-gradient(180deg, rgba(11,18,32,0.46), rgba(2,6,23,0.34));
+}
+
+.labrat-product-card h4 {
+  font-size: 1.05rem !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.03em !important;
+}
+
+.labrat-product-assurance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+}
+
+.labrat-product-assurance-grid span {
+  display: flex;
+  min-height: 2.35rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(34,211,238,0.16);
+  background: rgba(2,6,23,0.54);
+  color: rgba(203,213,225,0.82);
+  text-align: center;
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.labrat-product-assurance-grid svg {
+  color: #22d3ee;
+  flex: 0 0 auto;
+}
+
+.labrat-strength-console {
+  border-top-color: rgba(34,211,238,0.12) !important;
+  background: linear-gradient(180deg, rgba(2,6,23,0.16), rgba(2,6,23,0.42));
+  border-radius: 1rem;
+  padding: 0.8rem !important;
+  margin-top: 0.45rem !important;
+}
+
+.labrat-strength-console button {
+  border-radius: 0.8rem !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+}
+
+.labrat-product-buybar {
+  background:
+    linear-gradient(90deg, rgba(2,6,23,0.98), rgba(11,18,32,0.95)) !important;
+  border-top-color: rgba(34,211,238,0.16) !important;
+}
+
+.labrat-product-buybar button:not(:disabled) {
+  border-radius: 0.95rem !important;
+  background: linear-gradient(90deg, #00c5f5, #2176ff) !important;
+  box-shadow: 0 12px 24px rgba(6,182,212,0.18), inset 0 1px 0 rgba(255,255,255,0.28) !important;
+}
+
+.labrat-cart-panel > div {
+  background: linear-gradient(90deg, rgba(15,23,42,0.72), rgba(2,6,23,0.32));
+}
+
+/* Generic lower-page modules: make non-hero content feel like the mockup command cards. */
+.labrat-page-shell > div:not(.labrat-page-hero):not(.fixed):not(.absolute),
+.labrat-page-shell > section:not(.labrat-page-hero),
+#planner-main-container > div:not(.labrat-page-hero),
+#blood-intelligence-section > div,
+#members-shop-root > div:not(.fixed):not(.absolute) {
+  backdrop-filter: blur(18px);
+}
+
+.labrat-page-shell input,
+.labrat-page-shell textarea,
+.labrat-page-shell select,
+#members-shop-root input,
+#members-shop-root textarea,
+#members-shop-root select {
+  border-radius: 0.95rem !important;
+  background: rgba(2, 6, 23, 0.50) !important;
+  border-color: rgba(148, 163, 184, 0.15) !important;
+}
+
+/* Clinical Dark: real professional separation from Neon, including product cards. */
+html[data-labrat-theme="clinical"] .labrat-product-card {
+  background:
+    linear-gradient(180deg, rgba(17,24,39,0.98), rgba(10,18,32,0.98)) padding-box,
+    linear-gradient(135deg, rgba(148,163,184,0.24), rgba(96,165,250,0.16)) border-box !important;
+  box-shadow: 0 18px 46px rgba(0,0,0,0.24) !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-product-card::before {
+  background:
+    linear-gradient(to right, rgba(148,163,184,0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148,163,184,0.035) 1px, transparent 1px) !important;
+  background-size: 28px 28px !important;
+  opacity: 0.42 !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-product-vial-stage {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(96,165,250,0.11), transparent 34%),
+    linear-gradient(180deg, rgba(15,23,42,0.48), rgba(17,24,39,0.92)) !important;
+  border-bottom-color: rgba(148,163,184,0.14) !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-product-vial-stage::after,
+html[data-labrat-theme="clinical"] .labrat-product-assurance-grid span,
+html[data-labrat-theme="clinical"] .labrat-strength-console,
+html[data-labrat-theme="clinical"] .labrat-product-buybar {
+  border-color: rgba(148,163,184,0.16) !important;
+  background: rgba(15,23,42,0.70) !important;
+  color: #cbd5e1 !important;
+  box-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-product-assurance-grid svg,
+html[data-labrat-theme="clinical"] .labrat-product-vial-stage::after {
+  color: #93c5fd !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-product-buybar button:not(:disabled) {
+  background: linear-gradient(90deg, #60a5fa, #3b82f6) !important;
+  color: #06111f !important;
+  box-shadow: 0 10px 22px rgba(59,130,246,0.14) !important;
+}
+
+@media (max-width: 760px) {
+  .labrat-product-assurance-grid {
+    grid-template-columns: 1fr;
+  }
+  .labrat-product-vial-stage {
+    min-height: 15.5rem !important;
+  }
+}
