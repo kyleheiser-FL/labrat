@@ -448,7 +448,23 @@ export default function BloodAnalyzer({
   };
 
   return (
-    <div className="space-y-6" id="blood-intelligence-section">
+    <div className="space-y-6 labrat-page-shell labrat-me-page" id="blood-intelligence-section">
+      <section className="labrat-page-hero labrat-me-hero">
+        <div>
+          <span className="labrat-page-eyebrow">Me • Clinical Lab Engine</span>
+          <h2>Health Dossier & Biomarker Analysis</h2>
+          <p>Upload bloodwork, enter profile context, and review generated insights while preserving the existing analyzer and recommendation logic.</p>
+          <div className="labrat-page-stat-row">
+            <span><strong>{profile.age}</strong> age</span>
+            <span><strong>{profile.weightLb}</strong> lbs</span>
+            <span><strong>{profile.sleepHours}</strong> sleep hrs</span>
+          </div>
+        </div>
+        <div className="labrat-hero-orb" aria-hidden="true">
+          <Activity className="w-12 h-12" />
+        </div>
+      </section>
+
       {/* Intro Header Card */}
       <div className="bg-[#0f172a]/75 border border-[#1e293b]/70 p-5 rounded-3xl flex flex-col sm:flex-row items-center gap-4.5 text-center sm:text-left" id="analyzer-hero-card">
         <div className="p-3 bg-red-950/40 border border-red-500/25 rounded-2xl shrink-0">

@@ -2297,8 +2297,25 @@ export default function MembersShop() {
   const { totalQty, subtotal } = getCartTotals();
 
   return (
-    <div className="flex flex-col gap-6" id="members-shop-root">
-      
+    <div className="flex flex-col gap-6 labrat-page-shell labrat-shop-page" id="members-shop-root">
+      <section className="labrat-page-hero labrat-shop-hero">
+        <div>
+          <span className="labrat-page-eyebrow">Members Shop • Norway Peptides</span>
+          <h2>Certified Research Supply Vault</h2>
+          <p>Premium LabRat-branded vial presentation, COA-first quality messaging, and clearer ordering surfaces without changing inventory, IDs, stock, cart, or order logic.</p>
+          <div className="labrat-page-stat-row">
+            <span><strong>{products.length}</strong> products</span>
+            <span><strong>{totalQty}</strong> in cart</span>
+            <span><strong>COA</strong> focused</span>
+          </div>
+        </div>
+        <div className="labrat-shop-vial-cluster" aria-hidden="true">
+          <div className="labrat-mini-vial"><span>LABRAT</span></div>
+          <div className="labrat-mini-vial labrat-mini-vial-tall"><span>NP</span></div>
+          <div className="labrat-mini-vial"><span>COA</span></div>
+        </div>
+      </section>
+
       {/* Upper Status Cards / Welcome banners */}
       <div className="bg-[#0b1329] border border-[#1e293b] rounded-xl p-4 sm:p-5 relative overflow-hidden" id="shop-welcome-hero">
         <div className="absolute top-0 right-0 p-6 opacity-5 text-slate-100 pointer-events-none">

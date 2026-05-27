@@ -84,7 +84,24 @@ export default function ReconstitutionCalculator({
   const pct = Math.min(1.0, requiredUnits / (syringeSize || 100));
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6" id="reconstitution-calculator-container">
+    <div className="labrat-page-shell labrat-calculator-page" id="reconstitution-calculator-container">
+      <section className="labrat-page-hero labrat-calculator-hero">
+        <div>
+          <span className="labrat-page-eyebrow">Reconstitution Console</span>
+          <h2>Precision Mix Helper</h2>
+          <p>Calculate concentration, syringe units, and dose volume in a cleaner command-center workflow while preserving the existing math and apply-config behavior.</p>
+          <div className="labrat-page-stat-row">
+            <span><strong>{vialSizeMg}</strong> mg vial</span>
+            <span><strong>{bacWaterMl}</strong> mL water</span>
+            <span><strong>{requiredUnits.toFixed(1)}</strong> units</span>
+          </div>
+        </div>
+        <div className="labrat-hero-orb" aria-hidden="true">
+          <Syringe className="w-12 h-12" />
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       {/* Left Input panel */}
       <div className="lg:col-span-7 bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="calc-inputs-panel">
         <div className="flex items-center justify-between mb-6">
@@ -496,6 +513,7 @@ export default function ReconstitutionCalculator({
             <span>Draw the plunger of a <strong>{syringeSize} Units ({(syringeSize * 0.01).toFixed(1)} cc / ml)</strong> syringe to exactly the <strong>{requiredUnits}</strong> unit mark.</span>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

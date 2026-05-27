@@ -891,3 +891,310 @@ html[data-labrat-theme="clinical"] #members-shop-page::before { color:#93c5fd; b
   .labrat-command-hero-art { display: none; }
   .labrat-command-metrics { grid-template-columns: 1fr; }
 }
+
+/* ======================================================================
+   LABRAT FULL MOCKUP PAGE REDESIGN PASS
+   Applies the concept-board language beyond the dashboard: library, shop,
+   planner, calculator, and Me pages. CSS only changes visuals and does not
+   alter data, Firebase, shop inventory, bloodwork analysis, or PWA logic.
+   ====================================================================== */
+
+.labrat-page-shell {
+  position: relative;
+}
+
+.labrat-page-hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  align-items: center;
+  padding: clamp(1.25rem, 2.6vw, 2.25rem);
+  border-radius: 1.6rem;
+  border: 1px solid rgba(34, 211, 238, 0.18);
+  background:
+    radial-gradient(circle at 86% 18%, rgba(160, 94, 255, 0.20), transparent 30%),
+    radial-gradient(circle at 14% 6%, rgba(0, 197, 245, 0.15), transparent 28%),
+    linear-gradient(135deg, rgba(8, 18, 37, 0.96), rgba(3, 7, 18, 0.92));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.labrat-page-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(34,211,238,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34,211,238,0.05) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(90deg, black, transparent 82%);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.labrat-page-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.labrat-page-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.35rem 0.65rem;
+  margin-bottom: 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  background: rgba(6, 182, 212, 0.10);
+  color: #22d3ee;
+  font-size: 0.64rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.labrat-page-hero h2 {
+  margin: 0;
+  max-width: 15ch;
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  line-height: 0.92;
+  font-weight: 950;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #f8fafc, #22d3ee 45%, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.labrat-page-hero p {
+  margin: 0.9rem 0 0;
+  max-width: 56rem;
+  color: rgba(203, 213, 225, 0.86);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.labrat-page-stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.15rem;
+}
+
+.labrat-page-stat-row span {
+  min-width: 8.6rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: rgba(2, 6, 23, 0.48);
+  padding: 0.78rem 0.95rem;
+  color: rgba(148, 163, 184, 0.92);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.labrat-page-stat-row strong {
+  display: block;
+  color: #22d3ee;
+  font-size: 1.3rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.labrat-hero-orb,
+.labrat-shop-vial-cluster {
+  min-width: 9rem;
+  min-height: 9rem;
+  border-radius: 2rem;
+  display: grid;
+  place-items: center;
+  color: #22d3ee;
+  border: 1px solid rgba(34, 211, 238, 0.24);
+  background:
+    radial-gradient(circle at 50% 40%, rgba(34, 211, 238, 0.22), transparent 34%),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.80), rgba(2, 6, 23, 0.95));
+  box-shadow: 0 0 46px rgba(34, 211, 238, 0.10), inset 0 0 32px rgba(34, 211, 238, 0.05);
+}
+
+.labrat-shop-vial-cluster {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  align-items: flex-end;
+  min-width: 14rem;
+}
+
+.labrat-mini-vial {
+  width: 3.3rem;
+  height: 7.2rem;
+  border-radius: 0.85rem 0.85rem 1.1rem 1.1rem;
+  border: 1px solid rgba(255,255,255,0.35);
+  background: linear-gradient(90deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03) 42%, rgba(255,255,255,0.10));
+  position: relative;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 18px 32px rgba(0,0,0,0.38);
+}
+
+.labrat-mini-vial::before {
+  content: "";
+  position: absolute;
+  top: -0.7rem;
+  width: 2.15rem;
+  height: 0.85rem;
+  border-radius: 0.32rem;
+  background: linear-gradient(180deg, #f8fafc, #94a3b8);
+}
+
+.labrat-mini-vial span {
+  width: 100%;
+  padding: 0.45rem 0.1rem;
+  background: #020617;
+  text-align: center;
+  color: #22d3ee;
+  font-size: 0.48rem;
+  font-weight: 950;
+  letter-spacing: 0.09em;
+  border-top: 1px solid rgba(34, 211, 238, 0.24);
+  border-bottom: 1px solid rgba(34, 211, 238, 0.24);
+}
+
+.labrat-mini-vial-tall { height: 8.5rem; }
+
+/* Make the shop visibly different and premium, with branded vial-forward cards. */
+#members-shop-root #shop-welcome-hero,
+#members-shop-root [id*="norway"],
+#members-shop-root .bg-\[\#0b1329\] {
+  border-color: rgba(34, 211, 238, 0.20) !important;
+}
+
+#members-shop-root .grid > .group {
+  border-radius: 1.45rem !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(34,211,238,0.10), transparent 28%),
+    linear-gradient(180deg, rgba(15,23,42,0.98), rgba(2,6,23,0.96)) !important;
+  border: 1px solid rgba(34, 211, 238, 0.20) !important;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.03) !important;
+}
+
+#members-shop-root .grid > .group:hover {
+  transform: translateY(-3px);
+  border-color: rgba(34, 211, 238, 0.46) !important;
+  box-shadow: 0 26px 70px rgba(6,182,212,0.12), 0 18px 40px rgba(0,0,0,0.34) !important;
+}
+
+#members-shop-root .grid > .group [class*="h-44"] {
+  min-height: 15rem;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(34,211,238,0.18), transparent 36%),
+    linear-gradient(180deg, rgba(2,6,23,0.65), rgba(15,23,42,0.95)) !important;
+}
+
+#members-shop-root .grid > .group [class*="w-24"] {
+  transform: scale(1.2);
+}
+
+/* Make existing panels feel like distinct command modules across pages. */
+.labrat-page-shell > div:not(.fixed):not(.absolute),
+.labrat-page-shell section + div,
+#library-controls,
+#calc-inputs-panel,
+#blood-intelligence-section #analyzer-hero-card,
+#planner-main-container > div:not(.labrat-page-hero) {
+  border-radius: 1.35rem;
+}
+
+/* Clinical Dark: deliberately cleaner, slate-blue, low-glow, and less cyberpunk. */
+html[data-labrat-theme="clinical"] body,
+html[data-labrat-theme="clinical"] #root {
+  background: #07111f !important;
+}
+
+html[data-labrat-theme="clinical"] #labrat-app-shell {
+  background:
+    radial-gradient(circle at 12% -10%, rgba(59,130,246,0.10), transparent 28%),
+    linear-gradient(180deg, #07111f, #0b1220 58%, #07111f) !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-page-hero,
+html[data-labrat-theme="clinical"] .labrat-command-hero {
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  background:
+    linear-gradient(135deg, rgba(15,23,42,0.96), rgba(11,18,32,0.96)) !important;
+  box-shadow: 0 20px 54px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.035) !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-page-hero::before,
+html[data-labrat-theme="clinical"] .labrat-command-hero::before {
+  background-image:
+    linear-gradient(to right, rgba(148,163,184,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148,163,184,0.045) 1px, transparent 1px) !important;
+  opacity: 0.36 !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-page-eyebrow,
+html[data-labrat-theme="clinical"] .labrat-command-eyebrow {
+  color: #93c5fd !important;
+  background: rgba(59, 130, 246, 0.10) !important;
+  border-color: rgba(147, 197, 253, 0.18) !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-page-hero h2,
+html[data-labrat-theme="clinical"] .labrat-command-hero h1 {
+  background: none !important;
+  color: #e5eefb !important;
+  text-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-page-hero p,
+html[data-labrat-theme="clinical"] .labrat-command-hero p {
+  color: #94a3b8 !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-page-stat-row span,
+html[data-labrat-theme="clinical"] .labrat-command-metrics > div,
+html[data-labrat-theme="clinical"] .labrat-hero-orb,
+html[data-labrat-theme="clinical"] .labrat-shop-vial-cluster {
+  background: rgba(15, 23, 42, 0.82) !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-page-stat-row strong,
+html[data-labrat-theme="clinical"] .labrat-command-metrics strong {
+  color: #93c5fd !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-command-hero-art img,
+html[data-labrat-theme="clinical"] .labrat-command-hero-art,
+html[data-labrat-theme="clinical"] .labrat-hero-orb {
+  filter: saturate(0.72) brightness(0.92) !important;
+}
+
+html[data-labrat-theme="clinical"] #members-shop-root .grid > .group {
+  background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(11,18,32,0.98)) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  box-shadow: 0 18px 38px rgba(0,0,0,0.20) !important;
+}
+
+html[data-labrat-theme="clinical"] .bg-cyan-500,
+html[data-labrat-theme="clinical"] button.bg-cyan-500 {
+  background-color: #60a5fa !important;
+}
+
+html[data-labrat-theme="clinical"] .text-cyan-400,
+html[data-labrat-theme="clinical"] .text-cyan-300,
+html[data-labrat-theme="clinical"] .text-cyan-500 {
+  color: #93c5fd !important;
+}
+
+@media (max-width: 760px) {
+  .labrat-page-hero { grid-template-columns: 1fr; }
+  .labrat-hero-orb, .labrat-shop-vial-cluster { display: none; }
+  .labrat-page-stat-row span { flex: 1 1 8rem; min-width: 0; }
+}
