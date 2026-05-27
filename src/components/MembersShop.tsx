@@ -150,12 +150,6 @@ function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; c
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.05)_1px,transparent_1px)] bg-[size:1.35rem_1.35rem] opacity-80" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(96,165,250,0.11),transparent_30%),radial-gradient(circle_at_86%_16%,rgba(148,163,184,0.08),transparent_32%)]" />
 
-        <div className="relative z-10 flex items-center justify-between gap-2 mb-2.5">
-          <span className="px-2.5 py-1 rounded-full bg-slate-950/85 border border-slate-700/80 text-[9px] font-black tracking-[0.22em] uppercase text-sky-200">NP QA</span>
-          <span className="px-3 py-1 rounded-full bg-white/90 border border-slate-300 text-[9px] font-black tracking-[0.22em] uppercase text-slate-800">{isSolvent ? '30ML' : '3ML'}</span>
-          <span className="px-2.5 py-1 rounded-full bg-slate-950/85 border border-slate-700/80 text-[9px] font-black tracking-[0.22em] uppercase text-slate-100">LR VIAL</span>
-        </div>
-
         <div className="relative z-10 mx-auto max-w-[300px] min-h-[238px] rounded-[1.35rem] overflow-hidden border border-slate-600/50 bg-gradient-to-b from-slate-900 to-slate-950 shadow-[0_24px_55px_rgba(2,6,23,0.42)]">
           <img
             src={professionalVialSrc}
@@ -179,11 +173,6 @@ function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; c
           </div>
         </div>
 
-        <div className="relative z-10 mt-3 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-          <span>{category}</span>
-          <span className="text-sky-300">{sizeValue}</span>
-          <span>Professional Vial</span>
-        </div>
       </div>
     );
   }
@@ -193,11 +182,6 @@ function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; c
       <div className="labrat-real-vial-grid" aria-hidden="true" />
       <div className="labrat-real-vial-orb" aria-hidden="true" />
 
-      <div className="labrat-real-vial-chip-row" aria-hidden="true">
-        <span>NP QA</span>
-        <span>{isSolvent ? 'STERILE' : '3ML'}</span>
-        <span>LR VIAL</span>
-      </div>
 
       <div className="labrat-real-vial-photo-shell">
         <div className="labrat-real-vial-photo-frame">
@@ -219,11 +203,6 @@ function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; c
         </div>
       </div>
 
-      <div className="labrat-real-vial-bottom-strip">
-        <span>{category}</span>
-        <strong>{sizeValue}</strong>
-        <em>{isSolvent ? 'STERILE LAB BOTTLE' : 'PHOTO-REAL 3ML VIAL'}</em>
-      </div>
     </div>
   );
 }
