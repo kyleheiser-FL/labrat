@@ -31,10 +31,8 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ],
-  "prefer_related_applications": false
-}
-  "shortcuts": [
+  {
+  "prefer_related_applications": false,
     {
       "name": "Reconstitution Calculator",
       "short_name": "Calculator",
