@@ -1081,10 +1081,21 @@ export default function App() {
           {/* Top Row: Brand Header and Indicators */}
           <div className="flex flex-row items-center justify-between gap-3">
             {/* Logo Brand Title */}
-            <div className="flex items-center gap-2">
-              <span className="text-2xl sm:text-3xl font-black tracking-tighter bg-gradient-to-r from-[#00c5f5] via-[#2176ff] to-[#a05eff] bg-clip-text text-transparent font-sans uppercase">LABRAT</span>
-              <span className="bg-slate-800/80 border border-slate-700/60 text-slate-400 text-[10px] font-mono px-2 py-0.5 rounded-md shadow-[0_0_10px_rgba(34,211,238,0.1)] hidden xs:inline-block">V2.5</span>
-            </div>
+<div className="flex items-center gap-2">
+  <img
+    src="/labrat_top_left_logo_transparent.png"
+    alt="LabRat logo"
+    className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-[0_0_14px_rgba(34,211,238,0.45)]"
+  />
+
+  <span className="text-2xl sm:text-3xl font-black tracking-tighter bg-gradient-to-r from-[#00c5f5] via-[#2176ff] to-[#a05eff] bg-clip-text text-transparent font-sans uppercase">
+    LABRAT
+  </span>
+
+  <span className="bg-slate-800/80 border border-slate-700/60 text-slate-400 text-[10px] font-mono px-2 py-0.5 rounded-md shadow-[0_0_10px_rgba(34,211,238,0.1)] hidden xs:inline-block">
+    V2.5
+  </span>
+</div>
 
             {/* User Indicators & Notifications Group */}
             <div className="flex items-center gap-2 sm:gap-3" id="header-indicators-bar">
