@@ -11,16 +11,56 @@
   "orientation": "any",
   "dir": "ltr",
   "lang": "en-US",
-  "categories": ["medical", "health", "fitness", "productivity"],
+  "categories": [
+    "medical",
+    "health",
+    "fitness",
+    "productivity"
+  ],
   "icons": [
-    { "src": "/icon_72.png?v=lr-pro-v1", "sizes": "72x72", "type": "image/png" },
-    { "src": "/icon_96.png?v=lr-pro-v1", "sizes": "96x96", "type": "image/png" },
-    { "src": "/icon_128.png?v=lr-pro-v1", "sizes": "128x128", "type": "image/png" },
-    { "src": "/icon_144.png?v=lr-pro-v1", "sizes": "144x144", "type": "image/png" },
-    { "src": "/icon_152.png?v=lr-pro-v1", "sizes": "152x152", "type": "image/png" },
-    { "src": "/icon_192.png?v=lr-pro-v1", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icon_maskable_512.png?v=lr-pro-v1", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "/icon_512.png?v=lr-pro-v1", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    {
+      "src": "/icon_72.png?v=lr-pro-v1",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_96.png?v=lr-pro-v1",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_128.png?v=lr-pro-v1",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_144.png?v=lr-pro-v1",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_152.png?v=lr-pro-v1",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_192.png?v=lr-pro-v1",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon_maskable_512.png?v=lr-pro-v1",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon_512.png?v=lr-pro-v1",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ],
   "shortcuts": [
     {
@@ -28,58 +68,97 @@
       "short_name": "Calculator",
       "description": "Calculate peptide reconstitution volume and syringe doses instantly",
       "url": "/?shortcut=calculator",
-      "icons": [{ "src": "/icon_192.png?v=lr-pro-v1", "sizes": "192x192", "type": "image/png" }]
+      "icons": [
+        {
+          "src": "/icon_192.png?v=lr-pro-v1",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Cycle Planner",
       "short_name": "Planner",
       "description": "Plan your compound schedules and peptide cycles",
       "url": "/?shortcut=planner",
-      "icons": [{ "src": "/icon_192.png?v=lr-pro-v1", "sizes": "192x192", "type": "image/png" }]
+      "icons": [
+        {
+          "src": "/icon_192.png?v=lr-pro-v1",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Members Shop",
       "short_name": "Shop",
       "description": "Browse premium certified inventory",
       "url": "/?shortcut=shop",
-      "icons": [{ "src": "/icon_192.png?v=lr-pro-v1", "sizes": "192x192", "type": "image/png" }]
+      "icons": [
+        {
+          "src": "/icon_192.png?v=lr-pro-v1",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ],
   "screenshots": [
     {
-      "src": "/screenshot_tablet.png",
-      "sizes": "1536x2048",
+      "src": "/screenshots/labrat-neon-wide-dashboard.png",
+      "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "LabRat Portal - Tablet Dashboard"
+      "label": "LabRat dashboard showing protocol overview, timeline and readiness cards in the Neon Lab theme"
     },
     {
-      "src": "/screenshot_mobile.png",
+      "src": "/screenshots/labrat-neon-wide-shop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LabRat members shop showing quality, COA and stock cards in the Neon Lab theme"
+    },
+    {
+      "src": "/screenshots/labrat-clinical-wide-dashboard.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LabRat dashboard showing protocol overview, timeline and readiness cards in the Clinical Dark theme"
+    },
+    {
+      "src": "/screenshots/labrat-clinical-wide-analyzer.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LabRat bloodwork analyzer showing upload and marker trend views in the Clinical Dark theme"
+    },
+    {
+      "src": "/screenshots/labrat-neon-mobile-dashboard.png",
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "LabRat Portal - Mobile Daily View"
+      "label": "LabRat dashboard showing protocol overview, timeline and readiness cards in the Neon Lab theme"
     },
     {
-      "src": "/screenshot_cycle.png",
+      "src": "/screenshots/labrat-neon-mobile-shop.png",
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "LabRat Portal - Cycle Planner"
+      "label": "LabRat members shop showing quality, COA and stock cards in the Neon Lab theme"
     },
     {
-      "src": "/screenshot_compound.png",
+      "src": "/screenshots/labrat-clinical-mobile-dashboard.png",
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "LabRat Portal - Compound Encyclopedia"
+      "label": "LabRat dashboard showing protocol overview, timeline and readiness cards in the Clinical Dark theme"
     },
     {
-      "src": "/screenshot_profile.png",
+      "src": "/screenshots/labrat-clinical-mobile-analyzer.png",
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "LabRat Portal - Health Dossier"
+      "label": "LabRat bloodwork analyzer showing upload and marker trend views in the Clinical Dark theme"
     }
   ],
   "prefer_related_applications": false

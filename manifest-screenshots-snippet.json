@@ -1,0 +1,60 @@
+{
+  "screenshots": [
+    {
+      "src": "/screenshots/labrat-neon-wide-dashboard.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LabRat dashboard showing protocol overview, timeline and readiness cards in the Neon Lab theme"
+    },
+    {
+      "src": "/screenshots/labrat-neon-wide-shop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LabRat members shop showing quality, COA and stock cards in the Neon Lab theme"
+    },
+    {
+      "src": "/screenshots/labrat-clinical-wide-dashboard.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LabRat dashboard showing protocol overview, timeline and readiness cards in the Clinical Dark theme"
+    },
+    {
+      "src": "/screenshots/labrat-clinical-wide-analyzer.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LabRat bloodwork analyzer showing upload and marker trend views in the Clinical Dark theme"
+    },
+    {
+      "src": "/screenshots/labrat-neon-mobile-dashboard.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat dashboard showing protocol overview, timeline and readiness cards in the Neon Lab theme"
+    },
+    {
+      "src": "/screenshots/labrat-neon-mobile-shop.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat members shop showing quality, COA and stock cards in the Neon Lab theme"
+    },
+    {
+      "src": "/screenshots/labrat-clinical-mobile-dashboard.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat dashboard showing protocol overview, timeline and readiness cards in the Clinical Dark theme"
+    },
+    {
+      "src": "/screenshots/labrat-clinical-mobile-analyzer.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LabRat bloodwork analyzer showing upload and marker trend views in the Clinical Dark theme"
+    }
+  ]
+}
