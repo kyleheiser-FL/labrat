@@ -19,7 +19,8 @@ import {
   Clock,
   Heart,
   Droplet,
-  User
+  User,
+  Palette
 } from 'lucide-react';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
@@ -74,6 +75,7 @@ interface BloodAnalyzerProps {
   hideShop?: boolean;
   onToggleHideShop?: (hide: boolean) => void;
   currentUserEmail?: string | null;
+  onOpenAppearance?: () => void;
 }
 
 export interface AnalyzedMarker {
@@ -147,7 +149,8 @@ export default function BloodAnalyzer({
   onAddCompound, 
   hideShop, 
   onToggleHideShop,
-  currentUserEmail
+  currentUserEmail,
+  onOpenAppearance
 }: BloodAnalyzerProps) {
   const [pasteText, setPasteText] = useState('');
   const [isDragging, setIsDragging] = useState(false);
@@ -671,6 +674,29 @@ export default function BloodAnalyzer({
                   })}
                 </div>
               </div>
+
+              {/* Appearance / Theme Settings */}
+              {onOpenAppearance && (
+                <div className="space-y-2 pt-3.5 border-t border-slate-850 mt-1" id="appearance-settings-section">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">Appearance</label>
+                      <p className="text-[10.5px] text-slate-500 leading-normal mt-1">
+                        Switch between Neon Lab Command Center and Clinical Dark, or adjust in-app branding.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { triggerHaptic('light'); onOpenAppearance(); }}
+                      className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 hover:border-cyan-500/45 text-cyan-300 text-[11px] font-bold transition cursor-pointer"
+                      id="open-appearance-settings-btn"
+                    >
+                      <Palette className="w-3.5 h-3.5" />
+                      Theme
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* App Store Compliance / Shop Visibility Toggle option */}
               {onToggleHideShop && (!currentUserEmail || currentUserEmail.toLowerCase() === 'kyleheiser@gmail.com') && (
