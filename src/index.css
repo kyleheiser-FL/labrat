@@ -1198,446 +1198,374 @@ html[data-labrat-theme="clinical"] .text-cyan-500 {
   .labrat-hero-orb, .labrat-shop-vial-cluster { display: none; }
   .labrat-page-stat-row span { flex: 1 1 8rem; min-width: 0; }
 }
-
-/* ==========================================================================
-   LABRAT DEEP MOCKUP REDESIGN PASS
-   Applies the mockup styling below the page heroes: shop product cards, lower panels,
-   product vial merchandising, cart rows, and stronger Clinical Dark separation.
-   ========================================================================== */
-
-.labrat-product-grid {
-  align-items: stretch;
-}
-
-.labrat-product-card {
-  position: relative;
-  isolation: isolate;
-  min-height: 100%;
-  border-radius: 1.65rem !important;
-  overflow: hidden !important;
-  transform: translateZ(0);
+/* LABRAT SHOP PRODUCT IMAGE V3 HARD REPLACEMENT
+   This replaces the old plain vial image with a staged premium
+   branded carton + vial + COA card product visual.
+   ========================================================== */
+.labrat-product-vial-stage-v3 {
+  min-height: 290px !important;
   background:
-    linear-gradient(180deg, rgba(8, 14, 30, 0.96), rgba(3, 7, 18, 0.98)) padding-box,
-    linear-gradient(135deg, rgba(34,211,238,0.46), rgba(160,94,255,0.24), rgba(34,211,238,0.08)) border-box !important;
-  border: 1px solid transparent !important;
-  box-shadow:
-    0 24px 72px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+    radial-gradient(circle at 50% 18%, rgba(34, 211, 238, 0.22), transparent 34%),
+    radial-gradient(circle at 82% 28%, rgba(160, 94, 255, 0.2), transparent 38%),
+    linear-gradient(135deg, rgba(2, 6, 23, 0.98), rgba(8, 17, 38, 0.96) 48%, rgba(3, 8, 22, 0.98)) !important;
 }
-
-.labrat-product-card::before {
-  content: "";
+.labrat-v3-grid {
   position: absolute;
   inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(34,211,238,0.16), transparent 32%),
-    radial-gradient(circle at 0% 88%, rgba(160,94,255,0.13), transparent 34%),
-    linear-gradient(to right, rgba(34,211,238,0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(34,211,238,0.035) 1px, transparent 1px);
-  background-size: auto, auto, 24px 24px, 24px 24px;
-  opacity: 0.88;
-  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(34, 211, 238, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 211, 238, 0.055) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(circle at center, black, transparent 76%);
 }
-
-.labrat-product-card:hover {
-  transform: translateY(-5px) scale(1.006);
-  border-color: transparent !important;
-  box-shadow:
-    0 32px 90px rgba(6, 182, 212, 0.14),
-    0 22px 50px rgba(0, 0, 0, 0.44),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
-}
-
-.labrat-product-vial-stage {
-  min-height: 18rem !important;
-  border-bottom: 1px solid rgba(34,211,238,0.18) !important;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(34,211,238,0.22), transparent 30%),
-    radial-gradient(circle at 50% 45%, rgba(160,94,255,0.16), transparent 42%),
-    linear-gradient(180deg, rgba(3,7,18,0.25), rgba(15,23,42,0.82)) !important;
-}
-
-.labrat-product-vial-stage::after {
-  content: "LABRAT CERTIFIED RESEARCH VIAL";
+.labrat-v3-orb {
   position: absolute;
-  left: 1rem;
-  bottom: 0.85rem;
+  width: 220px;
+  height: 220px;
   border-radius: 999px;
-  border: 1px solid rgba(34,211,238,0.22);
-  background: rgba(2,6,23,0.65);
-  padding: 0.35rem 0.55rem;
-  color: rgba(34,211,238,0.78);
-  font-size: 0.52rem;
-  font-weight: 950;
-  letter-spacing: 0.16em;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  filter: blur(44px);
+  opacity: 0.28;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
 }
-
-.labrat-product-vial-stage [class*="w-24"] {
-  transform: scale(1.34) translateY(0.22rem) !important;
-  filter: drop-shadow(0 26px 28px rgba(0,0,0,0.54)) drop-shadow(0 0 22px rgba(34,211,238,0.13));
-}
-
-.labrat-product-card-body {
-  background: linear-gradient(180deg, rgba(11,18,32,0.46), rgba(2,6,23,0.34));
-}
-
-.labrat-product-card h4 {
-  font-size: 1.05rem !important;
-  line-height: 1.08 !important;
-  letter-spacing: -0.03em !important;
-}
-
-.labrat-product-assurance-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.45rem;
-  margin-top: 0.9rem;
-}
-
-.labrat-product-assurance-grid span {
+.labrat-v3-cert-panel {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
   display: flex;
-  min-height: 2.35rem;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  border-radius: 0.85rem;
-  border: 1px solid rgba(34,211,238,0.16);
-  background: rgba(2,6,23,0.54);
-  color: rgba(203,213,225,0.82);
-  text-align: center;
-  font-size: 0.58rem;
+  justify-content: space-between;
+  gap: 8px;
+  z-index: 4;
+}
+.labrat-v3-cert-panel span {
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  background: rgba(2, 6, 23, 0.68);
+  color: #67e8f9;
+  border-radius: 999px;
+  padding: 5px 8px;
+  font-size: 9px;
+  line-height: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.08);
 }
-
-.labrat-product-assurance-grid svg {
+.labrat-v3-product-scene {
+  position: relative;
+  z-index: 3;
+  min-height: 230px;
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 0.72fr;
+  align-items: end;
+  justify-items: center;
+  gap: 10px;
+  padding-top: 32px;
+}
+.labrat-v3-carton {
+  width: 86px;
+  height: 150px;
+  border-radius: 14px 14px 9px 9px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.06), transparent 18%, transparent 82%, rgba(255,255,255,0.05)),
+    linear-gradient(180deg, #111827 0%, #030712 48%, #e5e7eb 49%, #f8fafc 100%);
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  box-shadow: 0 24px 46px rgba(0, 0, 0, 0.52), inset 0 1px rgba(255,255,255,0.1);
+  transform: perspective(500px) rotateY(12deg) rotateZ(-2deg);
+  overflow: hidden;
+  padding: 11px 9px;
+  color: white;
+}
+.labrat-v3-carton-top {
   color: #22d3ee;
-  flex: 0 0 auto;
+  font-size: 9px;
+  font-weight: 1000;
+  letter-spacing: 0.16em;
 }
-
-.labrat-strength-console {
-  border-top-color: rgba(34,211,238,0.12) !important;
-  background: linear-gradient(180deg, rgba(2,6,23,0.16), rgba(2,6,23,0.42));
-  border-radius: 1rem;
-  padding: 0.8rem !important;
-  margin-top: 0.45rem !important;
+.labrat-v3-carton-title {
+  margin-top: 16px;
+  color: white;
+  font-size: 12px;
+  font-weight: 1000;
+  line-height: 1;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-
-.labrat-strength-console button {
-  border-radius: 0.8rem !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+.labrat-v3-carton-sub {
+  color: rgba(103, 232, 249, 0.74);
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-top: 5px;
+  height: 18px;
+  overflow: hidden;
 }
-
-.labrat-product-buybar {
-  background:
-    linear-gradient(90deg, rgba(2,6,23,0.98), rgba(11,18,32,0.95)) !important;
-  border-top-color: rgba(34,211,238,0.16) !important;
+.labrat-v3-carton-lines {
+  display: grid;
+  gap: 4px;
+  margin-top: 26px;
 }
-
-.labrat-product-buybar button:not(:disabled) {
-  border-radius: 0.95rem !important;
-  background: linear-gradient(90deg, #00c5f5, #2176ff) !important;
-  box-shadow: 0 12px 24px rgba(6,182,212,0.18), inset 0 1px 0 rgba(255,255,255,0.28) !important;
+.labrat-v3-carton-lines span {
+  height: 2px;
+  background: rgba(15, 23, 42, 0.28);
+  border-radius: 999px;
 }
-
-.labrat-cart-panel > div {
-  background: linear-gradient(90deg, rgba(15,23,42,0.72), rgba(2,6,23,0.32));
+.labrat-v3-carton-footer {
+  position: absolute;
+  left: 9px;
+  right: 9px;
+  bottom: 10px;
+  color: #0f172a;
+  font-size: 5.5px;
+  font-weight: 1000;
+  letter-spacing: 0.1em;
 }
-
-/* Generic lower-page modules: make non-hero content feel like the mockup command cards. */
-.labrat-page-shell > div:not(.labrat-page-hero):not(.fixed):not(.absolute),
-.labrat-page-shell > section:not(.labrat-page-hero),
-#planner-main-container > div:not(.labrat-page-hero),
-#blood-intelligence-section > div,
-#members-shop-root > div:not(.fixed):not(.absolute) {
-  backdrop-filter: blur(18px);
-}
-
-.labrat-page-shell input,
-.labrat-page-shell textarea,
-.labrat-page-shell select,
-#members-shop-root input,
-#members-shop-root textarea,
-#members-shop-root select {
-  border-radius: 0.95rem !important;
-  background: rgba(2, 6, 23, 0.50) !important;
-  border-color: rgba(148, 163, 184, 0.15) !important;
-}
-
-/* Clinical Dark: real professional separation from Neon, including product cards. */
-html[data-labrat-theme="clinical"] .labrat-product-card {
-  background:
-    linear-gradient(180deg, rgba(17,24,39,0.98), rgba(10,18,32,0.98)) padding-box,
-    linear-gradient(135deg, rgba(148,163,184,0.24), rgba(96,165,250,0.16)) border-box !important;
-  box-shadow: 0 18px 46px rgba(0,0,0,0.24) !important;
-}
-
-html[data-labrat-theme="clinical"] .labrat-product-card::before {
-  background:
-    linear-gradient(to right, rgba(148,163,184,0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148,163,184,0.035) 1px, transparent 1px) !important;
-  background-size: 28px 28px !important;
-  opacity: 0.42 !important;
-}
-
-html[data-labrat-theme="clinical"] .labrat-product-vial-stage {
-  background:
-    radial-gradient(circle at 50% 50%, rgba(96,165,250,0.11), transparent 34%),
-    linear-gradient(180deg, rgba(15,23,42,0.48), rgba(17,24,39,0.92)) !important;
-  border-bottom-color: rgba(148,163,184,0.14) !important;
-}
-
-html[data-labrat-theme="clinical"] .labrat-product-vial-stage::after,
-html[data-labrat-theme="clinical"] .labrat-product-assurance-grid span,
-html[data-labrat-theme="clinical"] .labrat-strength-console,
-html[data-labrat-theme="clinical"] .labrat-product-buybar {
-  border-color: rgba(148,163,184,0.16) !important;
-  background: rgba(15,23,42,0.70) !important;
-  color: #cbd5e1 !important;
-  box-shadow: none !important;
-}
-
-html[data-labrat-theme="clinical"] .labrat-product-assurance-grid svg,
-html[data-labrat-theme="clinical"] .labrat-product-vial-stage::after {
-  color: #93c5fd !important;
-}
-
-html[data-labrat-theme="clinical"] .labrat-product-buybar button:not(:disabled) {
-  background: linear-gradient(90deg, #60a5fa, #3b82f6) !important;
-  color: #06111f !important;
-  box-shadow: 0 10px 22px rgba(59,130,246,0.14) !important;
-}
-
-@media (max-width: 760px) {
-  .labrat-product-assurance-grid {
-    grid-template-columns: 1fr;
-  }
-  .labrat-product-vial-stage {
-    min-height: 15.5rem !important;
-  }
-}
-
-
-/* ==========================================================================
-   LABRAT SHOP CARD V2 HARD OVERRIDE
-   This pass intentionally changes the ACTUAL product tiles below the shop hero.
-   ========================================================================== */
-
-.labrat-inventory-vault-section {
-  margin-top: 1.25rem;
+.labrat-v3-vial-wrap {
+  position: relative;
+  width: 126px;
+  height: 196px;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  align-items: center;
+  filter: drop-shadow(0 28px 28px rgba(0,0,0,0.55));
+  transform: translateY(3px);
 }
-
-.labrat-inventory-vault-header {
+.labrat-v3-vial-cap {
+  width: 66px;
+  height: 21px;
+  border-radius: 11px 11px 5px 5px;
+  background: linear-gradient(180deg, #ffffff, #d4d4d8 48%, #a1a1aa);
+  border: 1px solid rgba(255,255,255,0.65);
+  box-shadow: inset 0 2px rgba(255,255,255,0.8), 0 6px 12px rgba(0,0,0,0.35);
+  z-index: 5;
+}
+.labrat-v3-vial-neck {
+  width: 42px;
+  height: 18px;
+  background: linear-gradient(90deg, rgba(226,232,240,0.18), rgba(255,255,255,0.42), rgba(226,232,240,0.16));
+  border-left: 1px solid rgba(255,255,255,0.3);
+  border-right: 1px solid rgba(255,255,255,0.22);
+  margin-top: -1px;
+  z-index: 4;
+}
+.labrat-v3-vial {
   position: relative;
+  width: 92px;
+  height: 150px;
+  border-radius: 20px 20px 14px 14px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.16) 28%, rgba(255,255,255,0.04) 70%, rgba(255,255,255,0.12));
+  border: 1px solid rgba(226, 232, 240, 0.35);
   overflow: hidden;
-  border-radius: 1.6rem;
+  box-shadow: inset 0 0 18px rgba(255,255,255,0.06), 0 0 0 1px rgba(34,211,238,0.08);
+}
+.labrat-v3-glare {
+  position: absolute;
+  top: 4px;
+  bottom: 6px;
+  left: 11px;
+  width: 9px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.48), rgba(255,255,255,0.05));
+  opacity: 0.55;
+  z-index: 8;
+}
+.labrat-v3-label-black {
+  position: absolute;
+  top: 22px;
+  left: 0;
+  right: 0;
+  min-height: 55px;
+  background: linear-gradient(180deg, #020617, #050816);
+  border-top: 1px solid rgba(34,211,238,0.35);
+  border-bottom: 1px solid rgba(34,211,238,0.26);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 5px;
+  z-index: 5;
+}
+.labrat-v3-brand {
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  background: linear-gradient(90deg, #00e5ff, #3b82f6, #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.labrat-v3-compound {
+  margin-top: 5px;
+  color: #67e8f9;
+  font-size: 8px;
+  font-weight: 1000;
+  text-transform: uppercase;
+  max-width: 72px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.labrat-v3-compound-sub {
+  color: rgba(226,232,240,0.75);
+  font-size: 5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  max-width: 72px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.labrat-v3-label-white {
+  position: absolute;
+  top: 77px;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: linear-gradient(90deg, #cbd5e1, #ffffff 45%, #dbeafe 100%);
+  color: #0f172a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  z-index: 4;
+}
+.labrat-v3-label-white span,
+.labrat-v3-label-white b,
+.labrat-v3-label-white small {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  line-height: 1;
+}
+.labrat-v3-label-white span { font-size: 5px; font-weight: 1000; }
+.labrat-v3-label-white b { font-size: 6px; font-weight: 1000; }
+.labrat-v3-label-white small { font-size: 5px; font-weight: 800; color: #334155; }
+.labrat-v3-powder-cake,
+.labrat-v3-liquid-fill {
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  bottom: 6px;
+  height: 18px;
+  border-radius: 5px 5px 12px 12px;
+  z-index: 3;
+}
+.labrat-v3-powder-cake {
+  background: linear-gradient(180deg, #ffffff, #e5e7eb);
+  box-shadow: inset 0 2px rgba(255,255,255,0.75);
+}
+.labrat-v3-liquid-fill {
+  height: 32px;
+  background: linear-gradient(180deg, rgba(125,211,252,0.08), rgba(56,189,248,0.32));
+  border-top: 1px solid rgba(125,211,252,0.32);
+}
+.labrat-v3-coa-card {
+  width: 82px;
+  height: 124px;
+  border-radius: 16px;
+  background: rgba(2, 6, 23, 0.7);
   border: 1px solid rgba(34, 211, 238, 0.22);
-  background:
-    radial-gradient(circle at 92% 10%, rgba(34,211,238,0.16), transparent 28%),
-    radial-gradient(circle at 7% 80%, rgba(160,94,255,0.16), transparent 30%),
-    linear-gradient(135deg, rgba(2,6,23,0.92), rgba(15,23,42,0.82));
-  padding: 1.1rem 1.2rem;
+  padding: 10px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.42), inset 0 1px rgba(255,255,255,0.07);
+  transform: perspective(500px) rotateY(-13deg) rotateZ(2deg);
+}
+.labrat-v3-coa-header {
+  color: #67e8f9;
+  font-size: 8px;
+  font-weight: 1000;
+  letter-spacing: 0.12em;
+}
+.labrat-v3-qr {
+  width: 38px;
+  height: 38px;
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+.labrat-v3-qr span {
+  border-radius: 4px;
+  background: rgba(34,211,238,0.72);
+  box-shadow: 0 0 10px rgba(34,211,238,0.24);
+}
+.labrat-v3-coa-line,
+.labrat-v3-coa-line.short {
+  height: 3px;
+  border-radius: 999px;
+  margin-top: 10px;
+  background: rgba(148,163,184,0.35);
+}
+.labrat-v3-coa-line.short { width: 70%; margin-top: 6px; }
+.labrat-v3-coa-chip {
+  margin-top: 13px;
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 4px 7px;
+  background: rgba(16,185,129,0.12);
+  color: #6ee7b7;
+  border: 1px solid rgba(16,185,129,0.22);
+  font-size: 8px;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+}
+.labrat-v3-bottom-strip {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  z-index: 6;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  box-shadow: 0 20px 54px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-.labrat-inventory-vault-header::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.38;
-  pointer-events: none;
-  background-image:
-    linear-gradient(to right, rgba(34,211,238,0.09) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(34,211,238,0.06) 1px, transparent 1px);
-  background-size: 26px 26px;
-}
-
-.labrat-inventory-vault-header > * {
-  position: relative;
-  z-index: 1;
-}
-
-.labrat-inventory-vault-header h3 {
-  margin: 0.15rem 0 0.25rem;
-  color: #f8fafc;
-  font-size: clamp(1.25rem, 2.4vw, 2rem);
-  font-weight: 950;
-  letter-spacing: -0.055em;
+  gap: 8px;
+  padding: 7px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.18);
+  background: rgba(2, 6, 23, 0.75);
+  backdrop-filter: blur(10px);
+  color: #cbd5e1;
+  font-size: 9px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 900;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-
-.labrat-inventory-vault-header p {
-  max-width: 62rem;
-  color: rgba(203,213,225,0.78);
-  font-size: 0.82rem;
-  line-height: 1.55;
+.labrat-v3-bottom-strip strong {
+  color: #67e8f9;
+  font-size: 11px;
 }
-
-.labrat-vault-header-tags {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  min-width: 12rem;
+.labrat-v3-bottom-strip em {
+  color: #94a3b8;
+  font-style: normal;
 }
-
-.labrat-vault-header-tags span {
-  border-radius: 999px;
-  border: 1px solid rgba(34,211,238,0.25);
-  background: rgba(2,6,23,0.62);
-  color: #22d3ee;
-  padding: 0.45rem 0.65rem;
-  font-size: 0.62rem;
-  font-weight: 950;
-  letter-spacing: 0.14em;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-}
-
-.labrat-product-grid-v2 {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)) !important;
-  gap: 1.35rem !important;
-}
-
-.labrat-product-grid-v2 .labrat-product-card {
-  border-radius: 2rem !important;
-  min-height: 39rem !important;
+html[data-labrat-theme="clinical"] .labrat-product-vial-stage-v3 {
   background:
-    radial-gradient(circle at 50% 0%, rgba(34,211,238,0.2), transparent 26%),
-    radial-gradient(circle at 100% 76%, rgba(168,85,247,0.18), transparent 32%),
-    linear-gradient(180deg, rgba(9,15,32,0.98), rgba(2,6,23,0.98)) !important;
-  border: 1px solid rgba(34,211,238,0.22) !important;
-  box-shadow:
-    0 28px 70px rgba(0,0,0,0.38),
-    0 0 0 1px rgba(255,255,255,0.025) inset !important;
+    radial-gradient(circle at 50% 18%, rgba(59, 130, 246, 0.16), transparent 36%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(23, 37, 84, 0.58)) !important;
 }
-
-.labrat-product-grid-v2 .labrat-product-card::after {
-  content: "LR";
-  position: absolute;
-  right: 1.1rem;
-  top: 1rem;
-  z-index: 2;
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: 1.05rem;
-  border: 1px solid rgba(34,211,238,0.24);
-  background: rgba(2,6,23,0.72);
-  color: rgba(226,232,240,0.78);
-  display: grid;
-  place-items: center;
-  font-size: 1.1rem;
-  font-weight: 950;
-  letter-spacing: -0.08em;
-  box-shadow: 0 0 24px rgba(34,211,238,0.12);
+html[data-labrat-theme="clinical"] .labrat-v3-cert-panel span,
+html[data-labrat-theme="clinical"] .labrat-v3-coa-card,
+html[data-labrat-theme="clinical"] .labrat-v3-bottom-strip {
+  border-color: rgba(96, 165, 250, 0.2);
+  box-shadow: none;
 }
-
-.labrat-product-grid-v2 .labrat-product-vial-stage {
-  min-height: 20.5rem !important;
-  padding-top: 2.2rem !important;
-  background:
-    radial-gradient(circle at 50% 48%, rgba(34,211,238,0.28), transparent 27%),
-    radial-gradient(circle at 50% 52%, rgba(168,85,247,0.20), transparent 42%),
-    linear-gradient(180deg, rgba(2,6,23,0.4), rgba(15,23,42,0.92)) !important;
+html[data-labrat-theme="clinical"] .labrat-v3-brand,
+html[data-labrat-theme="clinical"] .labrat-v3-compound,
+html[data-labrat-theme="clinical"] .labrat-v3-coa-header,
+html[data-labrat-theme="clinical"] .labrat-v3-bottom-strip strong {
+  color: #93c5fd;
+  background: none;
+  -webkit-text-fill-color: currentColor;
 }
-
-.labrat-product-grid-v2 .labrat-product-vial-stage::before {
-  content: "NORWAY PEPTIDES • COA VERIFIED";
-  position: absolute;
-  top: 0.95rem;
-  left: 1rem;
-  z-index: 2;
-  border-radius: 999px;
-  border: 1px solid rgba(16,185,129,0.22);
-  background: rgba(6,78,59,0.28);
-  color: #7dd3fc;
-  padding: 0.36rem 0.58rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.56rem;
-  font-weight: 950;
-  letter-spacing: 0.13em;
-}
-
-.labrat-product-grid-v2 .labrat-product-vial-stage::after {
-  content: "LABRAT LABEL • 3ML RESEARCH VIAL" !important;
-  right: 1rem;
-  left: auto !important;
-  bottom: 0.9rem !important;
-}
-
-.labrat-product-grid-v2 .labrat-product-card h4 {
-  font-size: 1.22rem !important;
-  line-height: 1.02 !important;
-  color: #f8fafc !important;
-}
-
-.labrat-product-grid-v2 .labrat-product-card p {
-  font-size: 0.78rem !important;
-}
-
-.labrat-product-grid-v2 .labrat-product-assurance-grid {
-  grid-template-columns: 1fr !important;
-  gap: 0.45rem !important;
-}
-
-.labrat-product-grid-v2 .labrat-product-assurance-grid span {
-  justify-content: flex-start !important;
-  min-height: 2.2rem !important;
-  padding-inline: 0.75rem !important;
-  background: linear-gradient(90deg, rgba(34,211,238,0.11), rgba(2,6,23,0.42)) !important;
-  border-color: rgba(34,211,238,0.22) !important;
-}
-
-.labrat-product-grid-v2 .labrat-strength-console {
-  background:
-    linear-gradient(135deg, rgba(2,6,23,0.68), rgba(15,23,42,0.52)) !important;
-  border: 1px solid rgba(34,211,238,0.14) !important;
-}
-
-.labrat-product-grid-v2 .labrat-product-buybar {
-  min-height: 5.6rem;
-  background: linear-gradient(90deg, rgba(2,6,23,0.96), rgba(8,47,73,0.32), rgba(2,6,23,0.96)) !important;
-}
-
-.labrat-product-grid-v2 .labrat-product-buybar button:not(:disabled) {
-  min-height: 2.65rem;
-  padding-inline: 1rem !important;
-  border-radius: 999px !important;
-}
-
-html[data-labrat-theme="clinical"] .labrat-inventory-vault-header,
-html[data-labrat-theme="clinical"] .labrat-product-grid-v2 .labrat-product-card {
-  background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(2,6,23,0.96)) !important;
-  border-color: rgba(96,165,250,0.22) !important;
-  box-shadow: 0 18px 44px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.045) !important;
-}
-
-html[data-labrat-theme="clinical"] .labrat-product-grid-v2 .labrat-product-vial-stage {
-  background:
-    radial-gradient(circle at 50% 45%, rgba(96,165,250,0.18), transparent 30%),
-    linear-gradient(180deg, rgba(15,23,42,0.48), rgba(2,6,23,0.82)) !important;
-}
-
 @media (max-width: 760px) {
-  .labrat-inventory-vault-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .labrat-vault-header-tags {
-    justify-content: flex-start;
-    min-width: 0;
-  }
-  .labrat-product-grid-v2 .labrat-product-card {
-    min-height: 0 !important;
-  }
+  .labrat-product-vial-stage-v3 { min-height: 250px !important; }
+  .labrat-v3-product-scene { grid-template-columns: 0.7fr 1fr 0.62fr; gap: 4px; min-height: 205px; }
+  .labrat-v3-carton { width: 68px; height: 125px; }
+  .labrat-v3-vial-wrap { transform: scale(0.86) translateY(14px); }
+  .labrat-v3-coa-card { width: 64px; height: 105px; padding: 8px; }
+  .labrat-v3-bottom-strip { font-size: 7px; }
 }

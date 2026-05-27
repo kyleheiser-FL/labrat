@@ -123,171 +123,89 @@ export interface OrderDetail {
 function ProductVialVisual({ name, category }: { name: string; category: string }) {
   const lowerCat = category.toLowerCase();
   const lowerName = name.toLowerCase();
+  const isSolvent = lowerCat.includes('reconstitution') || lowerCat.includes('solvent') || lowerName.includes('water') || lowerName.includes('bacteriostatic');
 
-  // Consistent dynamic details based on seed
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const serialNo = Math.abs(hash % 9000000) + 1000000;
-  
-  // Dynamic MFG / EXP dates based on the seed
-  const mfgYear = 2024 + Math.abs(hash % 3);
-  const mfgMonth = (Math.abs(hash % 12) + 1).toString().padStart(2, '0');
-  const expYear = mfgYear + 6;
-  const expMonth = mfgMonth;
 
-  // Extract base compound name and dose
-  let firstWord = 'Peptide';
-  let remainingWords = '';
-  
+  const serialNo = Math.abs(hash % 9000000) + 1000000;
   const cleanFullName = name.replace(/\(.*?\)/g, '').trim();
   const nameParts = cleanFullName.split(' ');
-  if (nameParts.length > 0) {
-    firstWord = nameParts[0];
-    remainingWords = nameParts.slice(1).join(' ');
-  }
-
-  // Get dynamic dosage
+  const firstWord = nameParts[0] || 'Peptide';
+  const remainingWords = nameParts.slice(1).join(' ');
   const capMatch = name.match(/(\d+\s*m?g|\d+\s*m?l)/i);
-  const sizeValue = capMatch ? capMatch[1].trim() : '10 mg';
-  const labelType = lowerCat.includes('solvent') || lowerName.includes('water') ? 'Bottle' : 'Vial';
-  const dosageBadge = `${labelType}, ${sizeValue}`;
-
-  // White or off-white lyophilized powder cake for research peptides, clear liquid tint for solvents
-  const isSolvent = lowerCat.includes('reconstitution') || lowerCat.includes('solvent') || lowerName.includes('water') || lowerName.includes('bacteriostatic');
-  const cakeColor = isSolvent
-    ? 'bg-blue-400/10'
-    : 'bg-gradient-to-t from-neutral-100 via-white to-zinc-200/40 shadow-[inset_0_1px_2px_rgba(255,255,255,0.7)]';
+  const sizeValue = capMatch ? capMatch[1].trim() : (isSolvent ? '30 ml' : '10 mg');
+  const accentIndex = Math.abs(hash % 4);
+  const accentClass = [
+    'from-cyan-400 via-blue-500 to-violet-500',
+    'from-emerald-300 via-cyan-400 to-blue-500',
+    'from-sky-300 via-indigo-400 to-purple-500',
+    'from-teal-300 via-cyan-500 to-fuchsia-500'
+  ][accentIndex];
 
   return (
-    <div className="labrat-product-vial-stage w-full h-44 bg-[#02050f]/60 border-b border-[#1e293b]/50 p-4 flex items-center justify-center relative overflow-hidden select-none">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_0.5px,transparent_0.5px),linear-gradient(to_bottom,#0f172a_0.5px,transparent_0.5px)] bg-[size:1rem_1rem] opacity-35" />
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#2176ff]/20 to-transparent" />
-      <div className="absolute w-32 h-32 bg-[#2176ff]/10 rounded-full blur-3xl pointer-events-none -translate-y-4" />
-      
-      {/* Peptide Vial Container */}
-      <div className="relative w-24 flex flex-col items-center group-hover:scale-105 transition-transform duration-300">
-        
-        {/* Cap top flip tab (sleek metallic matte white flipping cover) */}
-        <div className="w-10 h-1.5 rounded-t-sm bg-gradient-to-b from-white via-neutral-100 to-zinc-300 border-b border-black/30 z-20 shadow-sm" />
-        
-        {/* Metal flipoff seal middle */}
-        <div className="w-11 h-3 rounded-md bg-gradient-to-b from-neutral-200 via-neutral-50 to-neutral-400 border-b border-black/40 z-20 flex items-center justify-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]">
-          <div className="w-5 h-0.5 bg-white/20 rounded-full" />
-        </div>
-        
-        {/* Aluminum seal neck flange */}
-        <div className="w-8 h-1.5 bg-gradient-to-b from-slate-400 via-zinc-200 to-slate-500 border-x border-slate-600 z-10 shadow-[inset_0_-1px_1px_rgba(0,0,0,0.3)]" />
-        
-        {/* Glass Neck */}
-        <div className="w-6 h-2 bg-white/[0.08] border-x border-white/25 relative z-10" />
-        
-        {/* Shoulder */}
-        <div className="w-16 h-2 bg-gradient-to-b from-white/12 to-white/5 border-t border-x border-white/25 rounded-t-lg relative z-10" />
- 
-        {/* Main Glass Body */}
-        <div className="w-16 h-28 bg-white/[0.02] border-x border-b border-white/30 rounded-b-xl relative shadow-[0_12px_24px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col justify-between p-1 z-10">
-          
-          {/* Glass glare highlight layers */}
-          <div className="absolute inset-y-0 left-[2px] w-[1.5px] bg-gradient-to-r from-white/25 to-transparent pointer-events-none z-30" />
-          <div className="absolute inset-y-0 right-[2px] w-[0.5px] bg-white/15 pointer-events-none z-30" />
-          <div className="absolute top-0 inset-x-0 h-1 bg-white/5 pointer-events-none z-30" />
-          <div className="absolute inset-y-0 left-[6px] w-[2px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent pointer-events-none z-30" />
-          
-          {/* Lyophilized active substance dry cake or liquid fill at bottom */}
-          {isSolvent ? (
-            <div className="absolute bottom-0 inset-x-0 h-6 bg-sky-400/10 border-t border-sky-400/20 rounded-b-xl flex items-end">
-              <div className="w-full h-[0.5px] bg-sky-300/15" />
-            </div>
-          ) : (
-            <div className={`absolute bottom-0.5 inset-x-[1.5px] h-5 ${cakeColor} border-t border-white/25 rounded-t-[3px] rounded-b-[10px] flex flex-col justify-end overflow-hidden`}>
-              <div className="h-[1px] bg-white/40 opacity-45 blur-[0.2px]" />
-            </div>
-          )}
- 
-          {/* LABRAT Custom wrapped label */}
-          <div className="absolute top-[4px] bottom-[16px] inset-x-0 flex flex-col z-20 border-y border-black/10 shadow-[0_2px_4px_rgba(0,0,0,0.35)]">
-            
-            {/* Top half label (Solid black band) */}
-            <div className="h-[43px] bg-[#020202] flex flex-col justify-center px-1 border-b border-black/80 relative">
-              
-              {/* LABRAT branding logo in custom premium text styling */}
-              <div className="flex flex-col items-center justify-center -mt-0.5 scale-[0.88]">
-                <span 
-                  className="text-[6.5px] font-black tracking-tighter uppercase leading-none block font-sans bg-gradient-to-r from-[#00c5f5] via-[#2176ff] to-[#a05eff] bg-clip-text text-transparent italic"
-                  style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-                >
-                  LABRAT
-                </span>
-                <div className="w-full h-[0.5px] bg-[#00c5f5] mt-[0.5px] opacity-75" />
-              </div>
- 
-              {/* Dynamic Compound Name - Cyan theme */}
-              <div className="text-center mt-[1px] leading-none truncate px-[0.5px]">
-                <span className="text-[4.2px] font-black text-[#00c5f5] tracking-tight uppercase leading-none block truncate">
-                  {firstWord}
-                </span>
-                {remainingWords ? (
-                  <span className="text-[2.2px] font-bold text-slate-300 leading-none block mt-[0.5px] truncate">
-                    {remainingWords}
-                  </span>
-                ) : null}
-              </div>
- 
-              {/* Pill-shaped silver dosage sub-badge */}
-              <div className="mx-auto mt-[1.5px] scale-[0.8] origin-top bg-gradient-to-r from-slate-300 via-neutral-100 to-slate-400 border border-slate-500/20 rounded-[1.5px] px-[1px] py-[0.5px]">
-                <span className="text-[1.8px] font-black text-slate-950 uppercase tracking-wide block leading-none whitespace-nowrap">
-                  {dosageBadge}
-                </span>
-              </div>
- 
-            </div>
- 
-            {/* Bottom half label (Brushed Metallic Silver foil) */}
-            <div className="flex-1 bg-gradient-to-r from-slate-300 via-neutral-100 to-slate-400 border-t border-slate-400/40 flex flex-col justify-between p-0.5 relative overflow-hidden text-neutral-950">
-              
-              {/* Giant transparent watermarked "LR" monogram logo graphic in background */}
-              <div className="absolute right-[-1.5px] bottom-[-2.5px] text-[24px] font-extrabold text-slate-900/10 pointer-events-none italic select-none leading-none tracking-tighter">
-                LR
-              </div>
- 
-              {/* Standard disclaimer */}
-              <div className="leading-[1.1] scale-[0.8] origin-left-top">
-                <div className="text-[2.2px] font-black text-neutral-900 tracking-tight uppercase">
-                  For Research
-                </div>
-                <div className="text-[2.2px] font-black text-neutral-900 tracking-tight uppercase -mt-[0.5px]">
-                  Use Only
-                </div>
-              </div>
- 
-              {/* Monospace Metadata */}
-              <div className="leading-[1.1] scale-[0.85] origin-left-bottom pb-[0.5px]">
-                <div className="text-[1.6px] font-mono font-bold text-neutral-800 tracking-[0px]">
-                  SN: {serialNo}
-                </div>
-                <div className="text-[1.6px] font-mono font-bold text-neutral-800 tracking-[0px] -mt-[0.2px]">
-                  MFG: {mfgMonth}/{mfgYear}
-                </div>
-                <div className="text-[1.6px] font-mono font-bold text-neutral-800 tracking-[0px] -mt-[0.2px]">
-                  EXP: {expMonth}/{expYear}
-                </div>
-              </div>
- 
-            </div>
- 
+    <div className="labrat-product-vial-stage labrat-product-vial-stage-v3 w-full min-h-[290px] border-b border-cyan-400/10 p-5 relative overflow-hidden select-none">
+      <div className="labrat-v3-grid" aria-hidden="true" />
+      <div className={`labrat-v3-orb bg-gradient-to-br ${accentClass}`} aria-hidden="true" />
+
+      <div className="labrat-v3-cert-panel" aria-hidden="true">
+        <span>NP QA</span>
+        <span>COA</span>
+        <span>LR VIAL</span>
+      </div>
+
+      <div className="labrat-v3-product-scene" aria-label="LabRat branded research vial and COA card visual">
+        <div className="labrat-v3-carton">
+          <div className="labrat-v3-carton-top">LABRAT</div>
+          <div className="labrat-v3-carton-title">{firstWord}</div>
+          <div className="labrat-v3-carton-sub">{remainingWords || category}</div>
+          <div className="labrat-v3-carton-lines">
+            <span />
+            <span />
+            <span />
           </div>
-          
+          <div className="labrat-v3-carton-footer">NORWAY PEPTIDES QA</div>
+        </div>
+
+        <div className="labrat-v3-vial-wrap">
+          <div className="labrat-v3-vial-cap" />
+          <div className="labrat-v3-vial-neck" />
+          <div className="labrat-v3-vial">
+            <div className="labrat-v3-glare" />
+            <div className="labrat-v3-label-black">
+              <span className="labrat-v3-brand">LABRAT</span>
+              <span className="labrat-v3-compound">{firstWord}</span>
+              {remainingWords ? <span className="labrat-v3-compound-sub">{remainingWords}</span> : null}
+            </div>
+            <div className="labrat-v3-label-white">
+              <span>RESEARCH USE ONLY</span>
+              <b>{isSolvent ? 'STERILE DILUENT' : 'LYOPHILIZED PEPTIDE'}</b>
+              <small>SN {serialNo}</small>
+            </div>
+            <div className={isSolvent ? 'labrat-v3-liquid-fill' : 'labrat-v3-powder-cake'} />
+          </div>
+        </div>
+
+        <div className="labrat-v3-coa-card">
+          <div className="labrat-v3-coa-header">COA TRACE</div>
+          <div className="labrat-v3-qr">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="labrat-v3-coa-line" />
+          <div className="labrat-v3-coa-line short" />
+          <div className="labrat-v3-coa-chip">99% QA</div>
         </div>
       </div>
- 
-      {/* 3ml Vial physical scale alert badge */}
-      <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-slate-900/80 border border-[#1e293b]/60 backdrop-blur-sm rounded-full py-0.5 px-2 select-none pointer-events-none z-30">
-        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-        <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider font-mono scale-[0.9]">
-          {category.toLowerCase().includes('solvent') ? '30ml Bottle' : '3ml Vial'}
-        </span>
+
+      <div className="labrat-v3-bottom-strip">
+        <span>{category}</span>
+        <strong>{sizeValue}</strong>
+        <em>{isSolvent ? '30ML BOTTLE' : '3ML VIAL'}</em>
       </div>
     </div>
   );
@@ -3012,21 +2930,8 @@ export default function MembersShop() {
                   });
 
                   return (
-                    <div className="labrat-inventory-vault-section">
-                      <div className="labrat-inventory-vault-header">
-                        <div>
-                          <span className="labrat-page-eyebrow">Certified Inventory Vault</span>
-                          <h3>LabRat-Branded Research Vial Catalog</h3>
-                          <p>Every product card now stages the same inventory as a premium vial tile with Norway Peptides QA, COA trace messaging, active stock, strength selection, and a hardened buy bar.</p>
-                        </div>
-                        <div className="labrat-vault-header-tags" aria-hidden="true">
-                          <span>NP QA</span>
-                          <span>COA</span>
-                          <span>LR VIAL</span>
-                        </div>
-                      </div>
-                      <div className="labrat-product-grid labrat-product-grid-v2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {groupedDisplayItems.map(group => {
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {groupedDisplayItems.map(group => {
                         const prices = group.options.map(o => o.price);
                         const minPrice = Math.min(...prices);
                         const maxPrice = Math.max(...prices);
@@ -3040,7 +2945,7 @@ export default function MembersShop() {
                         return (
                           <div
                             key={group.baseName}
-                            className="labrat-product-card bg-[#0b1329] border border-[#1e293b] hover:border-cyan-500/30 rounded-2xl flex flex-col justify-between hover:shadow-[0_0_20px_rgba(6,182,212,0.04)] transition-all overflow-hidden group text-left"
+                            className="bg-[#0b1329] border border-[#1e293b] hover:border-cyan-500/30 rounded-2xl flex flex-col justify-between hover:shadow-[0_0_20px_rgba(6,182,212,0.04)] transition-all overflow-hidden group text-left"
                           >
                             {/* Tap image to open drawer */}
                             <div 
@@ -3060,7 +2965,7 @@ export default function MembersShop() {
                               <ProductVialVisual name={group.baseName} category={group.category} />
                             </div>
 
-                            <div className="labrat-product-card-body p-5 flex-1 flex flex-col justify-between gap-4">
+                            <div className="p-5 flex-1 flex flex-col justify-between gap-4">
                               {/* Tap text to open drawer */}
                               <div
                                 onClick={() => {
@@ -3112,15 +3017,9 @@ export default function MembersShop() {
                                 <p className="text-xs text-slate-400 mt-2 leading-normal min-h-[54px] line-clamp-3">
                                   {getCleanDescription(firstOption?.description)}
                                 </p>
-
-                                <div className="labrat-product-assurance-grid" aria-label="LabRat product quality summary">
-                                  <span><BadgeCheck className="w-3.5 h-3.5" /> Norway Peptides QA</span>
-                                  <span><Shield className="w-3.5 h-3.5" /> COA / batch trace</span>
-                                  <span><Package className="w-3.5 h-3.5" /> LabRat vial label</span>
-                                </div>
                               </div>
 
-                              <div className="labrat-strength-console border-t border-slate-800/50 pt-3 mt-1">
+                              <div className="border-t border-slate-800/50 pt-3 mt-1">
                                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Available Strengths:</span>
                                 <div className="flex flex-wrap gap-1.5">
                                   {group.options.map(opt => {
@@ -3163,7 +3062,7 @@ export default function MembersShop() {
                               const isOutOfStock = getProductAvailableStock(activeProduct.id, activeProduct.inventory) <= 0;
 
                               return (
-                                <div className="labrat-product-buybar bg-slate-950 border-t border-[#1e293b]/70 p-4 flex items-center justify-between gap-4">
+                                <div className="bg-slate-950 border-t border-[#1e293b]/70 p-4 flex items-center justify-between gap-4">
                                   <div className="flex flex-col text-left flex-1 min-w-0 pr-1">
                                     <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider truncate block">
                                       Research Price ({getProductBaseAndSize(activeProduct.name).size || 'each'})
@@ -3201,7 +3100,6 @@ export default function MembersShop() {
                           </div>
                         );
                       })}
-                      </div>
                     </div>
                   );
                 })()
@@ -3242,7 +3140,7 @@ export default function MembersShop() {
                     </button>
                   </div>
                 ) : (
-                  <div className="labrat-cart-panel bg-[#10172a]/40 border border-[#1e293b]/80 rounded-2xl divide-y divide-[#1e293b]/50">
+                  <div className="bg-[#10172a]/40 border border-[#1e293b]/80 rounded-2xl divide-y divide-[#1e293b]/50">
                     {cart.map(item => (
                       <div key={item.product.id} className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="max-w-xs text-left">
