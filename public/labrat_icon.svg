@@ -1,4 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="LabRat icon">
-  <rect width="512" height="512" rx="96" fill="#020611"/>
-  <text x="256" y="332" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="230" font-weight="700" fill="#27c7e7">LR</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#1e2a44"/></linearGradient></defs><rect width="512" height="512" rx="108" fill="url(#g)"/><rect x="42" y="42" width="428" height="428" rx="88" fill="none" stroke="#67e8f9" stroke-opacity=".55" stroke-width="10"/><text x="256" y="308" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="178" font-weight="900" fill="#f8fafc">LR</text><rect x="154" y="346" width="204" height="12" rx="6" fill="#22d3ee"/></svg>
