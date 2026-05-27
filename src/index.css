@@ -966,16 +966,17 @@ html[data-labrat-theme="clinical"] .labrat-real-vial-chip-row span {
 }
 .labrat-real-vial-photo-frame {
   position: relative;
-  width: min(100%, 240px);
+  width: min(100%, 252px);
   margin-inline: auto;
 }
 .labrat-real-vial-photo {
   display: block;
   width: 100%;
-  max-width: 240px;
+  max-width: 252px;
   margin-inline: auto;
   border-radius: 1rem;
-  box-shadow: 0 25px 55px rgba(2, 6, 23, 0.7), 0 0 45px rgba(34, 211, 238, 0.12);
+  box-shadow: 0 25px 55px rgba(2, 6, 23, 0.6), 0 0 45px rgba(34, 211, 238, 0.12);
+  object-fit: cover;
 }
 .labrat-real-vial-overlay-card {
   position: absolute;
@@ -984,7 +985,7 @@ html[data-labrat-theme="clinical"] .labrat-real-vial-chip-row span {
   bottom: 12px;
   border-radius: 1rem;
   padding: 0.75rem 0.8rem;
-  background: linear-gradient(180deg, rgba(2, 6, 23, 0.28), rgba(2, 6, 23, 0.90));
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.18), rgba(2, 6, 23, 0.84));
   border: 1px solid rgba(103, 232, 249, 0.12);
   backdrop-filter: blur(10px);
 }
@@ -1068,7 +1069,7 @@ html[data-labrat-theme="clinical"] .labrat-real-vial-bottom-strip strong {
     min-height: 190px;
   }
   .labrat-real-vial-photo-frame {
-    width: min(100%, 220px);
+    width: min(100%, 232px);
   }
   .labrat-real-vial-overlay-card {
     left: 10px;

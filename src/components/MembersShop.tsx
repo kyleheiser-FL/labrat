@@ -119,17 +119,11 @@ export interface OrderDetail {
   createdAt: any;
 }
 
-// Product Vial Visual Component (CSS + SVG) with dynamic colors and interactive "LABRAT" front labeling mimicking the uploaded high-quality vial mockup
-// Product Vial Visual Component using real-looking 3ml vial product photos and simplified branding
+// Product Vial Visual Component using photo-real branded vial assets for both Neon and Clinical themes
 function ProductVialVisual({ name, category }: { name: string; category: string }) {
   const lowerCat = category.toLowerCase();
   const lowerName = name.toLowerCase();
   const isSolvent = lowerCat.includes('reconstitution') || lowerCat.includes('solvent') || lowerName.includes('water') || lowerName.includes('bacteriostatic');
-
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
 
   const cleanFullName = name.replace(/\(.*?\)/g, '').trim();
   const nameParts = cleanFullName.split(' ');
@@ -138,7 +132,6 @@ function ProductVialVisual({ name, category }: { name: string; category: string 
   const sizeMatch = name.match(/(\d+\s*m?g|\d+\s*m?l)/i);
   const sizeValue = sizeMatch ? sizeMatch[1].trim() : (isSolvent ? '30 ml' : '10 mg');
   const imageSrc = isSolvent ? '/shop/labrat-real-vial-solvent.png' : '/shop/labrat-real-vial-peptide.png';
-  const rotation = (hash % 6) - 3;
   const glowClass = isSolvent ? 'labrat-real-vial-visual--solvent' : 'labrat-real-vial-visual--peptide';
 
   return (
@@ -158,7 +151,6 @@ function ProductVialVisual({ name, category }: { name: string; category: string 
             src={imageSrc}
             alt={`${cleanFullName} LabRat branded research vial`}
             className="labrat-real-vial-photo"
-            style={{ transform: `rotate(${rotation}deg)` }}
             loading="lazy"
           />
           <div className="labrat-real-vial-overlay-card">
@@ -176,7 +168,7 @@ function ProductVialVisual({ name, category }: { name: string; category: string 
       <div className="labrat-real-vial-bottom-strip">
         <span>{category}</span>
         <strong>{sizeValue}</strong>
-        <em>{isSolvent ? 'REAL LAB BOTTLE' : 'REAL 3ML VIAL'}</em>
+        <em>{isSolvent ? 'STERILE LAB BOTTLE' : 'PHOTO-REAL 3ML VIAL'}</em>
       </div>
     </div>
   );
