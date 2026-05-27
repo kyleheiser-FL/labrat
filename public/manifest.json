@@ -1,14 +1,17 @@
 {
+  {
   "id": "/",
   "name": "LabRat Portal - Advanced Bio-Log & Calculator",
   "short_name": "LabRat",
-  "description": "Securely track peptide & compound cycles, calculate precise reconstitution biochemistry, plan researched schedules, and log biosafety records.",
+  "description": "Securely track peptide and compound cycles, calculate precise reconstitution values, plan schedules, and log biosafety records.",
   "start_url": "/",
   "scope": "/",
-  "display": "standalone",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
   "background_color": "#030712",
-  "theme_color": "#22d3ee",
-  "orientation": "portrait-primary",
+  "theme_color": "#030712",
+  "orientation": "portrait-primary"
+}
   "dir": "ltr",
   "lang": "en-US",
   "categories": [
