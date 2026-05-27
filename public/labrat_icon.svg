@@ -1,1 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#1e2a44"/></linearGradient></defs><rect width="512" height="512" rx="108" fill="url(#g)"/><rect x="42" y="42" width="428" height="428" rx="88" fill="none" stroke="#67e8f9" stroke-opacity=".55" stroke-width="10"/><text x="256" y="308" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="178" font-weight="900" fill="#f8fafc">LR</text><rect x="154" y="346" width="204" height="12" rx="6" fill="#22d3ee"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="LabRat LR icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#23324c"/>
+      <stop offset="55%" stop-color="#102647"/>
+      <stop offset="100%" stop-color="#081731"/>
+    </linearGradient>
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7b8aa3" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#2a3d5f" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="fg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#d6dde8"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000814" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <rect x="14" y="14" width="484" height="484" rx="84" fill="url(#bg)" stroke="url(#stroke)" stroke-width="10"/>
+  <g fill="url(#fg)" filter="url(#shadow)">
+    <path d="M145 124h46v194c0 20 11 31 31 31h110v45H213c-44 0-68-24-68-69V124z"/>
+    <path d="M239 188h120c58 0 97 36 97 86 0 34-19 60-50 73l62 74h-60l-53-66h-53v-45h60c28 0 46-15 46-36 0-22-18-36-46-36H239v-50z"/>
+  </g>
+</svg>

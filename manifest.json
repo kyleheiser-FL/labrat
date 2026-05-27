@@ -6,104 +6,81 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-"background_color": "#030712",
-"theme_color": "#030712"
+  "background_color": "#030712",
+  "theme_color": "#030712",
   "orientation": "any",
   "dir": "ltr",
   "lang": "en-US",
   "categories": ["medical", "health", "fitness", "productivity"],
- "icons": [
-  {
-    "src": "/icon_192.png",
-    "sizes": "192x192",
-    "type": "image/png",
-    "purpose": "any"
-  },
-  {
-    "src": "/icon_512.png",
-    "sizes": "512x512",
-    "type": "image/png",
-    "purpose": "any"
-  },
-  {
-    "src": "/icon_maskable_512.png",
-    "sizes": "512x512",
-    "type": "image/png",
-    "purpose": "maskable"
-  }
- ],
+  "icons": [
+    { "src": "/icon_72.png?v=lr-pro-v1", "sizes": "72x72", "type": "image/png" },
+    { "src": "/icon_96.png?v=lr-pro-v1", "sizes": "96x96", "type": "image/png" },
+    { "src": "/icon_128.png?v=lr-pro-v1", "sizes": "128x128", "type": "image/png" },
+    { "src": "/icon_144.png?v=lr-pro-v1", "sizes": "144x144", "type": "image/png" },
+    { "src": "/icon_152.png?v=lr-pro-v1", "sizes": "152x152", "type": "image/png" },
+    { "src": "/icon_192.png?v=lr-pro-v1", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon_maskable_512.png?v=lr-pro-v1", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon_512.png?v=lr-pro-v1", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ],
   "shortcuts": [
     {
       "name": "Reconstitution Calculator",
       "short_name": "Calculator",
       "description": "Calculate peptide reconstitution volume and syringe doses instantly",
       "url": "/?shortcut=calculator",
-      "icons": [
-        {
-          "src": "/icon_192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
+      "icons": [{ "src": "/icon_192.png?v=lr-pro-v1", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Cycle Planner",
       "short_name": "Planner",
       "description": "Plan your compound schedules and peptide cycles",
       "url": "/?shortcut=planner",
-      "icons": [
-        {
-          "src": "/icon_192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
+      "icons": [{ "src": "/icon_192.png?v=lr-pro-v1", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Members Shop",
       "short_name": "Shop",
       "description": "Browse premium certified inventory",
       "url": "/?shortcut=shop",
-      "icons": [
-        {
-          "src": "/icon_192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
+      "icons": [{ "src": "/icon_192.png?v=lr-pro-v1", "sizes": "192x192", "type": "image/png" }]
     }
   ],
-  "prefer_related_applications": false,
   "screenshots": [
     {
       "src": "/screenshot_tablet.png",
+      "sizes": "1536x2048",
       "type": "image/png",
       "form_factor": "wide",
       "label": "LabRat Portal - Tablet Dashboard"
     },
     {
       "src": "/screenshot_mobile.png",
+      "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "LabRat Portal - Mobile Daily View"
     },
     {
       "src": "/screenshot_cycle.png",
+      "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "LabRat Portal - Cycle Planner"
     },
     {
       "src": "/screenshot_compound.png",
+      "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "LabRat Portal - Compound Encyclopedia"
     },
     {
       "src": "/screenshot_profile.png",
+      "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "LabRat Portal - Health Dossier"
     }
-  ]
+  ],
+  "prefer_related_applications": false
 }
