@@ -155,7 +155,9 @@ function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; c
             src={professionalVialSrc}
             alt={`${cleanFullName} professional LabRat vial presentation`}
             className="absolute inset-0 w-full h-full object-contain object-top p-2.5"
-            loading="lazy"
+            loading="eager"
+            decoding="async"
+            draggable={false}
           />
 
           <div className="absolute left-3 right-3 bottom-3 rounded-xl border border-slate-300/75 bg-white/88 backdrop-blur-sm shadow-[0_10px_20px_rgba(15,23,42,0.16)] px-3 py-2.5">
@@ -189,7 +191,9 @@ function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; c
             src={neonImageSrc}
             alt={`${cleanFullName} LabRat branded research vial`}
             className="labrat-real-vial-photo"
-            loading="lazy"
+            loading="eager"
+            decoding="async"
+            draggable={false}
           />
           <div className="labrat-real-vial-overlay-card">
             <div className="labrat-real-vial-overlay-brand">LABRAT</div>
@@ -2960,7 +2964,7 @@ export default function MembersShop() {
                                 setSelectedOptionIdInDrawer(activeProdId || firstOption?.id || '');
                                 setDrawerQuantity(1);
                               }}
-                              className="cursor-pointer hover:opacity-95 transition-opacity"
+                              className="cursor-pointer labrat-stable-product-tap"
                             >
                               <ProductVialVisual name={group.baseName} category={group.category} theme={labratTheme} />
                             </div>
@@ -2979,7 +2983,7 @@ export default function MembersShop() {
                                   setSelectedOptionIdInDrawer(activeProdId || firstOption?.id || '');
                                   setDrawerQuantity(1);
                                 }}
-                                className="cursor-pointer hover:opacity-95 transition-opacity"
+                                className="cursor-pointer labrat-stable-product-tap"
                               >
                                 <div className="flex flex-wrap items-center gap-1.5 mb-2">
                                   <span className="px-2 py-0.5 rounded bg-[#1e293b] text-slate-300 text-[10px] font-bold tracking-wider uppercase">
