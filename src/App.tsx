@@ -1483,6 +1483,7 @@ export default function App() {
                   hideShop={hideShop}
                   onToggleHideShop={isHardcompiledAppStore ? undefined : handleToggleHideShop}
                   currentUserEmail={user?.email || null}
+                  onOpenAppearance={() => setShowAppearanceModal(true)}
                 />
               )}
 

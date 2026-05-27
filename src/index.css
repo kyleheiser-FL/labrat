@@ -309,7 +309,7 @@ html:not(.dark) .border-slate-700 {
 }
 
 /* Special notification badge adjustments */
-html:not(.dark) .ring-[#030712] {
+html:not(.dark) .ring-\[\#030712\] {
   --tw-ring-color: #f8fafc !important;
 }
 
