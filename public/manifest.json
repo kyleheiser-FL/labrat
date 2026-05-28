@@ -1,13 +1,13 @@
 {
   "id": "/",
-  "name": "LabRat Portal - Neon Lab",
+  "name": "LabRat Portal - Clinical Dark",
   "short_name": "LabRat",
   "description": "Securely track peptide and compound cycles, calculate precise reconstitution values, plan schedules, and log biosafety records.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#020b12",
-  "theme_color": "#020b12",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "orientation": "any",
   "dir": "ltr",
   "lang": "en-US",
@@ -19,19 +19,19 @@
   ],
   "icons": [
     {
-      "src": "/pwa-icons/lr-neon-192.png?v=lr-neon-20260528",
+      "src": "/pwa-icons/lr-clinical-192.png?v=20260528-live-refine-v2",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/pwa-icons/lr-neon-512.png?v=lr-neon-20260528",
+      "src": "/pwa-icons/lr-clinical-512.png?v=20260528-live-refine-v2",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/pwa-icons/lr-neon-512.png?v=lr-neon-20260528",
+      "src": "/pwa-icons/lr-clinical-512.png?v=20260528-live-refine-v2",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -45,7 +45,7 @@
       "url": "/?shortcut=calculator",
       "icons": [
         {
-          "src": "/pwa-icons/lr-neon-192.png?v=lr-neon-20260528",
+          "src": "/pwa-icons/lr-clinical-192.png?v=20260528-live-refine-v2",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -58,7 +58,7 @@
       "url": "/?shortcut=planner",
       "icons": [
         {
-          "src": "/pwa-icons/lr-neon-192.png?v=lr-neon-20260528",
+          "src": "/pwa-icons/lr-clinical-192.png?v=20260528-live-refine-v2",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -71,7 +71,7 @@
       "url": "/?shortcut=shop",
       "icons": [
         {
-          "src": "/pwa-icons/lr-neon-192.png?v=lr-neon-20260528",
+          "src": "/pwa-icons/lr-clinical-192.png?v=20260528-live-refine-v2",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -80,46 +80,46 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/labrat-neon-wide-dashboard.png?v=20260528-final-screens",
+      "src": "/screenshots/labrat-clinical-wide-dashboard.png?v=20260528-live-refine-v2",
+      "sizes": "1536x952",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LabRat Daily Cockpit in Clinical Dark theme"
+    },
+    {
+      "src": "/screenshots/labrat-clinical-wide-cycle.png?v=20260528-live-refine-v2",
       "sizes": "1536x951",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "LabRat Daily Cockpit in Neon Lab theme"
+      "label": "LabRat Cycle Architect in Clinical Dark theme"
     },
     {
-      "src": "/screenshots/labrat-neon-wide-cycle.png?v=20260528-final-screens",
-      "sizes": "1536x951",
+      "src": "/screenshots/labrat-clinical-wide-compounds.png?v=20260528-live-refine-v2",
+      "sizes": "1536x945",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "LabRat Cycle Architect in Neon Lab theme"
+      "label": "LabRat Compound Encyclopedia in Clinical Dark theme"
     },
     {
-      "src": "/screenshots/labrat-neon-wide-compounds.png?v=20260528-final-screens",
-      "sizes": "1536x951",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "LabRat Compound Encyclopedia in Neon Lab theme"
-    },
-    {
-      "src": "/screenshots/labrat-neon-mobile-dashboard.png?v=20260528-final-screens",
-      "sizes": "773x1536",
+      "src": "/screenshots/labrat-clinical-mobile-dashboard.png?v=20260528-live-refine-v2",
+      "sizes": "789x1536",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "LabRat mobile Daily Cockpit in Neon Lab theme"
+      "label": "LabRat mobile Daily Cockpit in Clinical Dark theme"
     },
     {
-      "src": "/screenshots/labrat-neon-mobile-cycle.png?v=20260528-final-screens",
-      "sizes": "782x1536",
+      "src": "/screenshots/labrat-clinical-mobile-cycle.png?v=20260528-live-refine-v2",
+      "sizes": "796x1536",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "LabRat mobile Cycle Architect in Neon Lab theme"
+      "label": "LabRat mobile Cycle Architect in Clinical Dark theme"
     },
     {
-      "src": "/screenshots/labrat-neon-mobile-compounds.png?v=20260528-final-screens",
-      "sizes": "795x1536",
+      "src": "/screenshots/labrat-clinical-mobile-compounds.png?v=20260528-live-refine-v2",
+      "sizes": "794x1536",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "LabRat mobile Compound Encyclopedia in Neon Lab theme"
+      "label": "LabRat mobile Compound Encyclopedia in Clinical Dark theme"
     }
   ],
   "prefer_related_applications": false

@@ -224,7 +224,7 @@ export default function App() {
 
     // Keep the PWA manifest aligned with the selected theme before Chrome builds the install prompt.
     // Neon theme uses the neon LR launcher; Clinical Dark uses the stock clinical LR launcher.
-    const manifestHref = labratTheme === 'neon' ? '/manifest-neon.json?v=lr-neon-final-20260528-screens' : '/manifest-clinical.json?v=lr-clinical-final-20260528-screens';
+    const manifestHref = labratTheme === 'neon' ? '/manifest-neon.json?v=lr-neon-final-20260528-live-refine-v2' : '/manifest-clinical.json?v=lr-clinical-final-20260528-live-refine-v2';
     let manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     if (!manifestLink) {
       manifestLink = document.createElement('link');
@@ -375,7 +375,7 @@ export default function App() {
   }, []);
 
   const handleInstallApp = async () => {
-    const manifestHref = labratTheme === 'neon' ? '/manifest-neon.json?v=lr-neon-final-20260528-screens' : '/manifest-clinical.json?v=lr-clinical-final-20260528-screens';
+    const manifestHref = labratTheme === 'neon' ? '/manifest-neon.json?v=lr-neon-final-20260528-live-refine-v2' : '/manifest-clinical.json?v=lr-clinical-final-20260528-live-refine-v2';
     const manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     manifestLink?.setAttribute('href', manifestHref);
     safeLocalStorage.setItem('labrat_pwa_icon_theme', labratTheme);
@@ -1683,14 +1683,24 @@ export default function App() {
                   Install this offline-synchronized web register directly to your device home screen. The install icon and preview screenshots follow your current LabRat theme: Clinical uses the stock LR icon, Neon uses the neon LR icon.
                 </p>
 
-                <div className="labrat-pwa-theme-preview" aria-label="Theme-matched PWA install preview">
-                  <img
-                    src={labratTheme === 'neon' ? '/screenshots/labrat-neon-mobile-dashboard.png?v=20260528-final-screens' : '/screenshots/labrat-clinical-mobile-dashboard.png?v=20260528-final-screens'}
-                    alt={labratTheme === 'neon' ? 'Neon Lab mobile app preview' : 'Clinical Dark mobile app preview'}
-                  />
+                <div className="labrat-pwa-theme-preview labrat-pwa-theme-preview--gallery" aria-label="Theme-matched PWA install preview screenshots">
+                  <div className="labrat-pwa-preview-strip">
+                    <img
+                      src={labratTheme === 'neon' ? '/screenshots/labrat-neon-mobile-dashboard.png?v=20260528-live-refine-v2' : '/screenshots/labrat-clinical-mobile-dashboard.png?v=20260528-live-refine-v2'}
+                      alt={labratTheme === 'neon' ? 'Neon Lab mobile Daily Cockpit preview' : 'Clinical Dark mobile Daily Cockpit preview'}
+                    />
+                    <img
+                      src={labratTheme === 'neon' ? '/screenshots/labrat-neon-mobile-cycle.png?v=20260528-live-refine-v2' : '/screenshots/labrat-clinical-mobile-cycle.png?v=20260528-live-refine-v2'}
+                      alt={labratTheme === 'neon' ? 'Neon Lab mobile Cycle Architect preview' : 'Clinical Dark mobile Cycle Architect preview'}
+                    />
+                    <img
+                      src={labratTheme === 'neon' ? '/screenshots/labrat-neon-mobile-compounds.png?v=20260528-live-refine-v2' : '/screenshots/labrat-clinical-mobile-compounds.png?v=20260528-live-refine-v2'}
+                      alt={labratTheme === 'neon' ? 'Neon Lab mobile Compound Encyclopedia preview' : 'Clinical Dark mobile Compound Encyclopedia preview'}
+                    />
+                  </div>
                   <div>
                     <span>{labratTheme === 'neon' ? 'Neon Blue/Green Preview' : 'Clinical Dark Preview'}</span>
-                    <strong>{labratTheme === 'neon' ? 'Neon LR install icon + neon app screenshots' : 'Clinical LR install icon + clinical app screenshots'}</strong>
+                    <strong>{labratTheme === 'neon' ? 'Neon LR install icon + three live neon app screenshots' : 'Clinical LR install icon + three live clinical app screenshots'}</strong>
                   </div>
                 </div>
 
