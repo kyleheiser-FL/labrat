@@ -329,7 +329,6 @@ export default function App() {
   // PWA Setup & Home-Screen Install Prompt registers
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isStandalone, setIsStandalone] = useState(false);
-  const [showInstallModal, setShowInstallModal] = useState(false);
 
   // Email & Password Auth States
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -390,7 +389,12 @@ export default function App() {
         setDeferredPrompt(null);
       }
     } else {
-      setShowInstallModal(true);
+      triggerNotification(
+        'Install LabRat',
+        'Use your browser address-bar install icon or browser menu to install LabRat.',
+        'info',
+        false
+      );
     }
   };
 
@@ -1505,7 +1509,6 @@ export default function App() {
               )}
 
 
-
               {activeTab === 'library' && (
                 <PeptideLibrary
                   onAddToCycle={handleAddLibraryItemToCycle}
@@ -1637,113 +1640,6 @@ export default function App() {
                     Close
                   </button>
                 </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Progressive Web App (PWA) Install Guide Modal */}
-      <AnimatePresence>
-        {showInstallModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-[#020617]/85 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto"
-            id="pwa-install-overlay"
-            onClick={() => setShowInstallModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, y: 15 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 10 }}
-              className="bg-[#0f172a] border border-cyan-500/20 rounded-2xl p-5 sm:p-7 w-full max-w-md shadow-2xl relative space-y-5 my-6 leading-relaxed text-slate-200 font-mono"
-              id="pwa-install-card"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header Title Accent */}
-              <div className="flex items-start gap-3.5 pb-4 border-b border-[#1e293b] text-cyan-400">
-                <div className="p-2.5 bg-cyan-950/40 border border-cyan-500/30 rounded-2xl shadow-[0_0_15px_rgba(6,182,212,0.15)] flex items-center justify-center shrink-0">
-                  <Smartphone className="w-5 h-5 text-cyan-400" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-black uppercase tracking-widest font-mono text-cyan-400">
-                    Install LabRat
-                  </h4>
-                  <p className="text-[10px] text-slate-400 font-medium uppercase font-mono mt-0.5">
-                    Progressive Web App • Theme-Matched Icon
-                  </p>
-                </div>
-              </div>
-
-              {/* Informational Guidelines list */}
-              <div className="space-y-4 text-xs text-slate-300">
-                <p className="leading-relaxed text-[11px] text-slate-400">
-                  Install this offline-synchronized web register directly to your device home screen. The install icon and preview screenshots follow your current LabRat theme: Clinical uses the stock LR icon, Neon uses the neon LR icon.
-                </p>
-
-                <div className="labrat-pwa-theme-preview labrat-pwa-theme-preview--gallery" aria-label="Theme-matched PWA install preview screenshots">
-                  <div className="labrat-pwa-preview-strip">
-                    <img
-                      src={labratTheme === 'neon' ? '/screenshots/labrat-neon-mobile-dashboard.png?v=20260528-live-refine-v2' : '/screenshots/labrat-clinical-mobile-dashboard.png?v=20260528-live-refine-v2'}
-                      alt={labratTheme === 'neon' ? 'Neon Lab mobile Daily Cockpit preview' : 'Clinical Dark mobile Daily Cockpit preview'}
-                    />
-                    <img
-                      src={labratTheme === 'neon' ? '/screenshots/labrat-neon-mobile-cycle.png?v=20260528-live-refine-v2' : '/screenshots/labrat-clinical-mobile-cycle.png?v=20260528-live-refine-v2'}
-                      alt={labratTheme === 'neon' ? 'Neon Lab mobile Cycle Architect preview' : 'Clinical Dark mobile Cycle Architect preview'}
-                    />
-                    <img
-                      src={labratTheme === 'neon' ? '/screenshots/labrat-neon-mobile-compounds.png?v=20260528-live-refine-v2' : '/screenshots/labrat-clinical-mobile-compounds.png?v=20260528-live-refine-v2'}
-                      alt={labratTheme === 'neon' ? 'Neon Lab mobile Compound Encyclopedia preview' : 'Clinical Dark mobile Compound Encyclopedia preview'}
-                    />
-                  </div>
-                  <div>
-                    <span>{labratTheme === 'neon' ? 'Neon Blue/Green Preview' : 'Clinical Dark Preview'}</span>
-                    <strong>{labratTheme === 'neon' ? 'Neon LR install icon + three live neon app screenshots' : 'Clinical LR install icon + three live clinical app screenshots'}</strong>
-                  </div>
-                </div>
-
-                <div className="bg-[#030712]/60 border border-slate-800 rounded-xl p-3.5 space-y-3">
-                  <span className="text-cyan-400 font-bold text-[10px] tracking-wider block uppercase">Device Specific Instructions</span>
-                  
-                  <div className="space-y-2 text-[11px] leading-relaxed">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-cyan-500 font-bold font-sans">Apple iOS (Safari):</span>
-                      <p className="text-slate-300">
-                        1. Tap the <span className="text-cyan-400 font-bold underline">Share</span> button in Safari's bottom toolbar.<br />
-                        2. Scroll down and touch <strong className="text-slate-100 font-sans">"Add to Home Screen"</strong>.<br />
-                        3. Customize the app name & confirm install.
-                      </p>
-                    </div>
-                    <hr className="border-slate-800/60" />
-                    <div className="flex flex-col gap-1">
-                      <span className="text-cyan-500 font-bold font-sans">Android (Chrome):</span>
-                      <p className="text-slate-300">
-                        1. Tap Browser Menu <strong className="text-slate-100">(three vertical dots)</strong>.<br />
-                        2. Select <strong className="text-slate-100 font-sans">"Install App"</strong> or <strong className="text-slate-100 font-sans">"Add to Home screen"</strong>.
-                      </p>
-                    </div>
-                    <hr className="border-slate-800/60" />
-                    <div className="flex flex-col gap-1">
-                      <span className="text-cyan-500 font-bold font-sans">Desktop (Chrome/Edge):</span>
-                      <p className="text-slate-300">
-                        1. Click the <strong className="text-cyan-400 font-sans">Install icon</strong> inside the browser's URL address bar, or click Menu and select <strong className="text-slate-100 font-sans">"Install LabRat"</strong>.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions Section */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#1e293b]">
-                <button
-                  onClick={() => setShowInstallModal(false)}
-                  className="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-xs transition cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.15)] w-full text-center font-sans tracking-wide"
-                  id="pwa-install-close-btn"
-                >
-                  Acknowledge & Close
-                </button>
               </div>
             </motion.div>
           </motion.div>
