@@ -55,6 +55,7 @@ import {
 } from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { 
+import "./labratProtocolIconFallback";
   fetchUserCompounds, 
   saveUserCompound, 
   deleteUserCompound,
