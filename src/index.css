@@ -1467,3 +1467,194 @@ html[data-labrat-theme="neon"] #preset-card-jitter-rescue img {
     border-radius: 1.25rem !important;
   }
 }
+
+
+/* Final cockpit hero/logo + PWA preview polish (2026-05-28)
+   Keeps header logos intact, normalizes right-side rat art on tablet/desktop/phone,
+   and lets the title/copy overlap above the rat art cleanly. */
+.labrat-command-hero {
+  isolation: isolate !important;
+  overflow: hidden !important;
+}
+.labrat-command-hero-copy {
+  position: relative !important;
+  z-index: 3 !important;
+  max-width: min(760px, 62%) !important;
+}
+.labrat-command-hero-art {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  display: block !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+}
+.labrat-command-hero-art::before {
+  position: absolute !important;
+  right: clamp(-7.5rem, -5vw, -3.5rem) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: clamp(280px, 40vw, 560px) !important;
+  height: clamp(280px, 40vw, 560px) !important;
+}
+.labrat-command-hero-art img {
+  position: absolute !important;
+  right: clamp(-7.25rem, -3.5vw, -2rem) !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  width: clamp(300px, 39vw, 540px) !important;
+  max-width: none !important;
+  max-height: none !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+html[data-labrat-theme="clinical"] .labrat-command-hero-art img {
+  opacity: .38 !important;
+  filter: grayscale(.92) saturate(.70) contrast(1.16) brightness(.56) drop-shadow(0 24px 36px rgba(0,0,0,.62)) !important;
+}
+html[data-labrat-theme="neon"] .labrat-command-hero-art img {
+  opacity: .52 !important;
+  filter: saturate(1.2) contrast(1.08) drop-shadow(0 0 28px rgba(0,216,255,.44)) drop-shadow(0 0 30px rgba(57,255,20,.18)) !important;
+}
+
+/* Header logo/wordmark stability on tablet and phone. */
+#app-header .labrat-brand-wordmark {
+  white-space: nowrap !important;
+}
+#app-header img[alt="LabRat logo"] {
+  flex: 0 0 auto !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+.labrat-pwa-theme-preview {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: .8rem;
+  align-items: center;
+  padding: .7rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(34, 211, 238, .18);
+  background: rgba(2, 6, 23, .55);
+}
+.labrat-pwa-theme-preview img {
+  width: 86px;
+  height: 122px;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: .8rem;
+  border: 1px solid rgba(148, 163, 184, .18);
+  box-shadow: 0 16px 34px rgba(0,0,0,.35);
+}
+.labrat-pwa-theme-preview span,
+.labrat-pwa-theme-preview strong {
+  display: block;
+}
+.labrat-pwa-theme-preview span {
+  font-size: .62rem;
+  color: #22d3ee;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-weight: 900;
+}
+.labrat-pwa-theme-preview strong {
+  margin-top: .25rem;
+  font-size: .78rem;
+  line-height: 1.3;
+  color: #e2e8f0;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+@media (max-width: 900px) {
+  .labrat-command-hero {
+    display: block !important;
+    min-height: clamp(430px, 78vw, 720px) !important;
+    padding: clamp(1.15rem, 4vw, 2rem) !important;
+  }
+  .labrat-command-hero-copy {
+    max-width: min(430px, 66%) !important;
+  }
+  .labrat-command-hero-art::before {
+    right: clamp(-9rem, -18vw, -5rem) !important;
+    top: 43% !important;
+    width: clamp(300px, 62vw, 520px) !important;
+    height: clamp(300px, 62vw, 520px) !important;
+  }
+  .labrat-command-hero-art img {
+    right: clamp(-10rem, -20vw, -5.5rem) !important;
+    top: 43% !important;
+    width: clamp(320px, 66vw, 560px) !important;
+  }
+  .labrat-command-metrics {
+    max-width: 420px !important;
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #app-header {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  #app-header img[alt="LabRat logo"] {
+    width: 3.7rem !important;
+    height: 3.7rem !important;
+    border-radius: 1rem !important;
+  }
+  #app-header .labrat-brand-wordmark {
+    font-size: clamp(1.55rem, 8vw, 2.15rem) !important;
+    letter-spacing: -.06em !important;
+  }
+  #app-header #header-indicators-bar {
+    gap: .5rem !important;
+  }
+  .labrat-command-hero {
+    min-height: 660px !important;
+  }
+  .labrat-command-hero-copy {
+    max-width: 64% !important;
+  }
+  .labrat-command-hero-art::before {
+    right: -190px !important;
+    top: 30% !important;
+    width: 430px !important;
+    height: 430px !important;
+  }
+  .labrat-command-hero-art img {
+    right: -205px !important;
+    top: 30% !important;
+    width: 455px !important;
+  }
+  html[data-labrat-theme="clinical"] .labrat-command-hero-art img {
+    opacity: .34 !important;
+  }
+  html[data-labrat-theme="neon"] .labrat-command-hero-art img {
+    opacity: .45 !important;
+  }
+  .labrat-command-hero h2 {
+    font-size: clamp(3.35rem, 16vw, 5rem) !important;
+  }
+  .labrat-command-hero p {
+    font-size: 1.02rem !important;
+    line-height: 1.58 !important;
+  }
+}
+
+@media (max-width: 420px) {
+  #app-header img[alt="LabRat logo"] {
+    width: 3.25rem !important;
+    height: 3.25rem !important;
+  }
+  #app-header .labrat-brand-wordmark {
+    font-size: clamp(1.35rem, 7.4vw, 1.85rem) !important;
+  }
+  .labrat-command-hero-copy {
+    max-width: 68% !important;
+  }
+  .labrat-command-hero-art img {
+    right: -220px !important;
+    width: 440px !important;
+  }
+}

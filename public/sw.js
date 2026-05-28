@@ -1,5 +1,5 @@
 /* LabRat root service worker for PWA install, offline shell, and PWABuilder detection. */
-const CACHE_NAME = "labrat-pwa-v5-theme-icons";
+const CACHE_NAME = "labrat-pwa-v6-theme-screens-hero";
 const APP_SHELL = [
   "/",
   "/index.html",
@@ -15,7 +15,19 @@ const APP_SHELL = [
   "/pwa-icons/lr-neon-192.png",
   "/pwa-icons/lr-neon-512.png",
   "/labrat_hero_rat_dark.png",
-  "/labrat_top_left_logo_transparent.png"
+  "/labrat_top_left_logo_transparent.png",
+  "/screenshots/labrat-neon-wide-dashboard.png",
+  "/screenshots/labrat-neon-wide-cycle.png",
+  "/screenshots/labrat-neon-wide-compounds.png",
+  "/screenshots/labrat-neon-mobile-dashboard.png",
+  "/screenshots/labrat-neon-mobile-cycle.png",
+  "/screenshots/labrat-neon-mobile-compounds.png",
+  "/screenshots/labrat-clinical-wide-dashboard.png",
+  "/screenshots/labrat-clinical-wide-cycle.png",
+  "/screenshots/labrat-clinical-wide-compounds.png",
+  "/screenshots/labrat-clinical-mobile-dashboard.png",
+  "/screenshots/labrat-clinical-mobile-cycle.png",
+  "/screenshots/labrat-clinical-mobile-compounds.png"
 ];
 
 self.addEventListener("install", (event) => {
