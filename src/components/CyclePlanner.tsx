@@ -20,6 +20,7 @@ interface CyclePlannerProps {
   activeFromLibrary?: LibraryItem | null;
   clearActiveFromLibrary?: () => void;
   onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop') => void;
+  labratTheme?: 'neon' | 'clinical';
 }
 
 const PRESET_COLORS = [
@@ -46,7 +47,8 @@ export default function CyclePlanner({
   onResetData,
   activeFromLibrary,
   clearActiveFromLibrary,
-  onNavigateToTab
+  onNavigateToTab,
+  labratTheme = 'neon'
 }: CyclePlannerProps) {
   // Form modal triggers
   const [showForm, setShowForm] = useState(false);
@@ -77,6 +79,9 @@ export default function CyclePlanner({
   // Inline confirmation states (to avoid native browser alert blocks in iframe)
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
   const [confirmingReset, setConfirmingReset] = useState(false);
+
+  const protocolIcon = (name: 'vitamins' | 'joint' | 'estrogen' | 'endocrine') =>
+    `/protocol-icons/${name}-${labratTheme === 'clinical' ? 'clinical' : 'neon'}.svg`;
 
   // Form Fields State
   const [name, setName] = useState('');
@@ -1256,7 +1261,7 @@ export default function CyclePlanner({
                 id: 'vitamins',
                 category: 'Vitamins',
                 title: 'CoQ10 + Omega-3',
-                imgSrc: '/vitamins_icon.png',
+                imgSrc: protocolIcon('vitamins'),
                 themeColorText: 'text-purple-400',
                 themeColorBtn: 'bg-purple-500/10 hover:bg-purple-500/20 border-purple-500/20 text-purple-300',
                 themeColorHoverBorder: 'hover:border-purple-500/30',
@@ -1283,7 +1288,7 @@ export default function CyclePlanner({
                 id: 'joint-health',
                 category: 'Joint Health',
                 title: 'Glucosamine Complex',
-                imgSrc: '/joint_health_icon.png',
+                imgSrc: protocolIcon('joint'),
                 themeColorText: 'text-emerald-400',
                 themeColorBtn: 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/20 text-emerald-300',
                 themeColorHoverBorder: 'hover:border-emerald-500/30',
@@ -1309,7 +1314,7 @@ export default function CyclePlanner({
                 id: 'estrogen-control',
                 category: 'Estrogen Control',
                 title: 'Arimidex AI Shield',
-                imgSrc: '/vitamins_icon.png',
+                imgSrc: protocolIcon('estrogen'),
                 themeColorText: 'text-amber-400',
                 themeColorBtn: 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/20 text-amber-300',
                 themeColorHoverBorder: 'hover:border-amber-500/30',
@@ -1339,7 +1344,7 @@ export default function CyclePlanner({
                 id: 'endocrine-shield',
                 category: 'Endocrine Support',
                 title: 'HCG Endocrine Shield',
-                imgSrc: '/joint_health_icon.png',
+                imgSrc: protocolIcon('endocrine'),
                 themeColorText: 'text-indigo-400',
                 themeColorBtn: 'bg-indigo-500/10 hover:bg-indigo-500/20 border-indigo-500/20 text-indigo-300',
                 themeColorHoverBorder: 'hover:border-indigo-500/30',
@@ -1427,7 +1432,7 @@ export default function CyclePlanner({
                     <img 
                       src={suite.imgSrc} 
                       alt={`${suite.category} Icon`} 
-                      className="w-12 h-12 rounded-lg bg-black/40 border border-[#1e293b]/80 object-cover shrink-0" 
+                      className="w-12 h-12 rounded-lg bg-black/40 border border-[#1e293b]/80 object-contain p-1.5 shrink-0" 
                       referrerPolicy="no-referrer"
                     />
                     <div className="space-y-1 flex-1 text-left">

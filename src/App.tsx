@@ -1474,6 +1474,7 @@ export default function App() {
                   activeFromLibrary={activeFromLibrary}
                   clearActiveFromLibrary={() => setActiveFromLibrary(null)}
                   onNavigateToTab={setActiveTab}
+                  labratTheme={labratTheme}
                 />
               )}
 
