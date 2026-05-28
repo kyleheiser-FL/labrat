@@ -489,7 +489,7 @@ export default function CycleDashboard({
           </div>
         </div>
         <div className="labrat-command-hero-art" aria-hidden="true">
-          <img src={labratTheme === 'clinical' ? '/icon_512.png' : '/labrat_top_left_logo_transparent.png'} alt="" />
+          <img src={labratTheme === 'clinical' ? '/labrat_hero_rat_dark.png' : '/labrat_top_left_logo_transparent.png'} alt="" />
         </div>
       </section>
 

@@ -717,9 +717,9 @@ html[data-labrat-theme="neon"] .labrat-command-hero::before {
 }
 
 html[data-labrat-theme="clinical"] .labrat-command-hero {
-  border-color: rgba(148, 163, 184, 0.22);
-  background: linear-gradient(135deg, rgba(15, 26, 39, 0.98), rgba(11, 22, 35, 0.98)) !important;
-  box-shadow: 0 20px 48px rgba(0,0,0,0.30) !important;
+  border-color: rgba(148, 163, 184, 0.18);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(3, 7, 12, 0.98)) !important;
+  box-shadow: 0 20px 48px rgba(0,0,0,0.42) !important;
 }
 
 .labrat-command-hero-copy { position: relative; z-index: 2; }
@@ -748,10 +748,11 @@ html[data-labrat-theme="clinical"] .labrat-command-eyebrow { color: #93c5fd; bac
 }
 
 html[data-labrat-theme="neon"] .labrat-command-hero h2 {
-  background: linear-gradient(90deg, #f8fafc, #22d3ee 45%, #a78bfa 85%);
+  background: linear-gradient(90deg, #f8fafc 0%, #00d9ff 42%, #39ff14 92%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  text-shadow: 0 0 28px rgba(0, 217, 255, 0.16);
 }
 
 .labrat-command-hero p {
@@ -778,33 +779,49 @@ html[data-labrat-theme="neon"] .labrat-command-hero h2 {
 }
 .labrat-command-metrics strong { display:block; font-size:1.55rem; line-height:1; color:#22d3ee; font-weight:950; }
 html[data-labrat-theme="clinical"] .labrat-command-metrics strong { color:#93c5fd; }
+html[data-labrat-theme="neon"] .labrat-command-metrics div:nth-child(2) { border-color: rgba(57,255,20,.36); box-shadow: inset 0 0 0 1px rgba(57,255,20,.08); }
+html[data-labrat-theme="neon"] .labrat-command-metrics div:nth-child(2) strong { color:#39ff14; }
 .labrat-command-metrics span { display:block; margin-top:.35rem; font-size:.64rem; text-transform:uppercase; letter-spacing:.12em; color:#94a3b8; font-weight:800; }
 
 .labrat-command-hero-art {
-  position: relative;
+  position: absolute;
   z-index: 1;
+  inset: 0;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-  min-height: 190px;
+  pointer-events: none;
+  overflow: hidden;
 }
 .labrat-command-hero-art::before {
   content:"";
   position:absolute;
-  width: 250px;
-  height: 250px;
+  right: clamp(-5rem, -3vw, -1rem);
+  width: min(530px, 48vw);
+  height: min(530px, 48vw);
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(34,211,238,.20), rgba(160,94,255,.14) 42%, transparent 68%);
-  filter: blur(10px);
+  background: radial-gradient(circle, rgba(0,217,255,.18), rgba(57,255,20,.13) 42%, transparent 70%);
+  filter: blur(18px);
+  opacity: .86;
 }
 .labrat-command-hero-art img {
-  position: relative;
-  width: min(280px, 45vw);
-  max-height: 260px;
+  position: absolute;
+  right: clamp(-2.4rem, -1vw, .25rem);
+  bottom: -2rem;
+  width: min(500px, 44vw);
+  max-height: none;
   object-fit: contain;
-  filter: drop-shadow(0 0 30px rgba(34,211,238,.35)) drop-shadow(0 0 40px rgba(160,94,255,.22));
+  opacity: .42;
+  filter: saturate(1.12) contrast(1.04) drop-shadow(0 0 32px rgba(0,217,255,.30)) drop-shadow(0 0 38px rgba(57,255,20,.18));
 }
-html[data-labrat-theme="clinical"] .labrat-command-hero-art { opacity: .18; filter: grayscale(.4); }
+html[data-labrat-theme="clinical"] .labrat-command-hero-art img {
+  opacity: .32;
+  filter: grayscale(.95) contrast(1.12) brightness(.58) drop-shadow(0 0 22px rgba(148,163,184,.14));
+}
+html[data-labrat-theme="clinical"] .labrat-command-hero-art::before {
+  background: radial-gradient(circle, rgba(148,163,184,.10), rgba(30,41,59,.06) 45%, transparent 72%);
+  opacity: .55;
+}
 
 #dashboard-main-grid {
   align-items: start;
@@ -887,9 +904,34 @@ html[data-labrat-theme="clinical"] #daily-checklist-card [id^="checklist-item"] 
 html[data-labrat-theme="clinical"] #members-shop-page::before { color:#93c5fd; background: rgba(96,165,250,.08); border-color: rgba(147,197,253,.20); }
 
 @media (max-width: 900px) {
-  .labrat-command-hero { grid-template-columns: 1fr; }
-  .labrat-command-hero-art { display: none; }
-  .labrat-command-metrics { grid-template-columns: 1fr; }
+  .labrat-command-hero {
+    grid-template-columns: 1fr;
+    min-height: 330px;
+    padding-right: clamp(1rem, 4vw, 1.5rem);
+  }
+  .labrat-command-hero-copy { max-width: 70%; }
+  .labrat-command-hero-art { display: flex; }
+  .labrat-command-hero-art img {
+    width: min(300px, 58vw);
+    right: -2.5rem;
+    bottom: 1rem;
+    opacity: .40;
+  }
+  .labrat-command-hero-art::before {
+    width: min(330px, 62vw);
+    height: min(330px, 62vw);
+    right: -4rem;
+  }
+  .labrat-command-metrics { grid-template-columns: 1fr; max-width: 100%; }
+}
+
+@media (max-width: 520px) {
+  .labrat-command-hero { min-height: 360px; }
+  .labrat-command-hero-copy { max-width: 68%; }
+  .labrat-command-hero h2 { font-size: clamp(2rem, 11vw, 3.15rem); }
+  .labrat-command-hero p { font-size: .8rem; line-height: 1.55; }
+  .labrat-command-hero-art img { width: 64vw; right: -3.2rem; bottom: 4.2rem; opacity: .42; }
+  html[data-labrat-theme="clinical"] .labrat-command-hero-art img { opacity: .28; }
 }
 
 /* SHOP REAL VIALS V5 */

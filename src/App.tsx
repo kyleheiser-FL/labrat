@@ -173,13 +173,8 @@ export default function App() {
   const applyThemeSelection = (theme: LabRatTheme) => {
     setLabratTheme(theme);
 
-    if (theme === 'neon') {
-      setLabratBranding('mascot');
-      safeLocalStorage.setItem('labrat_in_app_branding', 'mascot');
-    } else {
-      setLabratBranding('lr');
-      safeLocalStorage.setItem('labrat_in_app_branding', 'lr');
-    }
+    setLabratBranding('lr');
+    safeLocalStorage.setItem('labrat_in_app_branding', 'lr');
 
     safeLocalStorage.setItem('labrat_ui_theme', theme);
     safeLocalStorage.setItem('labrat_theme_selected', 'true');
@@ -226,6 +221,24 @@ export default function App() {
     safeLocalStorage.setItem('labrat_theme_mode', 'dark');
     safeLocalStorage.setItem('labrat_ui_theme', labratTheme);
     safeLocalStorage.setItem('labrat_in_app_branding', labratBranding);
+
+    // Keep the PWA manifest aligned with the selected theme before Chrome builds the install prompt.
+    // Neon theme uses the neon LR launcher; Clinical Dark uses the stock clinical LR launcher.
+    const manifestHref = labratTheme === 'neon' ? '/manifest-neon.json?v=lr-neon-20260528' : '/manifest-clinical.json?v=lr-clinical-20260528';
+    let manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+    if (!manifestLink) {
+      manifestLink = document.createElement('link');
+      manifestLink.rel = 'manifest';
+      document.head.appendChild(manifestLink);
+    }
+    if (manifestLink.getAttribute('href') !== manifestHref) {
+      manifestLink.setAttribute('href', manifestHref);
+    }
+
+    const themeMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (themeMeta) {
+      themeMeta.setAttribute('content', labratTheme === 'neon' ? '#020b12' : '#000000');
+    }
   }, [labratTheme, labratBranding]);
 
   // Core authenticated user from Firebase
@@ -362,6 +375,14 @@ export default function App() {
   }, []);
 
   const handleInstallApp = async () => {
+    const manifestHref = labratTheme === 'neon' ? '/manifest-neon.json?v=lr-neon-20260528' : '/manifest-clinical.json?v=lr-clinical-20260528';
+    const manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+    manifestLink?.setAttribute('href', manifestHref);
+    safeLocalStorage.setItem('labrat_pwa_icon_theme', labratTheme);
+
+    // Give Chrome a moment to observe the theme-specific manifest before showing the install prompt.
+    await new Promise((resolve) => window.setTimeout(resolve, 160));
+
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const choiceResult = await deferredPrompt.userChoice;
@@ -1134,26 +1155,20 @@ export default function App() {
           <div className="flex flex-row items-center justify-between gap-3">
 {/* Logo Brand Title */}
 <div className="flex items-center gap-2">
-  {labratBranding === 'mascot' && (
-    <img
-      src="/labrat_top_left_logo_transparent.png"
-      alt="LabRat logo"
-      className="h-10 w-10 sm:h-12 sm:w-12 object-contain drop-shadow-[0_0_14px_rgba(34,211,238,0.45)]"
-    />
-  )}
-
-  {labratBranding === 'lr' && (
-    <img
-      src="/icon_192.png"
-      alt="LabRat LR logo"
-      className="h-10 w-10 sm:h-12 sm:w-12 object-contain rounded-xl labrat-lr-brand-mark"
-    />
-  )}
+  <img
+    src={labratTheme === 'neon' ? '/pwa-icons/lr-neon-192.png' : '/pwa-icons/lr-clinical-192.png'}
+    alt="LabRat logo"
+    className={`h-10 w-10 sm:h-12 sm:w-12 object-contain rounded-xl ${
+      labratTheme === 'neon'
+        ? 'drop-shadow-[0_0_16px_rgba(34,211,238,0.55)]'
+        : 'drop-shadow-[0_0_10px_rgba(148,163,184,0.18)]'
+    }`}
+  />
 
   <span
     className={`labrat-brand-wordmark text-2xl sm:text-3xl font-black tracking-tighter font-sans uppercase ${
       labratTheme === 'neon'
-        ? 'bg-gradient-to-r from-[#00c5f5] via-[#2176ff] to-[#a05eff] bg-clip-text text-transparent'
+        ? 'bg-gradient-to-r from-[#00d9ff] via-[#1e88ff] to-[#39ff14] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(34,211,238,0.25)]'
         : 'text-slate-100'
     }`}
   >
@@ -1657,7 +1672,7 @@ export default function App() {
                     Install LabRat
                   </h4>
                   <p className="text-[10px] text-slate-400 font-medium uppercase font-mono mt-0.5">
-                    Progressive Web App • Instant Setup
+                    Progressive Web App • Theme-Matched Icon
                   </p>
                 </div>
               </div>
@@ -1665,7 +1680,7 @@ export default function App() {
               {/* Informational Guidelines list */}
               <div className="space-y-4 text-xs text-slate-300">
                 <p className="leading-relaxed text-[11px] text-slate-400">
-                  Install this offline-synchronized web register directly to your device home screen to access it fullscreen, completely independent of external browser overlays.
+                  Install this offline-synchronized web register directly to your device home screen. The install icon follows your current LabRat theme: Clinical uses the stock LR icon, Neon uses the neon LR icon.
                 </p>
 
                 <div className="bg-[#030712]/60 border border-slate-800 rounded-xl p-3.5 space-y-3">

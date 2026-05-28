@@ -1,13 +1,21 @@
 /* LabRat root service worker for PWA install, offline shell, and PWABuilder detection. */
-const CACHE_NAME = "labrat-pwa-v4";
+const CACHE_NAME = "labrat-pwa-v5-theme-icons";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/manifest.json",
+  "/manifest-neon.json",
+  "/manifest-clinical.json",
   "/labrat_icon.svg",
   "/icon_192.png",
   "/icon_512.png",
-  "/icon_maskable_512.png"
+  "/icon_maskable_512.png",
+  "/pwa-icons/lr-clinical-192.png",
+  "/pwa-icons/lr-clinical-512.png",
+  "/pwa-icons/lr-neon-192.png",
+  "/pwa-icons/lr-neon-512.png",
+  "/labrat_hero_rat_dark.png",
+  "/labrat_top_left_logo_transparent.png"
 ];
 
 self.addEventListener("install", (event) => {
