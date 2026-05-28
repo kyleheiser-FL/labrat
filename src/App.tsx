@@ -419,7 +419,7 @@ export default function App() {
     }, 4500);
   };
 
-  // Password Reset / Account Transition Trigger Actions
+  // Password Reset Trigger Actions
   const handleForgotPassword = async () => {
     const emailStr = authEmail.trim();
     if (!emailStr) {
@@ -2011,7 +2011,7 @@ export default function App() {
                         className="text-[10px] text-cyan-400 hover:text-cyan-300 transition hover:underline cursor-pointer"
                         id="auth-btn-forgot-password"
                       >
-                        Forgot Password / Transition Google Login?
+                        Forgot Password?
                       </button>
                     </div>
                   )}
@@ -2040,22 +2040,6 @@ export default function App() {
                   )}
                 </button>
               </form>
-
-              {/* Developer / Owner Config & Account Transfer Notice */}
-              <div className="bg-[#030712]/40 border border-[#1e293b] p-3.5 rounded-xl space-y-2 text-[10px] leading-relaxed text-slate-400 text-left">
-                <div>
-                  <span className="text-cyan-400 font-bold block uppercase tracking-wider text-[10.5px]">🔄 Transitioning from Google?</span>
-                  <p className="mt-1">
-                    If you originally signed in using Google, simply type your email address above, leave the password blank, and click the <strong>&quot;Forgot Password / Transition Google Login&quot;</strong> link. A secure password setup link will be dispatched directly to your inbox so you can login with your password.
-                  </p>
-                </div>
-                <div className="border-t border-slate-900 pt-2 text-[9.5px]">
-                  <span className="text-slate-400 font-bold block uppercase tracking-wider">🔐 Setup Integration Guide</span>
-                  <p className="mt-0.5">
-                    Ensure the <strong>Email/Password</strong> provider is enabled in Firebase Console (Authentication &rarr; Sign-in method).
-                  </p>
-                </div>
-              </div>
             </motion.div>
           </motion.div>
         )}
