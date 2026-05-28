@@ -1497,6 +1497,8 @@ export default function MembersShop() {
   const [orders, setOrders] = useState<OrderDetail[]>([]);
   const [adminMembersList, setAdminMembersList] = useState<MemberProfile[]>([]);
   const [adminOrdersList, setAdminOrdersList] = useState<OrderDetail[]>([]);
+  const pendingApprovalCount = adminMembersList.filter(member => member.status === 'pending').length;
+  const newOrderCount = adminOrdersList.filter(order => order.status === 'placed').length;
   
   // Loading states
   const [profileLoading, setProfileLoading] = useState(true);
@@ -1772,38 +1774,46 @@ export default function MembersShop() {
   // Loading Admin datasets
   const fetchAdminData = async () => {
     if (!isAdminUser) return;
-    
-    if (view === 'admin_members') {
-      setMembersLoading(true);
-      try {
-        const snap = await getDocs(collection(db, 'members'));
-        const list: MemberProfile[] = [];
-        snap.forEach(docSnap => {
-          list.push({ id: docSnap.id, ...docSnap.data() } as MemberProfile);
-        });
-        setAdminMembersList(list);
-      } catch (e) {
-        console.error('Failed fetching member registrations', e);
-        handleFirestoreError(e, OperationType.LIST, 'members');
-      } finally {
-        setMembersLoading(false);
-      }
-    } else if (view === 'admin_orders') {
-      setOrdersLoading(true);
-      try {
-        const snap = await getDocs(collection(db, 'orders'));
-        const list: OrderDetail[] = [];
-        snap.forEach(docSnap => {
-          list.push({ id: docSnap.id, ...docSnap.data() } as OrderDetail);
-        });
-        list.sort((a, b) => b.id.localeCompare(a.id));
-        setAdminOrdersList(list);
-      } catch (e) {
-        console.error('Failed loading all retail orders', e);
-        handleFirestoreError(e, OperationType.LIST, 'orders');
-      } finally {
-        setOrdersLoading(false);
-      }
+
+    const shouldShowMemberSpinner = view === 'admin_members';
+    const shouldShowOrderSpinner = view === 'admin_orders';
+
+    if (shouldShowMemberSpinner) setMembersLoading(true);
+    if (shouldShowOrderSpinner) setOrdersLoading(true);
+
+    try {
+      const snap = await getDocs(collection(db, 'members'));
+      const list: MemberProfile[] = [];
+      snap.forEach(docSnap => {
+        list.push({ id: docSnap.id, ...docSnap.data() } as MemberProfile);
+      });
+      list.sort((a, b) => {
+        const rank: Record<MemberProfile['status'], number> = { pending: 0, approved: 1, blocked: 2 };
+        const statusRank = rank[a.status] - rank[b.status];
+        if (statusRank !== 0) return statusRank;
+        return (b.updatedAt || b.createdAt || '').toString().localeCompare((a.updatedAt || a.createdAt || '').toString());
+      });
+      setAdminMembersList(list);
+    } catch (e) {
+      console.error('Failed fetching member registrations', e);
+      handleFirestoreError(e, OperationType.LIST, 'members');
+    } finally {
+      if (shouldShowMemberSpinner) setMembersLoading(false);
+    }
+
+    try {
+      const snap = await getDocs(collection(db, 'orders'));
+      const list: OrderDetail[] = [];
+      snap.forEach(docSnap => {
+        list.push({ id: docSnap.id, ...docSnap.data() } as OrderDetail);
+      });
+      list.sort((a, b) => b.id.localeCompare(a.id));
+      setAdminOrdersList(list);
+    } catch (e) {
+      console.error('Failed loading all retail orders', e);
+      handleFirestoreError(e, OperationType.LIST, 'orders');
+    } finally {
+      if (shouldShowOrderSpinner) setOrdersLoading(false);
     }
   };
 
@@ -2379,15 +2389,25 @@ export default function MembersShop() {
                 <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex gap-1 flex-wrap">
                   <button 
                     onClick={() => { triggerHaptic('light'); setView('admin_members'); }}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${view === 'admin_members' ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-slate-400 hover:text-slate-200'}`}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative ${view === 'admin_members' ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-slate-400 hover:text-slate-200'}`}
                   >
-                    Accounts Approval
+                    <span>Accounts Approval</span>
+                    {pendingApprovalCount > 0 && (
+                      <span className="min-w-[1.15rem] h-[1.15rem] px-1 rounded-full bg-red-500 text-white text-[10px] font-black leading-none flex items-center justify-center shadow-[0_0_14px_rgba(239,68,68,0.45)] animate-pulse">
+                        {pendingApprovalCount > 99 ? '99+' : pendingApprovalCount}
+                      </span>
+                    )}
                   </button>
                   <button 
                     onClick={() => { triggerHaptic('light'); setView('admin_orders'); }}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${view === 'admin_orders' ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-slate-400 hover:text-slate-200'}`}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative ${view === 'admin_orders' ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-slate-400 hover:text-slate-200'}`}
                   >
-                    Global Orders
+                    <span>Global Orders</span>
+                    {newOrderCount > 0 && (
+                      <span className="min-w-[1.15rem] h-[1.15rem] px-1 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black leading-none flex items-center justify-center shadow-[0_0_14px_rgba(251,191,36,0.45)] animate-pulse">
+                        {newOrderCount > 99 ? '99+' : newOrderCount}
+                      </span>
+                    )}
                   </button>
                   <button 
                     onClick={() => { triggerHaptic('light'); setView('catalog'); }}
@@ -3801,8 +3821,13 @@ export default function MembersShop() {
           {isAdminUser && view === 'admin_members' && (
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-red-300 flex items-center gap-1.5">
+                <h2 className="text-lg font-bold text-red-300 flex flex-wrap items-center gap-1.5">
                   <Users className="w-5 h-5" /> Vetting &amp; Members Approval Portal
+                  {pendingApprovalCount > 0 && (
+                    <span className="ml-1 rounded-full bg-red-500/15 border border-red-500/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-red-200">
+                      {pendingApprovalCount} pending
+                    </span>
+                  )}
                 </h2>
                 <div className="text-xs text-slate-400">
                   Logged in as Administrator
@@ -3888,8 +3913,13 @@ export default function MembersShop() {
             <div className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-900 pb-4 mb-2">
                 <div>
-                  <h2 className="text-lg font-bold text-red-300 flex items-center gap-1.5">
+                  <h2 className="text-lg font-bold text-red-300 flex flex-wrap items-center gap-1.5">
                     <ClipboardList className="w-5 h-5 text-red-500 animate-pulse" /> Master Retail Partner Orders Console
+                    {newOrderCount > 0 && (
+                      <span className="ml-1 rounded-full bg-amber-400/15 border border-amber-400/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-200">
+                        {newOrderCount} new
+                      </span>
+                    )}
                   </h2>
                   <div className="text-xs text-slate-400 mt-0.5">
                     Verify physical payments, dispatch compounds, and manage cold-chain tracking.
