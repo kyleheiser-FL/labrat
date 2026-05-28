@@ -78,49 +78,5 @@
       ]
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshots/labrat-clinical-wide-dashboard.png?v=20260528-live-refine-v2",
-      "sizes": "1536x952",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "LabRat Daily Cockpit in Clinical Dark theme"
-    },
-    {
-      "src": "/screenshots/labrat-clinical-wide-cycle.png?v=20260528-live-refine-v2",
-      "sizes": "1536x951",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "LabRat Cycle Architect in Clinical Dark theme"
-    },
-    {
-      "src": "/screenshots/labrat-clinical-wide-compounds.png?v=20260528-live-refine-v2",
-      "sizes": "1536x945",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "LabRat Compound Encyclopedia in Clinical Dark theme"
-    },
-    {
-      "src": "/screenshots/labrat-clinical-mobile-dashboard.png?v=20260528-live-refine-v2",
-      "sizes": "789x1536",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "LabRat mobile Daily Cockpit in Clinical Dark theme"
-    },
-    {
-      "src": "/screenshots/labrat-clinical-mobile-cycle.png?v=20260528-live-refine-v2",
-      "sizes": "796x1536",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "LabRat mobile Cycle Architect in Clinical Dark theme"
-    },
-    {
-      "src": "/screenshots/labrat-clinical-mobile-compounds.png?v=20260528-live-refine-v2",
-      "sizes": "794x1536",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "LabRat mobile Compound Encyclopedia in Clinical Dark theme"
-    }
-  ],
   "prefer_related_applications": false
 }
