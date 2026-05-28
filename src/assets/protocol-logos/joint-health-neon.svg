@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 128 128" role="img" aria-label="LabRat JOINT protocol logo neon">
+<defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#111832"/></linearGradient></defs>
+<rect x="8" y="8" width="112" height="112" rx="22" fill="url(#bg)" stroke="#5ee7ff" stroke-opacity=".35" stroke-width="2"/>
+<g filter="url(#glow)">
+        <circle cx="47" cy="48" r="14" fill="#21d19f" opacity=".95"/>
+        <circle cx="81" cy="82" r="14" fill="#21d19f" opacity=".95"/>
+        <path d="M55 56l18 18" stroke="#5ee7ff" stroke-width="15" stroke-linecap="round"/>
+        <path d="M43 84c12-15 28-15 42 0" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity=".75"/></g>
+<text x="64" y="116" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="13" fill="#ffffff" letter-spacing="1.2">JOINT</text>
+<text x="64" y="19" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="9" fill="#21d19f" letter-spacing="1.4">GLU</text>
+</svg>

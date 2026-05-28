@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 128 128" role="img" aria-label="LabRat AI protocol logo clinical">
+<defs><filter id="glow"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".18"/></filter><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7fbff"/><stop offset="1" stop-color="#e9f1f8"/></linearGradient></defs>
+<rect x="8" y="8" width="112" height="112" rx="22" fill="url(#bg)" stroke="#2563eb" stroke-opacity=".35" stroke-width="2"/>
+<g filter="url(#glow)">
+        <path d="M64 25l36 13v27c0 23-15 37-36 46-21-9-36-23-36-46V38z" fill="none" stroke="#b45309" stroke-width="7"/>
+        <path d="M48 48h34M48 64h28M48 80h34" stroke="#2563eb" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="91" cy="36" r="7" fill="#b45309"/></g>
+<text x="64" y="116" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="13" fill="#0f172a" letter-spacing="1.2">AI</text>
+<text x="64" y="19" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="9" fill="#b45309" letter-spacing="1.4">E2</text>
+</svg>
