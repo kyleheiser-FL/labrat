@@ -1548,6 +1548,7 @@ export default function MembersShop() {
   const [editingProduct, setEditingProduct] = useState<ShopProduct | null>(null);
   const [confirmDeleteProductId, setConfirmDeleteProductId] = useState<string | null>(null);
   const [confirmDeleteOrderId, setConfirmDeleteOrderId] = useState<string | null>(null);
+  const [confirmDeleteMemberId, setConfirmDeleteMemberId] = useState<string | null>(null);
   const [productValidationError, setProductValidationError] = useState<string | null>(null);
   const [productForm, setProductForm] = useState({
     name: '',
@@ -1891,6 +1892,22 @@ export default function MembersShop() {
       setAdminMembersList(prev => prev.map(m => m.id === userId ? { ...m, status } : m));
     } catch (e) {
       console.error('Failed to change member privilege', e);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Admin deletion mechanics: removes the user's shop member profile/application.
+  // This does not delete their Firebase Authentication account, which requires server-side admin privileges.
+  const handleDeleteMemberProfile = async (userId: string) => {
+    triggerHaptic('medium');
+    setActionLoading(`member_${userId}_delete`);
+    try {
+      await deleteDoc(doc(db, 'members', userId));
+      setAdminMembersList(prev => prev.filter(m => m.id !== userId));
+      setConfirmDeleteMemberId(current => current === userId ? null : current);
+    } catch (e) {
+      console.error('Failed to delete member profile', e);
     } finally {
       setActionLoading(null);
     }
@@ -3873,12 +3890,12 @@ export default function MembersShop() {
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                      <div className="flex flex-wrap items-center justify-end gap-2 self-end md:self-center shrink-0">
                         {member.status !== 'approved' && (
                           <button
                             onClick={() => handleSetMemberStatus(member.id, 'approved')}
                             disabled={actionLoading !== null}
-                            className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1"
+                            className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <UserCheck className="w-3.5 h-3.5" /> Approve
                           </button>
@@ -3887,7 +3904,7 @@ export default function MembersShop() {
                           <button
                             onClick={() => handleSetMemberStatus(member.id, 'blocked')}
                             disabled={actionLoading !== null}
-                            className="px-3 py-1.5 bg-[#10172a] hover:bg-red-500/10 hover:text-red-300 text-slate-400 text-xs font-bold rounded-lg cursor-pointer border border-slate-800"
+                            className="px-3 py-1.5 bg-[#10172a] hover:bg-red-500/10 hover:text-red-300 text-slate-400 text-xs font-bold rounded-lg cursor-pointer border border-slate-800 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <XCircle className="w-3.5 h-3.5" /> Restrict
                           </button>
@@ -3896,9 +3913,36 @@ export default function MembersShop() {
                           <button
                             onClick={() => handleSetMemberStatus(member.id, 'pending')}
                             disabled={actionLoading !== null}
-                            className="px-2 py-1.5 bg-slate-900 text-slate-400 text-xs hover:text-white rounded-lg cursor-pointer border border-slate-800"
+                            className="px-2 py-1.5 bg-slate-900 text-slate-400 text-xs hover:text-white rounded-lg cursor-pointer border border-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             Reset
+                          </button>
+                        )}
+                        {confirmDeleteMemberId === member.id ? (
+                          <div className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 p-1">
+                            <button
+                              onClick={() => handleDeleteMemberProfile(member.id)}
+                              disabled={actionLoading !== null}
+                              className="px-2 py-1 bg-red-500 text-white text-[10px] font-black uppercase tracking-wide rounded-md cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {actionLoading === `member_${member.id}_delete` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                              Confirm
+                            </button>
+                            <button
+                              onClick={() => setConfirmDeleteMemberId(null)}
+                              disabled={actionLoading !== null}
+                              className="px-2 py-1 text-[10px] font-bold text-slate-300 hover:text-white rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmDeleteMemberId(member.id)}
+                            disabled={actionLoading !== null}
+                            className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-300 text-xs font-bold rounded-lg cursor-pointer border border-red-500/25 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> Delete
                           </button>
                         )}
                       </div>
