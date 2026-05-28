@@ -50,6 +50,7 @@ export default function CyclePlanner({
   onNavigateToTab,
   labratTheme = 'neon'
 }: CyclePlannerProps) {
+  const protocolIcon = (name: string) => `/protocol-icons/${name}-${labratTheme === 'clinical' ? 'clinical' : 'neon'}.svg`;
   // Form modal triggers
   const [showForm, setShowForm] = useState(false);
   const [showCalcModal, setShowCalcModal] = useState(false);
@@ -79,9 +80,6 @@ export default function CyclePlanner({
   // Inline confirmation states (to avoid native browser alert blocks in iframe)
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
   const [confirmingReset, setConfirmingReset] = useState(false);
-
-  const protocolIcon = (name: 'vitamins' | 'joint' | 'estrogen' | 'endocrine') =>
-    `/protocol-icons/${name}-${labratTheme === 'clinical' ? 'clinical' : 'neon'}.svg`;
 
   // Form Fields State
   const [name, setName] = useState('');
@@ -1232,7 +1230,7 @@ export default function CyclePlanner({
                 id: 'liver-support',
                 category: 'Liver Support',
                 title: 'TUDCA & NAC',
-                imgSrc: '/liver_support_icon.png',
+                imgSrc: protocolIcon('liver'),
                 themeColorText: 'text-cyan-400',
                 themeColorBtn: 'bg-cyan-500/10 hover:bg-cyan-500/20 border-cyan-500/20 text-cyan-300',
                 themeColorHoverBorder: 'hover:border-cyan-500/30',
@@ -1261,7 +1259,7 @@ export default function CyclePlanner({
                 id: 'vitamins',
                 category: 'Vitamins',
                 title: 'CoQ10 + Omega-3',
-                imgSrc: protocolIcon('vitamins'),
+                imgSrc: protocolIcon('coq10'),
                 themeColorText: 'text-purple-400',
                 themeColorBtn: 'bg-purple-500/10 hover:bg-purple-500/20 border-purple-500/20 text-purple-300',
                 themeColorHoverBorder: 'hover:border-purple-500/30',
@@ -1370,7 +1368,7 @@ export default function CyclePlanner({
                 id: 'jitter-rescue',
                 category: 'CNS Calm Support',
                 title: 'Theanine & Ashwagandha',
-                imgSrc: '/liver_support_icon.png',
+                imgSrc: protocolIcon('calm'),
                 themeColorText: 'text-rose-400',
                 themeColorBtn: 'bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/20 text-rose-300',
                 themeColorHoverBorder: 'hover:border-rose-500/30',
@@ -1432,7 +1430,7 @@ export default function CyclePlanner({
                     <img 
                       src={suite.imgSrc} 
                       alt={`${suite.category} Icon`} 
-                      className="w-12 h-12 rounded-lg bg-black/40 border border-[#1e293b]/80 object-contain p-1.5 shrink-0" 
+                      className="w-12 h-12 rounded-lg bg-black/40 border border-[#1e293b]/80 object-cover shrink-0" 
                       referrerPolicy="no-referrer"
                     />
                     <div className="space-y-1 flex-1 text-left">

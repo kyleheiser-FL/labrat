@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
 <defs><filter id="g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="lg" x1="8" y1="8" x2="56" y2="56"><stop stop-color="#8b9aac"/><stop offset="1" stop-color="#6f7d8e"/></linearGradient></defs>
 <rect x="4" y="4" width="56" height="56" rx="14" fill="#02060d" fill-opacity="0.0" stroke="url(#lg)" stroke-opacity="0.18"/>
-<g stroke="url(#lg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#g)" opacity="0.82"><path d="M34 8c-8 7-7 15-5 22 1 6-2 11-8 14M44 12c-5 8-4 18 1 25 4 7 0 15-8 19"/><path d="M18 40c5-4 11-3 16 2 4 4 10 4 14 0"/></g>
+<g stroke="url(#lg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#g)" opacity="0.82"><path d="M18 42c8-17 20-17 28 0M18 42h28"/><path d="M24 30c-2-8 2-14 8-20 6 6 10 12 8 20"/></g>
 </svg>

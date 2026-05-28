@@ -177,8 +177,8 @@ export default function App() {
       setLabratBranding('mascot');
       safeLocalStorage.setItem('labrat_in_app_branding', 'mascot');
     } else {
-      setLabratBranding('wordmark');
-      safeLocalStorage.setItem('labrat_in_app_branding', 'wordmark');
+      setLabratBranding('lr');
+      safeLocalStorage.setItem('labrat_in_app_branding', 'lr');
     }
 
     safeLocalStorage.setItem('labrat_ui_theme', theme);
@@ -1143,11 +1143,11 @@ export default function App() {
   )}
 
   {labratBranding === 'lr' && (
-    <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-[#0b1220] border border-slate-600/70 flex items-center justify-center shadow-[0_0_14px_rgba(148,163,184,0.16)]">
-      <span className="text-lg sm:text-xl font-black tracking-tighter text-slate-100">
-        LR
-      </span>
-    </div>
+    <img
+      src="/icon_192.png"
+      alt="LabRat LR logo"
+      className="h-10 w-10 sm:h-12 sm:w-12 object-contain rounded-xl labrat-lr-brand-mark"
+    />
   )}
 
   <span
@@ -1456,6 +1456,7 @@ export default function App() {
                   onUndoDose={handleUndoDose}
                   onSaveMetrics={handleAddOrUpdateMetrics}
                   onDeleteMetric={handleDeleteMetric}
+                  labratTheme={labratTheme}
                 />
               )}
 

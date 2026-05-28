@@ -14,6 +14,7 @@ interface CycleDashboardProps {
   onUndoDose: (id: string) => void;
   onSaveMetrics: (metric: DailyMetric) => void;
   onDeleteMetric?: (date: string) => void;
+  labratTheme?: 'neon' | 'clinical';
 }
 
 export default function CycleDashboard({
@@ -23,7 +24,8 @@ export default function CycleDashboard({
   onLogDose,
   onUndoDose,
   onSaveMetrics,
-  onDeleteMetric
+  onDeleteMetric,
+  labratTheme = 'neon'
 }: CycleDashboardProps) {
   // Navigation for Daily Checklist Date (default is today)
   const todayStr = new Date().toISOString().split('T')[0];
@@ -468,7 +470,7 @@ export default function CycleDashboard({
     <div className="space-y-6 flex flex-col" id="dashboard-wrapper">
       <section className="labrat-command-hero" id="labrat-command-hero">
         <div className="labrat-command-hero-copy">
-          <span className="labrat-command-eyebrow">Neon Lab Command Center</span>
+          <span className="labrat-command-eyebrow">{labratTheme === 'clinical' ? 'Clinical Command Center' : 'Neon Lab Command Center'}</span>
           <h2>Daily Cockpit</h2>
           <p>Track today's active schedule, verify administrations, monitor cycle progress, and keep device reminders ready from one high-visibility command surface.</p>
           <div className="labrat-command-metrics">
@@ -487,7 +489,7 @@ export default function CycleDashboard({
           </div>
         </div>
         <div className="labrat-command-hero-art" aria-hidden="true">
-          <img src="/labrat_top_left_logo_transparent.png" alt="" />
+          <img src={labratTheme === 'clinical' ? '/icon_512.png' : '/labrat_top_left_logo_transparent.png'} alt="" />
         </div>
       </section>
 
