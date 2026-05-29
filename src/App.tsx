@@ -1,3 +1,4 @@
+import { LiveChat } from './components/LiveChat';
 import React, { useState, useEffect } from 'react';
 import { 
   Beaker, 
