@@ -52,7 +52,8 @@ import {
   query, 
   where,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  writeBatch
 } from 'firebase/firestore';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
@@ -1869,9 +1870,12 @@ export default function MembersShop() {
     triggerHaptic('medium');
     setActionLoading('seed');
     try {
+      const batch = writeBatch(db);
       for (const item of SAMPLE_INVENTORY) {
-        await setDoc(doc(db, 'shopItems', item.id), item);
+        const docRef = doc(db, 'shopItems', item.id);
+        batch.set(docRef, item);
       }
+      await batch.commit();
       await fetchProducts();
     } catch (e) {
       console.error('Failed seeding products catalog', e);
