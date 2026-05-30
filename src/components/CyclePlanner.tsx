@@ -665,14 +665,15 @@ export default function CyclePlanner({
   return (
     <div className="space-y-6" id="planner-main-container">
       {/* Top action bar buttons */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h3 className="text-base font-semibold text-slate-100 flex items-center gap-2">
-          <span>Cycle Administration Architecture</span>
-          <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-[#1e293b]/45 text-slate-400 border border-slate-800">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <h3 className="text-base font-semibold text-slate-100">
+          Cycle Administration Architecture
+        </h3>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-[#1e293b]/40 text-slate-400 border border-slate-700/40">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
             {compounds.length} Compounds Actioned
           </span>
-        </h3>
-        <div className="flex gap-2">
           <button
             onClick={() => setShowDataControls(!showDataControls)}
             className="p-2 bg-[#1e293b] hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700/50 cursor-pointer"
