@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckSquare, Sparkles, HelpCircle, ArrowLeftRight, Save, Info, Edit, Check, Heart, Shield, Apple, Sun, Activity, CheckCircle, History, Clock } from 'lucide-react';
 import { Compound, LibraryItem, DoseLog, formatTimeTo12Hour } from '../types';
@@ -81,6 +81,66 @@ export default function CyclePlanner({
   // Inline confirmation states (to avoid native browser alert blocks in iframe)
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
   const [confirmingReset, setConfirmingReset] = useState(false);
+
+  // Pre-calculate cycle triggers using useMemo to avoid repeated string matching on every render
+  const cycleTriggers = useMemo(() => {
+    let hasOral = false, hasInjectable = false, hasAromatizing = false, hasJointStrain = false, hasSuppressive = false, hasStimulant = false;
+    let liverSupportInCycle = false, vitaminsInCycle = false, jointHealthInCycle = false, estrogenControlInCycle = false, endocrineShieldInCycle = false, jitterRescueInCycle = false;
+
+    for (let j = 0; j < compounds.length; j++) {
+      const c = compounds[j];
+      const lowerName = c.name.toLowerCase();
+      const type = c.type;
+      const steroidForm = c.steroidForm;
+
+      if (!hasOral) {
+        hasOral = (type === 'steroid' && steroidForm === 'pill') ||
+          lowerName.includes('dianabol') || lowerName.includes('dbol') || lowerName.includes('winstrol') ||
+          lowerName.includes('stanozolol') || lowerName.includes('anavar') || lowerName.includes('oxandrolone') ||
+          lowerName.includes('tesofensine') || lowerName.includes('clenbuterol');
+      }
+      if (!hasInjectable) {
+        hasInjectable = (type === 'steroid' && steroidForm === 'oil') ||
+          lowerName.includes('testosterone') || lowerName.includes('trenbolone') || lowerName.includes('primobolan') ||
+          lowerName.includes('masteron') || lowerName.includes('deca') || lowerName.includes('boldenone');
+      }
+      if (!hasAromatizing) {
+        hasAromatizing = lowerName.includes('testosterone') || lowerName.includes('dianabol') || lowerName.includes('dbol');
+      }
+      if (!hasJointStrain) {
+        hasJointStrain = lowerName.includes('winstrol') || lowerName.includes('stanozolol') || lowerName.includes('masteron') ||
+          lowerName.includes('trenbolone') || lowerName.includes('deca');
+      }
+      if (!hasSuppressive) {
+        hasSuppressive = type === 'steroid' || lowerName.includes('tren') || lowerName.includes('test') || lowerName.includes('deca') ||
+          lowerName.includes('primo') || lowerName.includes('mast') || lowerName.includes('var') || lowerName.includes('winstrol') ||
+          lowerName.includes('dianabol') || lowerName.includes('dbol');
+      }
+      if (!hasStimulant) {
+        hasStimulant = lowerName.includes('clenbuterol') || lowerName.includes('tesofensine');
+      }
+      if (!liverSupportInCycle) {
+        liverSupportInCycle = lowerName.includes('tudca') || lowerName.includes('liver protection') || lowerName.includes('nac');
+      }
+      if (!vitaminsInCycle) {
+        vitaminsInCycle = lowerName.includes('coq10') || lowerName.includes('omega-3') || lowerName.includes('fish oil');
+      }
+      if (!jointHealthInCycle) {
+        jointHealthInCycle = lowerName.includes('glucosamine') || lowerName.includes('joint');
+      }
+      if (!estrogenControlInCycle) {
+        estrogenControlInCycle = lowerName.includes('arimidex') || lowerName.includes('anastrozole') || lowerName.includes('aromasin') || lowerName.includes('exemestane');
+      }
+      if (!endocrineShieldInCycle) {
+        endocrineShieldInCycle = lowerName.includes('hcg') || lowerName.includes('gonadotropin');
+      }
+      if (!jitterRescueInCycle) {
+        jitterRescueInCycle = lowerName.includes('theanine') || lowerName.includes('ashwagandha') || lowerName.includes('calm-cycle');
+      }
+    }
+
+    return { hasOral, hasInjectable, hasAromatizing, hasJointStrain, hasSuppressive, hasStimulant, liverSupportInCycle, vitaminsInCycle, jointHealthInCycle, estrogenControlInCycle, endocrineShieldInCycle, jitterRescueInCycle };
+  }, [compounds]);
 
   // Form Fields State
   const [name, setName] = useState('');
@@ -1293,59 +1353,10 @@ export default function CyclePlanner({
           </div>
 
           {(() => {
-            const hasOral = compounds.some(c => 
-              (c.type === 'steroid' && c.steroidForm === 'pill') ||
-              c.name.toLowerCase().includes('dianabol') || 
-              c.name.toLowerCase().includes('dbol') || 
-              c.name.toLowerCase().includes('winstrol') || 
-              c.name.toLowerCase().includes('stanozolol') || 
-              c.name.toLowerCase().includes('anavar') || 
-              c.name.toLowerCase().includes('oxandrolone') || 
-              c.name.toLowerCase().includes('tesofensine') || 
-              c.name.toLowerCase().includes('clenbuterol')
-            );
-
-            const hasInjectable = compounds.some(c => 
-              (c.type === 'steroid' && c.steroidForm === 'oil') ||
-              c.name.toLowerCase().includes('testosterone') || 
-              c.name.toLowerCase().includes('trenbolone') || 
-              c.name.toLowerCase().includes('primobolan') || 
-              c.name.toLowerCase().includes('masteron') || 
-              c.name.toLowerCase().includes('deca') || 
-              c.name.toLowerCase().includes('boldenone')
-            );
-
-            const hasAromatizing = compounds.some(c => 
-              c.name.toLowerCase().includes('testosterone') || 
-              c.name.toLowerCase().includes('dianabol') || 
-              c.name.toLowerCase().includes('dbol')
-            );
-
-            const hasJointStrain = compounds.some(c => 
-              c.name.toLowerCase().includes('winstrol') || 
-              c.name.toLowerCase().includes('stanozolol') || 
-              c.name.toLowerCase().includes('masteron') || 
-              c.name.toLowerCase().includes('trenbolone') ||
-              c.name.toLowerCase().includes('deca')
-            );
-
-            const hasSuppressive = compounds.some(c => 
-              c.type === 'steroid' || 
-              c.name.toLowerCase().includes('tren') || 
-              c.name.toLowerCase().includes('test') || 
-              c.name.toLowerCase().includes('deca') || 
-              c.name.toLowerCase().includes('primo') || 
-              c.name.toLowerCase().includes('mast') || 
-              c.name.toLowerCase().includes('var') || 
-              c.name.toLowerCase().includes('winstrol') || 
-              c.name.toLowerCase().includes('dianabol') || 
-              c.name.toLowerCase().includes('dbol')
-            );
-
-            const hasStimulant = compounds.some(c => 
-              c.name.toLowerCase().includes('clenbuterol') || 
-              c.name.toLowerCase().includes('tesofensine')
-            );
+            const {
+              hasOral, hasInjectable, hasAromatizing, hasJointStrain, hasSuppressive, hasStimulant,
+              liverSupportInCycle, vitaminsInCycle, jointHealthInCycle, estrogenControlInCycle, endocrineShieldInCycle, jitterRescueInCycle
+            } = cycleTriggers;
 
             const isCycleEmpty = compounds.length === 0;
 
@@ -1360,11 +1371,7 @@ export default function CyclePlanner({
                 themeColorHoverBorder: 'hover:border-cyan-500/30',
                 badgeText: 'ORGAN PROTECTION',
                 isTriggered: hasOral,
-                isAlreadyInCycle: compounds.some(c => 
-                  c.name.toLowerCase().includes('tudca') || 
-                  c.name.toLowerCase().includes('liver protection') || 
-                  c.name.toLowerCase().includes('nac')
-                ),
+                isAlreadyInCycle: liverSupportInCycle,
                 compoundPreset: {
                   name: "TUDCA + NAC Liver Protection",
                   type: "supplement",
@@ -1389,11 +1396,7 @@ export default function CyclePlanner({
                 themeColorHoverBorder: 'hover:border-purple-500/30',
                 badgeText: 'CARDIO DEFENSE',
                 isTriggered: hasInjectable || isCycleEmpty,
-                isAlreadyInCycle: compounds.some(c => 
-                  c.name.toLowerCase().includes('coq10') || 
-                  c.name.toLowerCase().includes('omega-3') || 
-                  c.name.toLowerCase().includes('fish oil')
-                ),
+                isAlreadyInCycle: vitaminsInCycle,
                 compoundPreset: {
                   name: "CoQ10 + Omega-3 Vital Complex",
                   type: "supplement",
@@ -1416,10 +1419,7 @@ export default function CyclePlanner({
                 themeColorHoverBorder: 'hover:border-emerald-500/30',
                 badgeText: 'ARTICULAR CARE',
                 isTriggered: hasJointStrain,
-                isAlreadyInCycle: compounds.some(c => 
-                  c.name.toLowerCase().includes('glucosamine') || 
-                  c.name.toLowerCase().includes('joint')
-                ),
+                isAlreadyInCycle: jointHealthInCycle,
                 compoundPreset: {
                   name: "Glucosamine + Joint MSM Cure",
                   type: "supplement",
@@ -1442,12 +1442,7 @@ export default function CyclePlanner({
                 themeColorHoverBorder: 'hover:border-amber-500/30',
                 badgeText: 'ESTROGEN DEFENSE',
                 isTriggered: hasAromatizing,
-                isAlreadyInCycle: compounds.some(c => 
-                  c.name.toLowerCase().includes('arimidex') || 
-                  c.name.toLowerCase().includes('anastrozole') ||
-                  c.name.toLowerCase().includes('aromasin') ||
-                  c.name.toLowerCase().includes('exemestane')
-                ),
+                isAlreadyInCycle: estrogenControlInCycle,
                 compoundPreset: {
                   name: "Arimidex (Anastrozole) Estrogen Control",
                   type: "supplement",
@@ -1472,10 +1467,7 @@ export default function CyclePlanner({
                 themeColorHoverBorder: 'hover:border-indigo-500/30',
                 badgeText: 'HPTA RECOVERY',
                 isTriggered: hasSuppressive,
-                isAlreadyInCycle: compounds.some(c => 
-                  c.name.toLowerCase().includes('hcg') || 
-                  c.name.toLowerCase().includes('gonadotropin')
-                ),
+                isAlreadyInCycle: endocrineShieldInCycle,
                 compoundPreset: {
                   name: "hCG Endocrine Shield",
                   type: "peptide",
@@ -1498,11 +1490,7 @@ export default function CyclePlanner({
                 themeColorHoverBorder: 'hover:border-rose-500/30',
                 badgeText: 'STIMULANT MITIGATION',
                 isTriggered: hasStimulant,
-                isAlreadyInCycle: compounds.some(c => 
-                  c.name.toLowerCase().includes('theanine') || 
-                  c.name.toLowerCase().includes('ashwagandha') ||
-                  c.name.toLowerCase().includes('calm-cycle')
-                ),
+                isAlreadyInCycle: jitterRescueInCycle,
                 compoundPreset: {
                   name: "Theanine & Ashwagandha Synergy",
                   type: "supplement",
