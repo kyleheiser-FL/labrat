@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckSquare, Sparkles, HelpCircle, ArrowLeftRight, Save, Info, Edit, Check, Heart, Shield, Apple, Sun, Activity, CheckCircle, History, Clock } from 'lucide-react';
+import { Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckSquare, Sparkles, ArrowLeftRight, Save, Info, Edit, Check, Heart, Shield, Apple, Sun, Activity, CheckCircle, History, Clock } from 'lucide-react';
 import { Compound, LibraryItem, DoseLog, formatTimeTo12Hour } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
