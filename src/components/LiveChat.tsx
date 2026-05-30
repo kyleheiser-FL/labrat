@@ -2,7 +2,8 @@ import React from 'react';
 
 export const LiveChat: React.FC = () => {
   const openMessenger = () => {
-    window.open('https://m.me/Labratapp', '_blank', 'noopener,noreferrer');
+    window.open('https://www.facebook.com/messages/t/1188568744330200', '_blank', 'noopener,noreferrer');
+
   };
 
   return (
