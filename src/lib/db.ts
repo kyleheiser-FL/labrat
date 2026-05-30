@@ -207,32 +207,50 @@ export async function uploadLocalDataToCloud(
   notifications: AppNotification[]
 ): Promise<void> {
   try {
-    const batch = writeBatch(db);
+    let batch = writeBatch(db);
+    let opCount = 0;
+    const batches: Promise<void>[] = [];
 
-    compounds.forEach((item) => {
+    const commitAndReset = () => {
+      if (opCount > 0) {
+        batches.push(batch.commit());
+        batch = writeBatch(db);
+        opCount = 0;
+      }
+    };
+
+    for (let i = 0, len = compounds.length; i < len; i++) {
+      const item = compounds[i];
       // Do not upload template seed compounds to real cloud profiles
       if (item.id !== 'seed-bpc-157' && item.id !== 'seed-ghk-cu') {
-        const ref = doc(db, `users/${userId}/compounds`, item.id);
-        batch.set(ref, item);
+        batch.set(doc(db, `users/${userId}/compounds`, item.id), item);
+        if (++opCount === 500) commitAndReset();
       }
-    });
+    }
 
-    logs.forEach((item) => {
-      const ref = doc(db, `users/${userId}/doseLogs`, item.id);
-      batch.set(ref, item);
-    });
+    for (let i = 0, len = logs.length; i < len; i++) {
+      const item = logs[i];
+      batch.set(doc(db, `users/${userId}/doseLogs`, item.id), item);
+      if (++opCount === 500) commitAndReset();
+    }
 
-    metrics.forEach((item) => {
-      const ref = doc(db, `users/${userId}/metrics`, item.date);
-      batch.set(ref, item);
-    });
+    for (let i = 0, len = metrics.length; i < len; i++) {
+      const item = metrics[i];
+      batch.set(doc(db, `users/${userId}/metrics`, item.date), item);
+      if (++opCount === 500) commitAndReset();
+    }
 
-    notifications.forEach((item) => {
-      const ref = doc(db, `users/${userId}/notifications`, item.id);
-      batch.set(ref, item);
-    });
+    for (let i = 0, len = notifications.length; i < len; i++) {
+      const item = notifications[i];
+      batch.set(doc(db, `users/${userId}/notifications`, item.id), item);
+      if (++opCount === 500) commitAndReset();
+    }
 
-    await batch.commit();
+    if (opCount > 0) {
+      batches.push(batch.commit());
+    }
+
+    await Promise.all(batches);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `users/${userId}`);
   }
