@@ -3,7 +3,6 @@ import { Check, CheckCircle2, Circle, Calendar, Weight, Activity, History, Trash
 import { Compound, DoseLog, DailyMetric, formatTimeTo12Hour } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
-import { motion, AnimatePresence } from 'motion/react';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
 
 interface CycleDashboardProps {
