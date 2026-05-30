@@ -1900,7 +1900,7 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
-       <LiveChat />
+       {activeTab === 'shop' && <LiveChat />}
     </div>
        
   );
