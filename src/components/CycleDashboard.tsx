@@ -484,7 +484,7 @@ export default function CycleDashboard({
             </div>
             <div>
               <strong>{compounds.filter(c => !c.isCompleted).length}</strong>
-              <span>Active Cycles</span>
+              <span>Active Compounds</span>
             </div>
           </div>
         </div>
