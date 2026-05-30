@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Search, Filter, Info, ShieldAlert, CheckCircle, Zap, ArrowUpRight, BookOpen, Clock, Layers, Apple, Dumbbell } from 'lucide-react';
+import { Search, Info, ShieldAlert, CheckCircle, ArrowUpRight, BookOpen, Clock, Layers, Apple, Dumbbell } from 'lucide-react';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
-import { LibraryItem, Compound } from '../types';
+import { LibraryItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface PeptideLibraryProps {
