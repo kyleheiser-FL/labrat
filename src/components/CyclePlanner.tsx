@@ -84,6 +84,11 @@ export default function CyclePlanner({
 
   // Form Fields State
   const [name, setName] = useState('');
+  // Tracks whether the current name came from a real library selection (vs free typing).
+  // Used to enforce selection-only on NEW typed entries while letting library picks,
+  // edits of existing compounds, and app-set names (PCT suites) pass through.
+  const [nameFromLibrary, setNameFromLibrary] = useState(false);
+  const [nameError, setNameError] = useState('');
   const [type, setType] = useState<'peptide' | 'compound' | 'supplement' | 'steroid'>('peptide');
   const [vialSizeMg, setVialSizeMg] = useState('');
   const [bacWaterMl, setBacWaterMl] = useState('');
@@ -244,7 +249,8 @@ export default function CyclePlanner({
   // Auto-fill form from library trigger
   const triggerAutoFill = (item: LibraryItem) => {
     setName(item.name);
-    
+    setNameFromLibrary(true);
+    setNameError('');
     // Resolve precise dosage, unit, form, and size based on specific compounds
     let resolvedType: 'peptide' | 'compound' | 'supplement' | 'steroid' = 'compound';
     let resolvedForm: 'oil' | 'pill' = 'oil';
@@ -420,6 +426,8 @@ export default function CyclePlanner({
   const handleStartEdit = (comp: Compound) => {
     setEditingId(comp.id);
     setName(comp.name);
+    setNameFromLibrary(true);
+    setNameError('');
     setType(comp.type);
     setVialSizeMg(comp.vialSizeMg ? comp.vialSizeMg.toString() : '');
     setBacWaterMl(comp.bacWaterMl ? comp.bacWaterMl.toString() : '');
@@ -441,9 +449,37 @@ export default function CyclePlanner({
     e.preventDefault();
     if (!name.trim()) return;
 
+    // Selection-only enforcement: only for NEW, user-typed entries.
+    // Library picks, edits of existing compounds, and app-set names (nameFromLibrary=true) pass through.
+    let finalName = name.trim();
+    if (!editingId && !nameFromLibrary) {
+      const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const typed = norm(finalName);
+      // Exact (normalized) match → accept as-is.
+      const exact = PEPTIDE_LIBRARY.find((it) => norm(it.name) === typed);
+      if (exact) {
+        finalName = exact.name;
+      } else {
+        // Closest match: a library item whose name contains, or is contained by, the typed text.
+        const close = PEPTIDE_LIBRARY.find((it) => {
+          const n = norm(it.name);
+          return n.includes(typed) || typed.includes(n);
+        });
+        if (close) {
+          finalName = close.name; // auto-snap to closest
+        } else {
+          // No match at all → block submit and prompt to pick from the list.
+          setNameError('Please choose a compound from the list.');
+          setShowSuggestions(true);
+          return;
+        }
+      }
+    }
+    setNameError('');
+
     const data: Compound = {
       id: editingId || crypto.randomUUID(),
-      name: name.trim(),
+      name: finalName,
       type,
       vialSizeMg: type === 'peptide' && vialSizeMg ? parseFloat(vialSizeMg) : undefined,
       bacWaterMl: type === 'peptide' && bacWaterMl ? parseFloat(bacWaterMl) : undefined,
@@ -895,6 +931,7 @@ export default function CyclePlanner({
                             <button
                               onClick={() => {
                                 setName('Nolvadex / Clomid Suite');
+                                setNameFromLibrary(true);
                                 setType('compound');
                                 setDoseAmount('20');
                                 setDoseUnit('mg');
@@ -1791,6 +1828,8 @@ export default function CyclePlanner({
                     value={name}
                     onChange={(e) => {
                       setName(e.target.value);
+                      setNameFromLibrary(false);
+                      setNameError('');
                       setShowSuggestions(true);
                       setFocusedSuggestionIndex(-1);
                       if (!editingId) {
@@ -1827,6 +1866,9 @@ export default function CyclePlanner({
                     id="form-name-input"
                     autoComplete="off"
                   />
+                  {nameError && (
+                    <p className="text-[11px] text-red-400 mt-1 font-medium">{nameError}</p>
+                  )}
                   {showSuggestions && suggestions.length > 0 && (
                     <div className="absolute top-full left-0 w-full mt-1.5 bg-[#0f172a] border border-[#1e293b] rounded-xl shadow-2xl overflow-y-auto max-h-48 z-50 divide-y divide-slate-800/60 custom-scrollbar" id="name-autocomplete-dropdown">
                       <div className="px-3 py-1 bg-slate-900/45 text-[9px] font-mono text-slate-500 tracking-wider uppercase font-semibold">Matched Encyclopedia Suggestions</div>
