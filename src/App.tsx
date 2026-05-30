@@ -1,5 +1,4 @@
 import { LiveChat } from './components/LiveChat';
-import { LiveChat } from './components/LiveChat';
 import React, { useState, useEffect } from 'react';
 import { 
   Beaker, 
@@ -174,10 +173,8 @@ export default function App() {
 
   const applyThemeSelection = (theme: LabRatTheme) => {
     setLabratTheme(theme);
-
     setLabratBranding('lr');
     safeLocalStorage.setItem('labrat_in_app_branding', 'lr');
-
     safeLocalStorage.setItem('labrat_ui_theme', theme);
     safeLocalStorage.setItem('labrat_theme_selected', 'true');
     setShowFirstBootThemePicker(false);
@@ -212,7 +209,7 @@ export default function App() {
     }
   }, []);
 
-  // Theme support: visual theme only. Does not affect app data, compounds, shop stock, auth, or PWA logic.
+  // Theme support visual attributes syncing
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.add('dark');
@@ -224,8 +221,6 @@ export default function App() {
     safeLocalStorage.setItem('labrat_ui_theme', labratTheme);
     safeLocalStorage.setItem('labrat_in_app_branding', labratBranding);
 
-    // Keep the PWA manifest aligned with the selected theme before Chrome builds the install prompt.
-    // Neon theme uses the neon LR launcher; Clinical Dark uses the stock clinical LR launcher.
     const manifestHref = labratTheme === 'neon' ? '/manifest-neon.json?v=lr-neon-final-20260528-live-refine-v2' : '/manifest-clinical.json?v=lr-clinical-final-20260528-live-refine-v2';
     let manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     if (!manifestLink) {
@@ -247,7 +242,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Core offline/online synchronised database states
+  // Core database states
   const [compounds, setCompounds] = useState<Compound[]>([]);
   const [logs, setLogs] = useState<DoseLog[]>([]);
   const [metrics, setMetrics] = useState<DailyMetric[]>([]);
@@ -257,13 +252,13 @@ export default function App() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [activeToasts, setActiveToasts] = useState<AppNotification[]>([]);
 
-  // Transport transport item from Library tab directly to Planner form
+  // Transport state from Library directly to Planner
   const [activeFromLibrary, setActiveFromLibrary] = useState<LibraryItem | null>(null);
 
-  // Legal Liability disclaimers modal overlay state
+  // Disclaimer overlay status
   const [showLegalModal, setShowLegalModal] = useState(false);
 
-  // App Store Compliance mode to hide the "Shop" tab
+  // Hardcompiled App Store compliance configurations
   const isHardcompiledAppStore = (import.meta as any).env.VITE_APP_STORE_COMPLIANT === 'true';
 
   const [hideShop, setHideShop] = useState<boolean>(() => {
@@ -297,7 +292,7 @@ export default function App() {
     return () => unsub();
   }, [isHardcompiledAppStore]);
 
-  // Handle active tab fallback if shop is globally hidden
+  // Fallback structural safety routing adjustments
   useEffect(() => {
     if (hideShop && activeTab === 'shop') {
       setActiveTab('dashboard');
@@ -305,12 +300,10 @@ export default function App() {
   }, [hideShop, activeTab]);
 
   const handleToggleHideShop = async (hide: boolean) => {
-    if (isHardcompiledAppStore) return; // Prevent change if locked at build-time
+    if (isHardcompiledAppStore) return;
     try {
       setHideShop(hide);
       safeLocalStorage.setItem('labrat_hide_shop', hide ? 'true' : 'false');
-
-      // Sync globally with Firestore for all users
       await setDoc(doc(db, 'systemConfig', 'shop'), { hideShop: hide }, { merge: true });
 
       triggerNotification(
@@ -328,11 +321,11 @@ export default function App() {
     }
   };
 
-  // PWA Setup & Home-Screen Install Prompt registers
+  // PWA Prompt trackers
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isStandalone, setIsStandalone] = useState(false);
 
-  // Email & Password Auth States
+  // Email/Password authentication forms values
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
@@ -360,7 +353,7 @@ export default function App() {
       setIsStandalone(true);
       triggerNotification(
         'Installation Success',
-        'LabRat is now integrated on your active device home screen.',
+        'labrat is now integrated on your active device home screen.',
         'success',
         false
       );
@@ -381,7 +374,6 @@ export default function App() {
     manifestLink?.setAttribute('href', manifestHref);
     safeLocalStorage.setItem('labrat_pwa_icon_theme', labratTheme);
 
-    // Give Chrome a moment to observe the theme-specific manifest before showing the install prompt.
     await new Promise((resolve) => window.setTimeout(resolve, 160));
 
     if (deferredPrompt) {
@@ -392,22 +384,21 @@ export default function App() {
       }
     } else {
       triggerNotification(
-        'Install LabRat',
-        'Use your browser address-bar install icon or browser menu to install LabRat.',
+        'Install labrat',
+        'Use your browser address-bar install icon or browser menu to install labrat.',
         'info',
         false
       );
     }
   };
 
-  // Trigger custom animated toaster notifications & persistent alerts helper
+  // Toast notifications dispatchers
   const triggerNotification = (
     title: string,
     message: string,
     type: 'info' | 'success' | 'warning' | 'reminder',
     persist: boolean = true
   ) => {
-    // Dispatch instant smartphone tactile vibration feedback
     if (type === 'success') {
       triggerHaptic('success');
     } else if (type === 'warning') {
@@ -439,14 +430,12 @@ export default function App() {
       });
     }
 
-    // Spark animated screen toast alert
     setActiveToasts(prev => [newNotif, ...prev]);
     setTimeout(() => {
       setActiveToasts(prev => prev.filter(t => t.id !== newNotif.id));
     }, 4500);
   };
 
-  // Password Reset Trigger Actions
   const handleForgotPassword = async () => {
     const emailStr = authEmail.trim();
     if (!emailStr) {
@@ -460,14 +449,14 @@ export default function App() {
       await sendPasswordResetEmail(auth, emailStr);
       triggerNotification(
         'Reset Link Sent',
-        `A password reset/transition link has been dispatched to ${emailStr}. Click the email link to easily set a password for your account.`,
+        `A password reset link has been dispatched to ${emailStr}.`,
         'success'
       );
     } catch (err: any) {
       console.error('Password reset dispatch failed:', err);
       let errMsg = 'Failed to transmit reset email.';
       if (err?.code === 'auth/user-not-found') {
-        errMsg = 'No registered profile matching this email was found. You can easily create a new account instead.';
+        errMsg = 'No registered profile matching this email was found.';
       } else if (err?.message) {
         errMsg = err.message;
       }
@@ -478,7 +467,6 @@ export default function App() {
     }
   };
 
-  // Email and Password Auth Actions
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
@@ -502,7 +490,6 @@ export default function App() {
     }
 
     try {
-      // Prior to sign up / validation, mark sign-in flag to merge offline user cache sandbox
       safeLocalStorage.setItem('labrat_just_clicked_signin', 'true');
 
       if (isSignUpMode) {
@@ -514,11 +501,8 @@ export default function App() {
         }
 
         const userCredential = await createUserWithEmailAndPassword(auth, emailStr, passwordStr);
-        await updateProfile(userCredential.user, {
-          displayName: usernameStr
-        });
+        await updateProfile(userCredential.user, { displayName: usernameStr });
         
-        // Feed updated user parameters instantly into active session
         setUser({
           ...userCredential.user,
           displayName: usernameStr
@@ -526,7 +510,7 @@ export default function App() {
 
         triggerNotification(
           'Account Created',
-          `Welcome to LabRat, ${usernameStr}! Your secure data sync register has been activated.`,
+          `Welcome to labrat, ${usernameStr}! Your secure data sync register has been activated.`,
           'success'
         );
         setShowAuthModal(false);
@@ -575,13 +559,11 @@ export default function App() {
 
   const handleSignOut = async () => {
     try {
-      // Clear all memory states to prevent cross-user residue leaks
       setCompounds([]);
       setLogs([]);
       setMetrics([]);
       setNotifications([]);
 
-      // Clear all local storage caches of the logged-out session
       safeLocalStorage.removeItem('labrat_compounds');
       safeLocalStorage.removeItem('labrat_logs');
       safeLocalStorage.removeItem('labrat_metrics');
@@ -604,7 +586,6 @@ export default function App() {
 
       if (currentUser) {
         try {
-          // Pull cloud backups from Firestore securely with a 4.5 second safety timeout limit
           const [cCompounds, cLogs, cMetrics, cNotifs] = await timeoutPromise(
             Promise.all([
               fetchUserCompounds(currentUser.uid),
@@ -616,7 +597,6 @@ export default function App() {
             'Cloud sync timed out'
           );
 
-          // Detect offline local storage caches
           const localCompounds = safeLocalStorage.getItem('labrat_compounds');
           const localLogs = safeLocalStorage.getItem('labrat_logs');
           const localMetrics = safeLocalStorage.getItem('labrat_metrics');
@@ -627,23 +607,18 @@ export default function App() {
           const pMetrics = localMetrics ? JSON.parse(localMetrics) : [];
           const pNotifs = localNotifications ? JSON.parse(localNotifications) : [];
 
-          // Seamless transition check: If user cloud records are 100% empty, upload current offline data to avoid data loss!
           const hasOfflineRecords = pLocals.length > 0 && !(pLocals.length === SEED_COMPOUNDS.length && pLocals[0]?.id === SEED_COMPOUNDS[0]?.id);
-          const hasInitFlag = safeLocalStorage.getItem('labrat_compounds_initialized') === 'true';
           
           let finalCompounds = cCompounds;
           let finalLogs = cLogs;
           let finalMetrics = cMetrics;
           let finalNotifs = cNotifs;
 
-          // Detect if this session transition just initiated from a Google Auth trigger button
           const justClickedSignIn = safeLocalStorage.getItem('labrat_just_clicked_signin') === 'true';
           safeLocalStorage.removeItem('labrat_just_clicked_signin');
 
           if (justClickedSignIn) {
-            // First time Google register linking / guest transitioning to professional sync: Merge guest parameters with cloud
             if (cCompounds.length === 0) {
-              // Cloud backing is completely empty; preserve and sync unique client sandbox data
               if (hasOfflineRecords) {
                 await uploadLocalDataToCloud(currentUser.uid, pLocals, pLogs, pMetrics, pNotifs);
                 finalCompounds = pLocals;
@@ -667,7 +642,6 @@ export default function App() {
                 );
               }, 1000);
             } else {
-              // Cloud already holds custom registers. Intelligently merge only new, un-tracked offline logs or configurations
               const syncedCompounds = [...cCompounds];
               for (const localComp of pLocals) {
                 const inCloud = cCompounds.some(c => c.id === localComp.id);
@@ -721,8 +695,6 @@ export default function App() {
               }
             }
           } else {
-            // Re-visiting active user session or reloading app on alternative device (tablet, etc.): 
-            // The Google Cloud database is the absolute master. Overwrite stale local caches.
             finalCompounds = cCompounds;
             finalLogs = cLogs;
             finalMetrics = cMetrics;
@@ -746,7 +718,6 @@ export default function App() {
           setMetrics(migrateMetricsLegacyWeight(finalMetrics));
           setNotifications(filterTransientNotifs(finalNotifs).sort((a,b) => b.timestamp.localeCompare(a.timestamp)));
 
-          // Real-time double cache alignment keeps local storage and cloud perfectly mirrors
           safeLocalStorage.setItem('labrat_compounds', JSON.stringify(finalCompounds));
           safeLocalStorage.setItem('labrat_logs', JSON.stringify(finalLogs));
           safeLocalStorage.setItem('labrat_metrics', JSON.stringify(finalMetrics));
@@ -755,7 +726,6 @@ export default function App() {
           console.error('Error fetching user registers during sync:', err);
           triggerNotification('Sync Interruption', 'Failed fetching cloud records. Cache fallback activated.', 'warning', false);
           
-          // Robust client-side LocalStorage fallback under slow network/timeouts
           const storedCompounds = safeLocalStorage.getItem('labrat_compounds');
           const storedLogs = safeLocalStorage.getItem('labrat_logs');
           const storedMetrics = safeLocalStorage.getItem('labrat_metrics');
@@ -776,7 +746,6 @@ export default function App() {
         }
       } else {
         hasShownSyncReadyMessage = false;
-        // Fallback to strict client-side LocalStorage
         const storedCompounds = safeLocalStorage.getItem('labrat_compounds');
         const storedLogs = safeLocalStorage.getItem('labrat_logs');
         const storedMetrics = safeLocalStorage.getItem('labrat_metrics');
@@ -796,7 +765,6 @@ export default function App() {
         setNotifications(filterTransientNotifs(storedNotifications ? JSON.parse(storedNotifications) : []));
       }
       setAuthLoading(false);
-      // Mark as successfully compiled and mounted in the browser context to clear watchdog timers
       if (typeof window !== 'undefined') {
         (window as any).__LABRAT_MOUNTED__ = true;
       }
@@ -805,7 +773,7 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-   // Automated background reminder system for installed phone PWA matches
+  // Automated background checklist tracking triggers
   useEffect(() => {
     const checkDailyReminders = () => {
       if (typeof window === 'undefined' || !('Notification' in window)) return;
@@ -827,11 +795,9 @@ export default function App() {
         if (lastAlerted !== todayStr) {
           safeLocalStorage.setItem('labrat_last_alert_date', todayStr);
 
-          // Get counts of items scheduled for today
           const activeCompounds = JSON.parse(safeLocalStorage.getItem('labrat_compounds') || '[]');
           const logsToday = JSON.parse(safeLocalStorage.getItem('labrat_logs') || '[]');
           
-          // Count compounds scheduled for today
           const countScheduled = activeCompounds.filter((comp: any) => {
             const start = new Date(comp.startDate + 'T00:00:00');
             const curr = new Date(todayStr + 'T00:00:00');
@@ -850,13 +816,12 @@ export default function App() {
               case 'weekly': isDue = diffDays % 7 === 0; break;
               case 'custom': isDue = diffDays % (comp.customDays || 3) === 0; break;
             }
-            // Check if already logged today
             const alreadyLogged = logsToday.some((l: any) => l.compoundId === comp.id && l.date === todayStr);
             return isDue && !alreadyLogged;
           }).length;
 
           if (countScheduled > 0) {
-            const title = '🔬 LabRat Checklist Reminder';
+            const title = '🔬 labrat Checklist Reminder';
             const options = {
               body: `You have ${countScheduled} scheduled dosage administration checklist item${countScheduled === 1 ? '' : 's'} remaining for today.`,
               icon: '/vitamins_icon.png',
@@ -882,13 +847,12 @@ export default function App() {
       }
     };
 
-    // Run check initially and every 30 seconds
     checkDailyReminders();
     const interval = setInterval(checkDailyReminders, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  // Handle syncing state changes based on current auth layer helper
+  // Action methods
   const handleAddCompound = (comp: Compound) => {
     const updated = [...compounds, comp];
     setCompounds(updated);
@@ -923,18 +887,16 @@ export default function App() {
     if (user) {
       deleteUserCompound(user.uid, id).catch(e => {
         console.error(e);
-        triggerNotification('Cloud Sync Interruption', 'Terminated compound removed locally but cloud delete failed. Will retry on next state synchronisation.', 'warning');
+        triggerNotification('Cloud Sync Interruption', 'Terminated compound removed locally but cloud delete failed.', 'warning');
       });
     }
     triggerNotification('Compound Terminated', `${targetComp?.name || 'Substance'} removed from active schedule queues.`, 'warning');
   };
 
-  // Synchronize/adjust a compound's start date based on its earliest logged dose
   const syncCompoundStartDate = (compoundId: string, currentLogs: DoseLog[]) => {
     const compLogs = currentLogs.filter(l => l.compoundId === compoundId);
     if (compLogs.length === 0) return;
 
-    // Find the earliest date
     const sortedDates = compLogs.map(l => l.date).sort();
     const earliestDate = sortedDates[0];
 
@@ -969,8 +931,6 @@ export default function App() {
       });
     }
     triggerNotification('Dose Administered', `Successfully logged administration of ${newLog.doseAmount} ${newLog.doseUnit} ${newLog.compoundName}.`, 'success');
-    
-    // Auto-adjust start date based on the first dose added
     syncCompoundStartDate(newLog.compoundId, updated);
   };
 
@@ -986,7 +946,6 @@ export default function App() {
     }
     triggerNotification('Historic Doses Synced', `Successfully logged ${newLogs.length} historical administration entries.`, 'success');
     
-    // Auto-adjust start date based on the first dose added
     const firstLog = newLogs[0];
     if (firstLog) {
       syncCompoundStartDate(firstLog.compoundId, updated);
@@ -1005,7 +964,6 @@ export default function App() {
       });
     }
     triggerNotification('Administration Revoked', `Undo triggered for dose logs of ${targetLog?.compoundName}.`, 'info');
-    
     if (targetLog) {
       syncCompoundStartDate(targetLog.compoundId, updated);
     }
@@ -1081,7 +1039,6 @@ export default function App() {
     triggerNotification('Database Reset Complete', 'All active rosters and biometrics wiped clean.', 'warning', false);
   };
 
-  // Notification action controls
   const handleMarkNotificationRead = (id: string) => {
     setNotifications(prev => prev.map(n => {
       if (n.id === id) {
@@ -1110,7 +1067,6 @@ export default function App() {
     triggerNotification('Alert Feed Cleared', 'In-app notification records disengaged successfully.', 'info', false);
   };
 
-  // Callback to carry a peptide item over from library to the planner
   const handleAddLibraryItemToCycle = (item: LibraryItem) => {
     setActiveFromLibrary(item);
     setActiveTab('planner');
@@ -1125,7 +1081,7 @@ export default function App() {
     >
       {/* Outer Glow Cyber Ambient Background Highlights */}
       <div className="fixed top-[-100px] left-1/4 w-[500px] h-[500px] bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
-      <div className="fixed bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+      <div className="fixed bottom-0 right-1/4 w-[400px] h-[400px] bg-[#a855f7]/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
       {/* Floating Animated Toast Toaster Container */}
       <div className="fixed top-24 right-4 z-50 flex flex-col gap-2.5 max-w-[340px] pointer-events-none" id="toasters-wrapper">
@@ -1157,38 +1113,36 @@ export default function App() {
       <header className="sticky top-0 bg-[#030712]/92 backdrop-blur-md border-b border-[#1e293b]/70 py-2.5 px-4 sm:px-6 shrink-0 z-40 shadow-lg" id="app-header">
         <div className="max-w-7xl mx-auto flex flex-col gap-2.5">
           
-          {/* Top Row: Brand Header and Indicators */}
           <div className="flex flex-row items-center justify-between gap-3">
-{/* Logo Brand Title */}
-<div className="flex items-center gap-2">
-  <img
-    src={labratTheme === 'neon' ? '/pwa-icons/lr-neon-192.png' : '/pwa-icons/lr-clinical-192.png'}
-    alt="LabRat logo"
-    className={`h-10 w-10 sm:h-12 sm:w-12 object-contain rounded-xl ${
-      labratTheme === 'neon'
-        ? 'drop-shadow-[0_0_16px_rgba(34,211,238,0.55)]'
-        : 'drop-shadow-[0_0_10px_rgba(148,163,184,0.18)]'
-    }`}
-  />
+            {/* Logo Brand Title */}
+            <div className="flex items-center gap-2">
+              <img
+                src={labratTheme === 'neon' ? '/pwa-icons/lr-neon-192.png' : '/pwa-icons/lr-clinical-192.png'}
+                alt="labrat logo"
+                className={`h-10 w-10 sm:h-12 sm:w-12 object-contain rounded-xl ${
+                  labratTheme === 'neon'
+                    ? 'drop-shadow-[0_0_16px_rgba(34,211,238,0.55)]'
+                    : 'drop-shadow-[0_0_10px_rgba(148,163,184,0.18)]'
+                }`}
+              />
 
-  <span
-    className={`labrat-brand-wordmark text-2xl sm:text-3xl font-black tracking-tighter font-sans uppercase ${
-      labratTheme === 'neon'
-        ? 'bg-gradient-to-r from-[#00d9ff] via-[#1e88ff] to-[#39ff14] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(34,211,238,0.25)]'
-        : 'text-slate-100'
-    }`}
-  >
-    LABRAT
-  </span>
+              <span
+                className={`labrat-brand-wordmark text-2xl sm:text-3xl font-black tracking-tighter font-sans uppercase ${
+                  labratTheme === 'neon'
+                    ? 'bg-gradient-to-r from-[#00d9ff] via-[#1e88ff] to-[#39ff14] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(34,211,238,0.25)]'
+                    : 'text-slate-100'
+                }`}
+              >
+                labrat
+              </span>
 
-  <span className="bg-slate-800/80 border border-slate-700/60 text-slate-400 text-[10px] font-mono px-2 py-0.5 rounded-md shadow-[0_0_10px_rgba(34,211,238,0.1)] hidden xs:inline-block">
-    V2.5
-  </span>
-</div>
+              <span className="bg-slate-800/80 border border-slate-700/60 text-slate-400 text-[10px] font-mono px-2 py-0.5 rounded-md shadow-[0_0_10px_rgba(34,211,238,0.1)] hidden xs:inline-block">
+                V2.5
+              </span>
+            </div>
 
             {/* User Indicators & Notifications Group */}
             <div className="flex items-center gap-2 sm:gap-3" id="header-indicators-bar">
-
               <button
                 onClick={() => {
                   triggerHaptic('light');
@@ -1201,20 +1155,18 @@ export default function App() {
                 <Palette className="w-4 h-4" />
               </button>
 
-              {/* Install PWA Button */}
               {!isStandalone && (
                 <button
                   onClick={handleInstallApp}
                   className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#06b6d4]/10 hover:bg-[#06b6d4]/20 text-cyan-400 hover:text-cyan-300 border border-cyan-500/25 hover:border-cyan-500/45 rounded-xl transition-all cursor-pointer text-[10px] sm:text-xs font-bold font-mono"
                   id="pwa-install-header-btn"
-                  title="Install LabRat application"
+                  title="Install labrat application"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span className="hidden md:inline">Install</span>
                 </button>
               )}
 
-              {/* Notification Bell Badge Trigger Button */}
               <div className="relative">
                 <button
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
@@ -1238,11 +1190,9 @@ export default function App() {
                   )}
                 </button>
 
-                {/* Notification Popover Dropdown */}
                 <AnimatePresence>
                   {notificationsOpen && (
                     <>
-                      {/* Responsive Backdrop on Mobile Viewports to dismiss the tray naturally */}
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -1291,9 +1241,7 @@ export default function App() {
                             notifications.map((notif) => (
                               <div 
                                 key={notif.id} 
-                                onClick={() => {
-                                  handleMarkNotificationRead(notif.id);
-                                }}
+                                onClick={() => handleMarkNotificationRead(notif.id)}
                                 className={`p-3.5 text-left transition-colors duration-200 cursor-pointer hover:bg-slate-800/30 relative ${
                                   !notif.isRead ? 'bg-[#06b6d4]/5 border-l-2 border-cyan-500' : ''
                                 }`}
@@ -1320,7 +1268,7 @@ export default function App() {
                 </AnimatePresence>
               </div>
 
-              {/* Google Authentication Component Widget */}
+              {/* Secure Authentication Sync Widget */}
               {authLoading ? (
                 <div className="flex items-center gap-2 bg-[#0f172a]/60 border border-[#1e293b]/50 py-1.5 px-3 rounded-xl text-xs text-slate-400 font-mono">
                   <Loader2 className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
@@ -1328,7 +1276,6 @@ export default function App() {
                 </div>
               ) : user ? (
                 <div className="flex items-center gap-2 bg-[#0f172a]/75 border border-[#1e293b]/80 p-1 pl-2 rounded-xl text-xs font-mono">
-                  {/* User Avatar Circle */}
                   <div className="w-7 h-7 rounded-lg overflow-hidden border border-cyan-500/25 bg-cyan-950/45 flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.1)]">
                     {user.photoURL ? (
                       <img 
@@ -1343,7 +1290,7 @@ export default function App() {
                   </div>
 
                   <div className="hidden sm:flex flex-col text-left">
-                    <span className="text-[8px] text-slate-500 uppercase tracking-widest leading-none font-bold">LabRat Sync</span>
+                    <span className="text-[8px] text-slate-500 uppercase tracking-widest leading-none font-bold">labrat Sync</span>
                     <span className="text-cyan-400 font-bold max-w-[125px] truncate mt-0.5 text-xs font-sans tracking-tight" title={user.email || ''}>
                       {user.displayName || user.email?.split('@')[0] || 'Active Agent'}
                     </span>
@@ -1368,7 +1315,6 @@ export default function App() {
                 </button>
               )}
 
-              {/* Quick Status Indicators */}
               <div className="hidden lg:flex items-center gap-2 bg-[#0f172a]/60 border border-[#1e293b]/50 py-1.5 px-3 rounded-xl text-xs font-mono">
                 <div className={`w-1.5 h-1.5 rounded-full ${user ? 'bg-cyan-500 shadow-[0_0_6px_rgba(34,211,238,0.7)] animate-pulse' : 'bg-amber-500'}`}></div>
                 <span className="text-slate-400">Database Status: </span>
@@ -1376,11 +1322,10 @@ export default function App() {
                   {user ? 'Firebase Cloud Sync Active' : 'Offline Cache Sandbox'}
                 </span>
               </div>
-
             </div>
           </div>
 
-          {/* Navigation Tab selection Rail Bar (Static, always sticky, inside header) */}
+          {/* Navigation Tab selection Rail Bar */}
           <nav className="bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl grid grid-cols-5 sm:flex sm:flex-row gap-1.5 w-full" id="navigation-tabs-rail">
             <button
               onClick={() => { triggerHaptic('light'); setActiveTab('dashboard'); }}
@@ -1449,15 +1394,11 @@ export default function App() {
               <span className="truncate">Me</span>
             </button>
           </nav>
-
         </div>
       </header>
 
       {/* Main Responsive Layout Wrapper */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 z-10 flex flex-col gap-6 overflow-hidden">
-
-
-        {/* Dynamic Display workspace rendering */}
         <div className="flex-1 min-h-[300px]">
           <AnimatePresence mode="wait">
             <motion.div
@@ -1510,7 +1451,6 @@ export default function App() {
                 />
               )}
 
-
               {activeTab === 'library' && (
                 <PeptideLibrary
                   onAddToCycle={handleAddLibraryItemToCycle}
@@ -1525,13 +1465,13 @@ export default function App() {
         </div>
       </main>
 
-      {/* Standard Human footer elements with persistent legal warning */}
+      {/* Persistent Legal Disclaimer Footer */}
       <footer className="py-6 px-6 border-t border-[#1e293b]/60 bg-[#030712] text-xs text-slate-500 shrink-0 z-10" id="site-footer">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-5">
           <div className="flex flex-col gap-1.5 text-center lg:text-left">
-            <span className="font-semibold text-slate-400">&copy; {new Date().getFullYear()} LabRat. Persistent biochemical cycle management registers.</span>
+            <span className="font-semibold text-slate-400">&copy; {new Date().getFullYear()} labrat. Persistent biochemical cycle management registers.</span>
             <p className="text-[10px] text-slate-500 max-w-3xl leading-relaxed">
-              <strong>Liability Disclaimer:</strong> LabRat is strictly an educational system and laboratory calculator designed for mathematical tracking and raw historical research notation. It contains absolutely zero advice, prescriptions, or clinical diagnostic materials for consuming or compounding substances.
+              <strong>Liability Disclaimer:</strong> labrat is strictly an educational system and laboratory calculator designed for mathematical tracking and raw historical research notation. It contains absolutely zero advice, prescriptions, or clinical diagnostic materials for consuming or compounding substances.
             </p>
           </div>
 
@@ -1544,13 +1484,13 @@ export default function App() {
               <span>⚠️ Legal Disclaimer & Indemnity</span>
             </button>
             <span className="flex items-center gap-1.5 text-slate-600 text-[11px] font-mono">
-              <Compass className="w-3.5 h-3.5 text-slate-600" /> Inspired by LabRat standard formats
+              <Compass className="w-3.5 h-3.5 text-slate-600" /> Inspired by labrat standard formats
             </span>
           </div>
         </div>
       </footer>
 
-      {/* Robust Legal Disclaimer & Hold-Harmless Indemnification Agreement Modal */}
+      {/* Hold-Harmless Indemnification Agreement Modal */}
       <AnimatePresence>
         {showLegalModal && (
           <motion.div
@@ -1568,7 +1508,6 @@ export default function App() {
               id="legal-disclaimer-card"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header Title Accent */}
               <div className="flex items-start gap-3.5 pb-4 border-b border-[#1e293b] text-rose-400">
                 <div className="p-2.5 bg-rose-950/40 border border-rose-500/30 rounded-2xl shadow-[0_0_15px_rgba(244,63,94,0.15)] flex items-center justify-center shrink-0">
                   <ShieldCheck className="w-5 h-5 text-rose-400" />
@@ -1583,19 +1522,18 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Legal Text Panel */}
               <div className="bg-[#030712]/60 border border-slate-800 rounded-xl p-4 text-[11px] sm:text-xs text-slate-300 font-mono space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar" id="legal-agreement-scrollbar-panel">
                 <div className="space-y-1">
                   <span className="text-rose-400 font-bold tracking-wider block">SECTION 1: NO PROVISION OF MEDICAL ADVICE</span>
                   <p className="leading-normal">
-                    The software, compiled libraries, and calculator values generated by the LabRat platform are developed entirely for educational, historical tracking, and informational laboratory research purposes. They do not constitute the practice of medicine, nursing, clinical pharmacy, or the professional dispensing of medical services or substances. No physician-patient relationship is established here.
+                    The software, compiled libraries, and calculator values generated by the labrat platform are developed entirely for educational, historical tracking, and informational laboratory research purposes. They do not constitute the practice of medicine, nursing, clinical pharmacy, or the professional dispensing of medical services or substances.
                   </p>
                 </div>
 
                 <div className="space-y-1">
                   <span className="text-rose-400 font-bold tracking-wider block">SECTION 2: ABSOLUTE INDEMNIFICATION & THE "HOLD HARMLESS" COVENANT</span>
                   <p className="leading-normal">
-                    By launching and continuing usage of LabRat registers, you unconditionally, irrevocably agree to defend, indemnify, and hold harmless the developers, programmers, publishers, webmasters, hosting agencies, and any parent organizations of LabRat from any and all liability, damages, litigation costs, medical fees, physiological damage, acute hospital visits, permanent cardiovascular or metabolic damage, criminal charges, domestic legal proceedings, or fatalities resulting from any action you take using this program.
+                    By launching and continuing usage of labrat registers, you unconditionally, irrevocably agree to defend, indemnify, and hold harmless the developers, programmers, publishers, webmasters, hosting agencies, and any parent organizations of labrat from any and all liability, damages, litigation costs, medical fees, physiological damage, or fatalities resulting from any action you take using this program.
                   </p>
                 </div>
 
@@ -1605,23 +1543,8 @@ export default function App() {
                     You explicitly acknowledge that biological research, peptide compounding, research chemicals, and endocrine management are associated with severe medical complications, biological contamination, immunological shock, infection, sepsis, and structural toxicity. All formulations, injection volumes, reconstitutions, and protocols logged are recorded at your own peril and absolute personal risk.
                   </p>
                 </div>
-
-                <div className="space-y-1">
-                  <span className="text-rose-400 font-bold tracking-wider block">SECTION 4: SCIENTIFIC ENCYCLOPEDIA & ACCURACY WARRANTY DISMISSAL</span>
-                  <p className="leading-normal">
-                    The built-in compound profiles and peptide catalogs are crowdsourced compilements of theoretical textbook literature. No guarantee is made regarding the accuracy, viability, or legality of any specific compound. Under no circumstances does this resource warrant that external chemical suppliers pack sterile, safe, or unadulterated substances.
-                  </p>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-rose-400 font-bold tracking-wider block">SECTION 5: LEGALITY, LOCAL COMPLIANCE, & BAN REGISTERS</span>
-                  <p className="leading-normal">
-                    Certain compounds represented herein (including SARMs, anabolic hormones, or fat-loss peptides) may be designated as Prescription-Only, prohibited for import, or strictly banned under international sports frameworks (such as WADA/USADA). Compliance with regional, state, and Olympic laws remains entirely the burden of the end-user.
-                  </p>
-                </div>
               </div>
 
-              {/* Actions Section */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-[#1e293b]">
                 <p className="text-[10.5px] text-slate-400 text-center sm:text-left">
                   Leaving this screen indicates full compliance and execution of these terms.
@@ -1668,13 +1591,13 @@ export default function App() {
                 <div className="mx-auto h-20 w-20 rounded-2xl overflow-hidden border border-cyan-500/30 shadow-[0_0_22px_rgba(34,211,238,0.28)]">
                   <img
                     src="/labrat_top_left_logo_transparent.png"
-                    alt="LabRat"
+                    alt="labrat"
                     className="h-full w-full object-contain"
                   />
                 </div>
 
                 <h2 className="text-2xl font-black tracking-tight">
-                  Welcome to LabRat
+                  Welcome to labrat
                 </h2>
 
                 <p className="text-sm text-slate-400">
@@ -1752,7 +1675,7 @@ export default function App() {
                 <div>
                   <h3 className="text-lg font-black tracking-tight">Appearance</h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Choose your LabRat experience.
+                    Choose your labrat experience.
                   </p>
                 </div>
 
@@ -1840,7 +1763,6 @@ export default function App() {
               id="auth-modal-card"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header Title Accent */}
               <div className="flex items-start justify-between pb-4 border-b border-[#1e293b]">
                 <div className="flex items-start gap-3.5 text-cyan-400">
                   <div className="p-2.5 bg-cyan-950/40 border border-cyan-500/30 rounded-2xl shadow-[0_0_15px_rgba(6,182,212,0.15)] flex items-center justify-center shrink-0">
@@ -1848,7 +1770,7 @@ export default function App() {
                   </div>
                   <div>
                     <h4 className="text-sm font-black uppercase tracking-widest font-mono text-cyan-400">
-                      LabRat Cloud Sync
+                      labrat Cloud Sync
                     </h4>
                     <p className="text-[10px] text-slate-400 font-medium uppercase font-mono mt-0.5">
                       Secure Authentication Center
@@ -1864,7 +1786,6 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Mode Selection Tabs Selector */}
               <div className="flex bg-[#030712]/50 border border-slate-800 p-1 rounded-xl">
                 <button
                   type="button"
@@ -1892,7 +1813,6 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Input Forms */}
               <form onSubmit={handleEmailAuth} className="space-y-4">
                 {isSignUpMode && (
                   <div className="space-y-1.5 text-left">
@@ -1983,4 +1903,3 @@ export default function App() {
     </div>
   );
 }
-
