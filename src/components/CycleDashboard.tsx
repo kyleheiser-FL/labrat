@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check, CheckCircle2, Circle, Calendar, Weight, Smile, Activity, HelpCircle, History, Trash2, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Smartphone, Bell, BellRing, Clock, ShieldAlert, Loader2, Timer, Gauge, Zap, Sparkles, Heart, Info } from 'lucide-react';
 import { Compound, DoseLog, DailyMetric, formatTimeTo12Hour } from '../types';
 import { triggerHaptic } from '../lib/haptics';
