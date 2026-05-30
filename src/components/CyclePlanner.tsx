@@ -1094,6 +1094,45 @@ export default function CyclePlanner({
                 </div>
               )}
 
+              {/* Per-vial supply tracker (peptides with a known vial size) */}
+              {comp.type === 'peptide' && comp.vialSizeMg && comp.doseAmount > 0 && (() => {
+                // mg per single dose (convert mcg -> mg)
+                const mgPerDose = comp.doseUnit === 'mcg' ? comp.doseAmount / 1000 : comp.doseAmount;
+                if (mgPerDose <= 0) return null;
+                const dosesPerVial = comp.vialSizeMg / mgPerDose;
+                if (!isFinite(dosesPerVial) || dosesPerVial <= 0) return null;
+                // Count logged doses for this compound
+                const dosesLogged = logs.filter((l) => l.compoundId === comp.id).length;
+                // Per-vial semantics: track usage within the CURRENT vial only.
+                // Doses into the current vial = remainder after full vials are used up.
+                const dosesIntoCurrentVial = dosesLogged % Math.max(1, Math.floor(dosesPerVial) || 1);
+                const usedMgThisVial = dosesIntoCurrentVial * mgPerDose;
+                const remainingMg = Math.max(0, comp.vialSizeMg - usedMgThisVial);
+                const dosesRemaining = Math.max(0, Math.floor(remainingMg / mgPerDose));
+                const pctUsed = Math.min(100, (usedMgThisVial / comp.vialSizeMg) * 100);
+                const pctRemaining = 100 - pctUsed;
+                const lowSupply = dosesRemaining <= 3 || pctRemaining < 20;
+                const barColor = lowSupply ? '#f87171' : '#22d3ee';
+                return (
+                  <div className={`p-2.5 rounded-xl text-[10px] border flex flex-col gap-1.5 ${lowSupply ? 'bg-red-500/5 border-red-500/20 text-red-300' : 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400'}`}>
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-[11px] flex items-center gap-1">
+                        {lowSupply ? <AlertTriangle className="w-3.5 h-3.5" /> : <Activity className="w-3.5 h-3.5" />}
+                        Current Vial Supply
+                      </span>
+                      <span className="font-mono">{remainingMg.toFixed(2)} / {comp.vialSizeMg} mg left</span>
+                    </div>
+                    <div className="w-full h-1.5 rounded-full bg-slate-700/50 overflow-hidden">
+                      <div className="h-full rounded-full transition-all" style={{ width: `${pctUsed}%`, backgroundColor: barColor }} />
+                    </div>
+                    <span>
+                      {dosesRemaining} dose{dosesRemaining === 1 ? '' : 's'} remaining
+                      {' '}(~{dosesPerVial.toFixed(1)} per vial){lowSupply ? ' — running low, consider reordering' : ''}
+                    </span>
+                  </div>
+                );
+              })()}
+
               {/* Steroid/Supplement physical metrics details */}
               {(comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm && (
                 <div className="bg-cyan-500/5 border border-cyan-500/10 p-2.5 rounded-xl text-[10px] text-cyan-400 flex items-start gap-1.5">
