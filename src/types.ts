@@ -19,6 +19,7 @@ export interface Compound {
   steroidForm?: 'oil' | 'pill';
   pillSizeMg?: number;        // For oral, e.g. 10 (mg per pill)
   oilConcMgMl?: number;       // For liquids/oils, e.g. 250 (mg per ml)
+  vialMl?: number;            // For oils: vial volume in ml (defaults to 10 if unset)
 }
 
 export interface DoseLog {

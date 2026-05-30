@@ -1159,6 +1159,43 @@ export default function CyclePlanner({
                 </div>
               )}
 
+              {/* Per-vial supply tracker for oils (premixed mg/ml in a vial; default 10ml) */}
+              {comp.steroidForm === 'oil' && comp.oilConcMgMl && comp.doseAmount > 0 && (() => {
+                const vialMl = comp.vialMl ?? 10; // all oil vials assumed 10ml unless specified
+                const totalVialMg = comp.oilConcMgMl * vialMl;
+                const mgPerDose = comp.doseAmount; // oil doses are entered in mg
+                if (mgPerDose <= 0 || totalVialMg <= 0) return null;
+                const dosesPerVial = totalVialMg / mgPerDose;
+                if (!isFinite(dosesPerVial) || dosesPerVial <= 0) return null;
+                const dosesLogged = logs.filter((l) => l.compoundId === comp.id).length;
+                const dosesIntoCurrentVial = dosesLogged % Math.max(1, Math.floor(dosesPerVial) || 1);
+                const usedMgThisVial = dosesIntoCurrentVial * mgPerDose;
+                const remainingMg = Math.max(0, totalVialMg - usedMgThisVial);
+                const dosesRemaining = Math.max(0, Math.floor(remainingMg / mgPerDose));
+                const pctUsed = Math.min(100, (usedMgThisVial / totalVialMg) * 100);
+                const pctRemaining = 100 - pctUsed;
+                const lowSupply = dosesRemaining <= 3 || pctRemaining < 20;
+                const barColor = lowSupply ? '#f87171' : '#22d3ee';
+                return (
+                  <div className={`p-2.5 rounded-xl text-[10px] border flex flex-col gap-1.5 ${lowSupply ? 'bg-red-500/5 border-red-500/20 text-red-300' : 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400'}`}>
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-[11px] flex items-center gap-1">
+                        {lowSupply ? <AlertTriangle className="w-3.5 h-3.5" /> : <Activity className="w-3.5 h-3.5" />}
+                        Current Vial Supply
+                      </span>
+                      <span className="font-mono">{remainingMg.toFixed(0)} / {totalVialMg.toFixed(0)} mg left</span>
+                    </div>
+                    <div className="w-full h-1.5 rounded-full bg-slate-700/50 overflow-hidden">
+                      <div className="h-full rounded-full transition-all" style={{ width: `${pctUsed}%`, backgroundColor: barColor }} />
+                    </div>
+                    <span>
+                      {dosesRemaining} dose{dosesRemaining === 1 ? '' : 's'} remaining
+                      {' '}(~{dosesPerVial.toFixed(1)} per {vialMl}ml vial){lowSupply ? ' — running low, consider reordering' : ''}
+                    </span>
+                  </div>
+                );
+              })()}
+
               {comp.notes && (
                 <p className="text-[11px] text-slate-400 italic bg-[#1e293b]/20 p-2.5 rounded-xl border border-slate-800/80">
                   &ldquo;{comp.notes}&rdquo;
