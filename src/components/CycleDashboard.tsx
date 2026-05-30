@@ -266,6 +266,53 @@ export default function CycleDashboard({
     safeLocalStorage.setItem('labrat_reminder_time', time);
   };
 
+  // Foreground reminder scheduler: while the app is open, fire a dose reminder
+  // at the user's chosen time, then reschedule for the following day.
+  // NOTE: This only runs while the app/tab is open. Reminders that reach the
+  // user when the app is fully closed require server-side Web Push (phase 2).
+  useEffect(() => {
+    if (!reminderEnabled) return;
+    if (typeof window === 'undefined' || !('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    if (!reminderTime || !/^\d{1,2}:\d{2}$/.test(reminderTime)) return;
+
+    let timerId: ReturnType<typeof setTimeout>;
+
+    const msUntilNext = (): number => {
+      const [h, m] = reminderTime.split(':').map((n) => parseInt(n, 10));
+      const now = new Date();
+      const next = new Date();
+      next.setHours(h, m, 0, 0);
+      if (next.getTime() <= now.getTime()) {
+        // Time already passed today; schedule for tomorrow
+        next.setDate(next.getDate() + 1);
+      }
+      return next.getTime() - now.getTime();
+    };
+
+    const schedule = () => {
+      timerId = setTimeout(() => {
+        // Only fire if at least one compound is due on the reminder day and
+        // the user hasn't already logged everything for today.
+        try {
+          const todayStr = new Date().toISOString().split('T')[0];
+          const guardKey = `labrat_reminder_fired_${todayStr}`;
+          if (safeLocalStorage.getItem(guardKey) !== 'true') {
+            firePhysicalNotification();
+            safeLocalStorage.setItem(guardKey, 'true');
+          }
+        } catch (e) {
+          console.warn('[Reminder] foreground fire failed', e);
+        }
+        // Reschedule for the next day's occurrence
+        schedule();
+      }, msUntilNext());
+    };
+
+    schedule();
+    return () => clearTimeout(timerId);
+  }, [reminderEnabled, reminderTime, notificationPermission]);
+
   const triggerTestNotification = () => {
     triggerHaptic('medium');
     if (!('Notification' in window)) {
