@@ -642,12 +642,16 @@ export default function App() {
                 );
               }, 1000);
             } else {
+              const syncPromises: Promise<void>[] = [];
+
               const syncedCompounds = [...cCompounds];
               for (const localComp of pLocals) {
                 const inCloud = cCompounds.some(c => c.id === localComp.id);
                 if (!inCloud && localComp.id !== 'seed-bpc-157' && localComp.id !== 'seed-ghk-cu') {
                   syncedCompounds.push(localComp);
-                  await saveUserCompound(currentUser.uid, localComp).catch(e => console.error('Auto-sync layout err:', e));
+                  syncPromises.push(
+                    saveUserCompound(currentUser.uid, localComp).catch(e => console.error('Auto-sync layout err:', e))
+                  );
                 }
               }
               finalCompounds = syncedCompounds;
@@ -657,7 +661,9 @@ export default function App() {
                 const inCloud = cLogs.some(l => l.id === localLog.id);
                 if (!inCloud) {
                   syncedLogs.push(localLog);
-                  await saveUserLog(currentUser.uid, localLog).catch(e => console.error('Auto-sync logger err:', e));
+                  syncPromises.push(
+                    saveUserLog(currentUser.uid, localLog).catch(e => console.error('Auto-sync logger err:', e))
+                  );
                 }
               }
               finalLogs = syncedLogs;
@@ -667,7 +673,9 @@ export default function App() {
                 const inCloud = cMetrics.some(m => m.date === localMetric.date);
                 if (!inCloud) {
                   syncedMetrics.push(localMetric);
-                  await saveUserMetric(currentUser.uid, localMetric).catch(e => console.error('Auto-sync metrics err:', e));
+                  syncPromises.push(
+                    saveUserMetric(currentUser.uid, localMetric).catch(e => console.error('Auto-sync metrics err:', e))
+                  );
                 }
               }
               finalMetrics = syncedMetrics;
@@ -677,10 +685,14 @@ export default function App() {
                 const inCloud = cNotifs.some(n => n.id === localNotif.id);
                 if (!inCloud) {
                   syncedNotifs.push(localNotif);
-                  await saveUserNotification(currentUser.uid, localNotif).catch(e => console.error('Auto-sync flags err:', e));
+                  syncPromises.push(
+                    saveUserNotification(currentUser.uid, localNotif).catch(e => console.error('Auto-sync flags err:', e))
+                  );
                 }
               }
               finalNotifs = syncedNotifs;
+
+              await Promise.all(syncPromises);
 
               if (!hasShownSyncReadyMessage) {
                 hasShownSyncReadyMessage = true;
