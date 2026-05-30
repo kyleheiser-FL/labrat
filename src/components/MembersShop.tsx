@@ -1743,15 +1743,14 @@ export default function MembersShop() {
 
       // Proactively prune outdated/removed inventory sizes/products from Firestore
       const activeSampleIds = SAMPLE_INVENTORY.map(s => s.id);
-      for (const item of list) {
-        if (!activeSampleIds.includes(item.id)) {
-          try {
-            await deleteDoc(doc(db, 'shopItems', item.id));
-          } catch (err) {
-            console.error(`Failed to auto-delete obsolete database item: ${item.id}`, err);
-          }
-        }
-      }
+      const obsoleteItems = list.filter(item => !activeSampleIds.includes(item.id));
+      await Promise.all(
+        obsoleteItems.map(item =>
+          deleteDoc(doc(db, 'shopItems', item.id)).catch(err =>
+            console.error(`Failed to auto-delete obsolete database item: ${item.id}`, err)
+          )
+        )
+      );
 
       // Set state to strictly only contain active shop products
       const filteredList = list.filter(p => activeSampleIds.includes(p.id));
