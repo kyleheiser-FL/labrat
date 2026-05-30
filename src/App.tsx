@@ -1900,6 +1900,8 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+       <LiveChat />
     </div>
+       
   );
 }
