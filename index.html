@@ -20,6 +20,15 @@
 
 <body>
   <script>
+    function escapeHtml(unsafe) {
+      return (unsafe || '').toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     // Startup error diagnostics for older iOS WebKit/Safari and restricted environments
     window.addEventListener('error', function(e) {
       var root = document.getElementById('root');
@@ -40,11 +49,11 @@
         div.innerHTML = '<div style="max-width:480px; background:#0b1329; border:1px solid #1e293b; padding:28px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">' +
                         '<div style="text-align:center; font-size:42px; margin-bottom:12px;">🧪</div>' +
                         '<h2 style="font-size:20px; font-weight:700; color:#22d3ee; margin:0 0 10px 0;">LabRat Startup Diagnostic</h2>' +
-                        '<p style="color:#ef4444; font-size:14px; margin-bottom:16px; font-family:monospace; word-break:break-all;">' + (e.message || 'JavaScript load failure') + '</p>' +
+                        '<p style="color:#ef4444; font-size:14px; margin-bottom:16px; font-family:monospace; word-break:break-all;">' + escapeHtml(e.message || 'JavaScript load failure') + '</p>' +
                         '<div style="text-align:left; background:rgba(30,41,59,0.4); padding:12px; border-radius:8px; font-size:11px; font-family:monospace; color:#94a3b8; margin-bottom:16px;">' +
-                        'URL: ' + window.location.href + '<br>' +
-                        'File: ' + (e.filename ? e.filename.split('/').pop() : 'unknown') + '<br>' +
-                        'Line: ' + e.lineno + ':' + e.colno +
+                        'URL: ' + escapeHtml(window.location.href) + '<br>' +
+                        'File: ' + escapeHtml(e.filename ? e.filename.split('/').pop() : 'unknown') + '<br>' +
+                        'Line: ' + escapeHtml(e.lineno) + ':' + escapeHtml(e.colno) +
                         '</div>' +
                         '<p style="font-size:13px; color:#94a3b8; line-height:1.5;">This can be caused by restricted browser cookie settings blocking LocalStorage access, an outdated browser version, or private browsing mode constraints.</p>' +
                         '<div style="margin-top:20px;"><button onclick="window.location.reload(true)" style="background:#22d3ee; color:#030712; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; font-size:13px; cursor:pointer;">Refresh Page</button></div>' +
