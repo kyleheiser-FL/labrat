@@ -5,6 +5,7 @@ import { Compound, LibraryItem, DoseLog, formatTimeTo12Hour } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
 import ReconstitutionCalculator from './ReconstitutionCalculator';
+import { findShopProductMatch } from './MembersShop';
 
 interface CyclePlannerProps {
   compounds: Compound[];
@@ -1129,6 +1130,15 @@ export default function CyclePlanner({
                       {dosesRemaining} dose{dosesRemaining === 1 ? '' : 's'} remaining
                       {' '}(~{dosesPerVial.toFixed(1)} per vial){lowSupply ? ' — running low, consider reordering' : ''}
                     </span>
+                    {lowSupply && onNavigateToTab && findShopProductMatch(comp.name, comp.vialSizeMg) && (
+                      <button
+                        type="button"
+                        onClick={() => { triggerHaptic('medium'); onNavigateToTab('shop'); }}
+                        className="mt-0.5 self-start bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-200 font-semibold rounded-lg px-2.5 py-1 text-[10px] transition-all cursor-pointer"
+                      >
+                        Reorder in Shop →
+                      </button>
+                    )}
                   </div>
                 );
               })()}

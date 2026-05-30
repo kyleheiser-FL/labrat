@@ -222,6 +222,46 @@ function getProductBaseAndSize(name: string) {
   };
 }
 
+// Match a cycle compound to a stocked shop product by base name (+ closest size).
+// Returns the best matching product, or null if nothing is stocked for it.
+// Used by the Cycle planner to show a "Reorder" link when a peptide runs low.
+export function findShopProductMatch(compoundName: string, vialSizeMg?: number): ShopProduct | null {
+  if (!compoundName || !compoundName.trim()) return null;
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const target = normalize(compoundName);
+  if (!target) return null;
+
+  // Find products whose base name matches the compound name (either direction,
+  // to tolerate "CJC-1295" vs "CJC-1295 Without DAC").
+  const candidates = SAMPLE_INVENTORY.filter((p) => {
+    const { baseName } = getProductBaseAndSize(p.name);
+    const base = normalize(baseName);
+    if (!base) return false;
+    return base === target || base.includes(target) || target.includes(base);
+  });
+  if (candidates.length === 0) return null;
+
+  // If we know the vial size, prefer the product whose mg size is closest.
+  if (vialSizeMg && vialSizeMg > 0) {
+    let best: ShopProduct | null = null;
+    let bestDiff = Infinity;
+    for (const p of candidates) {
+      const { size } = getProductBaseAndSize(p.name);
+      const mg = parseFloat((size || '').replace(/[^0-9.]/g, ''));
+      if (!isFinite(mg)) continue;
+      const diff = Math.abs(mg - vialSizeMg);
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        best = p;
+      }
+    }
+    if (best) return best;
+  }
+
+  // Otherwise return the first (e.g. smallest-listed) candidate.
+  return candidates[0];
+}
+
 // Helper to determine a secondary positive benefit for a peptide compound
 function getSecondaryBenefit(baseName: string, category: string): string {
   const normName = baseName.toLowerCase();
