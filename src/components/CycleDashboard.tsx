@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Check, CheckCircle2, Circle, Activity, History, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw } from 'lucide-react';
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
+import SyringeVisual from './SyringeVisual';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
 
@@ -35,21 +36,62 @@ export default function CycleDashboard({
   const [showManualLog, setShowManualLog] = useState(false);
   const [manualCompoundId, setManualCompoundId] = useState('');
   const [manualDoseAmount, setManualDoseAmount] = useState('');
+  const [manualUnits, setManualUnits] = useState('');
   const [manualTime, setManualTime] = useState('');
+
+  const calcUnitsFromDose = (doseStr: string, comp: Compound): string => {
+    const d = parseFloat(doseStr);
+    if (isNaN(d)) return '';
+    if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
+      const perUnit = (comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100);
+      return String(Math.round((d / perUnit) * 10) / 10);
+    }
+    if ((comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm === 'oil' && comp.oilConcMgMl) {
+      return String(Math.round((d / comp.oilConcMgMl) * 100) / 100);
+    }
+    return '';
+  };
+
+  const calcDoseFromUnits = (unitsStr: string, comp: Compound): string => {
+    const u = parseFloat(unitsStr);
+    if (isNaN(u)) return '';
+    if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
+      const perUnit = (comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100);
+      return String(Math.round(u * perUnit * 10) / 10);
+    }
+    if ((comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm === 'oil' && comp.oilConcMgMl) {
+      return String(Math.round(u * comp.oilConcMgMl * 10) / 10);
+    }
+    return '';
+  };
 
   const handleSelectManualCompound = (id: string) => {
     setManualCompoundId(id);
     const comp = compounds.find(c => c.id === id);
     if (comp) {
       setManualDoseAmount(comp.doseAmount.toString());
+      setManualUnits(calcUnitsFromDose(comp.doseAmount.toString(), comp));
       const now = new Date();
       const hh = String(now.getHours()).padStart(2, '0');
       const mm = String(now.getMinutes()).padStart(2, '0');
       setManualTime(`${hh}:${mm}`);
     } else {
       setManualDoseAmount('');
+      setManualUnits('');
       setManualTime('');
     }
+  };
+
+  const handleManualDoseChange = (val: string) => {
+    setManualDoseAmount(val);
+    const comp = compounds.find(c => c.id === manualCompoundId);
+    if (comp) setManualUnits(calcUnitsFromDose(val, comp));
+  };
+
+  const handleManualUnitsChange = (val: string) => {
+    setManualUnits(val);
+    const comp = compounds.find(c => c.id === manualCompoundId);
+    if (comp) setManualDoseAmount(calcDoseFromUnits(val, comp));
   };
 
   const handleLogManualDoseSubmit = (e: React.FormEvent) => {
@@ -424,7 +466,7 @@ export default function CycleDashboard({
                     {/* Customized Dose amount */}
                     <div>
                       <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 font-mono">
-                        Dose Quantity ({manualCompoundId ? compounds.find(c => c.id === manualCompoundId)?.doseUnit : 'Amount'})
+                        Dose ({manualCompoundId ? compounds.find(c => c.id === manualCompoundId)?.doseUnit : 'Amount'})
                       </label>
                       <input
                         type="number"
@@ -433,11 +475,37 @@ export default function CycleDashboard({
                         disabled={!manualCompoundId}
                         placeholder={manualCompoundId ? `e.g. ${compounds.find(c => c.id === manualCompoundId)?.doseAmount}` : 'Amount'}
                         value={manualDoseAmount}
-                        onChange={(e) => setManualDoseAmount(e.target.value)}
+                        onChange={(e) => handleManualDoseChange(e.target.value)}
                         className="w-full bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono"
                         id="manual-log-dose-amount"
                       />
                     </div>
+
+                    {/* Syringe units (bidirectional) — shown for peptide/oil only */}
+                    {(() => {
+                      const comp = compounds.find(c => c.id === manualCompoundId);
+                      if (!comp) return null;
+                      const isPeptide = comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl;
+                      const isOil = (comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm === 'oil' && comp.oilConcMgMl;
+                      if (!isPeptide && !isOil) return null;
+                      return (
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 font-mono">
+                            {isPeptide ? 'Syringe Units (U-100)' : 'Volume (ml)'}
+                          </label>
+                          <input
+                            type="number"
+                            step="any"
+                            disabled={!manualCompoundId}
+                            placeholder={isPeptide ? 'e.g. 32' : 'e.g. 0.5'}
+                            value={manualUnits}
+                            onChange={(e) => handleManualUnitsChange(e.target.value)}
+                            className="w-full bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono"
+                            id="manual-log-units"
+                          />
+                        </div>
+                      );
+                    })()}
 
                     {/* Customized Time */}
                     <div>
@@ -453,7 +521,7 @@ export default function CycleDashboard({
                     </div>
                   </div>
 
-                  {/* Preview physical drawings / Syringe units to take */}
+                  {/* Syringe visual + delivery preview */}
                   {(() => {
                     if (!manualCompoundId) return null;
                     const comp = compounds.find(c => c.id === manualCompoundId);
@@ -461,39 +529,44 @@ export default function CycleDashboard({
                     const parsedDose = parseFloat(manualDoseAmount);
                     if (!parsedDose || isNaN(parsedDose)) return null;
 
-                    let needleUnits: number | null = null;
-                    if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
-                      const perUnit = (comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100);
-                      needleUnits = Math.round((parsedDose / perUnit) * 10) / 10;
-                    }
+                    const isPeptide = comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl;
+                    const isOil = (comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm === 'oil' && comp.oilConcMgMl;
+                    const isPill = (comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm === 'pill' && comp.pillSizeMg;
 
-                    let pillQty: number | null = null;
-                    if ((comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm === 'pill' && comp.pillSizeMg) {
-                      pillQty = Math.round((parsedDose / comp.pillSizeMg) * 100) / 100;
-                    }
+                    let syringeUnits = 0;
+                    let syringeMax = 100;
+                    let syringeLabel = 'units';
+                    let summaryText = '';
 
-                    let oilMl: string | null = null;
-                    if ((comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm === 'oil' && comp.oilConcMgMl) {
-                      oilMl = (parsedDose / comp.oilConcMgMl).toFixed(2);
+                    if (isPeptide) {
+                      const perUnit = (comp.vialSizeMg! * 1000) / (comp.bacWaterMl! * 100);
+                      syringeUnits = Math.round((parsedDose / perUnit) * 10) / 10;
+                      syringeMax = 100;
+                      syringeLabel = 'units';
+                      summaryText = `${syringeUnits} syringe units — ${comp.vialSizeMg}mg vial / ${comp.bacWaterMl}ml BAC water`;
+                    } else if (isOil) {
+                      const ml = Math.round((parsedDose / comp.oilConcMgMl!) * 100) / 100;
+                      syringeUnits = ml;
+                      syringeMax = Math.max(1, Math.ceil(ml * 2));
+                      syringeLabel = 'ml';
+                      summaryText = `${ml} ml — ${comp.oilConcMgMl}mg/ml concentration`;
+                    } else if (isPill) {
+                      const qty = Math.round((parsedDose / comp.pillSizeMg!) * 100) / 100;
+                      summaryText = `${qty} ${qty === 1 ? 'pill' : 'pills'} — ${comp.pillSizeMg}mg each`;
                     }
-
-                    if (needleUnits === null && pillQty === null && oilMl === null) return null;
 
                     return (
-                      <div className="bg-cyan-500/5 border border-cyan-500/10 p-2.5 rounded-lg flex items-center gap-2 text-[10px] text-cyan-400 font-mono animate-fade-in">
-                        <Syringe className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                        <div>
-                          <span className="font-semibold text-slate-300">Calculated Delivery Equivalent:</span>{' '}
-                          {needleUnits !== null && (
-                            <span>Draw <strong className="font-extrabold text-cyan-300">{needleUnits}</strong> Syringe Units (at {comp.vialSizeMg}mg reconstituted with {comp.bacWaterMl}ml)</span>
-                          )}
-                          {pillQty !== null && (
-                            <span>Take <strong className="font-extrabold text-cyan-300">{pillQty}</strong> {pillQty === 1 ? 'pill' : 'pills'} ({comp?.pillSizeMg}mg standard pill size)</span>
-                          )}
-                          {oilMl !== null && (
-                            <span>Draw <strong className="font-extrabold text-cyan-300">{oilMl}</strong> ml / cc ({comp?.oilConcMgMl}mg/ml density)</span>
-                          )}
+                      <div className="bg-cyan-500/5 border border-cyan-500/10 rounded-xl p-3 space-y-2">
+                        <div className="flex items-center gap-2 text-[10px] text-cyan-400 font-mono">
+                          <Syringe className="w-3.5 h-3.5 shrink-0" />
+                          <span className="font-semibold text-slate-300">Delivery:</span>{' '}
+                          <span>{summaryText}</span>
                         </div>
+                        {(isPeptide || isOil) && (
+                          <div className="pt-1">
+                            <SyringeVisual units={syringeUnits} maxUnits={syringeMax} unitLabel={syringeLabel} />
+                          </div>
+                        )}
                       </div>
                     );
                   })()}
@@ -608,27 +681,41 @@ export default function CycleDashboard({
                           Week {weekNo} of {compound.durationWeeks} • Target: {compound.doseAmount} {compound.doseUnit} ({compound.frequency.replace('_', ' ')})
                         </div>
 
-                        {/* Physical Guidance inline */}
+                        {/* Physical Guidance + syringe visual */}
                         {!isLogged && (
                           <>
                             {needleDrawUnits !== null && (
-                              <div className="flex items-center gap-1.5 text-[10px] text-cyan-400 bg-cyan-950/20 border border-cyan-900/10 py-1 px-2 rounded-md font-mono mt-2 w-fit">
-                                <Syringe className="w-3.5 h-3.5" />
-                                <span>Draw exactly <strong className="font-extrabold text-cyan-300">{needleDrawUnits}</strong> Syringe Units</span>
+                              <div className="mt-2 space-y-1.5">
+                                <div className="flex items-center gap-1.5 text-[10px] text-cyan-400 bg-cyan-950/20 border border-cyan-900/10 py-1 px-2 rounded-md font-mono w-fit">
+                                  <Syringe className="w-3.5 h-3.5" />
+                                  <span>Draw <strong className="font-extrabold text-cyan-300">{needleDrawUnits}</strong> Syringe Units</span>
+                                </div>
+                                <div className="max-w-[220px]">
+                                  <SyringeVisual units={needleDrawUnits} maxUnits={100} unitLabel="units" />
+                                </div>
                               </div>
                             )}
                             {(compound.type === 'steroid' || compound.type === 'supplement' || compound.type === 'compound') && compound.steroidForm === 'pill' && compound.pillSizeMg && (
                               <div className="flex items-center gap-1.5 text-[10px] text-cyan-400 bg-cyan-950/20 border border-cyan-900/10 py-1 px-2 rounded-md font-mono mt-2 w-fit">
                                 <CheckSquare className="w-3.5 h-3.5" />
-                                <span>Take exactly <strong className="font-extrabold text-cyan-300">{Math.round((compound.doseAmount / compound.pillSizeMg) * 100) / 100}</strong> {Math.round((compound.doseAmount / compound.pillSizeMg) * 100) / 100 === 1 ? 'pill' : 'pills'} ({compound.pillSizeMg}mg each)</span>
+                                <span>Take <strong className="font-extrabold text-cyan-300">{Math.round((compound.doseAmount / compound.pillSizeMg) * 100) / 100}</strong> {Math.round((compound.doseAmount / compound.pillSizeMg) * 100) / 100 === 1 ? 'pill' : 'pills'} ({compound.pillSizeMg}mg each)</span>
                               </div>
                             )}
-                            {(compound.type === 'steroid' || compound.type === 'supplement' || compound.type === 'compound') && compound.steroidForm === 'oil' && compound.oilConcMgMl && (
-                              <div className="flex items-center gap-1.5 text-[10px] text-cyan-400 bg-cyan-950/20 border border-cyan-900/10 py-1 px-2 rounded-md font-mono mt-2 w-fit">
-                                <Syringe className="w-3.5 h-3.5" />
-                                <span>Draw exactly <strong className="font-extrabold text-cyan-300">{(compound.doseAmount / compound.oilConcMgMl).toFixed(2)}</strong> ml / cc ({compound.oilConcMgMl}mg/ml)</span>
-                              </div>
-                            )}
+                            {(compound.type === 'steroid' || compound.type === 'supplement' || compound.type === 'compound') && compound.steroidForm === 'oil' && compound.oilConcMgMl && (() => {
+                              const ml = Math.round((compound.doseAmount / compound.oilConcMgMl) * 100) / 100;
+                              const maxMl = Math.max(1, Math.ceil(ml * 2));
+                              return (
+                                <div className="mt-2 space-y-1.5">
+                                  <div className="flex items-center gap-1.5 text-[10px] text-cyan-400 bg-cyan-950/20 border border-cyan-900/10 py-1 px-2 rounded-md font-mono w-fit">
+                                    <Syringe className="w-3.5 h-3.5" />
+                                    <span>Draw <strong className="font-extrabold text-cyan-300">{ml}</strong> ml / cc ({compound.oilConcMgMl}mg/ml)</span>
+                                  </div>
+                                  <div className="max-w-[220px]">
+                                    <SyringeVisual units={ml} maxUnits={maxMl} unitLabel="ml" />
+                                  </div>
+                                </div>
+                              );
+                            })()}
                           </>
                         )}
 

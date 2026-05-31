@@ -6,6 +6,7 @@ import { triggerHaptic } from '../lib/haptics';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
 import ReconstitutionCalculator from './ReconstitutionCalculator';
 import { findShopProductMatch } from './MembersShop';
+import SyringeVisual from './SyringeVisual';
 
 interface CyclePlannerProps {
   compounds: Compound[];
@@ -131,6 +132,7 @@ export default function CyclePlanner({
   const [retroSingleDate, setRetroSingleDate] = useState(new Date().toISOString().split('T')[0]);
   const [retroSingleTime, setRetroSingleTime] = useState('08:00');
   const [retroSingleAmount, setRetroSingleAmount] = useState('');
+  const [retroSingleUnits, setRetroSingleUnits] = useState('');
 
   // Batch logging states
   const [retroBatchStart, setRetroBatchStart] = useState(() => {
@@ -1349,6 +1351,15 @@ export default function CyclePlanner({
                     setRetroactiveCompId(comp.id);
                     setRetroSingleAmount(comp.doseAmount.toString());
                     setRetroBatchFreq(comp.frequency === 'custom' ? 'daily' : comp.frequency);
+                    // Init units for bidirectional syringe field
+                    if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
+                      const perUnit = (comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100);
+                      setRetroSingleUnits(String(Math.round((comp.doseAmount / perUnit) * 10) / 10));
+                    } else if (comp.steroidForm === 'oil' && comp.oilConcMgMl) {
+                      setRetroSingleUnits(String(Math.round((comp.doseAmount / comp.oilConcMgMl) * 100) / 100));
+                    } else {
+                      setRetroSingleUnits('');
+                    }
                   }}
                   className="w-full py-2 px-3 bg-[#1e293b]/55 hover:bg-[#1e293b]/90 text-slate-300 hover:text-cyan-400 border border-slate-800 hover:border-cyan-500/30 text-[10.5px] font-extrabold uppercase tracking-wide font-mono rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
                   id={`sync-past-doses-btn-${comp.id}`}
@@ -2646,27 +2657,115 @@ export default function CyclePlanner({
                         />
                       </div>
                     </div>
+
+                    {/* Bidirectional dose / units inputs */}
                     <div className="grid grid-cols-2 gap-3.5">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase font-mono">Dose Amount ({retroComp.doseUnit})</label>
+                        <label className="text-[10px] font-bold text-slate-400 uppercase font-mono">Dose ({retroComp.doseUnit})</label>
                         <input
                           type="number"
                           step="any"
                           required
                           value={retroSingleAmount}
-                          onChange={(e) => setRetroSingleAmount(e.target.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setRetroSingleAmount(val);
+                            const d = parseFloat(val);
+                            if (!isNaN(d)) {
+                              if (retroComp.type === 'peptide' && retroComp.vialSizeMg && retroComp.bacWaterMl) {
+                                const perUnit = (retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100);
+                                setRetroSingleUnits(String(Math.round((d / perUnit) * 10) / 10));
+                              } else if (retroComp.steroidForm === 'oil' && retroComp.oilConcMgMl) {
+                                setRetroSingleUnits(String(Math.round((d / retroComp.oilConcMgMl) * 100) / 100));
+                              }
+                            }
+                          }}
                           className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80 transition"
                         />
                       </div>
-                      <div className="flex items-end">
-                        <button
-                          type="submit"
-                          className="w-full py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider font-mono rounded-xl transition cursor-pointer"
-                        >
-                          Append Log
-                        </button>
-                      </div>
+                      {(retroComp.type === 'peptide' && retroComp.vialSizeMg && retroComp.bacWaterMl) || (retroComp.steroidForm === 'oil' && retroComp.oilConcMgMl) ? (
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase font-mono">
+                            {retroComp.type === 'peptide' ? 'Syringe Units' : 'Volume (ml)'}
+                          </label>
+                          <input
+                            type="number"
+                            step="any"
+                            value={retroSingleUnits}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setRetroSingleUnits(val);
+                              const u = parseFloat(val);
+                              if (!isNaN(u)) {
+                                if (retroComp.type === 'peptide' && retroComp.vialSizeMg && retroComp.bacWaterMl) {
+                                  const perUnit = (retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100);
+                                  setRetroSingleAmount(String(Math.round(u * perUnit * 10) / 10));
+                                } else if (retroComp.steroidForm === 'oil' && retroComp.oilConcMgMl) {
+                                  setRetroSingleAmount(String(Math.round(u * retroComp.oilConcMgMl * 10) / 10));
+                                }
+                              }
+                            }}
+                            className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80 transition"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-end">
+                          <button
+                            type="submit"
+                            className="w-full py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider font-mono rounded-xl transition cursor-pointer"
+                          >
+                            Append Log
+                          </button>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Syringe visual */}
+                    {(() => {
+                      const units = parseFloat(retroSingleUnits);
+                      const isPeptide = retroComp.type === 'peptide' && retroComp.vialSizeMg && retroComp.bacWaterMl;
+                      const isOil = retroComp.steroidForm === 'oil' && retroComp.oilConcMgMl;
+                      if ((!isPeptide && !isOil) || isNaN(units) || units <= 0) return null;
+                      const maxU = isPeptide ? 100 : Math.max(1, Math.ceil(units * 2));
+                      return (
+                        <div className="bg-slate-900/40 border border-slate-800/60 rounded-xl p-3">
+                          <SyringeVisual units={units} maxUnits={maxU} unitLabel={isPeptide ? 'units' : 'ml'} />
+                        </div>
+                      );
+                    })()}
+
+                    {/* Update cycle dose forward banner */}
+                    {(() => {
+                      const parsed = parseFloat(retroSingleAmount);
+                      if (isNaN(parsed) || parsed === retroComp.doseAmount) return null;
+                      return (
+                        <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 rounded-xl p-3">
+                          <div className="flex-1 text-[11px] text-amber-300 leading-snug">
+                            This dose ({parsed} {retroComp.doseUnit}) differs from the scheduled dose ({retroComp.doseAmount} {retroComp.doseUnit}). Update the cycle going forward?
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              triggerHaptic('medium');
+                              onUpdateCompound({ ...retroComp, doseAmount: parsed });
+                            }}
+                            className="shrink-0 py-1.5 px-3 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 rounded-lg text-[11px] font-bold cursor-pointer transition"
+                          >
+                            Update Cycle Dose
+                          </button>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Submit row — only shown when no units field above */}
+                    {((retroComp.type === 'peptide' && retroComp.vialSizeMg && retroComp.bacWaterMl) || (retroComp.steroidForm === 'oil' && retroComp.oilConcMgMl)) && (
+                      <button
+                        type="submit"
+                        className="w-full py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider font-mono rounded-xl transition cursor-pointer"
+                      >
+                        Append Log
+                      </button>
+                    )}
                   </form>
                 ) : (
                   <div className="bg-slate-900/20 p-4 border border-slate-800/60 rounded-2xl space-y-4">
