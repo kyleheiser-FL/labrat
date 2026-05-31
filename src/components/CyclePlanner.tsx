@@ -116,14 +116,6 @@ export default function CyclePlanner({
   visibility = { gantt: true, pct: true, dataControls: true }
 }: CyclePlannerProps) {
   const protocolIcon = (name: string) => `/protocol-icons/${name}-${labratTheme === 'clinical' ? 'clinical' : 'neon'}.svg`;
-  const phaseDetailRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if ((selectedGanttId || selectedGanttWeek) && phaseDetailRef.current) {
-      phaseDetailRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }, [selectedGanttId, selectedGanttWeek]);
-
   // Form modal triggers
   const [showForm, setShowForm] = useState(false);
   const [showCalcModal, setShowCalcModal] = useState(false);
