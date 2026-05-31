@@ -176,7 +176,55 @@ export default function SettingsPage({
         </div>
       </div>
 
-      {/* Section 2: Notifications */}
+      {/* Section 2: Page Sections (Segment Visibility) */}
+      <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+        <div className="flex items-center gap-2 mb-1">
+          <Layout className="w-4 h-4 text-cyan-400" />
+          <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Page Layout</span>
+        </div>
+        <h3 className="text-base font-bold text-slate-100 mb-4">Page Sections</h3>
+
+        {/* Tab Row */}
+        <div className="flex gap-1 mb-4 flex-wrap">
+          {PAGE_TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => { triggerHaptic('light'); setActivePageTab(tab.key); }}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold font-mono transition cursor-pointer ${
+                activePageTab === tab.key
+                  ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/35'
+                  : 'bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:text-slate-200 hover:bg-slate-700/50'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Toggle rows for active tab */}
+        <div className="space-y-1">
+          {SEGMENT_CONFIG[activePageTab].map((seg) => {
+            const pageVisibility = segmentVisibility[activePageTab] as Record<string, boolean>;
+            const isEnabled = pageVisibility[seg.key] ?? true;
+
+            return (
+              <div
+                key={seg.key}
+                className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-slate-800/30 transition"
+              >
+                <span className="text-xs text-slate-300 font-mono">{seg.label}</span>
+                <ToggleSwitch
+                  enabled={isEnabled}
+                  onToggle={() => { triggerHaptic('light'); onSegmentChange(activePageTab, seg.key, !isEnabled); }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Section 3: Notifications */}
       <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
         <div className="flex items-center gap-2 mb-1">
           <Bell className="w-4 h-4 text-cyan-400" />
@@ -243,7 +291,6 @@ export default function SettingsPage({
             </button>
           ) : (
             <div className="bg-[#1e293b]/15 border border-[#1e293b]/45 p-3.5 rounded-xl space-y-3">
-              {/* Switch indicator */}
               <div className="flex items-center justify-between">
                 <div className="text-left space-y-0.5">
                   <span className="text-xs font-bold text-slate-200">Daily Reminder Service</span>
@@ -255,7 +302,6 @@ export default function SettingsPage({
                 />
               </div>
 
-              {/* Preferred time selector */}
               {reminderEnabled && (
                 <div className="flex items-center justify-between pt-2.5 border-t border-slate-800/80">
                   <span className="text-[11px] text-slate-400 flex items-center gap-1">
@@ -292,25 +338,15 @@ export default function SettingsPage({
                 }`}
               >
                 {testStatus === 'countdown' ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 text-amber-400 animate-spin" />
-                    <span>Dispatch in {countdown}s...</span>
-                  </>
+                  <><Loader2 className="w-3.5 h-3.5 text-amber-400 animate-spin" /><span>Dispatch in {countdown}s...</span></>
                 ) : testStatus === 'triggered' ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-400 font-bold" />
-                    <span>Success! Check Notification Center</span>
-                  </>
+                  <><Check className="w-3.5 h-3.5 text-emerald-400 font-bold" /><span>Success! Check Notification Center</span></>
                 ) : (
-                  <>
-                    <Bell className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Send test alert (5s)</span>
-                  </>
+                  <><Bell className="w-3.5 h-3.5 text-slate-400" /><span>Send test alert (5s)</span></>
                 )}
               </button>
             </div>
 
-            {/* Helpful instructions for non-PWA */}
             {typeof window !== 'undefined' && !(window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) && (
               <div className="border border-dashed border-cyan-500/10 bg-cyan-950/5 p-2.5 rounded-lg text-[9.5px] leading-relaxed text-slate-500">
                 <div className="flex gap-1.5 items-start">
@@ -322,54 +358,6 @@ export default function SettingsPage({
               </div>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* Section 3: Page Sections (Segment Visibility) */}
-      <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
-        <div className="flex items-center gap-2 mb-1">
-          <Layout className="w-4 h-4 text-cyan-400" />
-          <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Page Layout</span>
-        </div>
-        <h3 className="text-base font-bold text-slate-100 mb-4">Page Sections</h3>
-
-        {/* Tab Row */}
-        <div className="flex gap-1 mb-4 flex-wrap">
-          {PAGE_TABS.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => { triggerHaptic('light'); setActivePageTab(tab.key); }}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold font-mono transition cursor-pointer ${
-                activePageTab === tab.key
-                  ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/35'
-                  : 'bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:text-slate-200 hover:bg-slate-700/50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Toggle rows for active tab */}
-        <div className="space-y-1">
-          {SEGMENT_CONFIG[activePageTab].map((seg) => {
-            const pageVisibility = segmentVisibility[activePageTab] as Record<string, boolean>;
-            const isEnabled = pageVisibility[seg.key] ?? true;
-
-            return (
-              <div
-                key={seg.key}
-                className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-slate-800/30 transition"
-              >
-                <span className="text-xs text-slate-300 font-mono">{seg.label}</span>
-                <ToggleSwitch
-                  enabled={isEnabled}
-                  onToggle={() => { triggerHaptic('light'); onSegmentChange(activePageTab, seg.key, !isEnabled); }}
-                />
-              </div>
-            );
-          })}
         </div>
       </div>
 
