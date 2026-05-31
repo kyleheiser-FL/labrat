@@ -12,17 +12,20 @@ body,
   margin: 0;
   min-height: 100%;
   background: #030712;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
 }
-html:not(.dark) {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
+
+/* html always stays dark — prevents white bleed through status bar safe area.
+   Only body/children get the light-mode override. */
+html {
+  background: #030712 !important;
+  color-scheme: dark !important;
 }
 
-/* Base Body Support */
 html:not(.dark) body {
   background-color: #f8fafc !important;
   color: #0f172a !important;
