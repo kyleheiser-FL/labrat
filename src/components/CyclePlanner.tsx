@@ -1354,7 +1354,8 @@ export default function CyclePlanner({
                     // Init units for bidirectional syringe field
                     if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
                       const perUnit = (comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100);
-                      setRetroSingleUnits(String(Math.round((comp.doseAmount / perUnit) * 10) / 10));
+                      const doseInMcg = comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount;
+                      setRetroSingleUnits(String(Math.round((doseInMcg / perUnit) * 10) / 10));
                     } else if (comp.steroidForm === 'oil' && comp.oilConcMgMl) {
                       setRetroSingleUnits(String(Math.round((comp.doseAmount / comp.oilConcMgMl) * 100) / 100));
                     } else {
@@ -2487,7 +2488,8 @@ export default function CyclePlanner({
 
           const calculatedQtyText = (() => {
             if (retroComp.vialSizeMg && retroComp.bacWaterMl) {
-              const units = Math.round(((retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10;
+              const doseInMcg = retroComp.doseUnit === 'mg' ? retroComp.doseAmount * 1000 : retroComp.doseAmount;
+              const units = Math.round((doseInMcg / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10;
               return `${units} Units`;
             } else if (retroComp.type === 'steroid' || retroComp.type === 'supplement' || retroComp.type === 'compound') {
               if (retroComp.steroidForm === 'pill' && retroComp.pillSizeMg) {
@@ -2512,7 +2514,7 @@ export default function CyclePlanner({
             reconstitutedRatio: retroComp.vialSizeMg && retroComp.bacWaterMl ? {
               vialSizeMg: retroComp.vialSizeMg,
               bacWaterMl: retroComp.bacWaterMl,
-              syringeUnits: Math.round(((retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10
+              syringeUnits: Math.round(((retroComp.doseUnit === 'mg' ? retroComp.doseAmount * 1000 : retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10
             } : undefined,
             calculatedQtyText
           };
@@ -2527,7 +2529,8 @@ export default function CyclePlanner({
 
           const calculatedQtyText = (() => {
             if (retroComp.vialSizeMg && retroComp.bacWaterMl) {
-              const units = Math.round(((retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10;
+              const doseInMcg = retroComp.doseUnit === 'mg' ? retroComp.doseAmount * 1000 : retroComp.doseAmount;
+              const units = Math.round((doseInMcg / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10;
               return `${units} Units`;
             } else if (retroComp.type === 'steroid' || retroComp.type === 'supplement' || retroComp.type === 'compound') {
               if (retroComp.steroidForm === 'pill' && retroComp.pillSizeMg) {
@@ -2552,7 +2555,7 @@ export default function CyclePlanner({
             reconstitutedRatio: retroComp.vialSizeMg && retroComp.bacWaterMl ? {
               vialSizeMg: retroComp.vialSizeMg,
               bacWaterMl: retroComp.bacWaterMl,
-              syringeUnits: Math.round(((retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10
+              syringeUnits: Math.round(((retroComp.doseUnit === 'mg' ? retroComp.doseAmount * 1000 : retroComp.doseAmount) / ((retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100))) * 10) / 10
             } : undefined,
             calculatedQtyText
           }));
@@ -2674,7 +2677,8 @@ export default function CyclePlanner({
                             if (!isNaN(d)) {
                               if (retroComp.type === 'peptide' && retroComp.vialSizeMg && retroComp.bacWaterMl) {
                                 const perUnit = (retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100);
-                                setRetroSingleUnits(String(Math.round((d / perUnit) * 10) / 10));
+                                const doseInMcg = retroComp.doseUnit === 'mg' ? d * 1000 : d;
+                                setRetroSingleUnits(String(Math.round((doseInMcg / perUnit) * 10) / 10));
                               } else if (retroComp.steroidForm === 'oil' && retroComp.oilConcMgMl) {
                                 setRetroSingleUnits(String(Math.round((d / retroComp.oilConcMgMl) * 100) / 100));
                               }
@@ -2699,7 +2703,9 @@ export default function CyclePlanner({
                               if (!isNaN(u)) {
                                 if (retroComp.type === 'peptide' && retroComp.vialSizeMg && retroComp.bacWaterMl) {
                                   const perUnit = (retroComp.vialSizeMg * 1000) / (retroComp.bacWaterMl * 100);
-                                  setRetroSingleAmount(String(Math.round(u * perUnit * 10) / 10));
+                                  const rawMcg = u * perUnit;
+                                  const dose = retroComp.doseUnit === 'mg' ? rawMcg / 1000 : rawMcg;
+                                  setRetroSingleAmount(String(Math.round(dose * 10) / 10));
                                 } else if (retroComp.steroidForm === 'oil' && retroComp.oilConcMgMl) {
                                   setRetroSingleAmount(String(Math.round(u * retroComp.oilConcMgMl * 10) / 10));
                                 }
