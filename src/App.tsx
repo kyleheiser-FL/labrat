@@ -34,7 +34,7 @@ import {
   Palette
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Compound, DoseLog, DailyMetric, LibraryItem, AppNotification } from './types';
+import { Compound, DoseLog, DailyMetric, LibraryItem, AppNotification, SegmentVisibility, DEFAULT_SEGMENT_VISIBILITY } from './types';
 import { triggerHaptic } from './lib/haptics';
 import { safeLocalStorage } from './lib/storage';
 import CycleDashboard from './components/CycleDashboard';
@@ -42,6 +42,7 @@ import CyclePlanner from './components/CyclePlanner';
 import PeptideLibrary from './components/PeptideLibrary';
 import BloodAnalyzer from './components/BloodAnalyzer';
 import MembersShop from './components/MembersShop';
+import SettingsPage from './components/SettingsPage';
 
 // Firebase Setup
 import { auth, db } from './firebase';
@@ -162,7 +163,7 @@ const getInitialBranding = (): LabRatBranding => {
 };
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'shop'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings'>('dashboard');
 
   const [labratTheme, setLabratTheme] = useState<LabRatTheme>(getInitialTheme);
   const [labratBranding, setLabratBranding] = useState<LabRatBranding>(getInitialBranding);
@@ -319,6 +320,112 @@ export default function App() {
         'warning'
       );
     }
+  };
+
+  // Notification state (lifted from CycleDashboard so scheduler always runs)
+  const [notificationPermission, setNotificationPermission] = useState<string>(
+    typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'unsupported'
+  );
+  const [reminderEnabled, setReminderEnabled] = useState(() =>
+    safeLocalStorage.getItem('labrat_reminder_enabled') === 'true'
+  );
+  const [reminderTime, setReminderTime] = useState(() =>
+    safeLocalStorage.getItem('labrat_reminder_time') || '09:00'
+  );
+  const [testStatus, setTestStatus] = useState<'idle' | 'countdown' | 'triggered' | 'denied' | 'unsupported'>('idle');
+  const [countdown, setCountdown] = useState(5);
+
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) { setNotificationPermission('unsupported'); return; }
+    try {
+      const status = await Notification.requestPermission();
+      setNotificationPermission(status);
+      if (status === 'granted') { setReminderEnabled(true); safeLocalStorage.setItem('labrat_reminder_enabled', 'true'); }
+    } catch (e) { console.error('Error requesting notification permission', e); }
+  };
+
+  const handleReminderToggle = (enabled: boolean) => {
+    setReminderEnabled(enabled);
+    safeLocalStorage.setItem('labrat_reminder_enabled', enabled ? 'true' : 'false');
+    if (enabled && notificationPermission !== 'granted') requestNotificationPermission();
+  };
+
+  const handleReminderTimeChange = (time: string) => {
+    setReminderTime(time);
+    safeLocalStorage.setItem('labrat_reminder_time', time);
+  };
+
+  const firePhysicalNotification = () => {
+    setTestStatus('triggered');
+    setTimeout(() => setTestStatus('idle'), 4000);
+    const title = '🔬 LabRat Administrator Alert';
+    const options = { body: 'Time to record today\'s dosage checklist administrations. Live sync active!', icon: '/vitamins_icon.png', badge: '/vitamins_icon.png', vibrate: [200, 100, 200], tag: 'labrat-reminder-test', renotify: true };
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(reg => reg.showNotification(title, options).catch(() => new Notification(title, options))).catch(() => new Notification(title, options));
+    } else { new Notification(title, options); }
+  };
+
+  const startTestCountdown = () => {
+    setTestStatus('countdown'); setCountdown(5);
+    const interval = setInterval(() => {
+      setCountdown(prev => { if (prev <= 1) { clearInterval(interval); firePhysicalNotification(); return 5; } return prev - 1; });
+    }, 1000);
+  };
+
+  const triggerTestNotification = () => {
+    triggerHaptic('medium');
+    if (!('Notification' in window)) { setTestStatus('unsupported'); return; }
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission().then(status => {
+        setNotificationPermission(status);
+        if (status === 'granted') startTestCountdown(); else setTestStatus('denied');
+      });
+    } else { startTestCountdown(); }
+  };
+
+  // Reminder scheduler useEffect
+  useEffect(() => {
+    if (!reminderEnabled) return;
+    if (typeof window === 'undefined' || !('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    if (!reminderTime || !/^\d{1,2}:\d{2}$/.test(reminderTime)) return;
+    let timerId: ReturnType<typeof setTimeout>;
+    const msUntilNext = (): number => {
+      const [h, m] = reminderTime.split(':').map((n: string) => parseInt(n, 10));
+      const now = new Date(); const next = new Date();
+      next.setHours(h, m, 0, 0);
+      if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
+      return next.getTime() - now.getTime();
+    };
+    const schedule = () => {
+      timerId = setTimeout(() => {
+        try {
+          const todayStr = new Date().toISOString().split('T')[0];
+          const guardKey = `labrat_reminder_fired_${todayStr}`;
+          if (safeLocalStorage.getItem(guardKey) !== 'true') { firePhysicalNotification(); safeLocalStorage.setItem(guardKey, 'true'); }
+        } catch (e) { console.warn('[Reminder] foreground fire failed', e); }
+        schedule();
+      }, msUntilNext());
+    };
+    schedule();
+    return () => clearTimeout(timerId);
+  }, [reminderEnabled, reminderTime, notificationPermission]);
+
+  // Segment visibility state
+  const [segmentVisibility, setSegmentVisibility] = useState<SegmentVisibility>(() => {
+    try {
+      const saved = safeLocalStorage.getItem('labrat_segment_visibility');
+      if (saved) return { ...DEFAULT_SEGMENT_VISIBILITY, ...JSON.parse(saved) };
+    } catch {}
+    return DEFAULT_SEGMENT_VISIBILITY;
+  });
+
+  const handleSegmentChange = (page: keyof SegmentVisibility, segment: string, value: boolean) => {
+    setSegmentVisibility(prev => {
+      const updated = { ...prev, [page]: { ...prev[page], [segment]: value } };
+      safeLocalStorage.setItem('labrat_segment_visibility', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   // PWA Prompt trackers
@@ -1158,7 +1265,7 @@ export default function App() {
               <button
                 onClick={() => {
                   triggerHaptic('light');
-                  setShowAppearanceModal(true);
+                  setActiveTab('settings');
                 }}
                 className="hidden sm:flex items-center justify-center p-2 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/35 hover:bg-cyan-500/10 transition-all cursor-pointer"
                 aria-label="Appearance settings"
@@ -1338,7 +1445,7 @@ export default function App() {
           </div>
 
           {/* Navigation Tab selection Rail Bar */}
-          <nav className="bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl grid grid-cols-5 sm:flex sm:flex-row gap-1.5 w-full" id="navigation-tabs-rail">
+          <nav className="bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl grid grid-cols-6 sm:flex sm:flex-row gap-1.5 w-full" id="navigation-tabs-rail">
             <button
               onClick={() => { triggerHaptic('light'); setActiveTab('dashboard'); }}
               className={`flex flex-col min-[480px]:flex-row items-center justify-center text-center gap-1 px-1 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer select-none truncate flex-1 justify-self-stretch ${
@@ -1405,6 +1512,19 @@ export default function App() {
               <UserProfileIcon className="w-3.5 h-3.5 shrink-0 text-red-300" />
               <span className="truncate">Me</span>
             </button>
+
+            <button
+              onClick={() => { triggerHaptic('light'); setActiveTab('settings'); }}
+              className={`flex flex-col min-[480px]:flex-row items-center justify-center text-center gap-1 px-1 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer select-none truncate flex-1 justify-self-stretch ${
+                activeTab === 'settings'
+                  ? 'bg-cyan-500 text-slate-950 font-bold shadow-[0_0_12px_rgba(34,211,238,0.25)]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/55'
+              }`}
+              id="tab-btn-settings"
+            >
+              <Settings className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Settings</span>
+            </button>
           </nav>
         </div>
       </header>
@@ -1431,6 +1551,7 @@ export default function App() {
                   onSaveMetrics={handleAddOrUpdateMetrics}
                   onDeleteMetric={handleDeleteMetric}
                   labratTheme={labratTheme}
+                  visibility={segmentVisibility.dashboard}
                 />
               )}
 
@@ -1450,6 +1571,7 @@ export default function App() {
                   clearActiveFromLibrary={() => setActiveFromLibrary(null)}
                   onNavigateToTab={setActiveTab}
                   labratTheme={labratTheme}
+                  visibility={segmentVisibility.planner}
                 />
               )}
 
@@ -1459,18 +1581,41 @@ export default function App() {
                   hideShop={hideShop}
                   onToggleHideShop={isHardcompiledAppStore ? undefined : handleToggleHideShop}
                   currentUserEmail={user?.email || null}
-                  onOpenAppearance={() => setShowAppearanceModal(true)}
+                  onOpenAppearance={() => setActiveTab('settings')}
+                  visibility={segmentVisibility.blood}
                 />
               )}
 
               {activeTab === 'library' && (
                 <PeptideLibrary
                   onAddToCycle={handleAddLibraryItemToCycle}
+                  visibility={segmentVisibility.library}
                 />
               )}
 
               {activeTab === 'shop' && !hideShop && (
                 <MembersShop />
+              )}
+
+              {activeTab === 'settings' && (
+                <SettingsPage
+                  labratTheme={labratTheme}
+                  onThemeChange={applyThemeSelection}
+                  user={user}
+                  hideShop={hideShop}
+                  onToggleHideShop={handleToggleHideShop}
+                  segmentVisibility={segmentVisibility}
+                  onSegmentChange={handleSegmentChange}
+                  notificationPermission={notificationPermission}
+                  onRequestPermission={requestNotificationPermission}
+                  reminderEnabled={reminderEnabled}
+                  onReminderToggle={handleReminderToggle}
+                  reminderTime={reminderTime}
+                  onReminderTimeChange={handleReminderTimeChange}
+                  onTestNotification={triggerTestNotification}
+                  testStatus={testStatus}
+                  countdown={countdown}
+                />
               )}
             </motion.div>
           </AnimatePresence>

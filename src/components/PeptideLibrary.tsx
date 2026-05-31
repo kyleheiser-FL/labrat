@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 interface PeptideLibraryProps {
   onAddToCycle: (item: LibraryItem) => void;
+  visibility?: { filters: boolean; };
 }
 
 const CATEGORIES: { value: string; label: string; color: string }[] = [
@@ -22,7 +23,7 @@ const CATEGORIES: { value: string; label: string; color: string }[] = [
   { value: 'supplements', label: 'Vitamins & Supplements', color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' },
 ];
 
-export default function PeptideLibrary({ onAddToCycle }: PeptideLibraryProps) {
+export default function PeptideLibrary({ onAddToCycle, visibility = { filters: true } }: PeptideLibraryProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -150,6 +151,7 @@ export default function PeptideLibrary({ onAddToCycle }: PeptideLibraryProps) {
         </div>
 
         {/* Categories Carousel / Chips list */}
+        {visibility.filters && (
         <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-[#1e293b]/50" id="library-categories-list">
           {CATEGORIES.map((cat) => (
             <button
@@ -166,6 +168,7 @@ export default function PeptideLibrary({ onAddToCycle }: PeptideLibraryProps) {
             </button>
           ))}
         </div>
+        )}
       </div>
 
       {/* Library Grid */}
