@@ -522,15 +522,15 @@ export default function CycleDashboard({
           <div className="labrat-command-metrics">
             <div>
               <strong>{scheduledCompounds.length}</strong>
-              <span>Scheduled Today</span>
+              <span>Scheduled</span>
             </div>
             <div>
               <strong>{logs.filter(l => l.date === selectedDate).length}</strong>
-              <span>Logged Entries</span>
+              <span>Logged</span>
             </div>
             <div>
               <strong>{compounds.filter(c => !c.isCompleted).length}</strong>
-              <span>Active Compounds</span>
+              <span>Active</span>
             </div>
           </div>
         </div>
