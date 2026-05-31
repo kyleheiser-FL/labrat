@@ -922,16 +922,23 @@ html[data-labrat-theme="clinical"] #members-shop-page::before { color:#93c5fd; b
     height: min(330px, 62vw);
     right: -4rem;
   }
-  .labrat-command-metrics { grid-template-columns: 1fr; max-width: 100%; }
+  .labrat-command-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 100%; gap: 0.45rem; margin-top: 0.9rem; }
+  .labrat-command-metrics div { padding: 0.55rem 0.6rem; border-radius: 0.85rem; }
+  .labrat-command-metrics strong { font-size: 1.3rem; }
+  .labrat-command-metrics span { font-size: 0.6rem; margin-top: 0.2rem; }
 }
 
 @media (max-width: 520px) {
-  .labrat-command-hero { min-height: 360px; }
+  .labrat-command-hero { min-height: 300px; }
   .labrat-command-hero-copy { max-width: 68%; }
   .labrat-command-hero h2 { font-size: clamp(2rem, 11vw, 3.15rem); }
   .labrat-command-hero p { font-size: .8rem; line-height: 1.55; }
   .labrat-command-hero-art img { width: 64vw; right: -3.2rem; bottom: 4.2rem; opacity: .42; }
   html[data-labrat-theme="clinical"] .labrat-command-hero-art img { opacity: .28; }
+  .labrat-command-metrics { gap: 0.3rem; }
+  .labrat-command-metrics div { padding: 0.45rem 0.5rem; border-radius: 0.7rem; }
+  .labrat-command-metrics strong { font-size: 1.15rem; }
+  .labrat-command-metrics span { font-size: 0.56rem; letter-spacing: .08em; }
 }
 
 /* SHOP REAL VIALS V5 */
