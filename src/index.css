@@ -38,6 +38,8 @@ html:not(.dark) body {
   background-color: #030712 !important;
   border-bottom-color: rgba(30, 41, 59, 0.7) !important;
   color-scheme: dark;
+  /* Push content below the status bar in PWA mode */
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 /* Layout shell overrides */
