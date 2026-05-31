@@ -19,8 +19,7 @@ import {
   Clock,
   Heart,
   Droplet,
-  User,
-  Palette
+  User
 } from 'lucide-react';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
@@ -76,6 +75,7 @@ interface BloodAnalyzerProps {
   onToggleHideShop?: (hide: boolean) => void;
   currentUserEmail?: string | null;
   onOpenAppearance?: () => void;
+  visibility?: { dossier: boolean; upload: boolean; };
 }
 
 export interface AnalyzedMarker {
@@ -144,13 +144,14 @@ LH: < 0.1 mIU/mL Ref: 1.7 - 8.6`,
   }
 ];
 
-export default function BloodAnalyzer({ 
-  compounds, 
-  onAddCompound, 
-  hideShop, 
+export default function BloodAnalyzer({
+  compounds,
+  onAddCompound,
+  hideShop,
   onToggleHideShop,
   currentUserEmail,
-  onOpenAppearance
+  onOpenAppearance,
+  visibility = { dossier: true, upload: true }
 }: BloodAnalyzerProps) {
   const [pasteText, setPasteText] = useState('');
   const [isDragging, setIsDragging] = useState(false);
@@ -469,6 +470,7 @@ export default function BloodAnalyzer({
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         
         {/* Left Column: My Health Dossier & Biography */}
+        {visibility.dossier && (
         <div className="col-span-1 lg:col-span-2 space-y-5" id="personal-dossier-panel">
           <div className="bg-[#0f172a]/80 border border-[#1e293b]/85 rounded-3xl p-5 space-y-4 text-left">
             
@@ -675,63 +677,15 @@ export default function BloodAnalyzer({
                 </div>
               </div>
 
-              {/* Appearance / Theme Settings */}
-              {onOpenAppearance && (
-                <div className="space-y-2 pt-3.5 border-t border-slate-850 mt-1" id="appearance-settings-section">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">Appearance</label>
-                      <p className="text-[10.5px] text-slate-500 leading-normal mt-1">
-                        Switch between Neon Lab Command Center and Clinical Dark, or adjust in-app branding.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => { triggerHaptic('light'); onOpenAppearance(); }}
-                      className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 hover:border-cyan-500/45 text-cyan-300 text-[11px] font-bold transition cursor-pointer"
-                      id="open-appearance-settings-btn"
-                    >
-                      <Palette className="w-3.5 h-3.5" />
-                      Theme
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* App Store Compliance / Shop Visibility Toggle option */}
-              {onToggleHideShop && (!currentUserEmail || currentUserEmail.toLowerCase() === 'kyleheiser@gmail.com') && (
-                <div className="space-y-2 pt-3.5 border-t border-slate-850 mt-1" id="app-store-compliance-section">
-                  <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">App Store Compliance</label>
-                  </div>
-                  <p className="text-[10.5px] text-slate-500 leading-normal mb-1">
-                    Completely hide the bioresearch peptide shop tab to comply with App Store policies. Toggle off to reveal for off-store use.
-                  </p>
-                  <div className="flex items-center justify-between bg-slate-950/45 border border-slate-800/80 p-3 rounded-2xl">
-                    <span className="text-xs font-semibold text-slate-300">Hide Buy Peptides Shop Tab</span>
-                    <button
-                      type="button"
-                      onClick={() => onToggleHideShop(!hideShop)}
-                      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        hideShop ? 'bg-cyan-500' : 'bg-slate-800'
-                      }`}
-                      id="hide-shop-toggle-btn"
-                    >
-                      <span
-                        className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-slate-100 shadow ring-0 transition duration-200 ease-in-out ${
-                          hideShop ? 'translate-x-4' : 'translate-x-0'
-                        }`}
-                      />
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* Appearance and Shop settings moved to Settings page */}
 
             </div>
           </div>
         </div>
+        )}
 
         {/* Right Column: Uploaders, Textareas, and Templates */}
+        {visibility.upload && (
         <div className="col-span-1 lg:col-span-3 space-y-5">
           <div className="bg-[#0f172a]/80 border border-[#1e293b]/85 rounded-3xl p-5 space-y-4" id="upload-panel-card">
             
@@ -860,6 +814,7 @@ export default function BloodAnalyzer({
             </div>
           </div>
         </div>
+        )}
 
       </div>
 

@@ -20,8 +20,9 @@ interface CyclePlannerProps {
   onResetData: () => void;
   activeFromLibrary?: LibraryItem | null;
   clearActiveFromLibrary?: () => void;
-  onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop') => void;
+  onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => void;
   labratTheme?: 'neon' | 'clinical';
+  visibility?: { gantt: boolean; pct: boolean; dataControls: boolean; };
 }
 
 const PRESET_COLORS = [
@@ -110,7 +111,8 @@ export default function CyclePlanner({
   activeFromLibrary,
   clearActiveFromLibrary,
   onNavigateToTab,
-  labratTheme = 'neon'
+  labratTheme = 'neon',
+  visibility = { gantt: true, pct: true, dataControls: true }
 }: CyclePlannerProps) {
   const protocolIcon = (name: string) => `/protocol-icons/${name}-${labratTheme === 'clinical' ? 'clinical' : 'neon'}.svg`;
   // Form modal triggers
@@ -951,7 +953,7 @@ export default function CyclePlanner({
       </div>
 
       {/* Data Import/Export Segment */}
-      {showDataControls && (
+      {visibility.dataControls && showDataControls && (
         <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="data-controls-panel">
           <div className="flex items-center justify-between border-b border-[#1e293b]/60 pb-3">
             <h4 className="text-sm font-semibold text-slate-200">Local Cycle Syncing & Backup Data</h4>
@@ -1039,6 +1041,7 @@ export default function CyclePlanner({
       )}
 
       {/* Gantt Chart Matrix Timeline */}
+      {visibility.gantt && (
       <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="gantt-chart-card">
         <div className="flex items-center justify-between mb-2">
           <h4 className="text-sm font-semibold text-slate-200 flex items-center gap-1.5">
@@ -1049,9 +1052,10 @@ export default function CyclePlanner({
         <p className="text-slate-500 text-[11px] mb-5">Interactive swimlane timeline mapping substance saturation across cycle weeks. Click any active week cell to inspect its phase transitions, expected gains, and adaptation warnings.</p>
         {renderGanttTimeline()}
       </div>
+      )}
 
       {/* Post-Cycle Therapy (PCT) Intelligent Suggester Hub */}
-      {(() => {
+      {visibility.pct && (() => {
         const getEndDate = (start: string, weeks: number) => {
           const s = new Date(start);
           if (isNaN(s.getTime())) return null;

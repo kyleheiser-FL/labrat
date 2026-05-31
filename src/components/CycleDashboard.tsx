@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Check, CheckCircle2, Circle, Weight, Activity, History, Trash2, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Smartphone, Bell, BellRing, Clock, ShieldAlert, Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, CheckCircle2, Circle, Weight, Activity, History, Trash2, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare } from 'lucide-react';
 import { Compound, DoseLog, DailyMetric, formatTimeTo12Hour } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
@@ -13,6 +13,12 @@ interface CycleDashboardProps {
   onSaveMetrics: (metric: DailyMetric) => void;
   onDeleteMetric?: (date: string) => void;
   labratTheme?: 'neon' | 'clinical';
+  visibility?: {
+    legalBanner: boolean;
+    schedule: boolean;
+    history: boolean;
+    wellness: boolean;
+  };
 }
 
 export default function CycleDashboard({
@@ -23,7 +29,8 @@ export default function CycleDashboard({
   onUndoDose,
   onSaveMetrics,
   onDeleteMetric,
-  labratTheme = 'neon'
+  labratTheme = 'neon',
+  visibility = { legalBanner: true, schedule: true, history: true, wellness: true }
 }: CycleDashboardProps) {
   // Navigation for Daily Checklist Date (default is today)
   const todayStr = new Date().toISOString().split('T')[0];
@@ -122,161 +129,6 @@ export default function CycleDashboard({
   const [disclaimerDismissed, setDisclaimerDismissed] = useState(() => {
     return safeLocalStorage.getItem('labrat_dashboard_disclaimer_dismissed') === 'true';
   });
-
-  // Mobile Native & PWA notifications states
-  const [notificationPermission, setNotificationPermission] = useState<string>(
-    typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'unsupported'
-  );
-  const [reminderEnabled, setReminderEnabled] = useState(() => {
-    return safeLocalStorage.getItem('labrat_reminder_enabled') === 'true';
-  });
-  const [reminderTime, setReminderTime] = useState(() => {
-    return safeLocalStorage.getItem('labrat_reminder_time') || '09:00';
-  });
-  const [testStatus, setTestStatus] = useState<'idle' | 'countdown' | 'triggered' | 'denied' | 'unsupported'>('idle');
-  const [countdown, setCountdown] = useState(5);
-
-  const requestNotificationPermission = async () => {
-    if (!('Notification' in window)) {
-      setNotificationPermission('unsupported');
-      return;
-    }
-    try {
-      const status = await Notification.requestPermission();
-      setNotificationPermission(status);
-      if (status === 'granted') {
-        setReminderEnabled(true);
-        safeLocalStorage.setItem('labrat_reminder_enabled', 'true');
-      }
-    } catch (e) {
-      console.error('Error requesting notification permission', e);
-    }
-  };
-
-  const handleReminderToggle = (enabled: boolean) => {
-    setReminderEnabled(enabled);
-    safeLocalStorage.setItem('labrat_reminder_enabled', enabled ? 'true' : 'false');
-    if (enabled && notificationPermission !== 'granted') {
-      requestNotificationPermission();
-    }
-  };
-
-  const handleReminderTimeChange = (time: string) => {
-    setReminderTime(time);
-    safeLocalStorage.setItem('labrat_reminder_time', time);
-  };
-
-  // Foreground reminder scheduler: while the app is open, fire a dose reminder
-  // at the user's chosen time, then reschedule for the following day.
-  // NOTE: This only runs while the app/tab is open. Reminders that reach the
-  // user when the app is fully closed require server-side Web Push (phase 2).
-  useEffect(() => {
-    if (!reminderEnabled) return;
-    if (typeof window === 'undefined' || !('Notification' in window)) return;
-    if (Notification.permission !== 'granted') return;
-    if (!reminderTime || !/^\d{1,2}:\d{2}$/.test(reminderTime)) return;
-
-    let timerId: ReturnType<typeof setTimeout>;
-
-    const msUntilNext = (): number => {
-      const [h, m] = reminderTime.split(':').map((n) => parseInt(n, 10));
-      const now = new Date();
-      const next = new Date();
-      next.setHours(h, m, 0, 0);
-      if (next.getTime() <= now.getTime()) {
-        // Time already passed today; schedule for tomorrow
-        next.setDate(next.getDate() + 1);
-      }
-      return next.getTime() - now.getTime();
-    };
-
-    const schedule = () => {
-      timerId = setTimeout(() => {
-        // Only fire if at least one compound is due on the reminder day and
-        // the user hasn't already logged everything for today.
-        try {
-          const todayStr = new Date().toISOString().split('T')[0];
-          const guardKey = `labrat_reminder_fired_${todayStr}`;
-          if (safeLocalStorage.getItem(guardKey) !== 'true') {
-            firePhysicalNotification();
-            safeLocalStorage.setItem(guardKey, 'true');
-          }
-        } catch (e) {
-          console.warn('[Reminder] foreground fire failed', e);
-        }
-        // Reschedule for the next day's occurrence
-        schedule();
-      }, msUntilNext());
-    };
-
-    schedule();
-    return () => clearTimeout(timerId);
-  }, [reminderEnabled, reminderTime, notificationPermission]);
-
-  const triggerTestNotification = () => {
-    triggerHaptic('medium');
-    if (!('Notification' in window)) {
-      setTestStatus('unsupported');
-      return;
-    }
-    if (Notification.permission !== 'granted') {
-      Notification.requestPermission().then(status => {
-        setNotificationPermission(status);
-        if (status === 'granted') {
-          startTestCountdown();
-        } else {
-          setTestStatus('denied');
-        }
-      });
-    } else {
-      startTestCountdown();
-    }
-  };
-
-  const startTestCountdown = () => {
-    setTestStatus('countdown');
-    setCountdown(5);
-    
-    const interval = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          firePhysicalNotification();
-          return 5;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const firePhysicalNotification = () => {
-    setTestStatus('triggered');
-    setTimeout(() => setTestStatus('idle'), 4000);
-
-    const title = '🔬 LabRat Administrator Alert';
-    const options = {
-      body: 'Time to record today’s dosage checklist administrations. Live sync active!',
-      icon: '/vitamins_icon.png',
-      badge: '/vitamins_icon.png',
-      vibrate: [200, 100, 200],
-      tag: 'labrat-reminder-test',
-      renotify: true
-    };
-
-    // If service worker is active, trigger standard background notification on mobile
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(reg => {
-        reg.showNotification(title, options).catch(err => {
-          console.warn('Service worker showNotification failed, fallback to Browser object', err);
-          new Notification(title, options);
-        });
-      }).catch(() => {
-        new Notification(title, options);
-      });
-    } else {
-      new Notification(title, options);
-    }
-  };
 
   // Sync state if selectedDate changes
   const handleDateChange = (date: string) => {
@@ -436,7 +288,7 @@ export default function CycleDashboard({
       </section>
 
       {/* Conspicuous Educational & Harm Mitigation Legal Warning Box */}
-      {!disclaimerDismissed && (
+      {visibility.legalBanner && !disclaimerDismissed && (
         <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg backdrop-blur-sm" id="dashboard-legal-banner">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-4">
             <div className="flex items-start gap-4">
@@ -479,6 +331,7 @@ export default function CycleDashboard({
       {/* Left Columns (Checklist and Log Ledger) */}
       <div className="2xl:col-span-7 flex flex-col gap-6">
         
+        {visibility.schedule && (<>
         {/* Date Navigator Header Card */}
         <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4" id="dashboard-header-navigator">
           <div>
@@ -823,8 +676,10 @@ export default function CycleDashboard({
             </div>
           )}
         </div>
+        </>)}
 
         {/* Administration History Ledger Log */}
+        {visibility.history && (
         <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="administration-ledger-card">
           <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider mb-4 flex items-center gap-2">
             <History className="w-4 h-4 text-cyan-400" /> Chronological Administration Logs
@@ -874,9 +729,11 @@ export default function CycleDashboard({
             </div>
           )}
         </div>
+        )}
       </div>
 
       {/* Right Column (Wellness Logs and Progress Records) */}
+      {visibility.wellness && (
       <div className="2xl:col-span-5 flex flex-col gap-6" id="dashboard-wellness-panel">
 
         {/* Active Cycle Progress Monitors */}
@@ -963,173 +820,6 @@ export default function CycleDashboard({
                 );
               })
             )}
-          </div>
-        </div>
-
-        {/* Smartphone PWA Mobile Notifications Setup & Helpers */}
-        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="mobile-notifications-card">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Smartphone className="w-5 h-5 text-cyan-400" />
-              <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider text-left">Device Push Reminders</h4>
-            </div>
-            <span className="text-[10px] bg-cyan-950/40 text-cyan-400 px-2.5 py-0.5 rounded-full border border-cyan-500/20 font-bold font-mono">
-              Phone Support
-            </span>
-          </div>
-
-          <div className="space-y-4">
-            <p className="text-xs text-slate-400 text-left leading-relaxed">
-              When configured, LabRat can dispatch device notification alerts and chemical schedule counters directly to your iOS or Android notification center after home-screen installation.
-            </p>
-
-            {/* Quick Status Checks */}
-            <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-              <div className="bg-slate-900/60 border border-slate-800 p-2.5 rounded-xl text-left">
-                <span className="text-[9px] text-slate-500 block uppercase font-bold">App Environment</span>
-                <span className="text-[11px] text-slate-300 font-semibold mt-0.5 flex items-center gap-1.5">
-                  {typeof window !== 'undefined' && (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) ? (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] animate-pulse"></span>
-                      <span>PWA Standalone</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24]"></span>
-                      <span>Web Browser</span>
-                    </>
-                  )}
-                </span>
-              </div>
-
-              <div className="bg-slate-900/60 border border-slate-800 p-2.5 rounded-xl text-left">
-                <span className="text-[9px] text-slate-500 block uppercase font-bold">Permission State</span>
-                <span className="text-[11px] text-slate-300 font-semibold mt-0.5 flex items-center gap-1.5">
-                  {notificationPermission === 'granted' ? (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]"></span>
-                      <span className="text-emerald-400">Granted</span>
-                    </>
-                  ) : notificationPermission === 'denied' ? (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-400 shadow-[0_0_6px_#f87171]"></span>
-                      <span className="text-red-400 font-bold">Blocked</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
-                      <span>Ask Permission</span>
-                    </>
-                  )}
-                </span>
-              </div>
-            </div>
-
-            {/* Request Permission or Toggle Switches */}
-            {notificationPermission !== 'granted' ? (
-              <button
-                type="button"
-                onClick={requestNotificationPermission}
-                className="w-full py-2.5 px-4 bg-cyan-500/10 hover:bg-cyan-500/20 active:bg-cyan-500/30 text-cyan-400 hover:text-cyan-300 border border-cyan-500/25 hover:border-cyan-500/40 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer"
-                id="request-notifications-btn"
-              >
-                <BellRing className="w-4 h-4" />
-                <span>Grant Phone Notification Permission</span>
-              </button>
-            ) : (
-              <div className="bg-[#1e293b]/15 border border-[#1e293b]/45 p-3.5 rounded-xl space-y-3">
-                {/* Switch indicator */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left space-y-0.5">
-                    <span className="text-xs font-bold text-slate-200">Daily Reminder Service</span>
-                    <span className="text-[10px] text-slate-500 block font-mono">Dispatches active chemical counters</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleReminderToggle(!reminderEnabled)}
-                    className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      reminderEnabled ? 'bg-cyan-500' : 'bg-slate-700'
-                    }`}
-                    id="reminder-toggle-switch"
-                  >
-                    <span
-                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-slate-950 shadow ring-0 transition duration-200 ease-in-out ${
-                        reminderEnabled ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
-                </div>
-
-                {/* Preferred time selector */}
-                {reminderEnabled && (
-                  <div className="flex items-center justify-between pt-2.5 border-t border-slate-800/80">
-                    <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-cyan-500" />
-                      <span>Reminder Dispatch Time:</span>
-                    </span>
-                    <input
-                      type="time"
-                      value={reminderTime}
-                      onChange={(e) => handleReminderTimeChange(e.target.value)}
-                      className="bg-[#0f172a] border border-slate-800 text-slate-200 text-xs py-1 px-2.5 rounded-lg focus:outline-none focus:border-cyan-500 text-right font-mono"
-                      id="reminder-time-picker"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Test Simulation Module */}
-            <div className="bg-slate-950/40 border border-[#1e293b]/50 p-3 rounded-xl space-y-2.5 text-left">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider font-mono block">Simulate Native Reminders</span>
-              <p className="text-[10.5px] text-slate-500 leading-normal">
-                Locks/backgrounds aren’t required to test! Request a delayed alert below, then put your device in your pocket or lock the screen to verify native behavior.
-              </p>
-
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={triggerTestNotification}
-                  disabled={testStatus === 'countdown'}
-                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition border cursor-pointer ${
-                    testStatus === 'countdown'
-                      ? 'bg-amber-500/15 border-amber-500/20 text-amber-400 font-mono text-[11px] font-black'
-                      : 'bg-[#1e293b] border-slate-805 hover:border-slate-700 text-slate-300'
-                  }`}
-                  id="simulate-notification-btn"
-                >
-                  {testStatus === 'countdown' ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 text-amber-400 animate-spin" />
-                      <span>Dispatch in {countdown}s...</span>
-                    </>
-                  ) : testStatus === 'triggered' ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400 font-bold" />
-                      <span>Success! Check Notification Center</span>
-                    </>
-                  ) : (
-                    <>
-                      <Bell className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Send test alert (5s)</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Helpful instructions block */}
-              {typeof window !== 'undefined' && !(window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) && (
-                <div className="border border-dashed border-cyan-500/10 bg-cyan-950/5 p-2.5 rounded-lg text-[9.5px] leading-relaxed text-slate-500">
-                  <div className="flex gap-1.5 items-start">
-                    <ShieldAlert className="w-3.5 h-3.5 text-cyan-500 shrink-0 mt-0.5" />
-                    <span>
-                      <strong>iOS / Android Instructions:</strong> Standard phone push/local alerts require you to install this app to your Home Screen first! Tap the share/install icon on your phone’s browser navigation, click <strong>"Add to Home Screen"</strong>, then reopen the app to activate device reminders.
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
           </div>
         </div>
 
@@ -1304,6 +994,7 @@ export default function CycleDashboard({
         </div>
 
       </div>
+      )}
 
     </div>
 
