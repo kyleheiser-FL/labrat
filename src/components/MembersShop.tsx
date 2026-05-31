@@ -1541,8 +1541,8 @@ export default function MembersShop() {
   const pendingApprovalCount = adminMembersList.filter(member => member.status === 'pending').length;
   const newOrderCount = adminOrdersList.filter(order => order.status === 'placed').length;
   
-  // Loading states
-  const [profileLoading, setProfileLoading] = useState(true);
+  // Loading states — skip spinner when no user is present (auth.currentUser is sync)
+  const [profileLoading, setProfileLoading] = useState(() => !!auth.currentUser);
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [membersLoading, setMembersLoading] = useState(false);
@@ -2302,7 +2302,7 @@ export default function MembersShop() {
   const { totalQty, subtotal } = getCartTotals();
 
   return (
-    <div className="flex flex-col gap-6" id="members-shop-root">
+    <div className="flex flex-col gap-6" id="members-shop-page">
       
       {/* Upper Status Cards / Welcome banners */}
       <div className="bg-[#0b1329] border border-[#1e293b] rounded-xl p-4 sm:p-5 relative overflow-hidden" id="shop-welcome-hero">
@@ -2535,7 +2535,7 @@ export default function MembersShop() {
       {/* RENDER LOGIC BY STATES */}
 
       {profileLoading ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-[#0f172a]/30 border border-[#1e293b]/70 rounded-2xl" id="loading-spinner-wrapper">
+        <div className="flex flex-col items-center justify-center py-20 bg-[#0b1329] border border-[#1e293b]/70 rounded-2xl min-h-[60vh]" id="loading-spinner-wrapper">
           <Loader2 className="w-10 h-10 text-cyan-400 animate-spin mb-3" />
           <p className="text-slate-400 text-sm">Synchronizing membership credentials...</p>
         </div>
