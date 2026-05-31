@@ -1107,6 +1107,12 @@ export default function App() {
     triggerNotification('Biometrics Captured', `Secured weight and wellbeing indicators for ${newMetric.date}.`, 'success');
   };
 
+  const handleUpdateCompoundDose = (compoundId: string, newDose: number) => {
+    const comp = compounds.find(c => c.id === compoundId);
+    if (!comp) return;
+    handleUpdateCompound({ ...comp, doseAmount: newDose });
+  };
+
   const handleDeleteMetric = (date: string) => {
     const updated = metrics.filter(m => m.date !== date);
     setMetrics(updated);
@@ -1550,6 +1556,7 @@ export default function App() {
                   onUndoDose={handleUndoDose}
                   onSaveMetrics={handleAddOrUpdateMetrics}
                   onDeleteMetric={handleDeleteMetric}
+                  onUpdateCompoundDose={handleUpdateCompoundDose}
                   labratTheme={labratTheme}
                   visibility={segmentVisibility.dashboard}
                 />
