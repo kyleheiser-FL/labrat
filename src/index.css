@@ -1346,8 +1346,8 @@ html[data-labrat-theme="clinical"] #preset-card-jitter-rescue img {
 
 html[data-labrat-theme="neon"] #labrat-app-shell {
   background:
-    radial-gradient(circle at 15% 5%, rgba(0, 216, 255, .25), transparent 30%),
-    radial-gradient(circle at 86% 12%, rgba(57,255,20,.16), transparent 28%),
+    radial-gradient(circle at 15% 5vh, rgba(0, 216, 255, .25), transparent 30%),
+    radial-gradient(circle at 86% 12vh, rgba(57,255,20,.16), transparent 28%),
     linear-gradient(135deg, #020711 0%, #031327 46%, #020611 100%) !important;
 }
 
