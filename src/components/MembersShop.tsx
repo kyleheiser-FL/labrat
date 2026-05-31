@@ -2730,7 +2730,7 @@ export default function MembersShop() {
                       <span className="text-xs text-slate-500 group-hover:translate-x-1.5 transition-transform inline-block">→</span>
                     </h4>
                     <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed max-w-2xl">
-                      Since 1902, Northern Europe and Switzerland have led molecular synthesis. Learn how glacial baselines and micro-batch GMP controls outperform bulk industrial alternatives. <span className="text-cyan-400 font-bold group-hover:underline">Read the scientific facts.</span>
+                      Norwegian glacial meltwater registers below 1 ppm dissolved solids — near-pharmaceutical grade straight from the source. Combined with Scandinavia's century-long GMP manufacturing culture, every batch delivers lower endotoxin counts, tighter sequence accuracy, and batch-level HPLC accountability that bulk industrial suppliers don't match. <span className="text-cyan-400 font-bold group-hover:underline">View sourcing standards.</span>
                     </p>
                   </div>
                 </div>
