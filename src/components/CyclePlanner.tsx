@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckSquare, Sparkles, ArrowLeftRight, Save, Info, Edit, Check, Heart, Shield, Apple, Sun, Activity, CheckCircle, History, Clock } from 'lucide-react';
 import { Compound, LibraryItem, DoseLog, formatTimeTo12Hour } from '../types';
@@ -116,6 +116,14 @@ export default function CyclePlanner({
   visibility = { gantt: true, pct: true, dataControls: true }
 }: CyclePlannerProps) {
   const protocolIcon = (name: string) => `/protocol-icons/${name}-${labratTheme === 'clinical' ? 'clinical' : 'neon'}.svg`;
+  const phaseDetailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if ((selectedGanttId || selectedGanttWeek) && phaseDetailRef.current) {
+      phaseDetailRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedGanttId, selectedGanttWeek]);
+
   // Form modal triggers
   const [showForm, setShowForm] = useState(false);
   const [showCalcModal, setShowCalcModal] = useState(false);
@@ -823,6 +831,7 @@ export default function CyclePlanner({
         {/* Phase detail panel */}
         {activeComp && (
           <div
+            ref={phaseDetailRef}
             className="bg-[#101b2e]/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl text-left relative overflow-hidden transition-all duration-300"
             style={{ borderLeft: `4px solid ${activeComp.color}` }}
           >
