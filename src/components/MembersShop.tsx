@@ -2314,7 +2314,7 @@ export default function MembersShop() {
   const { totalQty, subtotal } = getCartTotals();
 
   return (
-    <div className="flex flex-col gap-6" id="members-shop-page">
+    <div className="flex flex-col gap-6" id="members-shop-page" style={{ animation: 'none' }}>
       
       {/* Upper Status Cards / Welcome banners */}
       <div className="bg-[#0b1329] border border-[#1e293b] rounded-xl p-4 sm:p-5 relative overflow-hidden" id="shop-welcome-hero">
@@ -2965,7 +2965,7 @@ export default function MembersShop() {
 
               {/* PRODUCTS LISTING */}
               {catalogLoading ? (
-                <div className="flex flex-col items-center justify-center py-16 bg-[#0f172a]/20 border border-[#1e293b]/50 rounded-2xl">
+                <div className="flex flex-col items-center justify-center py-16 bg-[#0b1329] border border-[#1e293b]/70 rounded-2xl min-h-[40vh]">
                   <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mb-2" />
                   <p className="text-slate-400 text-xs text-center">Loading authorized substance inventory...</p>
                 </div>
@@ -3722,7 +3722,7 @@ export default function MembersShop() {
               </h2>
               
               {ordersLoading ? (
-                <div className="flex flex-col items-center justify-center py-16 bg-[#0f172a]/25 border border-[#1e293b]/70 rounded-2xl">
+                <div className="flex flex-col items-center justify-center py-16 bg-[#0b1329] border border-[#1e293b]/70 rounded-2xl min-h-[32vh]">
                   <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mb-2" />
                   <p className="text-slate-400 text-xs">Loading order dispatch lists...</p>
                 </div>
@@ -3907,7 +3907,7 @@ export default function MembersShop() {
               </div>
 
               {membersLoading ? (
-                <div className="flex flex-col items-center justify-center py-16 bg-[#0f172a]/20 border border-[#1e293b]/50 rounded-2xl">
+                <div className="flex flex-col items-center justify-center py-16 bg-[#0b1329] border border-[#1e293b]/70 rounded-2xl min-h-[32vh]">
                   <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mb-2" />
                   <p className="text-slate-400 text-xs">Fetching registered accounts...</p>
                 </div>
@@ -4042,7 +4042,7 @@ export default function MembersShop() {
               </div>
 
               {ordersLoading ? (
-                <div className="flex flex-col items-center justify-center py-16 bg-[#0f172a]/20 border border-[#1e293b]/50 rounded-2xl">
+                <div className="flex flex-col items-center justify-center py-16 bg-[#0b1329] border border-[#1e293b]/70 rounded-2xl min-h-[32vh]">
                   <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mb-2" />
                   <p className="text-slate-400 text-xs">Loading all orders...</p>
                 </div>
