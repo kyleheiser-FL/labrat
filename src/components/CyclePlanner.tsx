@@ -1054,167 +1054,6 @@ export default function CyclePlanner({
       </div>
       )}
 
-      {/* Post-Cycle Therapy (PCT) Intelligent Suggester Hub */}
-      {visibility.pct && (() => {
-        const getEndDate = (start: string, weeks: number) => {
-          const s = new Date(start);
-          if (isNaN(s.getTime())) return null;
-          s.setDate(s.getDate() + weeks * 7);
-          return s;
-        };
-
-        const todayObj = new Date();
-        const suppressiveCompounds = compounds.filter(c => c.type === 'steroid' || c.type === 'compound');
-        
-        // PCT is recommended when a suppressive cycle is completed OR the duration limit is reached
-        const pctCandidates = suppressiveCompounds.filter(c => {
-          const endDate = getEndDate(c.startDate, c.durationWeeks);
-          const dateLimitReached = endDate ? todayObj >= endDate : false;
-          return c.isCompleted || dateLimitReached;
-        });
-
-        if (suppressiveCompounds.length > 0) {
-          return (
-            <div className="bg-gradient-to-br from-[#0f172a] to-[#1e1b4b]/30 border border-indigo-500/20 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="pct-suggestion-dashboard">
-              <div className="border-b border-indigo-500/10 pb-3 flex justify-between items-center flex-wrap gap-2">
-                <div>
-                  <span className="text-[10px] text-cyan-400 font-mono tracking-wider font-semibold uppercase flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-cyan-400" /> Endocrine Restoration Advisor
-                  </span>
-                  <h4 className="text-sm font-bold text-slate-100 flex items-center gap-1.5 mt-0.5">
-                    <Shield className="w-4 h-4 text-indigo-400" />
-                    <span>Post-Cycle Therapy (PCT) Auto-Scheduler</span>
-                  </h4>
-                </div>
-                <span className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">
-                  {pctCandidates.length} Cycle{pctCandidates.length !== 1 ? 's' : ''} Ready for HPTA Recovery
-                </span>
-              </div>
-
-              {pctCandidates.length === 0 ? (
-                <div className="text-center py-6 text-slate-500 text-xs border border-dashed border-[#1e293b] rounded-xl max-w-xl mx-auto space-y-1">
-                  <Shield className="w-6 h-6 text-indigo-500/40 mx-auto mb-1" />
-                  <p className="font-semibold text-slate-400">Restoration Systems Standing By</p>
-                  <p className="text-slate-500 text-[11px]">Schedules are active. Once a suppressive cycle's duration limit is reached, or you click the checkmark on its card to complete it early, custom PCT suggestions will activate automatically here.</p>
-                </div>
-              ) : (
-                <div className="space-y-4 pt-1">
-                  <p className="text-slate-400 text-xs leading-normal">
-                    The following suppressive compounds have completed or elapsed their duration limits. Sustaining natural pituitary signals (LH / FSH) requires entering an endocrine restoration block to safeguard organic systems and preserve lean gains.
-                  </p>
-                  <div className="space-y-3">
-                    {pctCandidates.map((comp) => {
-                      const endDate = getEndDate(comp.startDate, comp.durationWeeks);
-                      const endDateStr = endDate ? endDate.toISOString().split('T')[0] : comp.startDate;
-                      
-                      return (
-                        <div key={`pct-sugg-${comp.id}`} className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 hover:border-indigo-500/30 transition-colors" id={`pct-row-container-${comp.id}`}>
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: comp.color }}></span>
-                              <h5 className="font-bold text-xs sm:text-sm text-slate-200">{comp.name}</h5>
-                              <span className="text-[9px] bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 font-mono px-1.5 py-0.5 rounded uppercase font-bold">
-                                {comp.isCompleted ? 'Manually Finished' : 'Duration Elapsed'}
-                              </span>
-                            </div>
-                            <p className="text-[11px] text-slate-400 leading-normal">
-                              Active Phase: <span className="font-mono text-slate-300 font-semibold">{comp.startDate}</span> to <span className="font-mono text-slate-300 font-semibold">{endDateStr}</span> ({comp.durationWeeks} Weeks total).
-                            </p>
-                          </div>
-
-                          <div className="flex flex-wrap gap-2 w-full lg:w-auto shrink-0">
-                            {/* Nolvadex Protocol Auto Add */}
-                            <button
-                              onClick={() => {
-                                const pctComp: Compound = {
-                                  id: `pct-nolva-${Date.now()}`,
-                                  name: `Nolvadex (Tamoxifen) • PCT for ${comp.name}`,
-                                  type: 'compound',
-                                  doseAmount: 20,
-                                  doseUnit: 'mg',
-                                  frequency: 'daily',
-                                  startDate: endDateStr,
-                                  durationWeeks: 4,
-                                  color: '#ec4899',
-                                  isCompleted: false,
-                                  steroidForm: 'pill',
-                                  pillSizeMg: 20,
-                                  notes: `Post-Cycle Therapy recovery block auto-suggested following completion/termination of ${comp.name}. Focus on restoring standard HPTA axis function.`
-                                };
-                                onAddCompound(pctComp);
-                              }}
-                              className="flex-1 lg:flex-initial py-1.5 px-3 bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/20 hover:border-pink-500/40 text-pink-300 hover:text-pink-200 font-bold rounded-xl text-[10px] md:text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
-                              title="Add Nolvadex PCT to schedule starting on finished date"
-                              id={`add-pct-nolva-btn-${comp.id}`}
-                            >
-                              <Heart className="w-3.5 h-3.5 text-pink-400" />
-                              <span>Nolvadex (20mg/day, 4wk)</span>
-                            </button>
-
-                            {/* Clomid Protocol Auto Add */}
-                            <button
-                              onClick={() => {
-                                const pctComp: Compound = {
-                                  id: `pct-clomid-${Date.now()}`,
-                                  name: `Clomid (Clomiphene) • PCT for ${comp.name}`,
-                                  type: 'compound',
-                                  doseAmount: 50,
-                                  doseUnit: 'mg',
-                                  frequency: 'daily',
-                                  startDate: endDateStr,
-                                  durationWeeks: 4,
-                                  color: '#a855f7',
-                                  isCompleted: false,
-                                  steroidForm: 'pill',
-                                  pillSizeMg: 50,
-                                  notes: `Gonadotropin stimulus Post-Cycle Therapy block scheduled post-${comp.name} cycle. Tamoxifen-alternative or supplement protocol.`
-                                };
-                                onAddCompound(pctComp);
-                              }}
-                              className="flex-1 lg:flex-initial py-1.5 px-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 hover:border-purple-500/40 text-purple-300 hover:text-purple-200 font-bold rounded-xl text-[10px] md:text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
-                              title="Add Clomid PCT to schedule starting on finished date"
-                              id={`add-pct-clomid-btn-${comp.id}`}
-                            >
-                              <Shield className="w-3.5 h-3.5 text-purple-400" />
-                              <span>Clomid (50mg/day, 4wk)</span>
-                            </button>
-
-                            {/* Quick Custom prefilled modal button */}
-                            <button
-                              onClick={() => {
-                                setName('Nolvadex / Clomid Suite');
-                                setNameFromLibrary(true);
-                                setType('compound');
-                                setDoseAmount('20');
-                                setDoseUnit('mg');
-                                setFrequency('daily');
-                                setStartDate(endDateStr);
-                                setDurationWeeks(4);
-                                setColor('#6366f1');
-                                setSteroidForm('pill');
-                                setPillSizeMg('20');
-                                setNotes(`Custom post-cycle therapy suite designated for the ${comp.name} recovery phase.`);
-                                setShowForm(true);
-                              }}
-                              className="flex-1 lg:flex-initial py-1.5 px-3 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-300 font-bold rounded-xl text-[10px] md:text-xs flex items-center justify-center gap-1 transition cursor-pointer"
-                              id={`add-pct-custom-btn-${comp.id}`}
-                            >
-                              <Plus className="w-3.5 h-3.5 text-slate-400" />
-                              <span>Custom PCT</span>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        }
-        return null;
-      })()}
-
       {/* Active Compound Cards (Manage Section) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="compounds-list-grid">
         {compounds.map((comp) => (
@@ -1522,6 +1361,167 @@ export default function CyclePlanner({
           </div>
         ))}
       </div>
+
+      {/* Post-Cycle Therapy (PCT) Intelligent Suggester Hub */}
+      {visibility.pct && (() => {
+        const getEndDate = (start: string, weeks: number) => {
+          const s = new Date(start);
+          if (isNaN(s.getTime())) return null;
+          s.setDate(s.getDate() + weeks * 7);
+          return s;
+        };
+
+        const todayObj = new Date();
+        const suppressiveCompounds = compounds.filter(c => c.type === 'steroid' || c.type === 'compound');
+
+        // PCT is recommended when a suppressive cycle is completed OR the duration limit is reached
+        const pctCandidates = suppressiveCompounds.filter(c => {
+          const endDate = getEndDate(c.startDate, c.durationWeeks);
+          const dateLimitReached = endDate ? todayObj >= endDate : false;
+          return c.isCompleted || dateLimitReached;
+        });
+
+        if (suppressiveCompounds.length > 0) {
+          return (
+            <div className="bg-gradient-to-br from-[#0f172a] to-[#1e1b4b]/30 border border-indigo-500/20 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="pct-suggestion-dashboard">
+              <div className="border-b border-indigo-500/10 pb-3 flex justify-between items-center flex-wrap gap-2">
+                <div>
+                  <span className="text-[10px] text-cyan-400 font-mono tracking-wider font-semibold uppercase flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-cyan-400" /> Endocrine Restoration Advisor
+                  </span>
+                  <h4 className="text-sm font-bold text-slate-100 flex items-center gap-1.5 mt-0.5">
+                    <Shield className="w-4 h-4 text-indigo-400" />
+                    <span>Post-Cycle Therapy (PCT) Auto-Scheduler</span>
+                  </h4>
+                </div>
+                <span className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">
+                  {pctCandidates.length} Cycle{pctCandidates.length !== 1 ? 's' : ''} Ready for HPTA Recovery
+                </span>
+              </div>
+
+              {pctCandidates.length === 0 ? (
+                <div className="text-center py-6 text-slate-500 text-xs border border-dashed border-[#1e293b] rounded-xl max-w-xl mx-auto space-y-1">
+                  <Shield className="w-6 h-6 text-indigo-500/40 mx-auto mb-1" />
+                  <p className="font-semibold text-slate-400">Restoration Systems Standing By</p>
+                  <p className="text-slate-500 text-[11px]">Schedules are active. Once a suppressive cycle's duration limit is reached, or you click the checkmark on its card to complete it early, custom PCT suggestions will activate automatically here.</p>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-1">
+                  <p className="text-slate-400 text-xs leading-normal">
+                    The following suppressive compounds have completed or elapsed their duration limits. Sustaining natural pituitary signals (LH / FSH) requires entering an endocrine restoration block to safeguard organic systems and preserve lean gains.
+                  </p>
+                  <div className="space-y-3">
+                    {pctCandidates.map((comp) => {
+                      const endDate = getEndDate(comp.startDate, comp.durationWeeks);
+                      const endDateStr = endDate ? endDate.toISOString().split('T')[0] : comp.startDate;
+
+                      return (
+                        <div key={`pct-sugg-${comp.id}`} className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 hover:border-indigo-500/30 transition-colors" id={`pct-row-container-${comp.id}`}>
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: comp.color }}></span>
+                              <h5 className="font-bold text-xs sm:text-sm text-slate-200">{comp.name}</h5>
+                              <span className="text-[9px] bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 font-mono px-1.5 py-0.5 rounded uppercase font-bold">
+                                {comp.isCompleted ? 'Manually Finished' : 'Duration Elapsed'}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-400 leading-normal">
+                              Active Phase: <span className="font-mono text-slate-300 font-semibold">{comp.startDate}</span> to <span className="font-mono text-slate-300 font-semibold">{endDateStr}</span> ({comp.durationWeeks} Weeks total).
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2 w-full lg:w-auto shrink-0">
+                            {/* Nolvadex Protocol Auto Add */}
+                            <button
+                              onClick={() => {
+                                const pctComp: Compound = {
+                                  id: `pct-nolva-${Date.now()}`,
+                                  name: `Nolvadex (Tamoxifen) • PCT for ${comp.name}`,
+                                  type: 'compound',
+                                  doseAmount: 20,
+                                  doseUnit: 'mg',
+                                  frequency: 'daily',
+                                  startDate: endDateStr,
+                                  durationWeeks: 4,
+                                  color: '#ec4899',
+                                  isCompleted: false,
+                                  steroidForm: 'pill',
+                                  pillSizeMg: 20,
+                                  notes: `Post-Cycle Therapy recovery block auto-suggested following completion/termination of ${comp.name}. Focus on restoring standard HPTA axis function.`
+                                };
+                                onAddCompound(pctComp);
+                              }}
+                              className="flex-1 lg:flex-initial py-1.5 px-3 bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/20 hover:border-pink-500/40 text-pink-300 hover:text-pink-200 font-bold rounded-xl text-[10px] md:text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                              title="Add Nolvadex PCT to schedule starting on finished date"
+                              id={`add-pct-nolva-btn-${comp.id}`}
+                            >
+                              <Heart className="w-3.5 h-3.5 text-pink-400" />
+                              <span>Nolvadex (20mg/day, 4wk)</span>
+                            </button>
+
+                            {/* Clomid Protocol Auto Add */}
+                            <button
+                              onClick={() => {
+                                const pctComp: Compound = {
+                                  id: `pct-clomid-${Date.now()}`,
+                                  name: `Clomid (Clomiphene) • PCT for ${comp.name}`,
+                                  type: 'compound',
+                                  doseAmount: 50,
+                                  doseUnit: 'mg',
+                                  frequency: 'daily',
+                                  startDate: endDateStr,
+                                  durationWeeks: 4,
+                                  color: '#a855f7',
+                                  isCompleted: false,
+                                  steroidForm: 'pill',
+                                  pillSizeMg: 50,
+                                  notes: `Gonadotropin stimulus Post-Cycle Therapy block scheduled post-${comp.name} cycle. Tamoxifen-alternative or supplement protocol.`
+                                };
+                                onAddCompound(pctComp);
+                              }}
+                              className="flex-1 lg:flex-initial py-1.5 px-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 hover:border-purple-500/40 text-purple-300 hover:text-purple-200 font-bold rounded-xl text-[10px] md:text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                              title="Add Clomid PCT to schedule starting on finished date"
+                              id={`add-pct-clomid-btn-${comp.id}`}
+                            >
+                              <Shield className="w-3.5 h-3.5 text-purple-400" />
+                              <span>Clomid (50mg/day, 4wk)</span>
+                            </button>
+
+                            {/* Quick Custom prefilled modal button */}
+                            <button
+                              onClick={() => {
+                                setName('Nolvadex / Clomid Suite');
+                                setNameFromLibrary(true);
+                                setType('compound');
+                                setDoseAmount('20');
+                                setDoseUnit('mg');
+                                setFrequency('daily');
+                                setStartDate(endDateStr);
+                                setDurationWeeks(4);
+                                setColor('#6366f1');
+                                setSteroidForm('pill');
+                                setPillSizeMg('20');
+                                setNotes(`Custom post-cycle therapy suite designated for the ${comp.name} recovery phase.`);
+                                setShowForm(true);
+                              }}
+                              className="flex-1 lg:flex-initial py-1.5 px-3 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-slate-300 font-bold rounded-xl text-[10px] md:text-xs flex items-center justify-center gap-1 transition cursor-pointer"
+                              id={`add-pct-custom-btn-${comp.id}`}
+                            >
+                              <Plus className="w-3.5 h-3.5 text-slate-400" />
+                              <span>Custom PCT</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* Dynamic Cycle Risk Mitigations & Science-Backed Support Recommendations */}
       <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="cycle-mitigations-panel">
