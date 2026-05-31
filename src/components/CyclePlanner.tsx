@@ -157,6 +157,13 @@ export default function CyclePlanner({
   const [selectedGanttId, setSelectedGanttId] = useState<string | null>(null);
   const [selectedGanttWeek, setSelectedGanttWeek] = useState<number | null>(null);
 
+  const phaseDetailRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if ((selectedGanttId || selectedGanttWeek) && phaseDetailRef.current) {
+      phaseDetailRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedGanttId, selectedGanttWeek]);
+
   // Pre-calculate cycle triggers using useMemo to avoid repeated string matching on every render
   const cycleTriggers = useMemo(() => {
     let hasOral = false, hasInjectable = false, hasAromatizing = false, hasJointStrain = false, hasSuppressive = false, hasStimulant = false;
