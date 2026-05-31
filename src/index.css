@@ -1458,7 +1458,7 @@ html[data-labrat-theme="neon"] #preset-card-jitter-rescue img {
   }
   .labrat-command-metrics {
     grid-column: 1 / -1 !important;
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 }
 
@@ -1595,8 +1595,8 @@ html[data-labrat-theme="neon"] .labrat-command-hero-art img {
     width: clamp(320px, 66vw, 560px) !important;
   }
   .labrat-command-metrics {
-    max-width: 420px !important;
-    grid-template-columns: 1fr !important;
+    max-width: 100% !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 }
 
@@ -1787,8 +1787,8 @@ html[data-labrat-theme="neon"] .labrat-command-hero-art img {
     line-height: 1.56 !important;
   }
   .labrat-command-metrics {
-    max-width: min(340px, 58%) !important;
-    grid-template-columns: 1fr !important;
+    max-width: 100% !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 }
 
@@ -1808,7 +1808,7 @@ html[data-labrat-theme="neon"] .labrat-command-hero-art img {
     max-width: 74% !important;
   }
   .labrat-command-metrics {
-    max-width: 55% !important;
+    max-width: 100% !important;
   }
 }
 
@@ -1834,7 +1834,7 @@ html[data-labrat-theme="neon"] .labrat-command-hero-art img {
     max-width: 78% !important;
   }
   .labrat-command-metrics {
-    max-width: 61% !important;
+    max-width: 100% !important;
   }
 }
 
