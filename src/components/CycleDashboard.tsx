@@ -770,15 +770,26 @@ export default function CycleDashboard({
                 <span className="text-[10px] text-slate-500 font-mono">
                   Showing {Math.min(ledgerShowCount, logs.length)} of {logs.length} log{logs.length !== 1 ? 's' : ''}
                 </span>
-                {logs.length > ledgerShowCount && (
-                  <button
-                    type="button"
-                    onClick={() => setLedgerShowCount(prev => prev + 5)}
-                    className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-lg transition cursor-pointer"
-                  >
-                    Show 5 More
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {ledgerShowCount > 5 && (
+                    <button
+                      type="button"
+                      onClick={() => setLedgerShowCount(5)}
+                      className="text-[10px] font-bold text-slate-400 hover:text-slate-300 bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700/40 px-3 py-1 rounded-lg transition cursor-pointer"
+                    >
+                      Show Less
+                    </button>
+                  )}
+                  {logs.length > ledgerShowCount && (
+                    <button
+                      type="button"
+                      onClick={() => setLedgerShowCount(prev => prev + 5)}
+                      className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-lg transition cursor-pointer"
+                    >
+                      Show 5 More
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}
