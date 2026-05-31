@@ -1698,16 +1698,21 @@ export default function MembersShop() {
         list.push({ id: docSnap.id, ...docSnap.data() } as ShopProduct);
       });
 
+      const syncPromises: Promise<void>[] = [];
+
       // Self-healing synchronization upgrade: insert or UPDATE items to match updated clean certified titles & sizes, prices, and stock
       for (const sample of SAMPLE_INVENTORY) {
         const existingIndex = list.findIndex(p => p.id === sample.id);
         if (existingIndex === -1) {
-          try {
-            await setDoc(doc(db, 'shopItems', sample.id), sample);
-            list.push(sample);
-          } catch (err) {
-            console.error(`Failed to auto-provision item: ${sample.id}`, err);
-          }
+          syncPromises.push(
+            setDoc(doc(db, 'shopItems', sample.id), sample)
+              .then(() => {
+                list.push(sample);
+              })
+              .catch(err => {
+                console.error(`Failed to auto-provision item: ${sample.id}`, err);
+              })
+          );
         } else {
           const existing = list[existingIndex];
           if (
@@ -1717,40 +1722,47 @@ export default function MembersShop() {
             existing.price !== sample.price ||
             existing.inventory !== sample.inventory
           ) {
-            try {
-              await setDoc(doc(db, 'shopItems', sample.id), {
+            syncPromises.push(
+              setDoc(doc(db, 'shopItems', sample.id), {
                 ...existing,
                 name: sample.name,
                 description: sample.description,
                 category: sample.category,
                 price: sample.price,
                 inventory: sample.inventory
-              });
-              list[existingIndex] = {
-                ...existing,
-                name: sample.name,
-                description: sample.description,
-                category: sample.category,
-                price: sample.price,
-                inventory: sample.inventory
-              };
-            } catch (err) {
-              console.error(`Failed to auto-update item: ${sample.id}`, err);
-            }
+              })
+                .then(() => {
+                  list[existingIndex] = {
+                    ...existing,
+                    name: sample.name,
+                    description: sample.description,
+                    category: sample.category,
+                    price: sample.price,
+                    inventory: sample.inventory
+                  };
+                })
+                .catch(err => {
+                  console.error(`Failed to auto-update item: ${sample.id}`, err);
+                })
+            );
           }
         }
       }
 
       // Proactively prune outdated/removed inventory sizes/products from Firestore
-      const activeSampleIds = SAMPLE_INVENTORY.map(s => s.id);
-      const obsoleteItems = list.filter(item => !activeSampleIds.includes(item.id));
-      await Promise.all(
-        obsoleteItems.map(item =>
+
+      const activeSampleIdsSet = new Set(SAMPLE_INVENTORY.map(s => s.id));
+      const obsoleteItems = list.filter(item => !activeSampleIdsSet.has(item.id));
+      await Promise.all([
+        ...syncPromises,
+        ...obsoleteItems.map(item =>
           deleteDoc(doc(db, 'shopItems', item.id)).catch(err =>
             console.error(`Failed to auto-delete obsolete database item: ${item.id}`, err)
           )
         )
-      );
+      ]);
+
+      const activeSampleIds = Array.from(activeSampleIdsSet);
 
       // Set state to strictly only contain active shop products
       const filteredList = list.filter(p => activeSampleIds.includes(p.id));
@@ -3874,9 +3886,9 @@ export default function MembersShop() {
           )}
 
 
-          {/* ======================================= */}
+          {/* ================================ */}
           {/* ADMINISTRATOR CONSOLE VIEWS (STRICT ACCESS) */}
-          {/* ======================================= */}
+          {/* ================================ */}
 
           {isAdminUser && view === 'admin_members' && (
             <div className="flex flex-col gap-4">
@@ -4290,9 +4302,9 @@ export default function MembersShop() {
         </div>
       )}
 
-      {/* ==================================== */}
+      {/* ============================= */}
       {/* SUCCESS ORDER CHECKOUT OVERLAY MODAL */}
-      {/* ==================================== */}
+      {/* ============================= */}
       <AnimatePresence>
         {showOrderSuccessModal && lastPlacedOrder && (
           <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
@@ -4369,9 +4381,9 @@ export default function MembersShop() {
       </AnimatePresence>
 
 
-      {/* ========================================= */}
+      {/* ================================== */}
       {/* IMMERSIVE DOSAGE SELECTOR MODAL / OVERLAY */}
-      {/* ========================================= */}
+      {/* ================================== */}
       <AnimatePresence>
         {selectedParentProductGroup && (
           <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[9990] flex items-center justify-center p-4">
@@ -4737,9 +4749,9 @@ export default function MembersShop() {
       </AnimatePresence>
 
 
-      {/* ========================================= */}
+      {/* ================================== */}
       {/* PRODUCT CREATION/EDITION MODAL (ADMIN ONLY) */}
-      {/* ========================================= */}
+      {/* ================================== */}
       <AnimatePresence>
         {showProductModal && isAdminUser && (
           <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
@@ -4873,9 +4885,9 @@ export default function MembersShop() {
       </AnimatePresence>
 
 
-      {/* ========================================= */}
+      {/* ================================== */}
       {/* NORWAY & SWITZERLAND PEPTIDE HERITAGE MODAL */}
-      {/* ========================================= */}
+      {/* ================================== */}
       <AnimatePresence>
         {showNorwayModal && (
           <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[9999] flex items-center justify-center p-4 overflow-y-auto">
@@ -5043,9 +5055,9 @@ export default function MembersShop() {
       </AnimatePresence>
 
 
-      {/* ========================================= */}
+      {/* ================================== */}
       {/* CERTIFICATION SPECIFICATION DETAIL MODAL */}
-      {/* ========================================= */}
+      {/* ================================== */}
       <AnimatePresence>
         {selectedCertKey && CERTIFICATION_DETAILS[selectedCertKey] && (() => {
           const cert = CERTIFICATION_DETAILS[selectedCertKey];
