@@ -44,7 +44,8 @@ export default function CycleDashboard({
     if (isNaN(d)) return '';
     if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
       const perUnit = (comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100);
-      return String(Math.round((d / perUnit) * 10) / 10);
+      const doseInMcg = comp.doseUnit === 'mg' ? d * 1000 : d;
+      return String(Math.round((doseInMcg / perUnit) * 10) / 10);
     }
     if ((comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm === 'oil' && comp.oilConcMgMl) {
       return String(Math.round((d / comp.oilConcMgMl) * 100) / 100);
@@ -57,7 +58,9 @@ export default function CycleDashboard({
     if (isNaN(u)) return '';
     if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
       const perUnit = (comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100);
-      return String(Math.round(u * perUnit * 10) / 10);
+      const rawMcg = u * perUnit;
+      const dose = comp.doseUnit === 'mg' ? rawMcg / 1000 : rawMcg;
+      return String(Math.round(dose * 10) / 10);
     }
     if ((comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm === 'oil' && comp.oilConcMgMl) {
       return String(Math.round(u * comp.oilConcMgMl * 10) / 10);
@@ -106,7 +109,8 @@ export default function CycleDashboard({
     // Calculate physical text
     let calculatedQtyText = undefined;
     if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
-      const units = Math.round(((parsedDose) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10;
+      const doseInMcg = comp.doseUnit === 'mg' ? parsedDose * 1000 : parsedDose;
+      const units = Math.round((doseInMcg / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10;
       calculatedQtyText = `${units} Units`;
     } else if (comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') {
       if (comp.steroidForm === 'pill' && comp.pillSizeMg) {
@@ -131,7 +135,7 @@ export default function CycleDashboard({
       reconstitutedRatio: comp.vialSizeMg && comp.bacWaterMl ? {
         vialSizeMg: comp.vialSizeMg,
         bacWaterMl: comp.bacWaterMl,
-        syringeUnits: Math.round(((parsedDose) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10
+        syringeUnits: Math.round(((comp.doseUnit === 'mg' ? parsedDose * 1000 : parsedDose) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10
       } : undefined,
       calculatedQtyText
     };
@@ -211,7 +215,8 @@ export default function CycleDashboard({
     
     let calculatedQtyText = undefined;
     if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
-      const units = Math.round(((comp.doseAmount) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10;
+      const doseInMcg = comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount;
+      const units = Math.round((doseInMcg / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10;
       calculatedQtyText = `${units} Units`;
     } else if (comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') {
       if (comp.steroidForm === 'pill' && comp.pillSizeMg) {
@@ -234,7 +239,7 @@ export default function CycleDashboard({
       reconstitutedRatio: comp.vialSizeMg && comp.bacWaterMl ? {
         vialSizeMg: comp.vialSizeMg,
         bacWaterMl: comp.bacWaterMl,
-        syringeUnits: Math.round(((comp.doseAmount) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10
+        syringeUnits: Math.round(((comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10
       } : undefined,
       calculatedQtyText
     };
@@ -540,7 +545,8 @@ export default function CycleDashboard({
 
                     if (isPeptide) {
                       const perUnit = (comp.vialSizeMg! * 1000) / (comp.bacWaterMl! * 100);
-                      syringeUnits = Math.round((parsedDose / perUnit) * 10) / 10;
+                      const doseInMcg = comp.doseUnit === 'mg' ? parsedDose * 1000 : parsedDose;
+                      syringeUnits = Math.round((doseInMcg / perUnit) * 10) / 10;
                       syringeMax = 100;
                       syringeLabel = 'units';
                       summaryText = `${syringeUnits} syringe units — ${comp.vialSizeMg}mg vial / ${comp.bacWaterMl}ml BAC water`;
@@ -640,9 +646,9 @@ export default function CycleDashboard({
                 // Calculate needle unit draws if applicable
                 let needleDrawUnits: number | null = null;
                 if (compound.vialSizeMg && compound.bacWaterMl) {
-                  // doseAmount (mcg) / (vialSizeMg * 1000 / (bacWaterMl * 100))
                   const perUnit = (compound.vialSizeMg * 1000) / (compound.bacWaterMl * 100);
-                  needleDrawUnits = Math.round((compound.doseAmount / perUnit) * 10) / 10;
+                  const doseInMcg = compound.doseUnit === 'mg' ? compound.doseAmount * 1000 : compound.doseAmount;
+                  needleDrawUnits = Math.round((doseInMcg / perUnit) * 10) / 10;
                 }
 
                 return (
