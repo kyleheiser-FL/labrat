@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AlertTriangle, Activity, CheckSquare, Edit, Trash2, Info, History } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
-import { findShopProductMatch } from './MembersShop';
+import { findShopProductMatch } from '../lib/shopHelpers';
 
 interface CompoundCardProps {
   compound: Compound;
