@@ -51,19 +51,23 @@ for(let i=100; i<120; i++){
   });
 }
 
-async function originalImplementation() {
+async function optimizedImplementation() {
   const currentList = [...list];
+
+  const promises: Promise<void>[] = [];
 
   // Self-healing synchronization upgrade: insert or UPDATE items to match updated clean certified titles & sizes, prices, and stock
   for (const sample of SAMPLE_INVENTORY) {
     const existingIndex = currentList.findIndex(p => p.id === sample.id);
     if (existingIndex === -1) {
-      try {
-        await setDoc(doc(db, 'shopItems', sample.id), sample);
-        currentList.push(sample);
-      } catch (err) {
-        console.error(`Failed to auto-provision item: ${sample.id}`, err);
-      }
+      promises.push((async () => {
+        try {
+          await setDoc(doc(db, 'shopItems', sample.id), sample);
+          currentList.push(sample);
+        } catch (err) {
+          console.error(`Failed to auto-provision item: ${sample.id}`, err);
+        }
+      })());
     } else {
       const existing = currentList[existingIndex];
       if (
@@ -73,48 +77,54 @@ async function originalImplementation() {
         existing.price !== sample.price ||
         existing.inventory !== sample.inventory
       ) {
-        try {
-          await setDoc(doc(db, 'shopItems', sample.id), {
-            ...existing,
-            name: sample.name,
-            description: sample.description,
-            category: sample.category,
-            price: sample.price,
-            inventory: sample.inventory
-          });
-          currentList[existingIndex] = {
-            ...existing,
-            name: sample.name,
-            description: sample.description,
-            category: sample.category,
-            price: sample.price,
-            inventory: sample.inventory
-          };
-        } catch (err) {
-          console.error(`Failed to auto-update item: ${sample.id}`, err);
-        }
+        promises.push((async () => {
+          try {
+            await setDoc(doc(db, 'shopItems', sample.id), {
+              ...existing,
+              name: sample.name,
+              description: sample.description,
+              category: sample.category,
+              price: sample.price,
+              inventory: sample.inventory
+            });
+            currentList[existingIndex] = {
+              ...existing,
+              name: sample.name,
+              description: sample.description,
+              category: sample.category,
+              price: sample.price,
+              inventory: sample.inventory
+            };
+          } catch (err) {
+            console.error(`Failed to auto-update item: ${sample.id}`, err);
+          }
+        })());
       }
     }
   }
 
   // Proactively prune outdated/removed inventory sizes/products from Firestore
-  const activeSampleIds = SAMPLE_INVENTORY.map(s => s.id);
+  const activeSampleIds = new Set(SAMPLE_INVENTORY.map(s => s.id));
   for (const item of currentList) {
-    if (!activeSampleIds.includes(item.id)) {
-      try {
-        await deleteDoc(doc(db, 'shopItems', item.id));
-      } catch (err) {
-        console.error(`Failed to auto-delete obsolete database item: ${item.id}`, err);
-      }
+    if (!activeSampleIds.has(item.id)) {
+      promises.push((async () => {
+        try {
+          await deleteDoc(doc(db, 'shopItems', item.id));
+        } catch (err) {
+          console.error(`Failed to auto-delete obsolete database item: ${item.id}`, err);
+        }
+      })());
     }
   }
+
+  await Promise.all(promises);
 }
 
 async function run() {
   const start = performance.now();
-  await originalImplementation();
+  await optimizedImplementation();
   const end = performance.now();
-  console.log(`Original implementation took: ${end - start} ms`);
+  console.log(`Optimized implementation took: ${end - start} ms`);
 }
 
 run();
