@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, CheckCircle2, Circle, Weight, Activity, History, Trash2, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare } from 'lucide-react';
+import { Check, CheckCircle2, Circle, Weight, Activity, History, Trash2, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw } from 'lucide-react';
 import { Compound, DoseLog, DailyMetric, formatTimeTo12Hour } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
@@ -12,6 +12,7 @@ interface CycleDashboardProps {
   onUndoDose: (id: string) => void;
   onSaveMetrics: (metric: DailyMetric) => void;
   onDeleteMetric?: (date: string) => void;
+  onUpdateCompoundDose?: (compoundId: string, newDose: number) => void;
   labratTheme?: 'neon' | 'clinical';
   visibility?: {
     legalBanner: boolean;
@@ -29,12 +30,14 @@ export default function CycleDashboard({
   onUndoDose,
   onSaveMetrics,
   onDeleteMetric,
+  onUpdateCompoundDose,
   labratTheme = 'neon',
   visibility = { legalBanner: true, schedule: true, history: true, wellness: true }
 }: CycleDashboardProps) {
   // Navigation for Daily Checklist Date (default is today)
   const todayStr = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(todayStr);
+  const [ledgerShowCount, setLedgerShowCount] = useState(5);
 
   // States for manual/unscheduled past dose logging
   const [showManualLog, setShowManualLog] = useState(false);
@@ -408,21 +411,30 @@ export default function CycleDashboard({
               <CheckSquare className="w-4 h-4 text-cyan-400" /> Daily Intake & Administration Checklist
             </h4>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHaptic('light');
-                  setShowManualLog(!showManualLog);
-                }}
-                className={`text-[10px] font-bold px-3 py-1 rounded-full border transition flex items-center gap-1 cursor-pointer ${
-                  showManualLog 
-                    ? 'bg-cyan-500/25 text-cyan-300 border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]' 
-                    : 'bg-slate-900/60 text-slate-400 border-slate-800 hover:text-cyan-400 hover:border-cyan-500/20'
-                }`}
-                id="btn-toggle-manual-log"
-              >
-                <PlusCircle className="w-3.5 h-3.5" /> {showManualLog ? "Hide Custom Log" : "Log Manual/Past Dose"}
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic('light');
+                    setShowManualLog(!showManualLog);
+                  }}
+                  className={`text-xs font-bold px-4 py-1.5 rounded-xl border transition flex items-center gap-1.5 cursor-pointer ${
+                    showManualLog
+                      ? 'bg-cyan-500/25 text-cyan-300 border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
+                      : 'bg-slate-900/60 text-slate-400 border-slate-700 hover:text-cyan-400 hover:border-cyan-500/30'
+                  }`}
+                  id="btn-toggle-manual-log"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" /> {showManualLog ? "Hide Manual Dose" : "Manual Dose"}
+                </button>
+                <div className="relative group">
+                  <Info className="w-3.5 h-3.5 text-slate-500 hover:text-slate-300 cursor-help transition" />
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-slate-900 border border-slate-700 rounded-xl p-3 text-[11px] text-slate-300 leading-relaxed shadow-xl hidden group-hover:block z-50 pointer-events-none">
+                    Use this to log a dose that differs from your scheduled cycle amount, or to record a back-dated entry. If you're adjusting your ongoing dose, you can update the cycle going forward to match after entering the new amount.
+                    <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-slate-700" />
+                  </div>
+                </div>
+              </div>
               <span className="text-[10px] bg-cyan-950 text-cyan-400 px-2.5 py-0.5 rounded-full border border-cyan-500/10 font-bold font-mono">
                 {scheduledCompounds.length} Scheduled
               </span>
@@ -434,7 +446,7 @@ export default function CycleDashboard({
             <div className="mb-5 bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 text-left space-y-3.5 shadow-xl transition-all" id="manual-dose-logger-form">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-[#94a3b8] uppercase tracking-wider flex items-center gap-1.5 font-mono">
-                  <PlusCircle className="w-4 h-4 text-cyan-400" /> Log Custom/Unscheduled Dose
+                  <PlusCircle className="w-4 h-4 text-cyan-400" /> Manual Dose Entry
                 </span>
                 <span className="text-[10px] text-slate-400 font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
                   Target Date: <strong className="text-cyan-400">{selectedDate}</strong>
@@ -548,6 +560,35 @@ export default function CycleDashboard({
                     );
                   })()}
 
+                  {/* Update cycle dose banner — shown when manual dose differs from scheduled dose */}
+                  {(() => {
+                    if (!manualCompoundId || !onUpdateCompoundDose) return null;
+                    const comp = compounds.find(c => c.id === manualCompoundId);
+                    if (!comp) return null;
+                    const parsed = parseFloat(manualDoseAmount);
+                    if (isNaN(parsed) || parsed === comp.doseAmount) return null;
+                    return (
+                      <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 rounded-xl p-3">
+                        <RefreshCw className="w-4 h-4 text-amber-400 shrink-0" />
+                        <div className="flex-1 text-[11px] text-amber-300 leading-snug">
+                          Your manual dose ({parsed} {comp.doseUnit}) differs from the scheduled cycle dose ({comp.doseAmount} {comp.doseUnit}).
+                          Update the cycle to use this dose going forward?
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            triggerHaptic('medium');
+                            onUpdateCompoundDose(comp.id, parsed);
+                          }}
+                          className="shrink-0 py-1.5 px-3 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 rounded-lg text-[11px] font-bold cursor-pointer transition"
+                          id="update-cycle-dose-btn"
+                        >
+                          Update Cycle Dose
+                        </button>
+                      </div>
+                    );
+                  })()}
+
                   <div className="flex justify-end gap-2 pt-1">
                     <button
                       type="button"
@@ -577,7 +618,7 @@ export default function CycleDashboard({
           {scheduledCompounds.length === 0 ? (
             <div className="text-center py-10 text-slate-500 border border-dashed border-slate-800 rounded-xl space-y-3">
               <p className="text-sm font-semibold text-slate-400">Rest Day / Empty Slate</p>
-              <p className="text-xs text-slate-600 max-w-xs mx-auto">No substance administration is scheduled for this date. Click <strong className="text-cyan-400 font-semibold cursor-pointer" onClick={() => { triggerHaptic('light'); setShowManualLog(true); }}>Log Manual/Past Dose</strong> above to record an unscheduled dose or back-dated entry.</p>
+              <p className="text-xs text-slate-600 max-w-xs mx-auto">No substance administration is scheduled for this date. Click <strong className="text-cyan-400 font-semibold cursor-pointer" onClick={() => { triggerHaptic('light'); setShowManualLog(true); }}>Manual Dose</strong> above to record an unscheduled dose or back-dated entry.</p>
             </div>
           ) : (
             <div className="space-y-4" id="checklist-conglomerate">
@@ -700,7 +741,7 @@ export default function CycleDashboard({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/40 text-slate-300 font-mono">
-                  {logs.slice().reverse().slice(0, 10).map((log) => (
+                  {logs.slice().reverse().slice(0, ledgerShowCount).map((log) => (
                     <tr key={log.id} className="hover:bg-slate-900/10">
                       <td className="py-2.5 px-2 text-slate-400">{log.date} at {formatTimeTo12Hour(log.time)}</td>
                       <td className="py-2.5 px-2 text-slate-200 font-semibold">{log.compoundName}</td>
@@ -725,7 +766,20 @@ export default function CycleDashboard({
                   ))}
                 </tbody>
               </table>
-              <span className="text-[10px] text-slate-500 block text-center mt-3 pt-3 border-t border-slate-800/40">Showing up to the 10 most recent administrative logs</span>
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-800/40">
+                <span className="text-[10px] text-slate-500 font-mono">
+                  Showing {Math.min(ledgerShowCount, logs.length)} of {logs.length} log{logs.length !== 1 ? 's' : ''}
+                </span>
+                {logs.length > ledgerShowCount && (
+                  <button
+                    type="button"
+                    onClick={() => setLedgerShowCount(prev => prev + 5)}
+                    className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-lg transition cursor-pointer"
+                  >
+                    Show 5 More
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>
