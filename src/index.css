@@ -31,6 +31,15 @@ html:not(.dark) body {
   color: #0f172a !important;
 }
 
+/* App header is always dark — never overridden by light mode.
+   ID selector specificity (1,0,0) beats the class-based light-mode
+   overrides below (0,2,1), so this wins even when both have !important. */
+#app-header {
+  background-color: #030712 !important;
+  border-bottom-color: rgba(30, 41, 59, 0.7) !important;
+  color-scheme: dark;
+}
+
 /* Layout shell overrides */
 html:not(.dark) .bg-\[\#030712\] {
   background-color: #f8fafc !important;

@@ -1,5 +1,5 @@
 /* LabRat root service worker for PWA install, offline shell, and PWABuilder detection. */
-const CACHE_NAME = "labrat-pwa-v7-dark-header";
+const CACHE_NAME = "labrat-pwa-v8-dark-fouc-fix";
 const APP_SHELL = [
   "/",
   "/index.html",
