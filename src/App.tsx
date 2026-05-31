@@ -1235,7 +1235,7 @@ export default function App() {
       </div>
 
       {/* Primary Navigation Top Header */}
-      <header className="sticky top-0 bg-[#030712]/92 backdrop-blur-md border-b border-[#1e293b]/70 py-2.5 px-4 sm:px-6 shrink-0 z-40 shadow-lg" id="app-header">
+      <header className="sticky top-0 bg-[#030712] backdrop-blur-md border-b border-[#1e293b]/70 py-2.5 px-4 sm:px-6 shrink-0 z-40 shadow-lg" id="app-header">
         <div className="max-w-7xl mx-auto flex flex-col gap-2.5">
           
           <div className="flex flex-row items-center justify-between gap-3">
@@ -1451,7 +1451,7 @@ export default function App() {
           </div>
 
           {/* Navigation Tab selection Rail Bar */}
-          <nav className="bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl grid grid-cols-6 sm:flex sm:flex-row gap-1.5 w-full" id="navigation-tabs-rail">
+          <nav className="bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid grid-cols-6 sm:flex sm:flex-row gap-1.5 w-full" id="navigation-tabs-rail">
             <button
               onClick={() => { triggerHaptic('light'); setActiveTab('dashboard'); }}
               className={`flex flex-col min-[480px]:flex-row items-center justify-center text-center gap-1 px-1 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer select-none truncate flex-1 justify-self-stretch ${
