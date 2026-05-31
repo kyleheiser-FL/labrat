@@ -1,7 +1,7 @@
 import { ShopProduct, CartItem, ShippingOption } from './shopTypes';
 import { SAMPLE_INVENTORY } from '../data/shopInventory';
 
-function getProductBaseAndSize(name: string) {
+export function getProductBaseAndSize(name: string) {
   const match = name.match(/^(.*?)\s*\(([^)]+)\)$/);
   if (match) {
     return { baseName: match[1].trim(), size: match[2].trim() };
