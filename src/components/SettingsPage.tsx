@@ -34,10 +34,8 @@ const PAGE_TABS: { key: PageTab; label: string }[] = [
 
 const SEGMENT_CONFIG: Record<PageTab, { key: string; label: string }[]> = {
   dashboard: [
-    { key: 'legalBanner', label: 'Legal Banner' },
     { key: 'schedule', label: 'Dose Schedule' },
     { key: 'history', label: 'Admin Ledger' },
-    { key: 'wellness', label: 'Wellness Panel' },
   ],
   planner: [
     { key: 'gantt', label: 'Bio-Timeline Gantt' },
@@ -50,6 +48,7 @@ const SEGMENT_CONFIG: Record<PageTab, { key: string; label: string }[]> = {
   blood: [
     { key: 'dossier', label: 'Health Dossier' },
     { key: 'upload', label: 'Lab Ingestor' },
+    { key: 'wellness', label: 'Wellness & Biomarkers' },
   ],
 };
 

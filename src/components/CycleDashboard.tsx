@@ -1,38 +1,30 @@
 import React, { useState } from 'react';
-import { Check, CheckCircle2, Circle, Weight, Activity, History, Trash2, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw } from 'lucide-react';
-import { Compound, DoseLog, DailyMetric, formatTimeTo12Hour } from '../types';
+import { Check, CheckCircle2, Circle, Activity, History, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw } from 'lucide-react';
+import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
 
 interface CycleDashboardProps {
   compounds: Compound[];
   logs: DoseLog[];
-  metrics: DailyMetric[];
   onLogDose: (log: DoseLog) => void;
   onUndoDose: (id: string) => void;
-  onSaveMetrics: (metric: DailyMetric) => void;
-  onDeleteMetric?: (date: string) => void;
   onUpdateCompoundDose?: (compoundId: string, newDose: number) => void;
   labratTheme?: 'neon' | 'clinical';
   visibility?: {
-    legalBanner: boolean;
     schedule: boolean;
     history: boolean;
-    wellness: boolean;
   };
 }
 
 export default function CycleDashboard({
   compounds,
   logs,
-  metrics,
   onLogDose,
   onUndoDose,
-  onSaveMetrics,
-  onDeleteMetric,
   onUpdateCompoundDose,
   labratTheme = 'neon',
-  visibility = { legalBanner: true, schedule: true, history: true, wellness: true }
+  visibility = { schedule: true, history: true }
 }: CycleDashboardProps) {
   // Navigation for Daily Checklist Date (default is today)
   const todayStr = new Date().toISOString().split('T')[0];
@@ -111,46 +103,10 @@ export default function CycleDashboard({
     setShowManualLog(false);
   };
 
-  // Wellness Log State for selectedDate
-  const currentMetric = metrics.find(m => m.date === selectedDate) || {
-    date: selectedDate,
-    weightLb: undefined,
-    mood: 3,
-    fatigue: 3,
-    sideEffects: '',
-    notes: ''
-  };
-
-  const [weight, setWeight] = useState<string>(currentMetric.weightLb ? currentMetric.weightLb.toString() : '');
-  const [mood, setMood] = useState<number>(currentMetric.mood || 3);
-  const [fatigue, setFatigue] = useState<number>(currentMetric.fatigue || 3);
-  const [sideEffects, setSideEffects] = useState<string>(currentMetric.sideEffects || '');
-  const [metricNotes, setMetricNotes] = useState<string>(currentMetric.notes || '');
-  const [saveSuccess, setSaveSuccess] = useState(false);
-
   // Disclaimer dismissal state stored in localStorage
   const [disclaimerDismissed, setDisclaimerDismissed] = useState(() => {
     return safeLocalStorage.getItem('labrat_dashboard_disclaimer_dismissed') === 'true';
   });
-
-  // Sync state if selectedDate changes
-  const handleDateChange = (date: string) => {
-    setSelectedDate(date);
-    const m = metrics.find(item => item.date === date);
-    if (m) {
-      setWeight(m.weightLb ? m.weightLb.toString() : '');
-      setMood(m.mood || 3);
-      setFatigue(m.fatigue || 3);
-      setSideEffects(m.sideEffects || '');
-      setMetricNotes(m.notes || '');
-    } else {
-      setWeight('');
-      setMood(3);
-      setFatigue(3);
-      setSideEffects('');
-      setMetricNotes('');
-    }
-  };
 
   // Check if a compound is due on selectedDate
   const getDoseScheduleForDate = (comp: Compound, dateStr: string) => {
@@ -245,24 +201,6 @@ export default function CycleDashboard({
     triggerHaptic('success');
   };
 
-  const handleSaveWellness = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const updatedMetric: DailyMetric = {
-      date: selectedDate,
-      weightLb: weight ? parseFloat(weight) : undefined,
-      mood,
-      fatigue,
-      sideEffects: sideEffects.trim(),
-      notes: metricNotes.trim()
-    };
-
-    onSaveMetrics(updatedMetric);
-    triggerHaptic('success');
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 2000);
-  };
-
   return (
     <div className="space-y-6 flex flex-col" id="dashboard-wrapper">
       <section className="labrat-command-hero" id="labrat-command-hero">
@@ -291,7 +229,7 @@ export default function CycleDashboard({
       </section>
 
       {/* Conspicuous Educational & Harm Mitigation Legal Warning Box */}
-      {visibility.legalBanner && !disclaimerDismissed && (
+      {!disclaimerDismissed && (
         <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg backdrop-blur-sm" id="dashboard-legal-banner">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-4">
             <div className="flex items-start gap-4">
@@ -350,7 +288,7 @@ export default function CycleDashboard({
               onClick={() => {
                 const prev = new Date(selectedDate + 'T00:00:00');
                 prev.setDate(prev.getDate() - 1);
-                handleDateChange(prev.toISOString().split('T')[0]);
+                setSelectedDate(prev.toISOString().split('T')[0]);
               }}
               className="py-1.5 px-3 bg-[#1e293b] hover:bg-slate-800 border border-slate-700/60 rounded-xl text-xs font-semibold text-slate-300 transition cursor-pointer"
               id="prev-day-btn"
@@ -360,7 +298,7 @@ export default function CycleDashboard({
             <input
               type="date"
               value={selectedDate}
-              onChange={(e) => handleDateChange(e.target.value)}
+              onChange={(e) => setSelectedDate(e.target.value)}
               className="bg-[#1e293b]/50 border border-slate-700/60 text-slate-200 text-xs py-1 px-3 rounded-xl focus:outline-none focus:border-cyan-500 font-mono"
               id="selected-date-picker"
             />
@@ -368,7 +306,7 @@ export default function CycleDashboard({
               onClick={() => {
                 const next = new Date(selectedDate + 'T00:00:00');
                 next.setDate(next.getDate() + 1);
-                handleDateChange(next.toISOString().split('T')[0]);
+                setSelectedDate(next.toISOString().split('T')[0]);
               }}
               className="py-1.5 px-3 bg-[#1e293b] hover:bg-slate-800 border border-slate-700/60 rounded-xl text-xs font-semibold text-slate-300 transition cursor-pointer"
               id="next-day-btn"
@@ -393,7 +331,7 @@ export default function CycleDashboard({
             <button
               type="button"
               onClick={() => {
-                handleDateChange(todayStr);
+                setSelectedDate(todayStr);
                 triggerHaptic('light');
               }}
               className="w-full sm:w-auto shrink-0 py-1.5 px-3.5 bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 text-cyan-400 border border-cyan-500/20 hover:border-cyan-500/40 font-semibold rounded-xl text-xs transition duration-150 cursor-pointer text-center"
@@ -797,8 +735,7 @@ export default function CycleDashboard({
         )}
       </div>
 
-      {/* Right Column (Wellness Logs and Progress Records) */}
-      {visibility.wellness && (
+      {/* Right Column (Cycle Progress) */}
       <div className="2xl:col-span-5 flex flex-col gap-6" id="dashboard-wellness-panel">
 
         {/* Active Cycle Progress Monitors */}
@@ -888,178 +825,8 @@ export default function CycleDashboard({
           </div>
         </div>
 
-        {/* Wellness and Biomarker Daily Forms */}
-        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="wellness-form-card">
-          <div className="flex items-center gap-2 mb-4">
-            <Activity className="w-5 h-5 text-indigo-400" />
-            <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">Wellness & Biomarkers</h4>
-          </div>
-
-          <form onSubmit={handleSaveWellness} className="space-y-5">
-            {/* Weight entry */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
-                <span>Body Weight</span>
-                <span className="text-[10px] font-mono text-slate-500">Lbs</span>
-              </label>
-              <div className="flex gap-2 items-center bg-[#1e293b]/45 border border-slate-700/60 rounded-xl pr-3">
-                <input
-                  type="number"
-                  step="0.1"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  placeholder="e.g. 180"
-                  className="w-full bg-transparent border-0 rounded-l-xl py-2.5 px-3.5 text-sm text-slate-200 focus:outline-none"
-                  id="wellness-weight-input"
-                />
-                <Weight className="w-4 h-4 text-slate-500" />
-              </div>
-            </div>
-
-            {/* Mood score */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
-                <span>Core Mood Indicator</span>
-                <span className="text-[11px] text-indigo-400 font-bold font-mono">Score: {mood}/5</span>
-              </label>
-              <div className="grid grid-cols-5 gap-2" id="mood-scores-selector">
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <button
-                    key={`mood-${num}`}
-                    type="button"
-                    onClick={() => setMood(num)}
-                    className={`py-2 px-1 text-center font-mono rounded-lg border text-sm transition-all cursor-pointer ${
-                      mood === num
-                        ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/50 scale-105'
-                        : 'bg-[#1e293b]/25 border-slate-800 text-slate-400'
-                    }`}
-                    id={`mood-btn-${num}`}
-                  >
-                    {num === 1 ? '🙁 1' : num === 2 ? '😐 2' : num === 3 ? '🙂 3' : num === 4 ? '😊 4' : '🤩 5'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Fatigue score */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
-                <span>Physical Energy / Fatigue level</span>
-                <span className="text-[11px] text-indigo-400 font-bold font-mono">Score: {fatigue}/5</span>
-              </label>
-              <div className="grid grid-cols-5 gap-2" id="fatigue-scores-selector">
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <button
-                    key={`fatigue-${num}`}
-                    type="button"
-                    onClick={() => setFatigue(num)}
-                    className={`py-2 px-1 text-center font-mono rounded-lg border text-sm transition-all cursor-pointer ${
-                      fatigue === num
-                        ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/50 scale-105'
-                        : 'bg-[#1e293b]/25 border-slate-800 text-slate-400'
-                    }`}
-                    id={`fatigue-btn-${num}`}
-                  >
-                    {num === 1 ? '😴 1' : num === 2 ? '🥱 2' : num === 3 ? '💪 3' : num === 4 ? '⚡ 4' : '🔥 5'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Side effects field */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Transient Side Effects (Allergies, Nausea, Site Sting)</label>
-              <input
-                type="text"
-                value={sideEffects}
-                onChange={(e) => setSideEffects(e.target.value)}
-                placeholder="List any reactions or symptoms..."
-                className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80"
-                id="wellness-side-effects-input"
-              />
-            </div>
-
-            {/* Text Notes */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">Journal notes</label>
-              <textarea
-                value={metricNotes}
-                onChange={(e) => setMetricNotes(e.target.value)}
-                placeholder="Insert focus points, sleep measurements, diet changes..."
-                className="w-full h-18 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/80"
-                id="wellness-notes-textarea"
-              />
-            </div>
-
-            <div className="flex items-center justify-between pt-2 border-t border-[#1e293b]/60">
-              <span className="text-[10px] text-slate-500 font-mono">Date: {selectedDate}</span>
-              {saveSuccess && <span className="text-emerald-400 text-[11px] font-semibold">✓ Metric Journal Recorded</span>}
-              <button
-                type="submit"
-                className="py-2 px-4 bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-lg shadow-indigo-500/10"
-                id="submit-wellness-btn"
-              >
-                Save Journal Entry
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* Historic Wellness Logs Entries list */}
-        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md flex-1" id="metrics-ledger-card">
-          <div className="flex items-center gap-2 mb-4">
-            <History className="w-5 h-5 text-indigo-400" />
-            <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">Historical Biomarker ledger</h4>
-          </div>
-
-          <div className="space-y-3" id="wellness-ledgers-list">
-            {metrics.length === 0 ? (
-              <p className="text-xs text-slate-600 text-center py-6">Your daily biometrics ledger is empty. Save some measurements above to list logs.</p>
-            ) : (
-              metrics.slice().reverse().slice(0, 5).map((m) => (
-                <div key={`metric-row-${m.date}`} className="bg-[#1e293b]/20 border border-slate-800/80 p-3.5 rounded-xl text-xs space-y-1.5" id={`metric-row-${m.date}`}>
-                  <div className="flex justify-between items-center font-mono font-bold text-slate-300">
-                    <div className="flex items-center gap-2">
-                      <span>{m.date}</span>
-                      {onDeleteMetric && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            triggerHaptic('warning');
-                            onDeleteMetric(m.date);
-                          }}
-                          className="p-1 text-slate-500 hover:text-rose-400 transition cursor-pointer rounded"
-                          title="Delete entry"
-                          id={`delete-metric-btn-${m.date}`}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
-                    {m.weightLb && <span className="text-cyan-400">Weight: {m.weightLb} Lbs</span>}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-slate-400 text-[11px] font-mono">
-                    <span>Mood: {Array(m.mood).fill('⭐').join('') || '—'}</span>
-                    <span>Energy: {Array(m.fatigue).fill('⚡').join('') || '—'}</span>
-                  </div>
-                  {m.sideEffects && (
-                    <div className="text-[10px] text-rose-300 font-mono">
-                      <strong>Reaction:</strong> {m.sideEffects}
-                    </div>
-                  )}
-                  {m.notes && (
-                    <p className="text-[11px] text-slate-400 italic">
-                      &ldquo;{m.notes}&rdquo;
-                    </p>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        </div>
 
       </div>
-      )}
 
     </div>
 

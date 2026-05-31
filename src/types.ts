@@ -78,17 +78,17 @@ export interface AppNotification {
 }
 
 export interface SegmentVisibility {
-  dashboard: { legalBanner: boolean; schedule: boolean; history: boolean; wellness: boolean; };
+  dashboard: { schedule: boolean; history: boolean; };
   planner: { gantt: boolean; pct: boolean; dataControls: boolean; };
   library: { filters: boolean; };
-  blood: { dossier: boolean; upload: boolean; };
+  blood: { dossier: boolean; upload: boolean; wellness: boolean; };
 }
 
 export const DEFAULT_SEGMENT_VISIBILITY: SegmentVisibility = {
-  dashboard: { legalBanner: true, schedule: true, history: true, wellness: true },
+  dashboard: { schedule: true, history: true },
   planner: { gantt: true, pct: true, dataControls: true },
   library: { filters: true },
-  blood: { dossier: true, upload: true },
+  blood: { dossier: true, upload: true, wellness: true },
 };
 
 // Helper to format 24-hour style HH:MM to 12-hour AM/PM general time format
