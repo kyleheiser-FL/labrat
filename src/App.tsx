@@ -1551,11 +1551,8 @@ export default function App() {
                 <CycleDashboard
                   compounds={compounds}
                   logs={logs}
-                  metrics={metrics}
                   onLogDose={handleLogDose}
                   onUndoDose={handleUndoDose}
-                  onSaveMetrics={handleAddOrUpdateMetrics}
-                  onDeleteMetric={handleDeleteMetric}
                   onUpdateCompoundDose={handleUpdateCompoundDose}
                   labratTheme={labratTheme}
                   visibility={segmentVisibility.dashboard}
@@ -1589,6 +1586,9 @@ export default function App() {
                   onToggleHideShop={isHardcompiledAppStore ? undefined : handleToggleHideShop}
                   currentUserEmail={user?.email || null}
                   onOpenAppearance={() => setActiveTab('settings')}
+                  metrics={metrics}
+                  onSaveMetrics={handleAddOrUpdateMetrics}
+                  onDeleteMetric={handleDeleteMetric}
                   visibility={segmentVisibility.blood}
                 />
               )}
