@@ -1,5 +1,5 @@
 import { LiveChat } from './components/LiveChat';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AppHeader from './components/AppHeader';
 import ToastContainer from './components/ToastContainer';
 import LegalModal from './components/LegalModal';
