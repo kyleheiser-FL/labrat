@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClipboardList, Loader2, MapPin, Truck } from 'lucide-react';
+import { ClipboardList, Loader2, MapPin, Truck, RefreshCcw } from 'lucide-react';
 import { OrderDetail } from '../../lib/shopTypes';
 
 interface ShopOrdersViewProps {
@@ -8,6 +8,7 @@ interface ShopOrdersViewProps {
   actionLoading: string | null;
   currentUserEmail: string | null | undefined;
   onSimulateDeliveryCheck: (orderId: string) => void;
+  onReorder?: (items: OrderDetail['items']) => void;
 }
 
 export default function ShopOrdersView({
@@ -16,6 +17,7 @@ export default function ShopOrdersView({
   actionLoading,
   currentUserEmail,
   onSimulateDeliveryCheck,
+  onReorder,
 }: ShopOrdersViewProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -86,8 +88,9 @@ export default function ShopOrdersView({
                   </div>
                 )}
 
-                {order.trackingNumber && (
-                  <div className="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-2xl max-w-md">
+                {/* Order Status Timeline — shown for all orders */}
+                <div className="mt-4 p-4 bg-slate-950 border border-slate-800 rounded-2xl max-w-md">
+                  {order.trackingNumber && (
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-3.5">
                       <div className="flex items-center gap-1.5">
                         <Truck className="w-4 h-4 text-cyan-400 shrink-0" />
@@ -103,53 +106,53 @@ export default function ShopOrdersView({
                         {order.trackingStatus === 'delivered' || order.status === 'completed' ? 'Delivered' : 'In Transit'}
                       </span>
                     </div>
+                  )}
 
-                    {/* Horizontal Progress Stepper */}
-                    <div className="grid grid-cols-4 gap-1 relative py-1 mb-2">
-                      <div className="absolute top-1/2 left-2 right-4 h-0.5 bg-slate-800 -translate-y-1/2 z-0" />
-                      {[
-                        { label: 'Paid', active: order.paymentStatus === 'paid' || ['processing', 'shipped', 'completed'].includes(order.status) },
-                        { label: 'Processed', active: ['processing', 'shipped', 'completed'].includes(order.status) },
-                        { label: 'Shipped', active: ['shipped', 'completed'].includes(order.status) },
-                        { label: 'Delivered', active: order.status === 'completed' }
-                      ].map((step, idx) => (
-                        <div key={idx} className="flex flex-col items-center relative z-10">
-                          <div className={`w-5 h-5 rounded-full flex items-center justify-center border text-[9px] font-bold ${
-                            step.active
-                              ? 'bg-cyan-500 border-cyan-400 text-slate-950 shadow-[0_0_8px_rgba(6,182,212,0.4)]'
-                              : 'bg-slate-950 border-slate-800 text-slate-400'
-                          }`}>
-                            {step.active ? '✓' : idx + 1}
-                          </div>
-                          <span className={`text-[8px] font-bold mt-1 text-center whitespace-nowrap ${
-                            step.active ? 'text-white' : 'text-slate-500'
-                          }`}>{step.label}</span>
+                  {/* Horizontal Progress Stepper */}
+                  <div className="grid grid-cols-4 gap-1 relative py-1 mb-2">
+                    <div className="absolute top-1/2 left-2 right-4 h-0.5 bg-slate-800 -translate-y-1/2 z-0" />
+                    {[
+                      { label: 'Paid', active: order.paymentStatus === 'paid' || ['processing', 'shipped', 'completed'].includes(order.status) },
+                      { label: 'Processed', active: ['processing', 'shipped', 'completed'].includes(order.status) },
+                      { label: 'Shipped', active: ['shipped', 'completed'].includes(order.status) },
+                      { label: 'Delivered', active: order.status === 'completed' }
+                    ].map((step, idx) => (
+                      <div key={idx} className="flex flex-col items-center relative z-10">
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border text-[9px] font-bold ${
+                          step.active
+                            ? 'bg-cyan-500 border-cyan-400 text-slate-950 shadow-[0_0_8px_rgba(6,182,212,0.4)]'
+                            : 'bg-slate-950 border-slate-800 text-slate-400'
+                        }`}>
+                          {step.active ? '✓' : idx + 1}
                         </div>
-                      ))}
-                    </div>
-
-                    {/* Auto Delivery Check simulation */}
-                    {order.status === 'shipped' && (
-                      <div className="mt-3.5 flex justify-end">
-                        <button
-                          onClick={() => onSimulateDeliveryCheck(order.id)}
-                          disabled={actionLoading === `check_${order.id}`}
-                          className="px-3 py-1.5 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 hover:from-cyan-500/20 hover:to-blue-500/20 border border-cyan-500/30 text-cyan-300 font-bold text-[10px] rounded-lg tracking-wide hover:text-white transition-all cursor-pointer flex items-center gap-1.5 animate-pulse"
-                        >
-                          {actionLoading === `check_${order.id}` ? (
-                            <>
-                              <Loader2 className="w-3 h-3 animate-spin text-cyan-400" /> Connecting USPS...
-                            </>
-                          ) : (
-                            <>
-                              <Truck className="w-3.5 h-3.5" /> Check Delivery Status
-                            </>
-                          )}
-                        </button>
+                        <span className={`text-[8px] font-bold mt-1 text-center whitespace-nowrap ${
+                          step.active ? 'text-white' : 'text-slate-500'
+                        }`}>{step.label}</span>
                       </div>
-                    )}
+                    ))}
                   </div>
-                )}
+
+                  {/* Auto Delivery Check simulation */}
+                  {order.status === 'shipped' && (
+                    <div className="mt-3.5 flex justify-end">
+                      <button
+                        onClick={() => onSimulateDeliveryCheck(order.id)}
+                        disabled={actionLoading === `check_${order.id}`}
+                        className="px-3 py-1.5 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 hover:from-cyan-500/20 hover:to-blue-500/20 border border-cyan-500/30 text-cyan-300 font-bold text-[10px] rounded-lg tracking-wide hover:text-white transition-all cursor-pointer flex items-center gap-1.5 animate-pulse"
+                      >
+                        {actionLoading === `check_${order.id}` ? (
+                          <>
+                            <Loader2 className="w-3 h-3 animate-spin text-cyan-400" /> Connecting USPS...
+                          </>
+                        ) : (
+                          <>
+                            <Truck className="w-3.5 h-3.5" /> Check Delivery Status
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-col justify-between items-start md:items-end md:text-right border-t md:border-t-0 border-[#1e293b]/50 pt-4 md:pt-0 shrink-0 text-xs gap-3">
@@ -178,6 +181,15 @@ export default function ShopOrdersView({
                   <div className="bg-emerald-950/10 p-2.5 rounded-xl border border-emerald-500/20 text-[11px] text-emerald-400 max-w-xs">
                     ✓ <span className="text-emerald-300 font-semibold">Payment Received:</span> Your sterile research compounds have been placed in processing.
                   </div>
+                )}
+
+                {onReorder && (
+                  <button
+                    onClick={() => onReorder(order.items)}
+                    className="flex items-center gap-1.5 px-3 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 font-bold text-[10px] rounded-xl transition-all cursor-pointer"
+                  >
+                    <RefreshCcw className="w-3.5 h-3.5" /> Reorder
+                  </button>
                 )}
               </div>
             </div>

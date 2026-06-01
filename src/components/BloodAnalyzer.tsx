@@ -153,6 +153,64 @@ export default function BloodAnalyzer({
       {visibility.wellness && (
         <WellnessTracker metrics={metrics} onSaveMetrics={onSaveMetrics} onDeleteMetric={onDeleteMetric} />
       )}
+
+      {/* Pre / Mid / Post Cycle Comparison */}
+      {metrics.length >= 3 && compounds.length > 0 && (() => {
+        const sorted = metrics.slice().sort((a, b) => a.date.localeCompare(b.date));
+        const activeCycles = compounds.filter(c => !c.isCompleted && c.startDate);
+        if (activeCycles.length === 0) return null;
+        const earliestCycle = activeCycles.reduce((a, b) => a.startDate < b.startDate ? a : b);
+        const cycleStart = new Date(earliestCycle.startDate + 'T00:00:00');
+        const cycleEnd = new Date(cycleStart);
+        cycleEnd.setDate(cycleStart.getDate() + earliestCycle.durationWeeks * 7);
+        const cycleMid = new Date((cycleStart.getTime() + cycleEnd.getTime()) / 2);
+
+        const pre = sorted.filter(m => new Date(m.date + 'T00:00:00') < cycleStart);
+        const mid = sorted.filter(m => { const d = new Date(m.date + 'T00:00:00'); return d >= cycleStart && d < cycleMid; });
+        const post = sorted.filter(m => new Date(m.date + 'T00:00:00') >= cycleMid);
+
+        const avg = (arr: DailyMetric[], key: keyof DailyMetric): string => {
+          const vals = arr.map(m => m[key]).filter((v): v is number => typeof v === 'number');
+          if (vals.length === 0) return '—';
+          return (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1);
+        };
+
+        return (
+          <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
+            <div className="flex items-center gap-2 border-b border-[#1e293b]/60 pb-3 mb-4">
+              <Activity className="w-4 h-4 text-red-400" />
+              <h4 className="text-sm font-bold text-slate-200">Pre / Mid / Post Cycle Wellness Comparison</h4>
+              <span className="ml-auto text-[10px] text-slate-500 font-mono">{earliestCycle.name.split(' ')[0]} cycle</span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border-collapse min-w-[400px]">
+                <thead>
+                  <tr className="border-b border-slate-800">
+                    <th className="py-2 px-3 text-left text-[10px] font-mono text-slate-500 uppercase tracking-wider">Metric</th>
+                    <th className="py-2 px-3 text-center text-[10px] font-mono text-slate-400 uppercase">Pre-Cycle ({pre.length} entries)</th>
+                    <th className="py-2 px-3 text-center text-[10px] font-mono text-cyan-400 uppercase">Mid-Cycle ({mid.length} entries)</th>
+                    <th className="py-2 px-3 text-center text-[10px] font-mono text-emerald-400 uppercase">Post-Cycle ({post.length} entries)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { label: 'Weight (lbs)', key: 'weightLb' as const },
+                    { label: 'Mood (1-5)', key: 'mood' as const },
+                    { label: 'Energy (1-5)', key: 'fatigue' as const },
+                  ].map(row => (
+                    <tr key={row.key} className="border-b border-slate-800/50 hover:bg-slate-800/20">
+                      <td className="py-2 px-3 text-slate-300 font-semibold">{row.label}</td>
+                      <td className="py-2 px-3 text-center text-slate-400 font-mono">{avg(pre, row.key)}</td>
+                      <td className="py-2 px-3 text-center text-cyan-300 font-mono font-bold">{avg(mid, row.key)}</td>
+                      <td className="py-2 px-3 text-center text-emerald-300 font-mono font-bold">{avg(post, row.key)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

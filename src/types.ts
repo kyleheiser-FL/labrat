@@ -14,7 +14,8 @@ export interface Compound {
   color: string;              // For timeline calendar colors (e.g. Hex)
   scheduledDays?: string[];   // Optional, e.g. ["Mon", "Wed", "Fri"]
   isCompleted?: boolean;
-  
+  reminderTime?: string;    // HH:MM daily reminder for this compound
+
   // Steroid delivery structures
   steroidForm?: 'oil' | 'pill';
   pillSizeMg?: number;        // For oral, e.g. 10 (mg per pill)

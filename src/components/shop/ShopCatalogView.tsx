@@ -26,6 +26,7 @@ import {
   getCleanDescription,
 } from '../../lib/shopHelpers';
 import ProductVialVisual from './ProductVialVisual';
+import PeptideRequestForm from './PeptideRequestForm';
 
 function getProductAvailableStock(prodId: string, baseInventory: number, allOrdersGlobal: OrderDetail[]): number {
   let stock = baseInventory;
@@ -631,6 +632,11 @@ export default function ShopCatalogView({
           );
         })()
       )}
+
+      {/* Peptide Request Form — always visible at bottom of catalog */}
+      <div className="mt-4">
+        <PeptideRequestForm />
+      </div>
     </div>
   );
 }

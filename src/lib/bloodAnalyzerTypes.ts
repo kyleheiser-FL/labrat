@@ -9,6 +9,7 @@ export interface HealthProfile {
   symptoms: string[];
   sleepHours: number;
   diagnoses?: string[];
+  referenceContext?: 'natty' | 'trt' | 'enhanced';
 }
 
 export interface AnalyzedMarker {

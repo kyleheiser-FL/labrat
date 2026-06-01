@@ -1433,6 +1433,21 @@ export default function MembersShop() {
               actionLoading={actionLoading}
               currentUserEmail={currentUser?.email}
               onSimulateDeliveryCheck={handleSimulateDeliveryCheck}
+              onReorder={(items) => {
+                items.forEach(item => {
+                  const product = products.find(p => p.id === item.id);
+                  if (product) {
+                    setCart(prev => {
+                      const existing = prev.find(c => c.product.id === product.id);
+                      return existing
+                        ? prev.map(c => c.product.id === product.id ? { ...c, quantity: c.quantity + item.quantity } : c)
+                        : [...prev, { product, quantity: item.quantity }];
+                    });
+                  }
+                });
+                setView('cart');
+                triggerHaptic('success');
+              }}
             />
           )}
 

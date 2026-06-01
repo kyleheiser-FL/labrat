@@ -96,6 +96,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
   const [steroidForm, setSteroidForm] = useState(DEFAULT_FORM.steroidForm);
   const [pillSizeMg, setPillSizeMg] = useState(DEFAULT_FORM.pillSizeMg);
   const [oilConcMgMl, setOilConcMgMl] = useState(DEFAULT_FORM.oilConcMgMl);
+  const [reminderTime, setReminderTime] = useState('');
   const [showCalcModal, setShowCalcModal] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(-1);
@@ -116,6 +117,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       setCustomDays(f.customDays); setStartDate(f.startDate); setDurationWeeks(f.durationWeeks);
       setNotes(f.notes); setColor(f.color); setSteroidForm(f.steroidForm as any);
       setPillSizeMg(f.pillSizeMg); setOilConcMgMl(f.oilConcMgMl);
+      setReminderTime(editingCompound.reminderTime || '');
     } else if (prefill && open) {
       setName(prefill.name ?? ''); setNameFromLibrary(true); setNameError('');
       setType((prefill.type ?? 'compound') as any);
@@ -137,6 +139,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       setFrequency('daily'); setCustomDays('3'); setStartDate(new Date().toISOString().split('T')[0]);
       setDurationWeeks(8); setNotes(''); setColor(PRESET_COLORS[0]);
       setSteroidForm('oil'); setPillSizeMg('10'); setOilConcMgMl('250');
+      setReminderTime('');
     }
   }, [editingCompound, open]);
 
@@ -244,6 +247,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       steroidForm: (type === 'steroid' || type === 'supplement' || type === 'compound') ? steroidForm : undefined,
       pillSizeMg: (type === 'steroid' || type === 'supplement' || type === 'compound') && steroidForm === 'pill' && pillSizeMg ? parseFloat(pillSizeMg) : undefined,
       oilConcMgMl: (type === 'steroid' || type === 'supplement' || type === 'compound') && steroidForm === 'oil' && oilConcMgMl ? parseFloat(oilConcMgMl) : undefined,
+      reminderTime: reminderTime.trim() || undefined,
     };
 
     triggerHaptic('success');
@@ -499,6 +503,18 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                       <input type="number" required min="1" max="52" value={durationWeeks} onChange={(e) => setDurationWeeks(parseInt(e.target.value))}
                         className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-duration-weeks-input" />
                     </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                      Dose Reminder Time <span className="text-[10px] text-slate-500 font-normal">(optional daily push notification)</span>
+                    </label>
+                    <input
+                      type="time"
+                      value={reminderTime}
+                      onChange={e => setReminderTime(e.target.value)}
+                      className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80"
+                    />
                   </div>
 
                   <div className="space-y-1.5">
