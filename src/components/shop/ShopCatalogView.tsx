@@ -114,8 +114,8 @@ export default function ShopCatalogView({
 
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const q = searchQuery.toLowerCase();
+    const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.chemicalName?.toLowerCase().includes(q);
     return matchesCategory && matchesSearch;
   });
 
@@ -200,10 +200,10 @@ export default function ShopCatalogView({
 
             {/* High-fidelity autocomplete popup dropdown */}
             {showShopSuggestions && searchQuery.trim().length > 0 && (() => {
+              const q = searchQuery.toLowerCase();
               const shopSuggestions = products.filter(p =>
-                p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.description.toLowerCase().includes(searchQuery.toLowerCase())
+                p.name.toLowerCase().includes(q) ||
+                p.chemicalName?.toLowerCase().includes(q)
               ).slice(0, 5);
 
               return (
