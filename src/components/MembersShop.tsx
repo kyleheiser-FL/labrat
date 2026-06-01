@@ -62,7 +62,7 @@ import { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption } fro
 import { SAMPLE_INVENTORY } from '../data/shopInventory';
 export type { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption };
 export { findShopProductMatch, getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice } from '../lib/shopHelpers';
-import { getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress } from '../lib/shopHelpers';
+import { getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress, getProductBaseAndSize } from '../lib/shopHelpers';
 import ShopCartView from './shop/ShopCartView';
 import ShopCheckoutView from './shop/ShopCheckoutView';
 import ShopOrdersView from './shop/ShopOrdersView';
