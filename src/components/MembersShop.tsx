@@ -146,8 +146,16 @@ export default function MembersShop() {
     setView(newView);
   }, []);
 
+  // Ref so the popstate handler can always see the current drawer state without stale closure
+  const drawerOpenRef = React.useRef(false);
+
   useEffect(() => {
     const onPop = (e: PopStateEvent) => {
+      // If a product drawer is open, close it and stay on the current shop view
+      if (drawerOpenRef.current) {
+        setSelectedParentProductGroup(null);
+        return;
+      }
       if (e.state?.tab === 'shop' && e.state?.shopView) {
         setView(e.state.shopView);
       }
@@ -181,6 +189,17 @@ export default function MembersShop() {
     description: string;
     options: (ShopProduct & { size: string })[];
   } | null>(null);
+
+  // Keep drawerOpenRef in sync so the popstate handler above can read it without a stale closure
+  useEffect(() => {
+    drawerOpenRef.current = selectedParentProductGroup !== null;
+  }, [selectedParentProductGroup]);
+
+  // Opening the drawer pushes a history entry so back-swipe closes it instead of leaving the shop
+  const openProductDrawer = useCallback((group: { baseName: string; category: string; description: string; options: (ShopProduct & { size: string })[] } | null) => {
+    if (group) window.history.pushState({ tab: 'shop', shopView: view, drawerOpen: true }, '');
+    setSelectedParentProductGroup(group);
+  }, [view]);
   const [selectedOptionIdInDrawer, setSelectedOptionIdInDrawer] = useState<string>('');
   const [drawerQuantity, setDrawerQuantity] = useState<number>(1);
 
@@ -1364,7 +1383,7 @@ export default function MembersShop() {
               isAdminUser={isAdminUser}
               actionLoading={actionLoading}
               onAddToCart={handleAddToCart}
-              onSetSelectedParentProductGroup={setSelectedParentProductGroup}
+              onSetSelectedParentProductGroup={openProductDrawer}
               onSetSelectedOptionIdInDrawer={setSelectedOptionIdInDrawer}
               onSetDrawerQuantity={setDrawerQuantity}
               onSeedDatabase={handleSeedDatabase}
