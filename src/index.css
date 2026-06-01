@@ -903,9 +903,6 @@ html[data-labrat-theme="clinical"] #daily-checklist-card [id^="checklist-item"] 
   filter: drop-shadow(0 18px 28px rgba(34,211,238,.12));
 }
 #members-shop-page::before { display: none; }
-@keyframes shop-ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-.shop-ticker-inner { animation: shop-ticker 38s linear infinite; will-change: transform; }
-.shop-ticker-inner:hover { animation-play-state: paused; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   ShoppingBag, 
   ShoppingCart, 
@@ -202,6 +202,28 @@ export default function MembersShop() {
   }, [view]);
   const [selectedOptionIdInDrawer, setSelectedOptionIdInDrawer] = useState<string>('');
   const [drawerQuantity, setDrawerQuantity] = useState<number>(1);
+
+  // Ticker: RAF-based auto-scroll so the user can also drag/swipe it natively
+  const tickerRef = useRef<HTMLDivElement>(null);
+  const tickerPausedRef = useRef(false);
+  const tickerResumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    const el = tickerRef.current;
+    if (!el) return;
+    let raf: number;
+    let prev = 0;
+    const step = (ts: number) => {
+      if (!tickerPausedRef.current) {
+        const dt = prev ? (ts - prev) / 1000 : 0;
+        el.scrollLeft += 45 * dt;
+        if (el.scrollLeft >= el.scrollWidth / 2) el.scrollLeft -= el.scrollWidth / 2;
+      }
+      prev = ts;
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
     if (products.length > 0) {
@@ -1032,7 +1054,7 @@ export default function MembersShop() {
   return (
     <div className="flex flex-col gap-4" id="members-shop-page" style={{ animation: 'none' }}>
 
-      {/* Scrolling credential pill ticker */}
+      {/* Scrolling credential pill ticker — auto-scrolls, swipeable */}
       {(() => {
         const pills = [
           { label: 'Authorized Lab Supply', cls: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/25', certKey: 'authorized_supply' },
@@ -1041,31 +1063,42 @@ export default function MembersShop() {
           { label: '✓ Certified Source',    cls: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', certKey: 'certified_source' },
           { label: 'COAs Available',         cls: 'bg-blue-500/10 text-blue-400 border-blue-500/20', certKey: 'coas_available' },
           { label: 'SOP Verified',           cls: 'bg-purple-500/10 text-purple-300 border-purple-500/20', certKey: 'sop_verified' },
-          { label: '🇳🇴 Norway Sourced',    cls: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/15' },
+          { label: '🇳🇴 Norway Sourced',    cls: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20' },
           { label: 'ISO 17025',              cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'iso_17025' },
           { label: 'ISO 9001',               cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'iso_9001' },
           { label: 'EU GMP Annex 1',         cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'eu_gmp' },
           { label: 'GDP Standard',           cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'gdp' },
         ];
+        const onGrab = () => {
+          tickerPausedRef.current = true;
+          if (tickerResumeTimer.current) clearTimeout(tickerResumeTimer.current);
+        };
+        const onRelease = () => {
+          tickerResumeTimer.current = setTimeout(() => { tickerPausedRef.current = false; }, 2000);
+        };
         return (
-          <div className="overflow-hidden rounded-xl border border-cyan-500/20 bg-[#060d1a] py-2">
-            <div className="shop-ticker-inner flex items-center gap-2 whitespace-nowrap">
-              {[0, 1].map(copy => (
-                <React.Fragment key={copy}>
-                  {pills.map((p, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={p.certKey ? () => { triggerHaptic('light'); setSelectedCertKey(p.certKey!); } : undefined}
-                      className={`inline-flex items-center shrink-0 px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase border ${p.cls} ${p.certKey ? 'cursor-pointer hover:brightness-125 active:scale-95 transition-all' : 'cursor-default'}`}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                  <span className="inline-block w-8 shrink-0" aria-hidden="true" />
-                </React.Fragment>
-              ))}
-            </div>
+          <div
+            ref={tickerRef}
+            className="overflow-x-auto scrollbar-hide flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-[#060d1a] py-2 px-3 cursor-grab active:cursor-grabbing select-none"
+            onPointerDown={onGrab}
+            onPointerUp={onRelease}
+            onPointerLeave={onRelease}
+          >
+            {[0, 1].map(copy => (
+              <React.Fragment key={copy}>
+                {pills.map((p, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={p.certKey ? () => { triggerHaptic('light'); setSelectedCertKey(p.certKey!); } : undefined}
+                    className={`inline-flex items-center shrink-0 px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase border ${p.cls} ${p.certKey ? 'cursor-pointer hover:brightness-125 active:scale-95 transition-all' : 'cursor-default'}`}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+                <span className="inline-block w-6 shrink-0" aria-hidden="true" />
+              </React.Fragment>
+            ))}
           </div>
         );
       })()}
