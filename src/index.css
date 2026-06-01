@@ -2108,36 +2108,15 @@ html[data-labrat-theme="neon"] .labrat-command-hero-art img {
 }
 /* LABRAT MOBILE RAT BACKGROUND RESTORE END */
 
-/* Clinical theme: full-bleed vial photo matching neon layout */
-html[data-labrat-theme="clinical"] .labrat-real-vial-photo-shell {
-  margin: -1rem -1rem 0 -1rem !important;
-  width: calc(100% + 2rem) !important;
-  min-height: 280px !important;
-  align-items: stretch !important;
-}
+/* Clinical theme: match neon framed layout, seamless background blend */
 html[data-labrat-theme="clinical"] .labrat-real-vial-photo-frame {
-  width: 100% !important;
-  max-width: none !important;
-  margin-inline: 0 !important;
-  height: 280px !important;
+  background: rgba(14, 22, 42, 0.0) !important;
 }
 html[data-labrat-theme="clinical"] .labrat-real-vial-photo {
-  width: 100% !important;
-  max-width: none !important;
-  height: 280px !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  object-fit: cover !important;
-  object-position: center 15% !important;
+  object-fit: contain !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 18px 42px rgba(2, 6, 23, 0.45) !important;
   filter: brightness(1.05) contrast(1.06) saturate(0.88) !important;
-  margin-inline: 0 !important;
-}
-html[data-labrat-theme="clinical"] .labrat-real-vial-overlay-card {
-  left: 18px !important;
-  right: 18px !important;
-  bottom: 16px !important;
-  background: linear-gradient(180deg, rgba(5, 12, 28, 0.10), rgba(5, 12, 28, 0.82)) !important;
-  border-color: rgba(148, 163, 184, 0.20) !important;
 }
 
 /* PDF Print Styles */
