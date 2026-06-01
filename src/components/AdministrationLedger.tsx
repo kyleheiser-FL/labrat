@@ -34,7 +34,7 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/40 text-slate-300 font-mono">
-              {logs.slice().reverse().slice(0, showCount).map((log) => (
+              {logs.slice().sort((a, b) => (`${b.date}T${b.time}`).localeCompare(`${a.date}T${a.time}`)).slice(0, showCount).map((log) => (
                 <tr key={log.id} className="hover:bg-slate-900/10">
                   <td className="py-2.5 px-2 text-slate-400">{log.date} at {formatTimeTo12Hour(log.time)}</td>
                   <td className="py-2.5 px-2 text-slate-200 font-semibold">{log.compoundName}</td>
