@@ -994,67 +994,78 @@ export default function MembersShop() {
   const { totalQty, subtotal } = getCartTotals();
 
   return (
-    <div className="flex flex-col gap-6" id="members-shop-page" style={{ animation: 'none' }}>
-      
+    <div className="flex flex-col gap-4" id="members-shop-page" style={{ animation: 'none' }}>
+
+      {/* Scrolling certification ticker */}
+      <div className="overflow-hidden rounded-xl border border-cyan-500/20 bg-gradient-to-r from-cyan-500/10 to-purple-500/8 py-1.5">
+        <div className="shop-ticker-inner flex whitespace-nowrap">
+          {[0, 1].map(i => (
+            <span key={i} className="inline-block px-10 text-cyan-400 font-mono font-black text-[.68rem] tracking-widest uppercase shrink-0">
+              Norway Peptides &nbsp;•&nbsp; COA Ready &nbsp;•&nbsp; ISO 17025 &nbsp;•&nbsp; ISO 9001 &nbsp;•&nbsp; EU GMP Annex 1 &nbsp;•&nbsp; GDP Standard &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Upper Status Cards / Welcome banners */}
-      <div className="bg-[#0b1329] border border-[#1e293b] rounded-xl p-4 sm:p-5 relative overflow-hidden" id="shop-welcome-hero">
+      <div className="bg-[#0b1329] border border-[#1e293b] rounded-xl p-3 sm:p-4 relative overflow-hidden" id="shop-welcome-hero">
         <div className="absolute top-0 right-0 p-6 opacity-5 text-slate-100 pointer-events-none">
           <ShoppingBag className="w-48 h-48" />
         </div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+            <div className="flex items-center gap-1.5 mb-1.5 overflow-x-auto scrollbar-hide pb-0.5">
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('authorized_supply'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-cyan-500/20 text-cyan-400 border border-cyan-500/10 animate-pulse transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-cyan-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-cyan-500/20 text-cyan-400 border border-cyan-500/10 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-cyan-500/30"
               >
                 Authorized Lab Supply
               </button>
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('research_only'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-amber-500/20 text-amber-300 border border-amber-500/10 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-amber-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-amber-500/20 text-amber-300 border border-amber-500/10 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-amber-500/30"
               >
                 🔬 Research Use Only
               </button>
               {isAdminUser && (
-                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-red-500/20 text-red-300 border border-red-500/10">
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-red-500/20 text-red-300 border border-red-500/10 shrink-0">
                   Site Administrator
                 </span>
               )}
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('99_purity'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center gap-1 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-cyan-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center gap-1 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-cyan-500/30"
               >
                 <BadgeCheck className="w-2.5 h-2.5 shrink-0" /> 99% Purity
               </button>
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('certified_source'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
               >
                 <CheckCircle className="w-2.5 h-2.5 shrink-0" /> Certified Source
               </button>
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('coas_available'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-blue-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-blue-500/30"
               >
                 <ClipboardList className="w-2.5 h-2.5 shrink-0" /> COAs Available
               </button>
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('sop_verified'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-purple-500/10 text-purple-300 border border-purple-500/20 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-purple-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-purple-500/10 text-purple-300 border border-purple-500/20 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-purple-500/30"
               >
                 SOP Verified
               </button>
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('iso_17025'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-slate-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-slate-500/30"
                 title="ISO/IEC 17025 Lab Competence (Click for details)"
               >
                 ISO 17025
@@ -1062,7 +1073,7 @@ export default function MembersShop() {
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('iso_9001'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-slate-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-slate-500/30"
                 title="ISO 9001:2015 Quality Management (Click for details)"
               >
                 ISO 9001
@@ -1070,7 +1081,7 @@ export default function MembersShop() {
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('eu_gmp'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-slate-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-slate-500/30"
                 title="EU GMP Annex 1 Sterile formulation protocols (Click for details)"
               >
                 EU GMP Annex 1
@@ -1078,7 +1089,7 @@ export default function MembersShop() {
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('annex_11'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-slate-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-slate-500/30"
                 title="Annex 11 Systems electronic security & audit loops (Click for details)"
               >
                 Annex 11
@@ -1086,15 +1097,15 @@ export default function MembersShop() {
               <button
                 type="button"
                 onClick={() => { triggerHaptic('light'); setSelectedCertKey('gdp'); }}
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-slate-500/30"
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-slate-800/60 text-slate-300 border border-slate-700/60 transition hover:scale-105 active:scale-95 cursor-pointer shrink-0 focus:outline-none focus:ring-1 focus:ring-slate-500/30"
                 title="Good Distribution Practice sterile shipping standard (Click for details)"
               >
                 GDP Standard
               </button>
             </div>
-            <h1 className="text-lg sm:text-xl font-black tracking-tight text-white flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="text-xl sm:text-2xl font-black tracking-tighter text-white font-sans uppercase">LABRAT</span>
-              <span className="text-white">Bioresearch Peptide &amp; Compound Shop</span>
+            <h1 className="text-sm font-black tracking-tight text-white flex items-center gap-x-2 mt-0.5">
+              <span className="text-base font-black tracking-tighter text-white font-sans uppercase">LABRAT</span>
+              <span className="text-slate-300 font-semibold">Bioresearch Peptide &amp; Compound Shop</span>
             </h1>
           </div>
 
@@ -1102,7 +1113,7 @@ export default function MembersShop() {
           <div className="flex items-center gap-2 self-start md:self-center">
             {isAdminUser ? (
               isAdminPreviewCustomer ? (
-                <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex gap-1 flex-wrap">
+                <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex gap-1 overflow-x-auto scrollbar-hide">
                   <button 
                     onClick={() => { triggerHaptic('light'); setView('catalog'); }}
                     className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${view === 'catalog' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'}`}
@@ -1135,7 +1146,7 @@ export default function MembersShop() {
                   </button>
                 </div>
               ) : (
-                <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex gap-1 flex-wrap">
+                <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex gap-1 overflow-x-auto scrollbar-hide">
                   <button 
                     onClick={() => { triggerHaptic('light'); setView('admin_members'); }}
                     className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative ${view === 'admin_members' ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-slate-400 hover:text-slate-200'}`}
