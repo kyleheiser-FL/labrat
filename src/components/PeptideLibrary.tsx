@@ -78,7 +78,7 @@ export default function PeptideLibrary({ onAddToCycle, visibility = { filters: t
             </span>
             <input
               type="text"
-              placeholder="Search by name, synonym, or physiological benefit (e.g., joint, satiety)..."
+              placeholder="Search compound name or chemical name..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
