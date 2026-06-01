@@ -2671,6 +2671,570 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     deliveryForm: 'pill',
     realisticGains: 'Sustained daily vitality, elimination of micronutrient deficiency fatigues, optimized metabolic conversion, and robust support for cellular organ parameters under intensive physical stress.',
     dietaryInteraction: 'Always consume alongside solid food to guarantee correct absorption of fat-soluble vitamins (A, D, E, K) and prevent mild gastric mineral nausea.'
+  },
+  {
+    id: 'sustanon-250',
+    name: 'Sustanon 250',
+    chemicalName: 'Testosterone Blend (4 Esters)',
+    category: 'muscle',
+    description: 'A pharmaceutical-grade blend of four testosterone esters: Testosterone Propionate (30mg), Testosterone Phenylpropionate (60mg), Testosterone Isocaproate (60mg), and Testosterone Decanoate (100mg). Engineered to provide an immediate spike from short esters and a sustained release from the long decanoate ester, offering the benefits of both fast and slow testosterone profiles in a single injection.',
+    clinicalResearch: 'The multi-ester profile creates near-immediate elevation of serum testosterone within hours (from propionate), sustained mid-range levels through days 3-7 (phenylpropionate and isocaproate), and a prolonged baseline from decanoate out to 18-21 days. Originally developed by Organon for TRT use.',
+    typicalDosage: '250 mg - 750 mg weekly',
+    frequencyText: 'Injected intramuscularly twice weekly (e.g. Monday and Thursday) to avoid hormonal peaks and troughs created by the mixed ester profile.',
+    halfLife: 'Approx. 15-18 days (composite of all 4 esters)',
+    benefits: [
+      'Rapid onset of androgenic effects from short-ester propionate component',
+      'Sustained stable testosterone levels maintained by long-ester decanoate',
+      'Full-spectrum anabolic activity: muscle mass, strength, and recovery',
+      'Single compound covers the full pharmacokinetic range without additional injections'
+    ],
+    sideEffects: [
+      'High aromatization rate due to testosterone base — requires AI management',
+      'Propionate component can cause injection site irritation and more frequent pip',
+      'HPG axis suppression requiring PCT after discontinuation',
+      'Can cause hematocrit elevation and adverse lipid shifts'
+    ],
+    suggestedCycleWeeks: '10 - 16 weeks with standard TRT or bodybuilding protocols.',
+    deliveryForm: 'oil',
+    realisticGains: 'Comparable to standard testosterone monoester cycles. Expect 8-14 lbs of combined lean muscle and glycogen mass over 12-16 weeks at moderate doses. The fast propionate fraction delivers strength and libido improvements within days 3-5 of first injection.',
+    dietaryInteraction: 'Same protocol as standard testosterone cycles: high-protein diet (0.9-1.2g/lb), clean complex carbohydrates, and potassium-rich foods. Keep an aromatase inhibitor on hand from week 1 as the propionate ester aromatizes rapidly.'
+  },
+  {
+    id: 'testosterone-suspension',
+    name: 'Testosterone Suspension',
+    chemicalName: 'Testosterone Base Aqueous Suspension (No Ester)',
+    category: 'muscle',
+    description: 'Pure testosterone with zero ester chain, suspended in water. The fastest-acting form of testosterone available, reaching peak serum levels within 1-2 hours of injection. Primarily used by competitive powerlifters and athletes as a same-day pre-event performance maximizer.',
+    clinicalResearch: 'Without an ester, testosterone suspension is immediately bioavailable upon injection. The extremely rapid spike in testosterone produces immediate nitrogen retention, glycogen loading, and explosive strength increases within 4-6 hours.',
+    typicalDosage: '50 mg - 100 mg daily or pre-workout',
+    frequencyText: 'Injected intramuscularly once or twice daily (every 12 hours) due to its ultra-short duration of action. Must be injected with a thicker gauge needle as the suspension particles are dense.',
+    halfLife: 'Approx. 2-4 hours',
+    benefits: [
+      'Fastest onset of any testosterone form — effects in under 4 hours',
+      'Extreme pre-workout strength surges and neurological aggression',
+      'No ester weight — every mg is pure active testosterone',
+      'Rapidly clears the system, making it favorable around drug-tested events'
+    ],
+    sideEffects: [
+      'Extremely painful injections due to water-based suspension and micro-crystals',
+      'Severe aromatization risk due to rapid testosterone spike',
+      'Frequent dosing schedule (daily or twice daily) required',
+      'Injection site nodules or abscess risk if aseptic technique is not perfect'
+    ],
+    suggestedCycleWeeks: '4 - 8 weeks, or used as a kickstart/pre-event dose.',
+    deliveryForm: 'oil',
+    realisticGains: 'Immediate explosive strength surges within hours of first dose. Not ideal for sustained mass building due to injection frequency demands, but provides a noticeable same-day performance enhancement of 10-15% in absolute lifting power.',
+    dietaryInteraction: 'Requires aggressive carbohydrate loading pre-injection to capitalize on the immediate insulin-sensitivity spike testosterone creates. Eat a high-protein meal post-injection to flood muscle tissue with amino acids during peak anabolic window.'
+  },
+  {
+    id: 'testosterone-undecanoate',
+    name: 'Testosterone Undecanoate (Nebido)',
+    chemicalName: 'Long-Chain Ester Testosterone Undecanoate Oil',
+    category: 'muscle',
+    description: 'The longest-acting ester of testosterone in clinical use. Formulated as a 1,000mg/4ml oily injection, Nebido (also known as Aveed in the USA) maintains stable testosterone levels for 10-14 weeks per injection — the foundation of modern long-cycle TRT.',
+    clinicalResearch: 'FDA-approved for hypogonadism treatment. The extremely long undecanoate ester (C19:0) produces stable serum testosterone for 10-14 weeks with a single large-volume injection. Clinical studies show stable hormone levels with fewer peaks and troughs compared to shorter esters.',
+    typicalDosage: '1,000 mg every 10-14 weeks (TRT) or 500 mg every 4-6 weeks (performance)',
+    frequencyText: 'Administered as a deep intramuscular injection typically in the gluteal muscle, given once every 10-14 weeks for medical TRT. Performance users may inject more frequently.',
+    halfLife: 'Approx. 20-21 days',
+    benefits: [
+      'Ultra-long-acting: one injection maintains testosterone for up to 14 weeks',
+      'Near-perfect stable hormone levels with no peaks or troughs',
+      'Ideal for TRT patients requiring minimal injection frequency',
+      'High-volume injection supports extremely stable sustained anabolic environment'
+    ],
+    sideEffects: [
+      'Slow dose correction — if side effects occur, they persist for weeks',
+      'High aromatization over the sustained release period',
+      'Risk of oil embolism with improper injection technique (large volume)',
+      'HPGA suppression, same as all exogenous testosterone forms'
+    ],
+    suggestedCycleWeeks: 'Ongoing TRT: 10-14 weeks per injection cycle. Performance: 12-20 weeks.',
+    deliveryForm: 'oil',
+    realisticGains: 'Stable, gradual anabolic tissue accumulation over an extended cycle. Because hormone levels are flat and stable (not pulsatile), muscle gains are consistent and well-maintained throughout. Expect 8-14 lbs over a full 20-week performance cycle.',
+    dietaryInteraction: 'Because of the extremely long release curve, dietary consistency is more important than timing. Maintain stable protein intake (0.9-1.1g/lb), adequate dietary fats for hormone precursor synthesis, and consistent sodium/potassium balance.'
+  },
+  {
+    id: 'testosterone-phenylpropionate',
+    name: 'Testosterone Phenylpropionate',
+    chemicalName: 'Short-Medium Ester Injectable Testosterone (Oil)',
+    category: 'muscle',
+    description: 'A short-to-medium acting testosterone ester with a phenylpropionate chain. One of the four components of Sustanon 250, it can also be run as a standalone ester. It bridges the gap between the ultra-short propionate and the medium enanthate, providing good stability without daily injections.',
+    clinicalResearch: 'The phenylpropionate ester has a 3-4 day effective half-life in human tissue, producing moderate-speed testosterone release with stable hormone levels when injected every 2-3 days. Less painful than propionate.',
+    typicalDosage: '100 mg - 400 mg weekly',
+    frequencyText: 'Injected intramuscularly every 2-3 days (e.g. Monday, Wednesday, Friday) for optimal blood level stability.',
+    halfLife: 'Approx. 3-4 days',
+    benefits: [
+      'Medium-speed release offering better stability than propionate without daily injections',
+      'Less painful injection compared to testosterone propionate',
+      'Fast enough for dose adjustments if side effects emerge',
+      'Full anabolic testosterone profile: muscle mass, strength, and recovery'
+    ],
+    sideEffects: [
+      'Moderate aromatization (slightly less than enanthate/cypionate)',
+      'HPG suppression requiring PCT post-cycle',
+      'Pip (post-injection pain) moderate compared to propionate',
+      'Frequency of injection (3x weekly) higher than longer esters'
+    ],
+    suggestedCycleWeeks: '8 - 12 weeks for performance or TRT bridging.',
+    deliveryForm: 'oil',
+    realisticGains: 'Similar to testosterone enanthate in overall muscle-building effect. Expect 7-12 lbs of lean muscle and glycogen mass over a 10-12 week protocol.',
+    dietaryInteraction: 'Standard testosterone dietary protocol: caloric surplus of 300-500 kcal, high protein diet, and aromatase inhibitor on hand. No special restrictions relative to other injectable testosterone forms.'
+  },
+  {
+    id: 'testosterone-isocaproate',
+    name: 'Testosterone Isocaproate',
+    chemicalName: 'Medium-Long Ester Injectable Testosterone (Oil)',
+    category: 'muscle',
+    description: 'A medium-to-long acting testosterone ester used primarily as one of four components in Sustanon 250. When used standalone, it provides testosterone release durations similar to enanthate, typically requiring once or twice weekly injections. Less commonly used as a solo compound but valued for its intermediate pharmacokinetic window.',
+    clinicalResearch: 'The isocaproate ester provides a 7-9 day effective half-life, filling the pharmacokinetic gap between propionate/phenylpropionate and decanoate in multi-ester blends. Provides stable serum testosterone for 7-9 days per injection.',
+    typicalDosage: '100 mg - 400 mg weekly',
+    frequencyText: 'Injected intramuscularly once or twice weekly for stable blood levels.',
+    halfLife: 'Approx. 7-9 days',
+    benefits: [
+      'Medium-long release comparable to testosterone enanthate',
+      'Suitable for once or twice weekly injection protocols',
+      'Full testosterone anabolic profile when used as standalone compound',
+      'Key synergistic ester in multi-ester blends like Sustanon 250'
+    ],
+    sideEffects: [
+      'Standard testosterone side effects: aromatization, HPGA suppression',
+      'Elevated hematocrit and LDL lipid shifts',
+      'Less commonly available as standalone compound'
+    ],
+    suggestedCycleWeeks: '10 - 16 weeks.',
+    deliveryForm: 'oil',
+    realisticGains: 'Equivalent to testosterone enanthate in muscle-building outcomes: 8-14 lbs of lean mass over a full 12-16 week protocol.',
+    dietaryInteraction: 'Standard testosterone dietary guidelines apply. High protein intake and AI management recommended.'
+  },
+  {
+    id: 'testosterone-decanoate',
+    name: 'Testosterone Decanoate',
+    chemicalName: 'Long-Chain Ester Injectable Testosterone (Oil)',
+    category: 'muscle',
+    description: 'The longest-acting pure decanoate ester of testosterone, making up 100mg (40%) of the 250mg dose in Sustanon 250. When used as a standalone, it behaves similarly to Nandrolone Decanoate (Deca) in terms of release duration, maintaining active testosterone levels for up to 15-18 days per injection.',
+    clinicalResearch: 'The decanoate ester chains attach to testosterone forming a depot that hydrolyzes slowly over 15-18 days. Clinical pharmacokinetic data confirms near-identical release profiles to testosterone undecanoate at comparable doses.',
+    typicalDosage: '200 mg - 500 mg every 2 weeks',
+    frequencyText: 'Injected intramuscularly every 10-14 days when used as a standalone compound.',
+    halfLife: 'Approx. 15-18 days',
+    benefits: [
+      'Ultra-long release requiring very infrequent injections',
+      'Highly stable blood levels with minimal peaks and troughs over 2-week windows',
+      'The slow-release foundation of multi-ester blends like Sustanon 250',
+      'Full anabolic testosterone activity with low injection burden'
+    ],
+    sideEffects: [
+      'Slow to clear if side effects develop (persistent for 2-3 weeks)',
+      'High aromatization risk over sustained release period',
+      'HPGA suppression with a long clearance period (requires longer PCT lead-in)'
+    ],
+    suggestedCycleWeeks: '12 - 20 weeks to allow ester equilibrium.',
+    deliveryForm: 'oil',
+    realisticGains: 'Slow, steady, quality muscle accumulation over extended cycles. Expect 8-14 lbs of combined lean tissue and water over a 16-week protocol.',
+    dietaryInteraction: 'Consistent daily protein and caloric surplus most important due to prolonged steady hormone release. Standard aromatase inhibitor management required.'
+  },
+  {
+    id: 'trenbolone-enanthate',
+    name: 'Trenbolone Enanthate',
+    chemicalName: 'Long-Ester 19-Nor Progestin (Oil)',
+    category: 'muscle',
+    description: 'The long-acting enanthate ester of Trenbolone. Provides the same extreme androgenic and anabolic properties as Trenbolone Acetate but with the convenience of twice-weekly injections instead of daily. Preferred by intermediate-to-advanced users who want Trenbolone\'s powerful body composition effects with fewer injections and a smoother hormonal curve.',
+    clinicalResearch: 'Trenbolone binds to androgen receptors with approximately five times the affinity of testosterone. The enanthate ester extends the active half-life to 5-7 days, enabling twice-weekly injection protocols and producing more stable blood level plateaus versus the acetate form.',
+    typicalDosage: '150 mg - 400 mg weekly',
+    frequencyText: 'Injected intramuscularly twice weekly (e.g. Monday and Thursday) for even blood concentrations.',
+    halfLife: 'Approx. 5-7 days',
+    benefits: [
+      'Same extreme muscle hardening, fat burning, and strength as Trenbolone Acetate',
+      'Twice-weekly injection schedule — far more convenient than EOD acetate',
+      'Produces a smoother hormonal curve with fewer side effect spikes',
+      'No aromatization — zero estrogen-related water retention or gynecomastia risk'
+    ],
+    sideEffects: [
+      'Intense night sweats, insomnia, elevated heart rate, and neurological irritability',
+      'Slow to clear if side effects emerge — acetate can be cleared faster if needed',
+      'Highly suppressive HPG axis shutdown requiring full PCT',
+      'Severe cardiovascular strain: elevated BP, crashed HDL, increased hematocrit'
+    ],
+    suggestedCycleWeeks: '8 - 12 weeks. Longer cycles increase cumulative cardiovascular and neurological side effect risk.',
+    deliveryForm: 'oil',
+    realisticGains: 'Identical to Trenbolone Acetate over equivalent durations. Expect 6-10 lbs of pure, permanent, granite-hard dry muscle fiber over 10 weeks, with simultaneous fat burning of 2-4% body fat even in a modest caloric deficit.',
+    dietaryInteraction: 'Reduce spicy, fatty, and acidic foods to minimize nighttime Trenbolone-induced insomnia and sweats. Eat slow-digesting complex carbs 2 hours pre-workout to prevent hypoglycemic episodes and improve breathing under heavy exertion.'
+  },
+  {
+    id: 'parabolan-trenbolone-hex',
+    name: 'Parabolan',
+    chemicalName: 'Trenbolone Hexahydrobenzylcarbonate (Oil)',
+    category: 'muscle',
+    description: 'The original, legendary French pharmaceutical form of Trenbolone, produced under the brand name Parabolan by Negma Laboratories until 1997. Uses a hexahydrobenzylcarbonate (cyclohexylmethylcarbonate) ester that provides a medium-long release profile. The only trenbolone compound ever legitimately produced for human clinical use.',
+    clinicalResearch: 'The hexahydrobenzylcarbonate ester provides a half-life of approximately 14 days, positioning Parabolan between Trenbolone Enanthate (5-7 days) and Nandrolone Decanoate (15 days) in pharmacokinetic terms. Produces the full trenbolone anabolic profile with slightly smoother peaks due to the longer ester.',
+    typicalDosage: '150 mg - 350 mg weekly',
+    frequencyText: 'Injected intramuscularly once weekly or every 10 days due to the long hexahydrobenzylcarbonate ester.',
+    halfLife: 'Approx. 14 days',
+    benefits: [
+      'The original human-grade Trenbolone — the most prestigious form of the compound',
+      'Once-weekly injection protocol due to extended ester duration',
+      'Extreme muscle hardening and fat oxidation properties identical to other Tren forms',
+      'Smoother peak-to-trough hormonal profile versus acetate, fewer side effect spikes'
+    ],
+    sideEffects: [
+      'All classic Trenbolone side effects: sweating, insomnia, aggression, cardiovascular strain',
+      'Slowest clearing of all Tren forms — side effects persist if compound is stopped',
+      'Complete HPG suppression — long washout needed before PCT initiation',
+      'Extreme suppression of endogenous testosterone'
+    ],
+    suggestedCycleWeeks: '8 - 12 weeks maximum.',
+    deliveryForm: 'oil',
+    realisticGains: 'Equivalent to other Trenbolone forms pound-for-pound. The extended ester provides a gradual buildup and more sustained plateau. Expect 6-10 lbs of pure dry muscle over a 10-week cycle.',
+    dietaryInteraction: 'Same as Trenbolone Enanthate: restrict nighttime acidic and spicy foods to reduce Tren-related insomnia. Carbohydrate-loading pre-workout is essential to manage breathing and cardiovascular output under load.'
+  },
+  {
+    id: 'tri-trenbolone',
+    name: 'Tri-Trenbolone',
+    chemicalName: 'Trenbolone Acetate + Enanthate + Hexahydrobenzylcarbonate Blend',
+    category: 'muscle',
+    description: 'A three-ester Trenbolone blend combining Trenbolone Acetate, Trenbolone Enanthate, and Trenbolone Hexahydrobenzylcarbonate in a single vial. Designed to provide immediate Tren activity from the acetate component alongside sustained 14-day coverage from the hex ester, creating a complete short-to-long pharmacokinetic profile.',
+    clinicalResearch: 'The tri-ester Trenbolone profile has been popularized by underground laboratories. It delivers an immediate trenbolone blood-level spike from the acetate (active within 24-48 hours), sustained mid-range levels from enanthate (days 3-7), and prolonged baseline from hexahydrobenzylcarbonate (through day 14+).',
+    typicalDosage: '150 mg - 400 mg weekly',
+    frequencyText: 'Injected intramuscularly twice weekly (Monday and Thursday) to capture the benefits of all three ester release windows.',
+    halfLife: 'Composite: Acetate ~24h, Enanthate ~5-7d, Hex ~14d',
+    benefits: [
+      'Immediate day-1 Trenbolone activity from the acetate fraction',
+      'Sustained multi-week stable blood levels from combined ester coverage',
+      'Full Trenbolone anabolic and androgenic profile in a single preparation',
+      'Fewer injections than running acetate solo while still getting rapid onset'
+    ],
+    sideEffects: [
+      'All Trenbolone side effects apply — compound is simply trenbolone in three ester forms',
+      'Side effects onset faster than long-ester-only preparations due to acetate fraction',
+      'Difficult to quickly exit compound if severe side effects occur',
+      'Extreme cardiovascular, neurological, and HPG suppression'
+    ],
+    suggestedCycleWeeks: '8 - 12 weeks maximum.',
+    deliveryForm: 'oil',
+    realisticGains: 'Rapid onset of Trenbolone\'s signature dry, hard physique transformation (noticeable by day 5-7 from acetate fraction), sustaining for the full cycle duration. Expect 6-10 lbs of pure dry contractile fiber and a 2-4% body fat drop.',
+    dietaryInteraction: 'Maintain high water intake (4+ liters daily) and restrict acid-forming foods at night to minimize the severe insomnia, reflux, and overheating typical of multi-ester Trenbolone blends.'
+  },
+  {
+    id: 'masteron-enanthate',
+    name: 'Masteron Enanthate',
+    chemicalName: 'Drostanolone Enanthate (Long-Ester Oil)',
+    category: 'muscle',
+    description: 'The long-acting enanthate ester version of Masteron (Drostanolone), providing the same cosmetic muscle-hardening, anti-estrogenic, and SHBG-lowering properties as Masteron Propionate — but requiring only twice-weekly injections instead of every-other-day dosing.',
+    clinicalResearch: 'Drostanolone enanthate was developed as a more patient-friendly version of the propionate ester. The enanthate chain extends the half-life from 2 days to approximately 10 days, enabling stable blood levels with bi-weekly injection frequency while maintaining all drostanolone activity.',
+    typicalDosage: '200 mg - 500 mg weekly',
+    frequencyText: 'Injected intramuscularly twice weekly (Monday and Thursday) for stable cosmetic drying and anti-estrogenic effects.',
+    halfLife: 'Approx. 10 days',
+    benefits: [
+      'Same extreme muscle hardening and cosmetic drying as Masteron Propionate',
+      'Twice-weekly injection schedule — much more practical than EOD propionate',
+      'Inhibits aromatase activity, helping manage estrogen from other compounds',
+      'Frees SHBG-bound testosterone, multiplying free testosterone bioavailability'
+    ],
+    sideEffects: [
+      'DHT-driven: androgenic effects (acne, hair thinning in predisposed individuals)',
+      'Negative lipid impact: lowers HDL cholesterol, raises LDL',
+      'Slower to clear than propionate if unwanted side effects occur',
+      'HPG axis suppression'
+    ],
+    suggestedCycleWeeks: '8 - 16 weeks. Typically overlaps the full length of a testosterone base cycle.',
+    deliveryForm: 'oil',
+    realisticGains: 'Zero mass building on its own. Expect a profound cosmetic transformation: deep muscular dryness, vascular pop, and chiseled hardness. Body fat must already be below 12% to see maximum visual effect. Expect 2-4 lbs of dry permanent tissue if combined with a testosterone base.',
+    dietaryInteraction: 'Best leveraged during a cutting or body recomposition phase with controlled sodium intake. Supplement with Citrus Bergamot (1g/daily) and Omega-3s (3g/daily) to counteract the cholesterol impact.'
+  },
+  {
+    id: 'primobolan-acetate-oral',
+    name: 'Primobolan Acetate (Oral)',
+    chemicalName: 'Methenolone Acetate (Oral Tablet)',
+    category: 'muscle',
+    description: 'The oral tablet form of Primobolan, using a shorter acetate ester on the methenolone base. Favored for its extremely clean anabolic profile, lack of liver toxicity compared to most oral steroids, and ability to produce dry, keepable lean mass. Historically used for pediatric muscle-wasting conditions due to its gentle safety profile.',
+    clinicalResearch: 'Unlike most oral steroids, methenolone acetate is not 17-alpha-alkylated, making it notably less hepatotoxic. Its 1-methyl modification prevents first-pass liver destruction, allowing good oral bioavailability without the typical liver enzyme elevation seen with most oral AAS.',
+    typicalDosage: '50 mg - 150 mg daily',
+    frequencyText: 'Taken orally in tablet form daily, split into morning and evening doses due to the short acetate half-life.',
+    halfLife: 'Approx. 4-6 hours',
+    benefits: [
+      'No liver toxicity — not 17-alpha-alkylated (safer than most oral steroids)',
+      'Produces high-quality, permanent dry lean muscle mass with zero aromatization',
+      'Highly bioavailable via oral route unlike most non-alkylated steroids',
+      'Excellent for female athletes due to very low virilization potential'
+    ],
+    sideEffects: [
+      'Mild HPG axis suppression at higher doses',
+      'Moderate impact on HDL/LDL cholesterol fractions',
+      'Higher dose required to achieve equivalent results to injectable Primo',
+      'Can accelerate male pattern baldness in genetically sensitive individuals'
+    ],
+    suggestedCycleWeeks: '8 - 12 weeks. Considered one of the safest oral AAS for long-term use.',
+    deliveryForm: 'pill',
+    realisticGains: 'Steady, very clean lean tissue accumulation. Expect 3-6 lbs of high-quality dry muscle over an 8-week cycle. Gains are highly permanent and easily preserved post-cycle compared to wet compounds.',
+    dietaryInteraction: 'Take alongside a meal containing healthy fats to improve lipophilic methenolone absorption. Citrus Bergamot (1g daily) and Omega-3 supplementation are recommended to offset mild cholesterol impact.'
+  },
+  {
+    id: 'turinabol',
+    name: 'Turinabol',
+    chemicalName: '4-Chlorodehydromethyltestosterone (Oral)',
+    category: 'muscle',
+    description: 'A modified oral anabolic steroid derived from Dianabol with a 4-chloro substitution that completely eliminates aromatization. Originally developed in East Germany and infamously used in the state-sponsored doping program in the 1970s-80s. Produces slow, steady, entirely dry quality muscle without any estrogenic side effects.',
+    clinicalResearch: 'The 4-chloro modification to the Dianabol backbone eliminates 5-alpha reduction and blocks aromatase binding, making Turinabol completely non-estrogenic. The result is a slower but cleaner anabolic profile than Dianabol with better tissue quality.',
+    typicalDosage: '20 mg - 60 mg daily',
+    frequencyText: 'Taken orally as a tablet daily. Due to the ~16-hour half-life, once-daily or twice-daily dosing works well.',
+    halfLife: 'Approx. 16 hours',
+    benefits: [
+      'Zero aromatization — no estrogen side effects whatsoever',
+      'Produces pure, clean, dry lean mass without water retention or bloat',
+      'Increases free testosterone by displacing it from SHBG',
+      'Well-tolerated relative to other oral steroids with moderate liver load'
+    ],
+    sideEffects: [
+      'Moderate hepatotoxicity (17-alpha-alkylated oral — liver support required)',
+      'Suppresses natural testosterone and HPG axis',
+      'Unfavorable lipid profile shift (lowers HDL, elevates LDL)',
+      'Androgenic: mild acne, hair thinning in sensitive individuals'
+    ],
+    suggestedCycleWeeks: '6 - 8 weeks to limit cumulative liver strain.',
+    deliveryForm: 'pill',
+    realisticGains: 'Slow, steady, and entirely permanent muscle tissue. Expect 4-7 lbs of completely dry, clean contractile mass over a 6-8 week protocol. All gains are keepable post-cycle as zero water is held. Widely used as a cycle kickstart for strength athletes requiring clean power output.',
+    dietaryInteraction: 'Take TUDCA (500mg daily) and NAC (1200mg daily) throughout the cycle to shield liver enzymes. Pair with a high-protein moderate-carbohydrate diet. Because there\'s zero water retention, gains feel harder and more permanent from day 14 onwards.'
+  },
+  {
+    id: 'boldenone-cypionate',
+    name: 'Boldenone Cypionate',
+    chemicalName: 'Boldenone Cypionate (Shorter-Ester Equipoise Oil)',
+    category: 'muscle',
+    description: 'A shorter-acting alternative to Boldenone Undecylenate (Equipoise), paired with a cypionate ester instead of undecylenate. Provides the same clean, vascular lean mass building and appetite-stimulating benefits of EQ but with faster blood level stabilization and a shorter cycle-end clearance window.',
+    clinicalResearch: 'Boldenone shares structural roots with testosterone (a 1,2-dehydrogenated testosterone derivative). The cypionate ester provides an effective half-life of 8-9 days, compared to 14 days for Boldenone Undecylenate, enabling faster blood level equilibrium and quicker washout.',
+    typicalDosage: '200 mg - 600 mg weekly',
+    frequencyText: 'Injected intramuscularly twice weekly (Monday and Thursday) for stable blood concentration.',
+    halfLife: 'Approx. 8-9 days',
+    benefits: [
+      'Faster blood level equilibrium than standard Equipoise (EQ)',
+      'Dramatically elevates red blood cells and physical endurance capacity',
+      'Clean, dry lean mass with moderate aromatization (half the rate of testosterone)',
+      'Shorter clearance window — less waiting time before PCT initiation'
+    ],
+    sideEffects: [
+      'Elevated hematocrit (blood thickness) — requires regular blood donation or bloodwork monitoring',
+      'Moderate aromatization — AI may be needed at higher doses',
+      'Can cause elevated anxiety and paranoia in sensitive users (similar to standard EQ)',
+      'Complete HPG axis suppression'
+    ],
+    suggestedCycleWeeks: '10 - 16 weeks to allow anabolic properties to fully manifest.',
+    deliveryForm: 'oil',
+    realisticGains: 'Clean, steady quality lean mass of 6-10 lbs over 12 weeks. Vascularity improvements are dramatic and begin around week 4-5. Athletic endurance enhancement is pronounced by week 6.',
+    dietaryInteraction: 'High hydration (4+ liters daily) is critical to manage hematocrit increases. Supplement with 2g Omega-3 fish oil daily for blood flow support and consume an iron-conscious diet to avoid hematocrit elevation.'
+  },
+  {
+    id: 'nandrolone-propionate',
+    name: 'Nandrolone Propionate',
+    chemicalName: 'Nandrolone Propionate (Ultra-Short Ester Nor-testosterone Oil)',
+    category: 'muscle',
+    description: 'The fastest-acting version of Nandrolone, using a propionate ester for ultra-rapid release and clearance. Offers the joint-healing, lean mass building, and nitrogen-retention properties of Deca or NPP but with daily or every-other-day injection dosing, allowing precise hormonal control and rapid exit if needed.',
+    clinicalResearch: 'The propionate ester provides a half-life of approximately 24 hours — the shortest of any commercially available nandrolone form. This enables rapid onset of nandrolone\'s prolific joint-healing collagen synthesis within 48-72 hours of first injection.',
+    typicalDosage: '50 mg - 100 mg daily or 100 mg - 200 mg EOD',
+    frequencyText: 'Injected intramuscularly every day or every other day due to the ultra-short propionate ester.',
+    halfLife: 'Approx. 24 hours',
+    benefits: [
+      'Fastest onset of Nandrolone\'s joint healing and collagen synthesis benefits',
+      'Daily injection schedule allows precise blood level control',
+      'Rapid clearance — out of system within 4-5 days if discontinued',
+      'Same lean mass building and nitrogen retention properties as NPP/Deca'
+    ],
+    sideEffects: [
+      'Daily injection requirement — highest injection burden of all nandrolone forms',
+      'Elevated prolactin requiring cabergoline or P-5-P management',
+      'Complete HPG axis suppression',
+      'Injection site irritation from daily propionate injections'
+    ],
+    suggestedCycleWeeks: '6 - 10 weeks.',
+    deliveryForm: 'oil',
+    realisticGains: 'Rapid and pronounced joint relief within the first 7-10 days. Lean muscle gains of 6-10 lbs over 8 weeks comparable to NPP.',
+    dietaryInteraction: 'Supplement with Vitamin B6 (P-5-P, 100mg daily) to manage prolactin. High collagen peptide intake (20g/daily) amplifies nandrolone\'s collagen synthesis effects on joints.'
+  },
+  {
+    id: 'trestolone-ment',
+    name: 'Trestolone (MENT)',
+    chemicalName: '7α-Methyl-19-Nortestosterone Acetate',
+    category: 'muscle',
+    description: 'One of the most potent androgenic-anabolic steroids ever synthesized. Trestolone (MENT) boasts an anabolic rating of approximately 2300 (vs testosterone at 100), making it 10-times more anabolic than standard testosterone. Originally researched as a male hormonal contraceptive due to its complete suppression of spermatogenesis.',
+    clinicalResearch: 'MENT does not bind to 5-alpha reductase and does not convert to DHT. However, it aromatizes aggressively to 7α-methyl-estradiol, requiring aggressive aromatase inhibitor management. Clinical male contraceptive studies confirm complete, rapid azoospermia within 6-8 weeks.',
+    typicalDosage: '10 mg - 25 mg daily (acetate form)',
+    frequencyText: 'Injected intramuscularly daily (acetate) or every 3-4 days (enanthate variant) due to extreme potency. Micro-dosing (10-15mg/day) is strongly recommended for beginners.',
+    halfLife: 'Acetate form: Approx. 8-12 hours',
+    benefits: [
+      'Extreme anabolic potency — muscle gains at fractions of standard steroid doses',
+      'Does not convert to DHT — no androgenic hair loss or prostate enlargement',
+      'Rapid, dramatic lean muscle tissue accretion within weeks',
+      'Provides a powerful, hard, highly vascular physique change even at low doses'
+    ],
+    sideEffects: [
+      'Extremely aggressive aromatization — requires significant AI use (anastrozole EOD minimum)',
+      'Complete, long-term azoospermia and infertility risk during and after use',
+      'Severe HPG suppression — often requires extended post-cycle recovery',
+      'Gynecomastia risk is extremely high without diligent estrogen management'
+    ],
+    suggestedCycleWeeks: '6 - 10 weeks maximum. Very low doses only for first cycle with MENT.',
+    deliveryForm: 'oil',
+    realisticGains: 'Explosive, rapid lean mass accumulation. Even at 15-25mg/day, expect 8-15 lbs of predominantly dry lean contractile muscle over 8 weeks. Strength gains are immediate and extreme. Often described as "the steroid that makes other steroids look mild."',
+    dietaryInteraction: 'Aggressive AI management (anastrozole or letrozole) is essential. High-estrogen dietary triggers like flaxseed oil, soy isoflavones, and refined seed oils should be limited. Monitor blood pressure weekly as Trestolone can elevate BP rapidly through high estrogen and androgenic mechanisms.'
+  },
+  {
+    id: 'mibolerone-cheque-drops',
+    name: 'Mibolerone (Cheque Drops)',
+    chemicalName: '7α,17α-dimethyl-19-nortestosterone (Oral)',
+    category: 'muscle',
+    description: 'One of the most powerful anabolic-androgenic steroids ever produced, originally developed as a veterinary contraceptive for dogs. Taken orally in microgram quantities as a short-term pre-competition or pre-workout strength maximizer, it delivers extreme neurological aggression, explosive strength, and ferocious competitive drive within minutes.',
+    clinicalResearch: 'Mibolerone is a methylated nandrolone derivative with extraordinarily high androgen receptor binding affinity. It stimulates CNS dopaminergic and noradrenergic pathways to create an unmatched state of aggression and strength. Its extreme hepatotoxicity limits use to minutes-per-day timeframes.',
+    typicalDosage: '200 mcg - 500 mcg taken 30-60 minutes pre-competition or pre-workout',
+    frequencyText: 'Taken orally as liquid drops or tiny pill. NEVER for more than 2 weeks continuously and NEVER more than once daily. Use reserved exclusively for competition or peak training events.',
+    halfLife: 'Approx. 4-6 hours',
+    benefits: [
+      'Near-instant explosion of neurological strength, aggression, and competitive drive',
+      'Used for decades by powerlifters and competitive athletes as a pre-event maximizer',
+      'Extremely potent CNS stimulation producing unmatched mental focus and ferocity',
+      'Does not aromatize and does not cause water retention'
+    ],
+    sideEffects: [
+      'Severe hepatotoxicity — among the most liver-toxic compounds known (MANDATORY liver support)',
+      'Extreme cardiovascular strain and blood pressure elevation',
+      'Severe behavioral aggression, mood volatility, and CNS overstimulation',
+      'Complete HPG suppression even at microgram doses'
+    ],
+    suggestedCycleWeeks: 'NOT a cycle compound — used for 1-2 weeks maximum. Reserved strictly for acute performance events.',
+    deliveryForm: 'pill',
+    realisticGains: 'Zero sustained muscle mass gains. Provides an immediate, profound 15-25% surge in CNS strength output and neurological aggression during peak performance windows only.',
+    dietaryInteraction: 'MANDATORY: TUDCA (1000mg) and NAC (1200mg) must be taken alongside every dose. Avoid all alcohol. Hydrate aggressively (4+ liters daily). The hepatotoxic load of Mibolerone exceeds virtually all other compounds — liver enzymes MUST be monitored weekly.'
+  },
+  {
+    id: 'methyltestosterone',
+    name: 'Methyltestosterone',
+    chemicalName: '17α-Methyltestosterone (Oral)',
+    category: 'muscle',
+    description: 'One of the oldest synthetic anabolic steroids, first synthesized in 1935. A 17-alpha-methylated version of testosterone with oral bioavailability. Used historically for testosterone replacement therapy before injectable esters were developed. Now primarily used in oral doses to provide rapid androgenic stimulation and a testosterone-like hormonal environment.',
+    clinicalResearch: 'Methyltestosterone retains full androgenic and anabolic properties of testosterone but is orally bioavailable due to the 17α-methyl group preventing first-pass degradation. It aromatizes to methylestradiol, which is significantly more potent than standard estradiol.',
+    typicalDosage: '10 mg - 40 mg daily',
+    frequencyText: 'Taken orally daily, split into morning and afternoon doses.',
+    halfLife: 'Approx. 4 hours',
+    benefits: [
+      'Rapid oral testosterone-like androgenic and libido effects',
+      'Historical pharmaceutical compound with decades of clinical data',
+      'Provides quick hormonal baseline coverage during injection cycle transition periods',
+      'Can be used sublingually for faster absorption'
+    ],
+    sideEffects: [
+      'Significant hepatotoxicity (17-alpha-alkylated structure)',
+      'High aromatization to potent methylestradiol — serious gynecomastia risk',
+      'Complete HPG axis suppression',
+      'Severe lipid deterioration and elevated blood pressure'
+    ],
+    suggestedCycleWeeks: '4 - 6 weeks maximum due to liver strain.',
+    deliveryForm: 'pill',
+    realisticGains: 'Moderate muscle and strength gains comparable to oral Dianabol, with higher relative androgenic impact. Expect 4-7 lbs of combined lean mass and glycogen over 4-6 weeks.',
+    dietaryInteraction: 'Mandatory liver support: TUDCA (500mg) and NAC (1200mg) daily. Because methylestradiol is highly potent, Arimidex (0.5mg EOD) from day 1 is strongly recommended to prevent rapid estrogenic side effects.'
+  },
+  {
+    id: 'nandrolone-undecylate',
+    name: 'Nandrolone Undecylate (Dynabolan)',
+    chemicalName: 'Nandrolone Undecylenate (Ultra-Long Ester Oil)',
+    category: 'muscle',
+    description: 'An ultra-long-acting version of Nandrolone using an undecylate ester that provides a half-life similar to Boldenone Undecylenate (Equipoise). Rarely used standalone but valued in long-cycle protocols for its extremely slow, sustained nandrolone release providing joint healing and lean mass accumulation over extended timelines.',
+    clinicalResearch: 'The undecylate ester is structurally identical to the undecylenate ester in EQ, providing a 14-16 day half-life on the nandrolone backbone. Provides the same benefits as Deca-Durabolin but requires only once-weekly to once-every-10-day injections.',
+    typicalDosage: '200 mg - 400 mg every 10-14 days',
+    frequencyText: 'Injected intramuscularly once every 10-14 days. Very low injection frequency makes it suitable for long TRT-adjacent protocols.',
+    halfLife: 'Approx. 14-16 days',
+    benefits: [
+      'Ultra-long nandrolone release requiring very infrequent injections',
+      'Same joint-healing collagen synthesis and anti-inflammatory properties as Deca',
+      'Extended stable blood levels with minimal peaks and troughs',
+      'Well-suited to very long 20-week protocols'
+    ],
+    sideEffects: [
+      'Slow clearance — side effects persist if compound is stopped',
+      'Long washout period before PCT can begin (4-6 weeks post-last-injection)',
+      'Prolactin elevation and HPG suppression identical to Deca-Durabolin',
+      'Requires cabergoline or P-5-P prolactin management'
+    ],
+    suggestedCycleWeeks: '12 - 20 weeks minimum to allow the long ester to manifest full benefits.',
+    deliveryForm: 'oil',
+    realisticGains: 'Gradual, steady lean mass accumulation of 8-14 lbs over a 16-20 week cycle with significant joint pain relief. Slower onset than NPP or Deca but extremely stable plateau phase.',
+    dietaryInteraction: 'Supplementing with Vitamin B6 P-5-P (100mg daily) is mandatory to manage nandrolone-driven prolactin. High collagen peptide intake (20g/daily) synergizes with nandrolone joint repair mechanisms.'
+  },
+  {
+    id: 'omnadren-250',
+    name: 'Omnadren 250',
+    chemicalName: 'Testosterone Propionate + Phenylpropionate + Isocaproate + Caproate Blend',
+    category: 'muscle',
+    description: 'A Polish-manufactured four-ester testosterone blend similar to Sustanon 250 but historically using testosterone caproate instead of decanoate as the longest-acting component. Now reformulated with the same four esters as Sustanon 250. Provides the same multi-speed pharmacokinetic profile: rapid onset from propionate, mid-range stability from phenylpropionate and isocaproate, and sustained levels from the caproate/decanoate.',
+    clinicalResearch: 'The multi-ester profile of Omnadren functions virtually identically to Sustanon 250 in pharmacokinetic terms. The only significant historical difference was testosterone caproate (10-12 day half-life) vs decanoate (15 days), producing slightly faster total clearance of the original formula.',
+    typicalDosage: '250 mg - 750 mg weekly',
+    frequencyText: 'Injected intramuscularly twice weekly (Monday and Thursday) for stable blood levels. The short propionate component demands more frequent dosing than single-ester testosterone forms.',
+    halfLife: 'Composite: Propionate ~20h, Phenylpropionate ~3-4d, Isocaproate ~7-9d, Caproate/Decanoate ~10-15d',
+    benefits: [
+      'Rapid testosterone activity onset within 24-48 hours from propionate fraction',
+      'Multi-week sustained testosterone levels from combined ester coverage',
+      'Essentially interchangeable with Sustanon 250 in clinical and performance use',
+      'Full anabolic testosterone profile across all tissue types'
+    ],
+    sideEffects: [
+      'Same side effect profile as Sustanon 250 and all testosterone forms',
+      'High aromatization requiring AI management',
+      'HPG axis suppression requiring PCT post-cycle',
+      'Propionate fraction pip and injection site irritation'
+    ],
+    suggestedCycleWeeks: '10 - 16 weeks.',
+    deliveryForm: 'oil',
+    realisticGains: 'Clinically equivalent to Sustanon 250: 8-14 lbs of muscle and glycogen over a 12-16 week protocol with proper nutrition and AI management.',
+    dietaryInteraction: 'Identical dietary and supplement requirements as Sustanon 250: high protein, aromatase inhibitor, and adequate hydration.'
+  },
+  {
+    id: 'testosterone-acetate',
+    name: 'Testosterone Acetate',
+    chemicalName: 'Ultra-Short Ester Injectable Testosterone (Oil)',
+    category: 'muscle',
+    description: 'An extremely short-acting acetate ester of testosterone with a half-life of approximately 2-3 days. Faster than propionate in onset but longer than testosterone suspension. Preferred by athletes who need rapid blood level control, precise cycle management, or those transitioning between cycles where fast clearance is essential.',
+    clinicalResearch: 'The acetate ester provides rapid testosterone absorption with near-complete bioavailability by day 1-2. Serum testosterone peaks sharply within 24 hours and returns to baseline within 4-5 days, enabling very precise hormonal manipulation.',
+    typicalDosage: '50 mg - 100 mg daily or every other day',
+    frequencyText: 'Injected intramuscularly daily or every other day due to the ultra-short 2-3 day active window.',
+    halfLife: 'Approx. 2-3 days',
+    benefits: [
+      'Faster onset than propionate with more frequent dosing control than suspension',
+      'Precise dose adjustments possible due to short ester clearance window',
+      'Clears quickly post-cycle — enables faster PCT initiation',
+      'Full testosterone anabolic and androgenic profile'
+    ],
+    sideEffects: [
+      'Daily or EOD injection requirement — high injection burden',
+      'Injection site irritation and pip common with acetate esters',
+      'Standard testosterone side effects: aromatization, HPGA suppression',
+      'Requires more precise scheduling and discipline than longer esters'
+    ],
+    suggestedCycleWeeks: '6 - 10 weeks.',
+    deliveryForm: 'oil',
+    realisticGains: 'Similar to testosterone propionate: 5-8 lbs of dry lean mass over 8-10 weeks. Notable for fast washout enabling early PCT initiation.',
+    dietaryInteraction: 'Standard testosterone dietary protocol. Aromatase inhibitor required from day 1 due to rapid peak testosterone levels.'
+  },
+  {
+    id: 'clostebol-acetate',
+    name: 'Clostebol',
+    chemicalName: '4-Chlorotestosterone Acetate (Oral/Injectable)',
+    category: 'muscle',
+    description: 'A 4-chloro substituted testosterone derivative — the same modification that makes Turinabol non-estrogenic. Clostebol itself cannot aromatize to estrogen and has low androgenic activity due to its inability to be converted by 5-alpha reductase. Used medically in Europe for hypogonadism and wound healing.',
+    clinicalResearch: 'The 4-chloro substitution at the C-4 position prevents aromatase binding, making Clostebol completely non-estrogenic. It has a favorable anabolic-to-androgenic ratio and is approved in several European countries as a topical pharmaceutical for wound healing.',
+    typicalDosage: '100 mg - 200 mg weekly (injectable), 40 mg - 60 mg daily (oral)',
+    frequencyText: 'Injectable: administered once or twice weekly. Oral: taken daily in divided doses.',
+    halfLife: 'Injectable: Approx. 4-6 days. Oral: Approx. 4-6 hours.',
+    benefits: [
+      'Zero aromatization — no estrogen side effects',
+      'Mild androgenic profile with favorable tissue anabolic actions',
+      'Notably less suppressive to HPG axis than testosterone',
+      'Used medically for wound healing due to tissue-repair promoting effects'
+    ],
+    sideEffects: [
+      'Mild HPG axis suppression at performance doses',
+      'Minor negative lipid impact',
+      'Very mild androgenic effects'
+    ],
+    suggestedCycleWeeks: '8 - 12 weeks.',
+    deliveryForm: 'oil',
+    realisticGains: 'Modest but clean lean tissue gains of 3-5 lbs over 8-10 weeks. Primarily used for tissue recomposition rather than bulk building.',
+    dietaryInteraction: 'Relatively gentle dietary requirements. Moderate caloric surplus with high protein intake. Standard lipid support supplements recommended.'
   }
 ];
 
