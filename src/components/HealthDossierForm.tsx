@@ -221,6 +221,33 @@ export default function HealthDossierForm({ profile, onUpdate, onToggleSymptom, 
           </div>
         </div>
       </div>
+
+      {/* Reference Range Context */}
+      <div className="space-y-2">
+        <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">Reference Range Context</label>
+        <p className="text-[10.5px] text-slate-500 leading-normal">Sets hormone reference ranges used for interpretation. TRT users have naturally higher testosterone targets.</p>
+        <div className="grid grid-cols-3 gap-2">
+          {([
+            { key: 'natty', label: 'Natural / Natty', desc: 'Standard ranges' },
+            { key: 'trt', label: 'TRT Protocol', desc: 'Testosterone therapy' },
+            { key: 'enhanced', label: 'Enhanced', desc: 'Full blast ranges' },
+          ] as const).map(opt => (
+            <button
+              key={opt.key}
+              type="button"
+              onClick={() => onUpdate({ referenceContext: opt.key })}
+              className={`px-2 py-2 rounded-xl border text-center transition cursor-pointer ${
+                profile.referenceContext === opt.key
+                  ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-200'
+                  : 'bg-slate-950/30 border-slate-800/80 text-slate-400 hover:border-slate-700'
+              }`}
+            >
+              <div className="text-[10px] font-bold">{opt.label}</div>
+              <div className="text-[9px] text-slate-500 mt-0.5">{opt.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

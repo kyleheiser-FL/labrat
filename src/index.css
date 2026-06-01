@@ -2107,3 +2107,34 @@ html[data-labrat-theme="neon"] .labrat-command-hero-art img {
   }
 }
 /* LABRAT MOBILE RAT BACKGROUND RESTORE END */
+
+/* PDF Print Styles */
+@media print {
+  #labrat-app-shell > div:first-child,
+  #labrat-app-shell > div:nth-child(2),
+  header, nav, .fixed {
+    display: none !important;
+  }
+  body, html {
+    background: white !important;
+    color: black !important;
+  }
+  #planner-main-container {
+    padding: 20px;
+    font-size: 12px;
+  }
+  #compounds-list-grid {
+    display: block !important;
+  }
+  #compounds-list-grid > * {
+    break-inside: avoid;
+    margin-bottom: 12px;
+    border: 1px solid #ccc !important;
+    background: white !important;
+    color: black !important;
+  }
+  .bg-\[\#0f172a\]\/70, .bg-\[#0f172a\] {
+    background: white !important;
+    color: black !important;
+  }
+}

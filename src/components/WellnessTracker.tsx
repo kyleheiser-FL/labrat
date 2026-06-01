@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, History, Weight, Trash2 } from 'lucide-react';
+import { Activity, History, Weight, Trash2, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { DailyMetric } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 
@@ -134,11 +134,119 @@ export default function WellnessTracker({ metrics, onSaveMetrics, onDeleteMetric
         </form>
       </div>
 
+      {/* Body Weight Trend Chart */}
+      {(() => {
+        const weightEntries = metrics
+          .filter(m => m.weightLb && m.weightLb > 0)
+          .slice().sort((a, b) => a.date.localeCompare(b.date))
+          .slice(-30);
+        if (weightEntries.length < 2) return null;
+        const weights = weightEntries.map(m => m.weightLb!);
+        const minW = Math.min(...weights);
+        const maxW = Math.max(...weights);
+        const range = maxW - minW || 1;
+        const chartH = 60;
+        const chartW = 100;
+        const pts = weightEntries.map((m, i) => {
+          const x = (i / (weightEntries.length - 1)) * chartW;
+          const y = chartH - ((m.weightLb! - minW) / range) * chartH;
+          return `${x},${y}`;
+        }).join(' ');
+        const firstW = weights[0];
+        const lastW = weights[weights.length - 1];
+        const delta = lastW - firstW;
+        const trendColor = delta < -0.5 ? '#34d399' : delta > 0.5 ? '#f87171' : '#94a3b8';
+        const TrendIcon = delta < -0.5 ? TrendingDown : delta > 0.5 ? TrendingUp : Minus;
+        return (
+          <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Weight className="w-4 h-4 text-indigo-400" />
+                <h4 className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Weight Trend</h4>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-bold" style={{ color: trendColor }}>
+                <TrendIcon className="w-3.5 h-3.5" />
+                <span>{lastW} lbs</span>
+                <span className="text-[10px] font-mono opacity-70">({delta > 0 ? '+' : ''}{delta.toFixed(1)} lbs / {weightEntries.length} entries)</span>
+              </div>
+            </div>
+            <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-14" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="wGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={trendColor} stopOpacity="0.25" />
+                  <stop offset="100%" stopColor={trendColor} stopOpacity="0.02" />
+                </linearGradient>
+              </defs>
+              <polygon
+                points={`0,${chartH} ${pts} ${chartW},${chartH}`}
+                fill="url(#wGrad)"
+              />
+              <polyline
+                points={pts}
+                fill="none"
+                stroke={trendColor}
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+              {weightEntries.map((m, i) => {
+                const x = (i / (weightEntries.length - 1)) * chartW;
+                const y = chartH - ((m.weightLb! - minW) / range) * chartH;
+                return <circle key={i} cx={x} cy={y} r="1.2" fill={trendColor} />;
+              })}
+            </svg>
+            <div className="flex justify-between text-[9px] font-mono text-slate-600 mt-1">
+              <span>{weightEntries[0].date.slice(5)}</span>
+              <span>{weightEntries[weightEntries.length - 1].date.slice(5)}</span>
+            </div>
+          </div>
+        );
+      })()}
+
       <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="metrics-ledger-card">
         <div className="flex items-center gap-2 mb-4">
           <History className="w-5 h-5 text-indigo-400" />
           <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">Historical Biomarker Ledger</h4>
         </div>
+        {/* Trend Alerts */}
+        {(() => {
+          const recent = metrics.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 7);
+          if (recent.length < 3) return null;
+          const alerts: { color: string; msg: string }[] = [];
+          const moodVals = recent.filter(m => m.mood).map(m => m.mood!);
+          const fatigueVals = recent.filter(m => m.fatigue).map(m => m.fatigue!);
+          const weightVals = recent.filter(m => m.weightLb).map(m => m.weightLb!);
+          if (moodVals.length >= 3) {
+            const avg = moodVals.reduce((a, b) => a + b, 0) / moodVals.length;
+            if (avg < 2.5) alerts.push({ color: 'rose', msg: `Low mood average (${avg.toFixed(1)}/5) over last ${moodVals.length} entries — monitor closely.` });
+            else if (avg >= 4.3) alerts.push({ color: 'emerald', msg: `Strong mood trend (${avg.toFixed(1)}/5) — feeling good lately.` });
+          }
+          if (fatigueVals.length >= 3) {
+            const avg = fatigueVals.reduce((a, b) => a + b, 0) / fatigueVals.length;
+            if (avg < 2.5) alerts.push({ color: 'amber', msg: `Below average energy (${avg.toFixed(1)}/5) — check sleep, nutrition, and recovery.` });
+          }
+          if (weightVals.length >= 3) {
+            const delta = weightVals[0] - weightVals[weightVals.length - 1];
+            if (delta > 5) alerts.push({ color: 'amber', msg: `Weight down ${delta.toFixed(1)} lbs over last ${weightVals.length} entries.` });
+            else if (delta < -5) alerts.push({ color: 'blue', msg: `Weight up ${Math.abs(delta).toFixed(1)} lbs over last ${weightVals.length} entries.` });
+          }
+          if (alerts.length === 0) return null;
+          return (
+            <div className="mb-4 space-y-2">
+              {alerts.map((a, i) => (
+                <div key={i} className={`text-[11px] px-3 py-2 rounded-lg border font-medium ${
+                  a.color === 'rose' ? 'bg-rose-500/8 border-rose-500/20 text-rose-300' :
+                  a.color === 'amber' ? 'bg-amber-500/8 border-amber-500/20 text-amber-300' :
+                  a.color === 'emerald' ? 'bg-emerald-500/8 border-emerald-500/20 text-emerald-300' :
+                  'bg-blue-500/8 border-blue-500/20 text-blue-300'
+                }`}>
+                  {a.color === 'rose' ? '⚠️' : a.color === 'amber' ? '⚡' : a.color === 'emerald' ? '✓' : 'ℹ️'} {a.msg}
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+
         <div className="space-y-3" id="wellness-ledgers-list">
           {metrics.length === 0 ? (
             <p className="text-xs text-slate-600 text-center py-6">Your daily biometrics ledger is empty. Save some measurements above to list logs.</p>

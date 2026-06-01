@@ -1,5 +1,5 @@
 import { LiveChat } from './components/LiveChat';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppHeader from './components/AppHeader';
 import ToastContainer from './components/ToastContainer';
 import LegalModal from './components/LegalModal';
@@ -433,6 +433,76 @@ export default function App() {
     schedule();
     return () => clearTimeout(timerId);
   }, [reminderEnabled, reminderTime, notificationPermission]);
+
+  // Per-compound dose reminder scheduler
+  useEffect(() => {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    for (const comp of compounds) {
+      if (!comp.reminderTime || comp.isCompleted) continue;
+      const [h, m] = comp.reminderTime.split(':').map(Number);
+      if (isNaN(h) || isNaN(m)) continue;
+      const now = new Date();
+      const next = new Date();
+      next.setHours(h, m, 0, 0);
+      if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
+      const delay = next.getTime() - now.getTime();
+      const t = setTimeout(() => {
+        const guardKey = `labrat_comp_reminder_${comp.id}_${new Date().toISOString().split('T')[0]}`;
+        if (safeLocalStorage.getItem(guardKey) === 'true') return;
+        const title = `Time for ${comp.name}`;
+        const body = `${comp.doseAmount}${comp.doseUnit} dose scheduled — log it in LabRat.`;
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then(reg => reg.showNotification(title, { body, icon: '/vitamins_icon.png', tag: `comp-${comp.id}` })).catch(() => {});
+        } else {
+          new Notification(title, { body });
+        }
+        safeLocalStorage.setItem(guardKey, 'true');
+      }, delay);
+      timers.push(t);
+    }
+    return () => timers.forEach(clearTimeout);
+  }, [compounds]);
+
+  // Missed dose detection
+  const [missedDosePrompts, setMissedDosePrompts] = useState<{ compound: Compound; date: string }[]>([]);
+  const [missedDoseIdx, setMissedDoseIdx] = useState(0);
+
+  useEffect(() => {
+    const checkKey = 'labrat_missed_check_' + new Date().toISOString().split('T')[0];
+    if (safeLocalStorage.getItem(checkKey) === 'true') return;
+    const today = new Date();
+    const prompts: { compound: Compound; date: string }[] = [];
+    const activeComps = compounds.filter(c => !c.isCompleted);
+    for (const comp of activeComps) {
+      for (let d = 1; d <= 3; d++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() - d);
+        const dateStr = checkDate.toISOString().split('T')[0];
+        const startDate = new Date(comp.startDate + 'T00:00:00');
+        if (checkDate < startDate) continue;
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + comp.durationWeeks * 7);
+        if (checkDate >= endDate) continue;
+        const dayOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][checkDate.getDay()];
+        let shouldHaveDosed = false;
+        if (comp.frequency === 'daily') shouldHaveDosed = true;
+        else if (comp.frequency === 'eod') shouldHaveDosed = Math.floor((checkDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) % 2 === 0;
+        else if (comp.frequency === 'twice_weekly') shouldHaveDosed = ['Mon', 'Thu'].includes(dayOfWeek);
+        else if (comp.frequency === 'weekly') shouldHaveDosed = checkDate.getDay() === startDate.getDay();
+        else if (comp.frequency === 'custom' && comp.customDays) shouldHaveDosed = Math.floor((checkDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) % comp.customDays === 0;
+        if (comp.scheduledDays?.length) shouldHaveDosed = comp.scheduledDays.includes(dayOfWeek);
+        if (!shouldHaveDosed) continue;
+        const hasLog = logs.some(l => l.compoundId === comp.id && l.date === dateStr);
+        if (!hasLog) prompts.push({ compound: comp, date: dateStr });
+      }
+    }
+    if (prompts.length > 0) {
+      setMissedDosePrompts(prompts);
+      setMissedDoseIdx(0);
+    }
+    safeLocalStorage.setItem(checkKey, 'true');
+  }, [compounds, logs]);
 
   // Segment visibility state
   const [segmentVisibility, setSegmentVisibility] = useState<SegmentVisibility>(() => {
@@ -1102,9 +1172,66 @@ export default function App() {
 
       <ToastContainer toasts={activeToasts} />
 
+      {/* Missed Dose Modal */}
+      {missedDosePrompts.length > 0 && missedDoseIdx < missedDosePrompts.length && (() => {
+        const { compound, date } = missedDosePrompts[missedDoseIdx];
+        const dismiss = () => {
+          if (missedDoseIdx + 1 >= missedDosePrompts.length) setMissedDosePrompts([]);
+          else setMissedDoseIdx(i => i + 1);
+        };
+        const logMissed = () => {
+          const log: DoseLog = {
+            id: `missed-${Date.now()}`,
+            compoundId: compound.id,
+            compoundName: compound.name,
+            date,
+            time: '00:00',
+            doseAmount: compound.doseAmount,
+            doseUnit: compound.doseUnit,
+            notes: 'Marked as taken (retroactive)'
+          };
+          handleLogDose(log);
+          dismiss();
+        };
+        return (
+          <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-sm bg-[#0f172a] border border-amber-500/30 rounded-2xl p-5 shadow-2xl space-y-4">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-widest mb-1">Missed Dose Detected</div>
+                  <h3 className="text-sm font-bold text-white">{compound.name}</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">No log found for <span className="font-mono text-slate-300">{date}</span></p>
+                </div>
+                <button onClick={dismiss} className="p-1 text-slate-500 hover:text-slate-300 cursor-pointer shrink-0">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-400">Did you take your {compound.doseAmount}{compound.doseUnit} dose on this date?</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={logMissed}
+                  className="flex-1 py-2 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 font-bold text-xs rounded-xl transition cursor-pointer"
+                >
+                  Yes, log it
+                </button>
+                <button
+                  onClick={dismiss}
+                  className="flex-1 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-slate-400 font-bold text-xs rounded-xl transition cursor-pointer"
+                >
+                  Skip / Missed
+                </button>
+              </div>
+              {missedDosePrompts.length > 1 && (
+                <p className="text-[10px] text-center text-slate-600 font-mono">{missedDoseIdx + 1} of {missedDosePrompts.length} missed doses</p>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
       <AppHeader
         activeTab={activeTab}
-        onSetActiveTab={navigateTab}
+        onSetActiveTab={setActiveTab}
         labratTheme={labratTheme}
         notifications={notifications}
         notificationsOpen={notificationsOpen}

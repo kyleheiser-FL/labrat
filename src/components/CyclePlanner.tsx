@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import {
   Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
-  Info, Activity, Shield, Apple, Sun, Heart, CheckSquare, History, Clock
+  Info, Activity, Shield, Apple, Sun, Heart, CheckSquare, History, Clock,
+  BookTemplate, Layers, Zap, Target, Brain, BarChart2, X
 } from 'lucide-react';
 import { Compound, LibraryItem, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
@@ -59,6 +60,43 @@ export default function CyclePlanner({
   const [importError, setImportError] = useState('');
   const [importSuccess, setImportSuccess] = useState(false);
   const [copiedData, setCopiedData] = useState(false);
+
+  // Cycle Templates
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [templateSaveName, setTemplateSaveName] = useState('');
+  const [savedTemplates, setSavedTemplates] = useState<{ name: string; compounds: Compound[] }[]>(() => {
+    try { return JSON.parse(localStorage.getItem('labrat_cycle_templates') || '[]'); } catch { return []; }
+  });
+
+  const saveTemplate = () => {
+    if (!templateSaveName.trim() || compounds.length === 0) return;
+    const t = { name: templateSaveName.trim(), compounds: compounds.map(c => ({ ...c, id: c.id, startDate: c.startDate })) };
+    const next = [...savedTemplates, t];
+    setSavedTemplates(next);
+    localStorage.setItem('labrat_cycle_templates', JSON.stringify(next));
+    setTemplateSaveName('');
+    triggerHaptic('success');
+  };
+
+  const applyTemplate = (t: { name: string; compounds: Compound[] }) => {
+    const today = new Date().toISOString().split('T')[0];
+    t.compounds.forEach(c => {
+      onAddCompound({ ...c, id: `tmpl-${Date.now()}-${Math.random().toString(36).slice(2)}`, startDate: today, isCompleted: false });
+    });
+    setShowTemplates(false);
+    triggerHaptic('success');
+  };
+
+  const deleteTemplate = (idx: number) => {
+    const next = savedTemplates.filter((_, i) => i !== idx);
+    setSavedTemplates(next);
+    localStorage.setItem('labrat_cycle_templates', JSON.stringify(next));
+  };
+
+  // Cycle Stack Recommendations
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [recGoal, setRecGoal] = useState<string>('healing');
+  const [recPeptideOnly, setRecPeptideOnly] = useState(true);
 
   const cycleTriggers = useMemo(() => {
     let hasOral = false, hasInjectable = false, hasAromatizing = false, hasJointStrain = false, hasSuppressive = false, hasStimulant = false;
@@ -144,6 +182,24 @@ export default function CyclePlanner({
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
             {compounds.length} Compounds Actioned
           </span>
+          <button onClick={() => setShowTemplates(!showTemplates)}
+            className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border cursor-pointer transition-all ${showTemplates ? 'bg-purple-500/10 text-purple-300 border-purple-500/30' : 'bg-[#1e293b] hover:bg-slate-800 text-slate-300 border-slate-700/50'}`}>
+            <Layers className="w-3.5 h-3.5" /> Templates
+          </button>
+          <button onClick={() => setShowRecommendations(!showRecommendations)}
+            className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border cursor-pointer transition-all ${showRecommendations ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30' : 'bg-[#1e293b] hover:bg-slate-800 text-slate-300 border-slate-700/50'}`}>
+            <Sparkles className="w-3.5 h-3.5" /> Stack Advisor
+          </button>
+          <button
+            onClick={() => {
+              triggerHaptic('light');
+              window.print();
+            }}
+            className="p-2 bg-[#1e293b] hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700/50 cursor-pointer"
+            title="Export cycle summary as PDF"
+          >
+            <FileDown className="w-3.5 h-3.5" /> PDF
+          </button>
           <button onClick={() => setShowDataControls(!showDataControls)}
             className="p-2 bg-[#1e293b] hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700/50 cursor-pointer"
             id="toggle-data-mgmt">
@@ -156,6 +212,153 @@ export default function CyclePlanner({
           </button>
         </div>
       </div>
+
+      {/* Cycle Templates Panel */}
+      {showTemplates && (
+        <div className="bg-[#0f172a]/70 border border-purple-500/20 rounded-2xl p-5 shadow-xl backdrop-blur-md space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Layers className="w-4 h-4 text-purple-400" />
+              <h4 className="text-sm font-bold text-slate-200">Cycle Templates</h4>
+            </div>
+            <button onClick={() => setShowTemplates(false)} className="p-1 text-slate-500 hover:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
+          </div>
+
+          {compounds.length > 0 && (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={templateSaveName}
+                onChange={e => setTemplateSaveName(e.target.value)}
+                placeholder="Template name (e.g. Healing Stack, Bulk Season...)"
+                className="flex-1 bg-slate-950/60 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500/60"
+              />
+              <button
+                onClick={saveTemplate}
+                disabled={!templateSaveName.trim()}
+                className="px-3 py-2 bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 font-bold text-xs rounded-xl transition cursor-pointer disabled:opacity-40 flex items-center gap-1.5 whitespace-nowrap"
+              >
+                <Save className="w-3.5 h-3.5" /> Save Current Stack
+              </button>
+            </div>
+          )}
+
+          {savedTemplates.length === 0 ? (
+            <p className="text-xs text-slate-500 text-center py-4">No saved templates yet. Add compounds and save your stack as a reusable template.</p>
+          ) : (
+            <div className="space-y-2">
+              {savedTemplates.map((t, i) => (
+                <div key={i} className="flex items-center justify-between gap-3 bg-slate-950/40 border border-slate-800 rounded-xl px-3.5 py-2.5">
+                  <div>
+                    <div className="text-sm font-bold text-slate-200">{t.name}</div>
+                    <div className="text-[10px] text-slate-500 font-mono">{t.compounds.length} compounds · {t.compounds.map(c => c.name.split(' ')[0]).join(', ')}</div>
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    <button
+                      onClick={() => applyTemplate(t)}
+                      className="px-2.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 font-bold text-[10px] rounded-lg transition cursor-pointer"
+                    >Apply</button>
+                    <button
+                      onClick={() => deleteTemplate(i)}
+                      className="p-1.5 text-slate-500 hover:text-rose-400 transition cursor-pointer rounded-lg"
+                    ><Trash2 className="w-3.5 h-3.5" /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Stack Recommendations Panel */}
+      {showRecommendations && (
+        <div className="bg-[#0f172a]/70 border border-cyan-500/20 rounded-2xl p-5 shadow-xl backdrop-blur-md space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <h4 className="text-sm font-bold text-slate-200">Stack Advisor</h4>
+            </div>
+            <button onClick={() => setShowRecommendations(false)} className="p-1 text-slate-500 hover:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
+          </div>
+
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-xs text-slate-400 font-semibold">Goal:</span>
+            {[
+              { key: 'healing', label: 'Healing & Recovery' },
+              { key: 'muscle', label: 'Muscle & Strength' },
+              { key: 'weight_loss', label: 'Fat Loss' },
+              { key: 'longevity', label: 'Longevity' },
+              { key: 'cognitive', label: 'Cognitive' },
+              { key: 'hormones', label: 'Hormones / TRT' },
+            ].map(g => (
+              <button
+                key={g.key}
+                onClick={() => setRecGoal(g.key)}
+                className={`px-2.5 py-1 text-[10px] font-bold rounded-lg border transition cursor-pointer ${recGoal === g.key ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-200' : 'bg-slate-800/50 border-slate-700/50 text-slate-400 hover:text-slate-200'}`}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setRecPeptideOnly(!recPeptideOnly)}
+              className={`w-8 h-4 rounded-full relative transition-all cursor-pointer border ${recPeptideOnly ? 'bg-cyan-500 border-cyan-400' : 'bg-slate-700 border-slate-600'}`}
+            >
+              <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all ${recPeptideOnly ? 'left-4' : 'left-0.5'}`} />
+            </button>
+            <span className="text-xs text-slate-400">{recPeptideOnly ? 'Peptides only' : 'All compounds (peptides + steroids)'}</span>
+          </div>
+
+          {(() => {
+            const matches = PEPTIDE_LIBRARY.filter(item => {
+              if (recPeptideOnly && item.deliveryForm !== 'peptide') return false;
+              return item.category === recGoal || (recGoal === 'muscle' && ['muscle', 'hormones'].includes(item.category));
+            }).slice(0, 5);
+            if (matches.length === 0) return <p className="text-xs text-slate-500 text-center py-4">No matches found for this combination.</p>;
+            return (
+              <div className="space-y-3">
+                {matches.map(item => (
+                  <div key={item.id} className="bg-slate-950/40 border border-slate-800 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm font-bold text-slate-200">{item.name}</span>
+                        <span className="text-[9px] font-mono bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded capitalize">{item.category.replace('_', ' ')}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-normal">{item.description.slice(0, 120)}…</p>
+                      <div className="flex items-center gap-3 mt-1.5 text-[10px] font-mono text-slate-500">
+                        <span>Half-life: {item.halfLife}</span>
+                        <span>{item.typicalDosage}</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        onAddCompound({
+                          id: `rec-${item.id}-${Date.now()}`,
+                          name: item.name,
+                          type: item.deliveryForm === 'peptide' ? 'peptide' : 'compound',
+                          doseAmount: parseFloat(item.typicalDosage.match(/[\d.]+/)?.[0] || '250'),
+                          doseUnit: item.typicalDosage.toLowerCase().includes('mcg') ? 'mcg' : item.typicalDosage.toLowerCase().includes('mg') ? 'mg' : 'mcg',
+                          frequency: item.frequencyText.toLowerCase().includes('twice') ? 'twice_weekly' : item.frequencyText.toLowerCase().includes('once weekly') ? 'weekly' : 'daily',
+                          startDate: new Date().toISOString().split('T')[0],
+                          durationWeeks: parseInt(item.suggestedCycleWeeks.match(/\d+/)?.[0] || '8'),
+                          color: recGoal === 'healing' ? '#06b6d4' : recGoal === 'muscle' ? '#a855f7' : recGoal === 'weight_loss' ? '#f59e0b' : recGoal === 'longevity' ? '#10b981' : recGoal === 'cognitive' ? '#6366f1' : '#ec4899',
+                          notes: `${item.frequencyText} | ${item.reconstitutionText || ''}`
+                        });
+                        triggerHaptic('success');
+                      }}
+                      className="shrink-0 px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 font-bold text-xs rounded-xl transition cursor-pointer whitespace-nowrap"
+                    >
+                      + Add to Cycle
+                    </button>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      )}
 
       {/* Data Import/Export */}
       {visibility.dataControls && showDataControls && (
@@ -225,6 +428,119 @@ export default function CyclePlanner({
           />
         ))}
       </div>
+
+      {/* Cycle History Timeline */}
+      {(() => {
+        const completed = compounds.filter(c => c.isCompleted);
+        if (completed.length === 0) return null;
+        return (
+          <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
+            <div className="flex items-center gap-2 border-b border-[#1e293b]/60 pb-3 mb-4">
+              <History className="w-4 h-4 text-slate-400" />
+              <h4 className="text-sm font-bold text-slate-200">Completed Cycle History</h4>
+              <span className="ml-auto text-[10px] text-slate-500 font-mono">{completed.length} cycle{completed.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div className="relative pl-4">
+              <div className="absolute left-1 top-0 bottom-0 w-0.5 bg-slate-800" />
+              <div className="space-y-3">
+                {completed.slice().sort((a, b) => b.startDate.localeCompare(a.startDate)).map(c => {
+                  const start = new Date(c.startDate + 'T00:00:00');
+                  const end = new Date(start);
+                  end.setDate(end.getDate() + c.durationWeeks * 7);
+                  return (
+                    <div key={c.id} className="relative flex items-start gap-3">
+                      <div className="absolute -left-[13px] w-3 h-3 rounded-full border-2 border-slate-900 mt-0.5" style={{ backgroundColor: c.color }} />
+                      <div className="flex-1 bg-slate-900/40 border border-slate-800 rounded-xl px-3 py-2.5">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <span className="text-xs font-bold text-slate-200">{c.name}</span>
+                          <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/15 px-1.5 py-0.5 rounded font-mono font-bold">COMPLETED</span>
+                        </div>
+                        <div className="flex gap-3 mt-1 text-[10px] font-mono text-slate-500">
+                          <span>{c.startDate}</span>
+                          <span>→</span>
+                          <span>{end.toISOString().split('T')[0]}</span>
+                          <span className="text-slate-600">·</span>
+                          <span>{c.durationWeeks}wk · {c.doseAmount}{c.doseUnit} {c.frequency.replace('_', ' ')}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Half-life Decay Visualization */}
+      {(() => {
+        const parseHalfLifeHours = (hl: string): number | null => {
+          if (!hl) return null;
+          const hourMatch = hl.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*hours?/i);
+          if (hourMatch) {
+            const lo = parseFloat(hourMatch[1]);
+            const hi = hourMatch[2] ? parseFloat(hourMatch[2]) : lo;
+            return (lo + hi) / 2;
+          }
+          const dayMatch = hl.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*days?/i);
+          if (dayMatch) {
+            const lo = parseFloat(dayMatch[1]);
+            const hi = dayMatch[2] ? parseFloat(dayMatch[2]) : lo;
+            return ((lo + hi) / 2) * 24;
+          }
+          return null;
+        };
+        const activeCompounds = compounds.filter(c => !c.isCompleted);
+        const items = activeCompounds.map(c => {
+          const lib = PEPTIDE_LIBRARY.find(l => l.name.toLowerCase().includes(c.name.toLowerCase().split(' ')[0]) || c.name.toLowerCase().includes(l.name.toLowerCase().split(' ')[0]));
+          const hlHours = lib ? parseHalfLifeHours(lib.halfLife) : null;
+          if (!hlHours) return null;
+          const compLogs = logs.filter(l => l.compoundId === c.id);
+          const lastLog = compLogs.length > 0 ? compLogs[compLogs.length - 1] : null;
+          if (!lastLog) return null;
+          const lastDoseTime = new Date(`${lastLog.date}T${lastLog.time || '12:00'}`);
+          const hoursSince = (Date.now() - lastDoseTime.getTime()) / (1000 * 60 * 60);
+          const level = Math.max(0, Math.pow(0.5, hoursSince / hlHours) * 100);
+          return { compound: c, hlHours, hoursSince, level, lib };
+        }).filter(Boolean);
+        type DecayItem = { compound: Compound; hlHours: number; hoursSince: number; level: number; lib: typeof PEPTIDE_LIBRARY[0] };
+        const decayItems = items as DecayItem[];
+        if (decayItems.length === 0) return null;
+        return (
+          <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
+            <div className="flex items-center gap-2 border-b border-[#1e293b]/60 pb-3 mb-4">
+              <BarChart2 className="w-4 h-4 text-indigo-400" />
+              <h4 className="text-sm font-bold text-slate-200">Active Compound Levels</h4>
+              <span className="ml-auto text-[10px] text-slate-500 font-mono">Based on last dose + half-life</span>
+            </div>
+            <div className="space-y-3">
+              {decayItems.map((item) => (
+                <div key={item.compound.id}>
+                  <div className="flex items-center justify-between text-[11px] mb-1">
+                    <span className="font-semibold text-slate-300">{item.compound.name}</span>
+                    <span className="font-mono text-slate-500">
+                      {item.level.toFixed(0)}% active · last dose {item.hoursSince < 24 ? `${item.hoursSince.toFixed(0)}h ago` : `${(item.hoursSince / 24).toFixed(1)}d ago`}
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${item.level}%`,
+                        backgroundColor: item.level > 60 ? item.compound.color : item.level > 25 ? '#f59e0b' : '#f87171'
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-[9px] font-mono text-slate-600 mt-0.5">
+                    <span>Half-life: {item.lib?.halfLife}</span>
+                    <span>{item.level < 25 ? '⚠ Low — consider redosing' : item.level > 80 ? '● Peak active range' : '● Therapeutic range'}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* PCT Section */}
       {visibility.pct && (() => {

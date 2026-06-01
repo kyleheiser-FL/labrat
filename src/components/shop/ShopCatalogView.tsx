@@ -26,6 +26,7 @@ import {
   getCleanDescription,
 } from '../../lib/shopHelpers';
 import ProductVialVisual from './ProductVialVisual';
+import PeptideRequestForm from './PeptideRequestForm';
 
 function getProductAvailableStock(prodId: string, baseInventory: number, allOrdersGlobal: OrderDetail[]): number {
   let stock = baseInventory;
@@ -122,16 +123,19 @@ export default function ShopCatalogView({
     <div className="flex flex-col gap-6">
 
       {/* Consolidated Launch Sale & Per-vial pricing notice */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 border border-cyan-500/20 rounded-xl px-3 py-2 text-left shadow-[0_0_15px_rgba(6,182,212,0.03)]">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-xs font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+      <div className="bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 border border-cyan-500/20 rounded-xl p-3 sm:p-4 text-left shadow-[0_0_15px_rgba(6,182,212,0.03)] focus-within:ring-1 focus-within:ring-cyan-500/30">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2 mb-2">
+          <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
             Grand Opening Sale: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">15% Off Site-Wide</span>
           </h3>
-          <div className="text-[9px] uppercase font-black tracking-widest text-[#22d3ee] bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20">
-            Auto-applied at checkout · Price = 1 vial (3ml)
+          <div className="text-[9px] uppercase font-black tracking-widest text-[#22d3ee] bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
+            Automatic Checkout Discount
           </div>
         </div>
+        <p className="text-xs text-slate-400 leading-relaxed">
+          Prices are auto-discounted to celebrate our application launch! Please note: <strong className="text-cyan-300 font-bold">every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed.
+        </p>
       </div>
 
       {/* Norway & Switzerland Heritage Banner */}
@@ -148,22 +152,22 @@ export default function ShopCatalogView({
         {/* Visual border pulse highlight */}
         <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-cyan-500/10 via-sky-500/20 to-indigo-500/10 opacity-75 group-hover/norway-banner:from-cyan-400 group-hover/norway-banner:via-sky-400 group-hover/norway-banner:to-indigo-400 transition-all duration-300" />
 
-        <div className="flex items-start gap-3 relative z-10">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 border border-cyan-500/20 flex items-center justify-center text-lg shrink-0 shadow-inner group-hover/norway-banner:scale-105 transition-transform duration-300 select-none mt-0.5">
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 border border-cyan-500/20 flex items-center justify-center text-xl shrink-0 shadow-inner group-hover/norway-banner:scale-105 transition-transform duration-300 select-none">
             🇳🇴
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 flex-wrap mb-1">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-0.5">
               <span className="text-[8px] uppercase font-black tracking-widest text-cyan-400 bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-500/20 select-none">SCANDINAVIAN HERITAGE</span>
               <span className="text-[8px] uppercase font-black tracking-widest text-[#a05eff] bg-[#1e0f35]/60 px-1.5 py-0.5 rounded border border-[#a05eff]/20 select-none">SWISS GMP</span>
             </div>
-            <div className="flex items-center justify-between gap-2">
-              <div>
-                <p className="text-xs font-black text-white leading-snug">Why Norway-sourced peptides?</p>
-                <p className="text-[10px] text-slate-400 mt-0.5">Glacial water &lt;1ppm TDS · Batch HPLC accountability · 99.2%+ purity</p>
-              </div>
-              <span className="text-slate-500 group-hover/norway-banner:translate-x-1 transition-transform shrink-0 text-sm">→</span>
-            </div>
+            <h4 className="text-xs sm:text-sm font-black text-white group-hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+              Why are Norway-sourced peptides the best?
+              <span className="text-xs text-slate-500 group-hover:translate-x-1.5 transition-transform inline-block">→</span>
+            </h4>
+            <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed max-w-2xl">
+              Norwegian glacial meltwater registers below 1 ppm dissolved solids — near-pharmaceutical grade straight from the source. Combined with Scandinavia's century-long GMP manufacturing culture, every batch delivers lower endotoxin counts, tighter sequence accuracy, and batch-level HPLC accountability that bulk industrial suppliers don't match. <span className="text-cyan-400 font-bold group-hover:underline">View sourcing standards.</span>
+            </p>
           </div>
         </div>
       </div>
@@ -628,6 +632,11 @@ export default function ShopCatalogView({
           );
         })()
       )}
+
+      {/* Peptide Request Form — always visible at bottom of catalog */}
+      <div className="mt-4">
+        <PeptideRequestForm />
+      </div>
     </div>
   );
 }

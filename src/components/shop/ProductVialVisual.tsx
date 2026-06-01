@@ -40,6 +40,10 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
                 <div className="mt-0.5 text-base leading-none font-black text-slate-950 tracking-tight truncate">{firstWord}</div>
                 <div className="mt-0.5 text-[11px] leading-tight text-slate-600 truncate">{remainingWords || category}</div>
               </div>
+              <div className="text-right shrink-0">
+                <div className="text-[8px] font-black uppercase tracking-[0.18em] text-slate-600">{isSolvent ? 'Solvent' : 'Peptide'}</div>
+                <div className="text-xs font-black uppercase tracking-[0.16em] text-sky-700 whitespace-nowrap">{sizeValue.toUpperCase()}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -66,6 +70,10 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
             <div className="labrat-real-vial-overlay-brand">LABRAT</div>
             <div className="labrat-real-vial-overlay-name">{firstWord}</div>
             <div className="labrat-real-vial-overlay-sub">{remainingWords || category}</div>
+            <div className="labrat-real-vial-overlay-meta">
+              <span>{isSolvent ? 'Sterile Diluent' : 'Research Peptide'}</span>
+              <strong>{sizeValue.toUpperCase()}</strong>
+            </div>
           </div>
         </div>
       </div>

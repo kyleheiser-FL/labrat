@@ -62,7 +62,7 @@ import { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption } fro
 import { SAMPLE_INVENTORY } from '../data/shopInventory';
 export type { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption };
 export { findShopProductMatch, getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice } from '../lib/shopHelpers';
-import { getProductBaseAndSize, getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress } from '../lib/shopHelpers';
+import { getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress } from '../lib/shopHelpers';
 import ShopCartView from './shop/ShopCartView';
 import ShopCheckoutView from './shop/ShopCheckoutView';
 import ShopOrdersView from './shop/ShopOrdersView';
@@ -1352,7 +1352,7 @@ export default function MembersShop() {
               isAdminUser={isAdminUser}
               actionLoading={actionLoading}
               onAddToCart={handleAddToCart}
-              onSetSelectedParentProductGroup={openProductDrawer}
+              onSetSelectedParentProductGroup={setSelectedParentProductGroup}
               onSetSelectedOptionIdInDrawer={setSelectedOptionIdInDrawer}
               onSetDrawerQuantity={setDrawerQuantity}
               onSeedDatabase={handleSeedDatabase}
@@ -1404,6 +1404,21 @@ export default function MembersShop() {
               actionLoading={actionLoading}
               currentUserEmail={currentUser?.email}
               onSimulateDeliveryCheck={handleSimulateDeliveryCheck}
+              onReorder={(items) => {
+                items.forEach(item => {
+                  const product = products.find(p => p.id === item.id);
+                  if (product) {
+                    setCart(prev => {
+                      const existing = prev.find(c => c.product.id === product.id);
+                      return existing
+                        ? prev.map(c => c.product.id === product.id ? { ...c, quantity: c.quantity + item.quantity } : c)
+                        : [...prev, { product, quantity: item.quantity }];
+                    });
+                  }
+                });
+                setView('cart');
+                triggerHaptic('success');
+              }}
             />
           )}
 
