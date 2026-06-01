@@ -1042,10 +1042,10 @@ export default function MembersShop() {
           { label: 'COAs Available',         cls: 'bg-blue-500/10 text-blue-400 border-blue-500/20', certKey: 'coas_available' },
           { label: 'SOP Verified',           cls: 'bg-purple-500/10 text-purple-300 border-purple-500/20', certKey: 'sop_verified' },
           { label: '🇳🇴 Norway Sourced',    cls: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/15' },
-          { label: 'ISO 17025',              cls: 'bg-slate-800/50 text-slate-300 border-slate-700/50', certKey: 'iso_17025' },
-          { label: 'ISO 9001',               cls: 'bg-slate-800/50 text-slate-300 border-slate-700/50', certKey: 'iso_9001' },
-          { label: 'EU GMP Annex 1',         cls: 'bg-slate-800/50 text-slate-300 border-slate-700/50', certKey: 'eu_gmp' },
-          { label: 'GDP Standard',           cls: 'bg-slate-800/50 text-slate-300 border-slate-700/50', certKey: 'gdp' },
+          { label: 'ISO 17025',              cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'iso_17025' },
+          { label: 'ISO 9001',               cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'iso_9001' },
+          { label: 'EU GMP Annex 1',         cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'eu_gmp' },
+          { label: 'GDP Standard',           cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'gdp' },
         ];
         return (
           <div className="overflow-hidden rounded-xl border border-cyan-500/20 bg-[#060d1a] py-2">
