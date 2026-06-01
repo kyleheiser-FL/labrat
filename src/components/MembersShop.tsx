@@ -1032,16 +1032,43 @@ export default function MembersShop() {
   return (
     <div className="flex flex-col gap-4" id="members-shop-page" style={{ animation: 'none' }}>
 
-      {/* Scrolling certification ticker */}
-      <div className="overflow-hidden rounded-xl border border-cyan-500/20 bg-gradient-to-r from-cyan-500/10 to-purple-500/8 py-1.5">
-        <div className="shop-ticker-inner flex whitespace-nowrap">
-          {[0, 1].map(i => (
-            <span key={i} className="inline-block px-10 text-cyan-400 font-mono font-black text-[.68rem] tracking-widest uppercase shrink-0">
-              Norway Peptides &nbsp;•&nbsp; COA Ready &nbsp;•&nbsp; ISO 17025 &nbsp;•&nbsp; ISO 9001 &nbsp;•&nbsp; EU GMP Annex 1 &nbsp;•&nbsp; GDP Standard &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* Scrolling credential pill ticker */}
+      {(() => {
+        const pills = [
+          { label: 'Authorized Lab Supply', cls: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/25', certKey: 'authorized_supply' },
+          { label: '🔬 Research Use Only',  cls: 'bg-amber-500/20 text-amber-300 border-amber-500/25', certKey: 'research_only' },
+          { label: '✓ 99% Purity',          cls: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20', certKey: '99_purity' },
+          { label: '✓ Certified Source',    cls: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', certKey: 'certified_source' },
+          { label: 'COAs Available',         cls: 'bg-blue-500/10 text-blue-400 border-blue-500/20', certKey: 'coas_available' },
+          { label: 'SOP Verified',           cls: 'bg-purple-500/10 text-purple-300 border-purple-500/20', certKey: 'sop_verified' },
+          { label: '🇳🇴 Norway Sourced',    cls: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/15' },
+          { label: 'ISO 17025',              cls: 'bg-slate-800/50 text-slate-300 border-slate-700/50', certKey: 'iso_17025' },
+          { label: 'ISO 9001',               cls: 'bg-slate-800/50 text-slate-300 border-slate-700/50', certKey: 'iso_9001' },
+          { label: 'EU GMP Annex 1',         cls: 'bg-slate-800/50 text-slate-300 border-slate-700/50', certKey: 'eu_gmp' },
+          { label: 'GDP Standard',           cls: 'bg-slate-800/50 text-slate-300 border-slate-700/50', certKey: 'gdp' },
+        ];
+        return (
+          <div className="overflow-hidden rounded-xl border border-cyan-500/20 bg-[#060d1a] py-2">
+            <div className="shop-ticker-inner flex items-center gap-2 whitespace-nowrap">
+              {[0, 1].map(copy => (
+                <React.Fragment key={copy}>
+                  {pills.map((p, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={p.certKey ? () => { triggerHaptic('light'); setSelectedCertKey(p.certKey!); } : undefined}
+                      className={`inline-flex items-center shrink-0 px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase border ${p.cls} ${p.certKey ? 'cursor-pointer hover:brightness-125 active:scale-95 transition-all' : 'cursor-default'}`}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                  <span className="inline-block w-8 shrink-0" aria-hidden="true" />
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Upper Status Cards / Welcome banners */}
       <div className="bg-[#0b1329] border border-[#1e293b] rounded-xl p-3 sm:p-4 relative" id="shop-welcome-hero">
@@ -1049,41 +1076,6 @@ export default function MembersShop() {
           <ShoppingBag className="w-48 h-48" />
         </div>
         <div className="relative z-10 flex flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => { triggerHaptic('light'); setSelectedCertKey('authorized_supply'); }}
-              className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-cyan-500/20 text-cyan-400 border border-cyan-500/10 transition hover:scale-105 active:scale-95 cursor-pointer focus:outline-none"
-            >
-              Authorized Lab Supply
-            </button>
-            <button
-              type="button"
-              onClick={() => { triggerHaptic('light'); setSelectedCertKey('research_only'); }}
-              className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-amber-500/20 text-amber-300 border border-amber-500/10 transition hover:scale-105 active:scale-95 cursor-pointer focus:outline-none"
-            >
-              🔬 Research Use Only
-            </button>
-            <button
-              type="button"
-              onClick={() => { triggerHaptic('light'); setSelectedCertKey('99_purity'); }}
-              className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center gap-1 transition hover:scale-105 active:scale-95 cursor-pointer focus:outline-none"
-            >
-              <BadgeCheck className="w-2.5 h-2.5" /> 99% Purity
-            </button>
-            <button
-              type="button"
-              onClick={() => { triggerHaptic('light'); setSelectedCertKey('certified_source'); }}
-              className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1 transition hover:scale-105 active:scale-95 cursor-pointer focus:outline-none"
-            >
-              <CheckCircle className="w-2.5 h-2.5" /> Certified Source
-            </button>
-            {isAdminUser && (
-              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-red-500/20 text-red-300 border border-red-500/10">
-                Site Administrator
-              </span>
-            )}
-          </div>
           <h1 className="text-sm font-black tracking-tight text-white flex items-center gap-x-2">
             <span className="text-base font-black tracking-tighter font-sans uppercase">LABRAT</span>
             <span className="text-slate-300 font-semibold">Bioresearch Peptide &amp; Compound Shop</span>
