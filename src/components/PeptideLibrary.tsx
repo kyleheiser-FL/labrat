@@ -33,8 +33,7 @@ export default function PeptideLibrary({ onAddToCycle, visibility = { filters: t
   const suggestions = searchTerm.trim()
     ? PEPTIDE_LIBRARY.filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.chemicalName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.benefits.some((b) => b.toLowerCase().includes(searchTerm.toLowerCase()))
+        item.chemicalName?.toLowerCase().includes(searchTerm.toLowerCase())
       ).slice(0, 5)
     : [];
 
@@ -60,13 +59,11 @@ export default function PeptideLibrary({ onAddToCycle, visibility = { filters: t
 
   // Filter items for main view list
   const filteredItems = PEPTIDE_LIBRARY.filter((item) => {
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.chemicalName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.benefits.some((b) => b.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+    const q = searchTerm.toLowerCase();
+    const matchesSearch = !q ||
+      item.name.toLowerCase().includes(q) ||
+      item.chemicalName?.toLowerCase().includes(q);
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-
     return matchesSearch && matchesCategory;
   });
 
