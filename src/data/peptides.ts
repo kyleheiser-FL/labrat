@@ -3085,6 +3085,669 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     deliveryForm: 'oil',
     realisticGains: 'Modest but clean lean tissue gains of 3-5 lbs over 8-10 weeks. Primarily used for tissue recomposition rather than bulk building.',
     dietaryInteraction: 'Relatively gentle dietary requirements. Moderate caloric surplus with high protein intake. Standard lipid support supplements recommended.'
+  },
+  {
+    id: 'ghrp-2',
+    name: 'GHRP-2',
+    chemicalName: 'Growth Hormone-Releasing Peptide 2 (D-Ala-D-β-Nal-Ala-Trp-D-Phe-Lys-NH2)',
+    category: 'longevity',
+    description: 'A powerful synthetic hexapeptide that directly stimulates the pituitary gland to release massive, pulsatile bursts of growth hormone. Second only to Hexarelin in raw GH output, GHRP-2 is widely paired with CJC-1295 to create amplified dual-pituitary GH pulses far exceeding either compound alone.',
+    clinicalResearch: 'Binds with high affinity to GHS-R1a (ghrelin receptor) on pituitary somatotroph cells, triggering 7–15× greater GH secretion than baseline. Studies confirm GHRP-2 also mildly elevates cortisol and prolactin, distinguishing it from the more selective ipamorelin.',
+    typicalDosage: '100 mcg - 300 mcg per dose',
+    frequencyText: 'Injected subcutaneously 2-3 times daily, ideally fasted — morning, pre-workout, and before bed.',
+    reconstitutionText: 'Add 2.0 ml of Bacteriostatic Water to a 5 mg vial. A 100 mcg dose = 4 units (0.04 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 15 to 30 minutes',
+    benefits: [
+      'Plus (+): Produces the most powerful GH pulses of any injectable peptide short of Hexarelin',
+      'Plus (+): Dramatically increases IGF-1 over sustained use, supporting lean tissue and fat loss',
+      'Plus (+): Synergizes explosively with CJC-1295 to multiply the pituitary GH output',
+      'Plus (+): Enhances slow-wave sleep depth and cellular recovery overnight'
+    ],
+    sideEffects: [
+      'Minus (-): Mild cortisol and prolactin elevation compared to ipamorelin (avoid if sensitive)',
+      'Minus (-): Moderate appetite increase post-injection (hunger spike within 20-30 minutes)'
+    ],
+    suggestedCycleWeeks: '12 - 20 weeks continuous use, with 4-week breaks between protocols.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Consistent IGF-1 elevation and visible body composition changes over 12 weeks — 3-5 lbs lean mass increase with steady subcutaneous fat reduction, improved skin texture, and deeper restorative sleep from the first week.',
+    dietaryInteraction: 'Must be administered in a fully fasted state (no carbohydrates or fats in blood) to avoid insulin-mediated somatostatin suppression of GH release. Wait 30-45 minutes before eating after each injection.'
+  },
+  {
+    id: 'ghrp-6',
+    name: 'GHRP-6',
+    chemicalName: 'Growth Hormone-Releasing Peptide 6 (His-D-Trp-Ala-Trp-D-Phe-Lys-NH2)',
+    category: 'longevity',
+    description: 'The original hunger-stimulating GHRP. GHRP-6 delivers robust pulsatile GH secretion alongside a powerful ghrelin-like appetite surge, making it the compound of choice for hard-gainers in aggressive lean-bulk phases who struggle to hit high daily caloric targets.',
+    clinicalResearch: 'One of the first GHRPs validated in clinical literature. GHRP-6 has high GHS-R1a receptor affinity and activates appetite-regulating centers in the hypothalamus by mimicking endogenous ghrelin — producing the most pronounced hunger response of any GHRP class compound.',
+    typicalDosage: '100 mcg - 300 mcg per dose',
+    frequencyText: 'Injected subcutaneously 2-3 times daily (upon waking, pre-workout, and before bed). Eat within 15-20 minutes post-injection to leverage the ghrelin appetite surge.',
+    reconstitutionText: 'Add 2.0 ml of Bacteriostatic Water to a 5 mg vial. A 100 mcg dose = 4 units (0.04 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 15 to 60 minutes',
+    benefits: [
+      'Plus (+): Strong pulsatile GH release and sustained IGF-1 elevation over continuous use',
+      'Plus (+): Powerful appetite stimulation — ideal for athletes struggling to hit high caloric targets',
+      'Plus (+): Accelerates muscle repair, post-workout recovery, and connective tissue resilience',
+      'Plus (+): Enhances sleep architecture and overnight anabolic hormone pulses'
+    ],
+    sideEffects: [
+      'Minus (-): Intense, near-uncontrollable hunger surge within 20 minutes of injection',
+      'Minus (-): Mild water retention and cortisol/prolactin elevation at high doses'
+    ],
+    suggestedCycleWeeks: '12 - 24 weeks for lean bulk phases.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Dramatic increase in appetite and nutrient uptake, driving faster muscle accrual during bulking. Expect consistent lean mass gains of 3-6 lbs over a 12-week cycle when combined with a high-calorie, high-protein diet.',
+    dietaryInteraction: 'Unlike other GHRPs, GHRP-6 should be followed immediately by a quality protein-and-carbohydrate meal within 15-20 minutes to leverage the intense ghrelin window and maximize anabolic nutrient shuttling.'
+  },
+  {
+    id: 'hexarelin',
+    name: 'Hexarelin',
+    chemicalName: 'Examorelin (His-D-2-MeTrp-Ala-Trp-D-Phe-Lys-NH2)',
+    category: 'longevity',
+    description: 'The most potent GHRP ever developed. Hexarelin triggers the largest single-dose GH pulses of any growth hormone secretagogue peptide, while uniquely offering direct cardioprotective effects through GHS-R1 receptors expressed on heart tissue — independent of its GH-releasing actions.',
+    clinicalResearch: 'Clinical trials demonstrate Hexarelin produces the strongest dose-dependent pituitary GH discharge of all GHRPs tested. Independent cardiac research confirms Hexarelin directly stimulates GHS receptors in myocardial tissue, improving cardiac function, reducing ischemic damage, and enhancing contractility — benefits not shared by other GHRPs.',
+    typicalDosage: '100 mcg - 200 mcg per dose',
+    frequencyText: 'Injected subcutaneously once or twice daily. Due to rapid receptor desensitization, cycling protocols (5 days on / 2 days off) are strongly recommended.',
+    reconstitutionText: 'Add 2.0 ml of Bacteriostatic Water to a 5 mg vial. A 100 mcg dose = 4 units (0.04 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 30 to 70 minutes',
+    benefits: [
+      'Plus (+): Highest single-dose GH pulse of any GHRP peptide available',
+      'Plus (+): Direct cardioprotective mechanism — improves myocardial function independent of GH',
+      'Plus (+): Powerful systemic anti-inflammatory effects at tissue level',
+      'Plus (+): Potent fat mobilization and lean tissue preservation at doses above 100 mcg'
+    ],
+    sideEffects: [
+      'Minus (-): Rapid pituitary desensitization — receptor downregulation occurs faster than other GHRPs',
+      'Minus (-): Notable cortisol and prolactin elevation; not suitable for prolonged continuous use'
+    ],
+    suggestedCycleWeeks: '8 - 12 weeks maximum; run on 5 on / 2 off cycling schedule to prevent desensitization.',
+    deliveryForm: 'peptide',
+    realisticGains: 'The most powerful GH peptide for acute anabolic and fat-burning applications. Measurable body composition changes in 6-8 weeks, with unique cardioprotective benefits emerging after 4 weeks of consistent use.',
+    dietaryInteraction: 'Administer strictly fasted. Somatostatin release from elevated insulin directly blocks Hexarelin\'s pituitary GH pulse. Wait a minimum of 45 minutes after injection before eating.'
+  },
+  {
+    id: 'cjc-1295-dac',
+    name: 'CJC-1295 (DAC)',
+    chemicalName: 'CJC-1295 with Drug Affinity Complex (Modified GRF 1-29 + Lysine-DAC)',
+    category: 'longevity',
+    description: 'The long-acting, once-weekly GHRH analog. The Drug Affinity Complex (DAC) chemically binds CJC-1295 to circulating albumin, extending its plasma half-life from minutes to 6-8 days. This creates a sustained, elevated GH baseline rather than pulsatile spikes — ideal for anti-aging, metabolic enhancement, and year-round optimization protocols.',
+    clinicalResearch: 'The DAC modification uses a reactive lysine residue to covalently bind circulating serum albumin, protecting the peptide from proteolytic degradation. Studies show CJC-1295 DAC produces a 2-10× increase in GH AUC and a 3-5× increase in circulating IGF-1 levels that persist for 6-10 days after a single injection.',
+    typicalDosage: '1 mg - 2 mg per injection',
+    frequencyText: 'Injected subcutaneously once or twice per week. Dosed on a fixed schedule (e.g., Monday/Thursday) for stable GH and IGF-1 baseline.',
+    reconstitutionText: 'Add 2.0 ml of Bacteriostatic Water to a 2 mg vial. The full vial represents a single weekly dose of 2 mg.',
+    halfLife: 'Approx. 6 to 8 days (albumin-bound)',
+    benefits: [
+      'Plus (+): Single weekly injection provides continuous GH and IGF-1 elevation for 7+ days',
+      'Plus (+): Dramatically raises baseline IGF-1 over 12-24 week protocols',
+      'Plus (+): Supports steady fat loss, lean tissue maintenance, and dermal rejuvenation',
+      'Plus (+): Ideal for long-term anti-aging and optimization with minimal injection burden'
+    ],
+    sideEffects: [
+      'Minus (-): Less physiological than no-DAC; may cause water retention and slightly blunted GH pulse pattern',
+      'Minus (-): Higher cost per dose vs. CJC no-DAC; some users report mild jaw or joint water loading'
+    ],
+    suggestedCycleWeeks: '16 - 24 weeks for full body composition and anti-aging protocol.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Steady, progressive body recomposition over 12-24 weeks. Expect 3-6% body fat reduction, improved skin elasticity, and lean mass support without the fragmented daily dosing of shorter-acting peptides.',
+    dietaryInteraction: 'Administer on fasted blood (no insulin spike) for maximum pituitary response. Unlike pulsatile peptides, CJC-1295 DAC timing around meals is less critical due to its albumin-bound continuous release mechanism.'
+  },
+  {
+    id: 'mk-677-ibutamoren',
+    name: 'MK-677',
+    chemicalName: 'Ibutamoren Mesylate (Oral Ghrelin Receptor Agonist)',
+    category: 'longevity',
+    description: 'The only orally bioavailable growth hormone secretagogue. MK-677 activates the ghrelin receptor (GHS-R1a) at the pituitary and hypothalamus to drive sustained GH and IGF-1 elevation — without any injection. Unmatched for convenience in long-term anti-aging, muscle recovery, and sleep optimization protocols.',
+    clinicalResearch: 'Phase I-II clinical trials confirm MK-677 increases 24-hour GH pulse amplitude and mean IGF-1 by 40-60% in both young and elderly subjects. Multiple studies in healthy older adults demonstrate improvements in lean body mass, bone mineral density, and sleep architecture with 2-year safety data available.',
+    typicalDosage: '12.5 mg - 25 mg daily',
+    frequencyText: 'Taken orally as a capsule once daily at bedtime to align with the natural nocturnal GH surge and minimize daytime water retention.',
+    halfLife: 'Approx. 4 to 6 hours (GH secretion effects persist 24 hours)',
+    benefits: [
+      'Plus (+): Fully oral — no injections, no reconstitution, extremely convenient daily protocol',
+      'Plus (+): Sustained GH and IGF-1 elevation across 24 hours at therapeutic doses',
+      'Plus (+): Dramatically deepens slow-wave sleep and accelerates nightly muscle recovery',
+      'Plus (+): Backed by Phase II clinical trials with 2+ year safety data in elderly populations'
+    ],
+    sideEffects: [
+      'Minus (-): Significant appetite increase, especially at 25 mg — can compromise cutting phases',
+      'Minus (-): Mild water retention in extremities; transient insulin resistance at high doses'
+    ],
+    suggestedCycleWeeks: '16 - 52 weeks; typically run continuously as a year-round protocol.',
+    deliveryForm: 'pill',
+    realisticGains: 'Progressive IGF-1 elevation building over the first 12 weeks, yielding steady lean tissue accrual, measurable fat redistribution, and dramatically improved sleep quality. A 2-4% fat loss with simultaneous lean mass gain recomposition effect is expected over a 16-week run.',
+    dietaryInteraction: 'Best taken at bedtime on a relatively empty stomach to amplify the nocturnal GH pulse. Avoid high-sugar foods post-dose. Long-term users should periodically monitor fasting glucose and HbA1c for insulin resistance.'
+  },
+  {
+    id: 'igf-1-des',
+    name: 'IGF-1 DES',
+    chemicalName: 'Des(1-3)IGF-1 (Truncated IGF-1 Variant, 67 Amino Acids)',
+    category: 'longevity',
+    description: 'A naturally occurring truncated variant of IGF-1 with the first three N-terminal amino acids removed, dramatically reducing affinity for IGF-binding proteins (IGFBPs) and increasing free bioavailability at injection sites. IGF-1 DES is 10× more potent than standard IGF-1 at the receptor level, making it the most site-targeted anabolic IGF peptide available.',
+    clinicalResearch: 'IGF-1 DES is found naturally in the brain and gut. Unlike LR3 (systemic), DES bypasses IGFBP-3 binding, delivering rapid anabolic signaling locally at the injection site. Research confirms DES has a dramatically shorter half-life but higher receptor binding potency, creating a highly localized hypertrophic effect useful for targeting lagging muscle groups.',
+    typicalDosage: '20 mcg - 100 mcg per injection site',
+    frequencyText: 'Injected intramuscularly into the target muscle belly immediately post-workout, 2-3 times per week on training days.',
+    reconstitutionText: 'Add 2.0 ml of Bacteriostatic Water to a 1 mg vial. A 50 mcg dose = 10 units (0.10 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 20 to 30 minutes (extremely short — acts primarily locally)',
+    benefits: [
+      'Plus (+): 10× more potent than standard IGF-1 at the receptor level due to IGFBP bypass',
+      'Plus (+): Highly localized effect — injected directly into a target muscle for site-selective hypertrophy',
+      'Plus (+): Dramatically activates muscle satellite cells for deep structural repair post-workout',
+      'Plus (+): Ideal for lagging body parts — targeted enhancement not achievable with systemic IGF-1'
+    ],
+    sideEffects: [
+      'Minus (-): Very short half-life requires precise intra- or post-workout timing for effectiveness',
+      'Minus (-): Potential localized hypoglycemia or mild site inflammation at doses above 100 mcg'
+    ],
+    suggestedCycleWeeks: '4 - 8 weeks, used on training days only post-workout.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Highly targeted muscle hypertrophy in the injection site. Athletes report visible improvements in lagging muscle groups within 4-6 weeks. Overall systemic effects are more subtle than IGF-1 LR3.',
+    dietaryInteraction: 'Consume a high-protein post-workout meal (40-60g protein) within 30 minutes of injection to leverage the acute anabolic window. Avoid carbohydrate restriction around DES injection windows to prevent hypoglycemia.'
+  },
+  {
+    id: 'peg-mgf',
+    name: 'PEG-MGF',
+    chemicalName: 'Pegylated Mechano Growth Factor (IGF-1Ec Splice Variant)',
+    category: 'longevity',
+    description: 'A pegylated synthetic analogue of Mechano Growth Factor — the IGF-1 splice variant released locally by muscle tissue in response to mechanical stress. PEGylation extends its half-life from 5 minutes to several days, enabling systemic satellite cell activation and deep muscle repair signaling after injection.',
+    clinicalResearch: 'MGF is naturally upregulated only in mechanically loaded muscles. PEG-MGF extends this local repair signal systemically, activating dormant muscle satellite cells throughout the body via a distinct C-terminal peptide pathway. Unlike IGF-1 LR3, PEG-MGF does not activate the IGF-1 receptor directly — making the two compounds synergistic rather than redundant.',
+    typicalDosage: '200 mcg - 400 mcg per injection',
+    frequencyText: 'Injected subcutaneously 2-3 times per week. Optimal timing is 2-4 hours post-workout to align with peak muscle repair demand.',
+    reconstitutionText: 'Add 2.0 ml of Bacteriostatic Water to a 2 mg vial. A 200 mcg dose = 20 units (0.20 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 72 to 96 hours (PEGylation extends from 5 minutes to days)',
+    benefits: [
+      'Plus (+): Activates dormant muscle satellite cells to initiate structural muscle repair and growth',
+      'Plus (+): Dramatically accelerates recovery from muscle tears, overtraining, and heavy training blocks',
+      'Plus (+): Works via a distinct pathway from IGF-1 LR3 — can be stacked for synergistic effect',
+      'Plus (+): PEGylation eliminates the need for same-session or intra-workout injections'
+    ],
+    sideEffects: [
+      'Minus (-): Excessive receptor stimulation with too-frequent dosing can cause desensitization',
+      'Minus (-): Mild temporary post-injection site discomfort in some users'
+    ],
+    suggestedCycleWeeks: '4 - 8 weeks per cycle, ideally stacked with IGF-1 LR3.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Noticeable improvements in muscle recovery speed and density, particularly during high-volume training blocks. Athletes report faster return from muscle damage and improved training frequency over a 4-8 week PEG-MGF protocol.',
+    dietaryInteraction: 'Pair with a post-workout high-protein meal (40-60g protein) to maximize the downstream anabolic signaling window opened by satellite cell activation.'
+  },
+  {
+    id: 'melanotan-1',
+    name: 'Melanotan I',
+    chemicalName: 'Afamelanotide (Linear α-MSH Analogue, MC1R-Selective Tanning Peptide)',
+    category: 'cognitive',
+    description: 'The selective tanning peptide. Unlike Melanotan II which activates all 5 melanocortin receptors simultaneously, MT-1 (Afamelanotide) binds highly selectively to MC1R on skin melanocytes — delivering deep, long-lasting eumelanin pigmentation with minimal sexual, appetite, or cardiovascular side effects. EMA-approved in Europe for Erythropoietic Protoporphyria.',
+    clinicalResearch: 'Afamelanotide is the most clinically studied tanning peptide. EMA-approved under the name Scenesse for EPP. Clinical studies confirm MC1R-selective agonism drives a profound shift from pheomelanin to eumelanin synthesis in melanocytes, producing UV-stable tan with documented anti-inflammatory and photoprotective effects independent of melanogenesis.',
+    typicalDosage: '500 mcg - 1 mg per dose',
+    frequencyText: 'Injected subcutaneously daily during loading (1-2 weeks), then every 2-3 days for maintenance tanning protocol.',
+    reconstitutionText: 'Add 1.0 ml of Bacteriostatic Water to a 10 mg vial. A 500 mcg dose = 5 units (0.05 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 30 to 90 minutes (melanocyte tanning effects persist 2-3 weeks)',
+    benefits: [
+      'Plus (+): Deep, even eumelanin tanning achievable without excessive UV exposure',
+      'Plus (+): Virtually no sexual side effects — MC1R selective with minimal MC3R/MC4R activation',
+      'Plus (+): Anti-inflammatory properties via MC1R-mediated prostaglandin pathway modulation',
+      'Plus (+): European regulatory approval — the best-researched tanning compound available'
+    ],
+    sideEffects: [
+      'Minus (-): Mild transient nausea or facial flushing in the first 30 minutes post-injection',
+      'Minus (-): Potential darkening of existing moles or freckles — regular dermatological monitoring advised'
+    ],
+    suggestedCycleWeeks: '4 - 8 weeks loading then periodic maintenance doses.',
+    deliveryForm: 'peptide',
+    realisticGains: 'A natural-looking, deep, even tan achievable within 3-4 weeks of consistent protocol without sunburn or UV damage. A significantly safer tanning mechanism with a documented clinical safety profile compared to Melanotan II.',
+    dietaryInteraction: 'Can be administered at any time. To minimize nausea, inject before bed on a light stomach. Brief sun exposure (15-30 minutes) after injection helps leverage the active melanocyte stimulation window.'
+  },
+  {
+    id: 'andarine-s4',
+    name: 'Andarine (S4)',
+    chemicalName: 'S-4 / GTx-007 (Partial Androgen Receptor Agonist)',
+    category: 'hormones',
+    description: 'One of the original SARMs. Andarine delivers strong androgen receptor binding in muscle and bone tissue, producing lean muscle hardening, body fat reduction, and enhanced muscular density — particularly popular as a cutting and recomposition SARM due to its pronounced dry, vascular physique effects.',
+    clinicalResearch: 'Developed by GTX Pharmaceuticals, S4 shows high AR binding affinity with partial agonism in muscle and bone and partial antagonism in the prostate. At moderate doses it produces significant body recomposition without the estrogenic or progestogenic side effects common to anabolic steroids.',
+    typicalDosage: '25 mg - 50 mg daily',
+    frequencyText: 'Taken orally as a capsule or liquid, split into 2 daily doses (AM and PM) due to its 4-hour half-life.',
+    halfLife: 'Approx. 3 to 6 hours',
+    benefits: [
+      'Plus (+): Produces a dramatically hard, dry, and vascular physique with minimal water retention',
+      'Plus (+): Strong fat-burning recomposition effect — loses fat while preserving and hardening muscle',
+      'Plus (+): Enhances bone mineral density and connective tissue strength',
+      'Plus (+): Effective at moderate doses with relatively mild suppression compared to LGD-4033'
+    ],
+    sideEffects: [
+      'Minus (-): Vision disturbances — yellow tinge or reduced night vision at doses above 50 mg daily',
+      'Minus (-): Mild to moderate testosterone suppression requiring PCT protocol post-cycle'
+    ],
+    suggestedCycleWeeks: '6 - 8 weeks per cycle, with a 4-week PCT follow-up.',
+    deliveryForm: 'pill',
+    realisticGains: 'A hardened, dense, competition-ready physique — 5-8 lbs lean muscle gain with simultaneous fat loss creating a strong recomposition effect. Outstanding for visually improving muscle separation and vascularity.',
+    dietaryInteraction: 'Take with food to improve oral bioavailability. Maintain high protein intake (1.2g/lb bodyweight) to maximize lean tissue retention during the caloric deficit typically paired with S4 use.'
+  },
+  {
+    id: 'lgd-3303-sarm',
+    name: 'LGD-3303',
+    chemicalName: 'LGD-3303 (Second-Generation Nonsteroidal Full-Agonist SARM)',
+    category: 'hormones',
+    description: 'A next-generation SARM producing some of the driest, densest lean mass gains in the entire SARM class. LGD-3303 demonstrates near-full agonism in muscle and bone with minimal estrogenic conversion — delivering a hard, quality mass-building effect closer to DHT derivatives than traditional SARMs.',
+    clinicalResearch: 'Animal models demonstrate LGD-3303 achieves near-complete AR full agonism in skeletal muscle with substantially less prostate activation than testosterone. Its dry mass quality surpasses LGD-4033 in research models with less water retention and a better androgenic-to-estrogenic ratio.',
+    typicalDosage: '10 mg - 20 mg daily',
+    frequencyText: 'Taken orally as a capsule once daily.',
+    halfLife: 'Approx. 6 hours',
+    benefits: [
+      'Plus (+): Arguably the driest, hardest quality muscle gain of any SARM available',
+      'Plus (+): Full-agonist AR activity in muscle with strength gains comparable to LGD-4033',
+      'Plus (+): Strong bone mineral density and joint integrity support',
+      'Plus (+): Minimal aromatization — very low estrogen-related sides at standard doses'
+    ],
+    sideEffects: [
+      'Minus (-): Strong testosterone suppression — more aggressive PCT is required vs. first-gen SARMs',
+      'Minus (-): Fewer human safety trials than first-generation SARMs such as LGD-4033 or Ostarine'
+    ],
+    suggestedCycleWeeks: '6 - 8 weeks per cycle.',
+    deliveryForm: 'pill',
+    realisticGains: 'Consistent lean, dry, quality mass gains of 6-10 lbs over an 8-week cycle with minimal water weight. Produces a harder, more aesthetically polished physique than LGD-4033.',
+    dietaryInteraction: 'Can be taken fasted or with food. Pair with a high-protein diet and support PCT with Nolvadex or Enclomiphene post-cycle to restore suppressed natural testosterone.'
+  },
+  {
+    id: 'rad-150-sarm',
+    name: 'RAD-150',
+    chemicalName: 'TLB-150 / Sustalone (Esterified Testosterone-Mimetic SARM)',
+    category: 'hormones',
+    description: 'A next-generation evolution of RAD-140 featuring an added benzoate ester that dramatically improves bioavailability and extends active half-life to 48 hours. RAD-150 delivers the most testosterone-like androgenic experience of any SARM — with no aromatization and significantly lower liver burden than methylated orals.',
+    clinicalResearch: 'RAD-150 was engineered with chemical esterification to improve metabolic stability and oral bioavailability beyond RAD-140. The testosterone-mimetic structure provides a smooth, sustained androgenic tone rather than the sharp on/off peaks typical of non-esterified SARMs.',
+    typicalDosage: '10 mg - 20 mg daily',
+    frequencyText: 'Taken orally as a capsule once daily.',
+    halfLife: 'Approx. 48 hours (dramatically extended vs. RAD-140\'s 15-20 hours)',
+    benefits: [
+      'Plus (+): The most testosterone-like mood, libido, and strength effect of any SARM',
+      'Plus (+): Extended 48-hour half-life means stable androgenic blood levels and fewer peak/trough fluctuations',
+      'Plus (+): No aromatization — zero estrogenic sides despite a strong androgenic tone',
+      'Plus (+): Superior androgenic and anabolic output compared to standard RAD-140'
+    ],
+    sideEffects: [
+      'Minus (-): Newer compound with limited long-term human safety data',
+      'Minus (-): Moderate testosterone suppression; structured PCT is advised post-cycle'
+    ],
+    suggestedCycleWeeks: '6 - 8 weeks per cycle.',
+    deliveryForm: 'pill',
+    realisticGains: 'Aggressive lean mass and strength gains comparable to a low-dose testosterone cycle without estrogen management. Expect 6-10 lbs quality lean mass over an 8-week run with enhanced libido and mood throughout.',
+    dietaryInteraction: 'The ester modification improves lipid-phase absorption — take with a fat-containing meal for best results. Standard lipid support (CoQ10, Citrus Bergamot) is recommended for cardiovascular protection throughout the cycle.'
+  },
+  {
+    id: 'acp-105-sarm',
+    name: 'ACP-105',
+    chemicalName: 'Acadibol / ACP-105 (Partial Androgen Receptor Agonist)',
+    category: 'hormones',
+    description: 'A newer-generation partial AR agonist SARM known for its exceptionally clean profile — significant anabolic benefit with very mild suppression and minimal androgenic side effects. Ideal for female athletes, beginners, or as a joint-support adjunct during hard cutting cycles where side effect avoidance is the primary concern.',
+    clinicalResearch: 'Developed as part of a next-generation selective androgen modulator research program targeting muscle and bone anabolism with minimal prostate activity. Preclinical data confirms strong tissue-selective anabolic signaling with a uniquely low suppression profile versus full-agonist SARMs.',
+    typicalDosage: '10 mg - 20 mg daily',
+    frequencyText: 'Taken orally as a capsule once daily.',
+    halfLife: 'Approx. 4 to 6 hours',
+    benefits: [
+      'Plus (+): Tissue-selective anabolic effects with remarkably mild suppression of natural testosterone',
+      'Plus (+): One of the safest SARMs for female athletes — minimal virilization risk',
+      'Plus (+): Excellent adjunct for joint and connective tissue strength during cutting phases',
+      'Plus (+): Very low liver enzyme elevation in available data'
+    ],
+    sideEffects: [
+      'Minus (-): Moderate anabolic output compared to stronger SARMs (LGD-4033, S23, LGD-3303)',
+      'Minus (-): Limited human trial data; primarily preclinical and anecdotal evidence to date'
+    ],
+    suggestedCycleWeeks: '8 - 12 weeks per cycle.',
+    deliveryForm: 'pill',
+    realisticGains: 'Clean, modest lean mass gains of 3-5 lbs over 8-10 weeks with good hardening and minimal water retention. Excellent baseline SARM for new users or as a female athlete cycle.',
+    dietaryInteraction: 'Can be taken with or without food. As with all SARMs, pair with a high-protein diet and lipid health monitoring throughout the cycle.'
+  },
+  {
+    id: 'gonadorelin-gnrh',
+    name: 'Gonadorelin',
+    chemicalName: 'Gonadorelin Acetate (Synthetic GnRH Decapeptide)',
+    category: 'hormones',
+    description: 'A synthetic analogue of endogenous GnRH (Gonadotropin-Releasing Hormone). Gonadorelin provides pulsatile LH and FSH stimulation to preserve testicular size, function, and fertility during TRT or steroid cycles — the gold-standard HCG replacement for men on testosterone therapy who wish to maintain sperm production and natural testicular tone.',
+    clinicalResearch: 'When administered in a pulsatile fashion mimicking the hypothalamic 90-minute GnRH pulse, Gonadorelin maintains Leydig cell activity, testicular volume, and spermatogenesis during androgen-induced HPG suppression. Its short half-life is mechanistically critical — continuous infusion creates receptor desensitization and suppression, not stimulation.',
+    typicalDosage: '100 mcg - 200 mcg per dose',
+    frequencyText: 'Injected subcutaneously 2-3 times per week to maintain pulsatile LH/FSH signaling to the testes throughout any steroid cycle or TRT protocol.',
+    reconstitutionText: 'Add 2.0 ml of Bacteriostatic Water to a 2 mg vial. A 100 mcg dose = 10 units (0.10 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 10 to 40 minutes (must be pulsatile — continuous delivery causes suppression)',
+    benefits: [
+      'Plus (+): Preserves testicular volume, fertility, and sperm production during cycles or TRT',
+      'Plus (+): Stimulates endogenous testosterone production at the Leydig cell level',
+      'Plus (+): The modern replacement for HCG in fertility-preservation protocols',
+      'Plus (+): Supports easier PCT recovery by maintaining baseline HPG axis activity throughout a cycle'
+    ],
+    sideEffects: [
+      'Minus (-): Must be pulsatile — continuous exposure causes HPG suppression, not stimulation',
+      'Minus (-): Requires consistent dosing frequency for clinical effect; missed doses disrupt pulsatile pattern'
+    ],
+    suggestedCycleWeeks: 'Used continuously throughout any androgen cycle or TRT protocol.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Complete preservation of testicular volume and fertility markers during androgen cycles. Sperm counts and testicular tone maintained at baseline throughout cycle duration, dramatically simplifying post-cycle recovery.',
+    dietaryInteraction: 'Can be administered at any time of day. Consistent dosing frequency is far more important than meal timing. Ensure adequate zinc (15-30 mg daily) to support Leydig cell receptor sensitivity.'
+  },
+  {
+    id: 'triptorelin-pct',
+    name: 'Triptorelin',
+    chemicalName: 'Triptorelin Acetate (Synthetic Decapeptide GnRH Agonist)',
+    category: 'hormones',
+    description: 'A powerful GnRH agonist peptide capable of fully restarting the hypothalamic-pituitary-gonadal axis from complete androgen suppression with a single strategic injection. Used in targeted PCT restart protocols where standard SERMs alone have failed to restore natural testosterone production.',
+    clinicalResearch: 'Triptorelin creates a massive single-dose LH/FSH surge by flooding pituitary GnRH receptors. Paradoxically, continuous exposure suppresses the HPG axis (used in prostate cancer therapy), but a single 100 mcg injection induces a powerful acute gonadotropin surge that effectively reboots deeply suppressed Leydig cells.',
+    typicalDosage: '100 mcg (single-shot restart protocol)',
+    frequencyText: 'Administered as a single 100 mcg subcutaneous injection at the start of PCT after cycle clearance. Must NOT be repeated in close intervals — a second dose within weeks causes HPG suppression.',
+    reconstitutionText: 'Add 1.0 ml of Bacteriostatic Water to a 100 mcg vial. The entire volume represents a single restart dose.',
+    halfLife: 'Approx. 3 to 7 hours',
+    benefits: [
+      'Plus (+): Single-injection HPG axis restart — a powerful one-shot protocol for deep suppression recovery',
+      'Plus (+): Forces a massive LH and FSH surge that kick-starts dormant Leydig cell testosterone production',
+      'Plus (+): Effective when standard SERMs (Clomid, Nolvadex) have failed to restore natural testosterone',
+      'Plus (+): Strong track record in medical fertility restart protocols'
+    ],
+    sideEffects: [
+      'Minus (-): Must NOT be repeated in close succession — multiple doses cause HPG axis suppression, not stimulation',
+      'Minus (-): Temporary testosterone crash and hormonal disruption for 1-3 days immediately post-injection'
+    ],
+    suggestedCycleWeeks: 'Single-use restart protocol only. Do not repeat within the same PCT phase.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Forced HPG axis restart — allows previously shut-down testosterone production to resume within 7-21 days of a single strategic injection. Most effective as a "nuclear option" for deeply suppressed or long-cycle users.',
+    dietaryInteraction: 'Administer in a fasted state for maximum pituitary receptor access. No other hormonal compounds (SARMs, AAS, SERMs) should be active at the time of Triptorelin injection for best restart response.'
+  },
+  {
+    id: 'hmg-gonadotropin',
+    name: 'HMG',
+    chemicalName: 'Human Menopausal Gonadotropin (Purified FSH + LH Complex)',
+    category: 'hormones',
+    description: 'A natural FSH-dominant gonadotropin complex that contains both FSH and LH activity — delivering the complete gonadotropin signal required for maximum spermatogenesis recovery and fertility optimization. Unlike HCG (LH-only), HMG provides the FSH signal essential for Sertoli cell function and full sperm maturation.',
+    clinicalResearch: 'HMG is the clinical gold standard for male fertility restoration in hypogonadotropic hypogonadism. When HCG alone fails to restore sperm production, adding FSH-rich HMG completes the dual gonadotropin signal needed to fully support Sertoli cells and sperm maturation, recovering fertility within 3-6 months in clinical trials.',
+    typicalDosage: '75 IU - 150 IU per injection',
+    frequencyText: 'Injected subcutaneously or intramuscularly every other day (EOD), typically alongside HCG in fertility or PCT protocols.',
+    halfLife: 'FSH component: Approx. 24 to 50 hours | LH component: Approx. 12 to 24 hours',
+    benefits: [
+      'Plus (+): Provides both FSH and LH signaling — the complete gonadotropin stimulus for full testicular function',
+      'Plus (+): Essential when HCG alone fails to restore spermatogenesis after extended cycles',
+      'Plus (+): Significantly accelerates PCT fertility recovery in deeply suppressed individuals',
+      'Plus (+): Medical gold standard with decades of clinical safety and efficacy data'
+    ],
+    sideEffects: [
+      'Minus (-): Risk of testicular overstimulation and fluid accumulation at high doses',
+      'Minus (-): Can drive excessive estrogen conversion if used at high doses alongside high-dose HCG simultaneously'
+    ],
+    suggestedCycleWeeks: '8 - 16 weeks in fertility or PCT recovery protocols.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Full spermatogenesis recovery and testicular function restoration. Sperm count improvements are often measurable within 8-12 weeks of consistent HMG + HCG protocol in fertility-compromised individuals.',
+    dietaryInteraction: 'No specific dietary requirements. Ensure adequate zinc (15-30 mg daily) and vitamin D3 to support gonadotropin receptor sensitivity throughout the protocol.'
+  },
+  {
+    id: 'semax-nootropic',
+    name: 'Semax',
+    chemicalName: 'Met-Glu-His-Phe-Pro-Gly-Pro (Synthetic ACTH 4-7 Heptapeptide Analogue)',
+    category: 'cognitive',
+    description: 'Russia\'s premier nootropic peptide and registered neuroprotective drug. A synthetic 7-amino acid fragment of ACTH that powerfully upregulates BDNF and NGF — the brain\'s primary neuroplasticity growth factors — improving memory, learning speed, executive function, and neuroresilience without stimulant effects or addiction risk.',
+    clinicalResearch: 'Registered as a pharmaceutical drug in Russia since 1991. Multiple controlled clinical trials demonstrate Semax increases BDNF and NGF synthesis in the hippocampus and cortex, enhancing synaptic plasticity and neuroprotection. Used clinically in Russia for stroke recovery, attention deficit, and cognitive aging.',
+    typicalDosage: '200 mcg - 600 mcg per dose',
+    frequencyText: 'Administered as nasal drops or subcutaneous injection once or twice daily, ideally in the morning and early afternoon.',
+    reconstitutionText: 'For nasal use: dilute in 0.9% sterile saline. For injection: Add 2.0 ml Bacteriostatic Water to a 5 mg vial. A 300 mcg dose = 12 units (0.12 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 20 to 30 minutes (intranasal) | Downstream BDNF effects persist 4-8 hours',
+    benefits: [
+      'Plus (+): Upregulates BDNF and NGF by up to 200% — drives genuine neuroplasticity and synaptogenesis',
+      'Plus (+): Dramatically improves working memory, verbal fluency, and sustained attention',
+      'Plus (+): Neuroprotective — shields against stress-induced, hypoxic, and aging neuronal damage',
+      'Plus (+): 30+ years of Russian clinical safety data as a registered pharmaceutical drug'
+    ],
+    sideEffects: [
+      'Minus (-): Mild transient nasal irritation or tingling with intranasal administration',
+      'Minus (-): Occasional temporary headaches during the first 1-2 days as BDNF pathways upregulate'
+    ],
+    suggestedCycleWeeks: '3 - 8 weeks on, then 2-week break.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Measurable improvements in cognitive processing speed, focus, and memory within 1-2 weeks. Particularly effective for high-stress periods, competitive demands, or creative work. Not a stimulant — provides mental clarity without elevated heart rate.',
+    dietaryInteraction: 'Best administered in the morning in a fasted or low-sugar state. BDNF upregulation is amplified by concurrent exercise. Pair with omega-3 fatty acids (EPA/DHA) for enhanced neuroplastic support.'
+  },
+  {
+    id: 'selank-anxiolytic',
+    name: 'Selank',
+    chemicalName: 'Thr-Lys-Pro-Arg-Pro-Gly-Pro (Synthetic Tuftsin Heptapeptide Analogue)',
+    category: 'cognitive',
+    description: 'Russia\'s premier anxiolytic peptide. A synthetic analogue of the endogenous immune peptide Tuftsin, modulating GABA, serotonin, and enkephalin systems to produce deep, stable anxiolysis without sedation, addiction risk, or withdrawal — a fundamental upgrade over benzodiazepines for daily stress and anxiety management.',
+    clinicalResearch: 'Registered pharmaceutical in Russia for anxiety disorders. Controlled trials show Selank down-regulates anxiety through multiple pathways — enhancing GABAergic inhibitory tone, upregulating enkephalins, and stabilizing serotonin turnover — producing consistent clinical anxiolysis at 400-2000 mcg per day without cognitive blunting or tolerance.',
+    typicalDosage: '250 mcg - 500 mcg per dose',
+    frequencyText: 'Administered as nasal drops or subcutaneous injection 1-2 times daily. Pairs synergistically with Semax in the Neuro-Focus & Calm stack.',
+    reconstitutionText: 'For nasal use: dilute in 0.9% sterile saline. For injection: Add 2.0 ml Bacteriostatic Water to a 5 mg vial. A 250 mcg dose = 10 units (0.10 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 1 to 3 hours (receptor effects persist 4-6 hours)',
+    benefits: [
+      'Plus (+): Deep, stable anxiolysis without sedation, cognitive impairment, or dependency risk',
+      'Plus (+): Modulates multiple pathways (GABA, serotonin, enkephalins) for comprehensive anxiety control',
+      'Plus (+): Preserves and enhances cognitive clarity — no benzodiazepine-style brain fog',
+      'Plus (+): Registered pharmaceutical with extensive Russian clinical safety data'
+    ],
+    sideEffects: [
+      'Minus (-): Mild nasal dryness with intranasal administration',
+      'Minus (-): Rarely, mild sedation in hypersensitive individuals at doses above 1,000 mcg'
+    ],
+    suggestedCycleWeeks: '2 - 6 weeks on, then 1-2 week break.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Reliable, stable reduction in subjective anxiety, social stress, and anticipatory worry within hours of first dose. Particularly effective combined with Semax for a balanced cognitive enhancement protocol (sharper focus + calm nervous system). No rebound anxiety upon cessation.',
+    dietaryInteraction: 'Can be administered at any time. The anxiolytic effect complements Semax\'s cognitive drive for a productive, calm focus state throughout the day — ideal for demanding work periods or high-stress training environments.'
+  },
+  {
+    id: 'dihexa-nootropic',
+    name: 'Dihexa',
+    chemicalName: 'N-hexanoic-Tyr-Ile-(6)aminohexanoic Amide (HGF/MET Receptor Agonist)',
+    category: 'cognitive',
+    description: 'The most potent nootropic peptide ever characterized in preclinical research — reported to be approximately 10 million times more potent than BDNF at stimulating synaptogenesis. Dihexa operates through the HGF/MET signaling axis to drive new synapse formation, memory consolidation, and neuroregeneration at vanishingly small concentrations.',
+    clinicalResearch: 'Developed at Washington State University. Preclinical data show synaptogenesis induction at concentrations 7 orders of magnitude below BDNF. Multiple animal studies demonstrate reversal of cognitive deficits and improved spatial memory. No completed human clinical trials — currently experimental.',
+    typicalDosage: '10 mg - 50 mg topical cream daily | 1 mcg - 5 mcg subcutaneous injection',
+    frequencyText: 'Applied topically as a 10-50 mg cream to the inner wrist once daily; or injected subcutaneously at 1-5 mcg doses with extreme dose conservatism. Cycle weekly (5 on / 2 off).',
+    halfLife: 'Topical: Estimated 12+ hours (lipophilic skin depot) | Injectable: 1-2 hours',
+    benefits: [
+      'Plus (+): Most potent known synaptogenesis inducer — drives new synapse formation at extraordinary low doses',
+      'Plus (+): Reversal of age-related cognitive decline and memory deficits in multiple animal models',
+      'Plus (+): Works via HGF/MET — completely distinct pathway from BDNF-based nootropics (synergistically stackable)',
+      'Plus (+): Highly lipophilic — effective topical delivery without injection for most users'
+    ],
+    sideEffects: [
+      'Minus (-): Zero human clinical trials — proceed only with extreme caution and dose conservatism',
+      'Minus (-): Theoretical risk of accelerating pathological cell proliferation via MET agonism at high doses'
+    ],
+    suggestedCycleWeeks: '4 - 8 weeks maximum per cycle, with extended breaks between.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Profoundly improved memory recall, pattern recognition, and cognitive speed in anecdotal user reports — often described as the most dramatic single nootropic experience. Highly experimental with wide individual variability.',
+    dietaryInteraction: 'Topical application is optimized on clean, dry skin. Pair with daily omega-3 (EPA/DHA 2g) and phospholipid-rich foods to supply the structural lipids needed for new synapse membrane formation.'
+  },
+  {
+    id: 'nmn-nad-precursor',
+    name: 'NMN',
+    chemicalName: 'Nicotinamide Mononucleotide (Direct NAD+ Biosynthesis Precursor)',
+    category: 'longevity',
+    description: 'The most direct and bioavailable precursor to NAD+ — the master metabolic coenzyme powering every cellular energy-generating reaction. NAD+ levels decline 50% by age 60, and NMN supplementation is the most evidence-backed strategy for cellular energy restoration, DNA repair capacity, and healthy aging available without a prescription.',
+    clinicalResearch: 'The first human clinical NMN trials from Keio University and Washington University confirm NMN is safe, effectively raises blood NAD+ levels, and improves insulin sensitivity in aged populations. NMN has been validated in multiple mouse models to improve mitochondrial function, extend healthspan, and reverse some hallmarks of aging.',
+    typicalDosage: '500 mg - 1,000 mg daily',
+    frequencyText: 'Taken orally as a capsule once daily in the morning, on an empty stomach.',
+    halfLife: 'Rapidly converted — plasma half-life minutes, but intracellular NAD+ elevation persists 24+ hours',
+    benefits: [
+      'Plus (+): Directly restores depleted cellular NAD+ levels — the foundation of all mitochondrial energy metabolism',
+      'Plus (+): Activates sirtuins (SIRT1-SIRT3) — the core longevity protein family linked to lifespan extension',
+      'Plus (+): Improves mitochondrial efficiency, reducing cellular fatigue and metabolic dysfunction with aging',
+      'Plus (+): Enhances DNA repair capacity by replenishing PARP enzyme substrate'
+    ],
+    sideEffects: [
+      'Minus (-): Mild transient flushing at doses above 1,000 mg in sensitive individuals',
+      'Minus (-): Theoretical concern about elevated NAD+ promoting cancer cell energy metabolism at very high doses'
+    ],
+    suggestedCycleWeeks: 'Used year-round as a foundational longevity supplement.',
+    deliveryForm: 'pill',
+    realisticGains: 'Improved physical energy, reduced afternoon fatigue, better insulin sensitivity, and enhanced exercise capacity within 4-8 weeks. Long-term benefits include cellular repair optimization and potential healthspan extension. Synergistic with SS-31, MOTS-c, and Epitalon.',
+    dietaryInteraction: 'Best absorbed on an empty stomach in the morning. Synergistic with Resveratrol (500 mg) which activates SIRT1, and TMG (Trimethylglycine, 500 mg) to prevent methyl group depletion from elevated NAD+ metabolism.'
+  },
+  {
+    id: 'll-37-peptide',
+    name: 'LL-37',
+    chemicalName: 'LL-37 (Human Cathelicidin Antimicrobial Peptide, hCAP-18 C-terminal Fragment)',
+    category: 'immune',
+    description: 'The only known human cathelicidin — an endogenous antimicrobial peptide produced by neutrophils and epithelial cells. LL-37 acts as a multifunctional innate immune modulator: directly killing bacteria, viruses, and fungi while simultaneously driving wound closure, angiogenesis, and anti-inflammatory signaling throughout damaged tissue.',
+    clinicalResearch: 'LL-37 is expressed at sites of infection and tissue damage where it performs triple duty — direct microbial membrane lysis, immune cell recruitment (chemotaxis of neutrophils and monocytes), and angiogenic tissue repair via FPRL-1 receptor signaling that drives new blood vessel formation and wound healing.',
+    typicalDosage: '100 mcg - 500 mcg per dose',
+    frequencyText: 'Injected subcutaneously or applied topically to wounds. 3-5 times weekly during acute infection or wound healing protocols.',
+    reconstitutionText: 'Add 1.0 ml Bacteriostatic Water to a 5 mg vial. A 100 mcg dose = 2 units (0.02 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 15 to 30 minutes (biological effects at tissue level persist significantly longer)',
+    benefits: [
+      'Plus (+): Direct broad-spectrum antimicrobial action against bacteria, viruses, and fungi',
+      'Plus (+): Powerfully drives wound closure, skin repair, and angiogenesis at injury sites',
+      'Plus (+): Modulates inflammatory cytokine expression for a controlled, effective immune response',
+      'Plus (+): Endogenous human compound — extremely low risk of foreign-protein or immune reactions'
+    ],
+    sideEffects: [
+      'Minus (-): Potential pro-inflammatory cascade at excessive doses in autoimmune-prone individuals',
+      'Minus (-): Limited human clinical trial data for systemic injection use'
+    ],
+    suggestedCycleWeeks: '2 - 6 weeks as needed during infections, post-surgical recovery, or wound healing.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Accelerated wound closure, reduced infection risk, and faster recovery from surgical procedures. Systemic protocols report improved immune resilience during heavy cycle phases where immune function is typically compromised by intense training and hormonal manipulation.',
+    dietaryInteraction: 'Can be administered at any time. Vitamin D3 (2,000-5,000 IU daily) strongly upregulates endogenous LL-37 production — supplement year-round to maintain natural cathelicidin activity between peptide courses.'
+  },
+  {
+    id: 'nandrolone-laurate',
+    name: 'Nandrolone Laurate',
+    chemicalName: 'Nandrolone Laurate (19-Nortestosterone C12 Fatty Acid Ester — Laurabolin)',
+    category: 'hormones',
+    description: 'The longest-acting nandrolone ester ever produced, originally formulated as the veterinary injectable Laurabolin for horses and cattle. Nandrolone Laurate releases active nandrolone across 3-4 weeks from a single injection — ideal for athletes seeking the joint, collagen, and lean-mass benefits of nandrolone with minimum injection frequency.',
+    clinicalResearch: 'The laurate ester (C12 fatty acid) is the longest-chain commercially produced AAS ester, with active release duration exceeding all other nandrolone forms. A single intramuscular injection provides sustained therapeutic nandrolone levels across a 3-4 week window, making it the nandrolone equivalent of testosterone undecanoate (Nebido).',
+    typicalDosage: '200 mg - 400 mg every 3 to 4 weeks',
+    frequencyText: 'Injected intramuscularly once every 3-4 weeks. Exclusively a veterinary compound — underground lab sourced.',
+    halfLife: 'Approx. 25 to 35 days (longest commercial nandrolone ester)',
+    benefits: [
+      'Plus (+): 3-4 weeks of active nandrolone release from a single injection — extreme convenience',
+      'Plus (+): Delivers all nandrolone benefits: joint lubrication, collagen synthesis, lean mass accrual',
+      'Plus (+): Lower peak blood concentration vs. NPP/Deca creates a smoother, more stable hormonal profile',
+      'Plus (+): Ideal for travel-heavy schedules or athletes who want minimal injection frequency'
+    ],
+    sideEffects: [
+      'Minus (-): Extremely difficult to manage — if sides emerge there is no quick off-switch from a 35-day ester',
+      'Minus (-): Same nandrolone progestenic and suppressive side effects as Deca, amplified by duration'
+    ],
+    suggestedCycleWeeks: '12 - 16 weeks (the long ester naturally controls minimum cycle length).',
+    deliveryForm: 'injection',
+    realisticGains: 'Same qualitative gains as Nandrolone Decanoate — deep joint lubrication, lean mass accrual, and collagen synthesis — with dramatically reduced injection burden. Steady 8-12 lb lean mass gain over a 12-16 week protocol.',
+    dietaryInteraction: 'Same as Deca-Durabolin. High protein intake (1.5g/lb bodyweight), prolactin monitoring with cabergoline if needed, and full post-cycle recovery planning are essential given the very long ester duration extending 5-6 weeks beyond the last injection.'
+  },
+  {
+    id: 'boldenone-acetate',
+    name: 'Boldenone Acetate',
+    chemicalName: 'Boldenone Acetate (Fast-Release Equipoise Ester)',
+    category: 'hormones',
+    description: 'The short-acting ester form of Boldenone (Equipoise), designed for cycles where the standard 14-day half-life of Boldenone Undecylenate is too long. Boldenone Acetate delivers the same EPO-stimulating, lean mass, and appetite-enhancing benefits of Equipoise with a 3-day half-life — allowing precise cycle management and faster clearance.',
+    clinicalResearch: 'Boldenone Acetate shares the same active compound as Equipoise but uses a short acetate ester to control release duration. The fast ester creates frequent peak/trough cycles requiring every-other-day injection but allows far more responsive dosing adjustments and a much faster washout than the ultra-long undecylenate ester.',
+    typicalDosage: '200 mg - 400 mg per week (split into EOD injections)',
+    frequencyText: 'Injected intramuscularly every other day (EOD) to maintain stable blood levels.',
+    halfLife: 'Approx. 2 to 4 days',
+    benefits: [
+      'Plus (+): All Equipoise benefits — EPO stimulation, lean mass, appetite, vascularity — in a short ester format',
+      'Plus (+): Suitable for 6-8 week cycles where the 16+ week Boldenone Undecylenate is impractical',
+      'Plus (+): Faster clearance for athletes with tighter cycle windows or drug testing concerns',
+      'Plus (+): Low aromatization rate — minimal estrogenic sides at standard doses'
+    ],
+    sideEffects: [
+      'Minus (-): EOD injections required — significantly more frequent pinning vs. undecylenate',
+      'Minus (-): Same cardiovascular (RBC/EPO) monitoring required as standard Equipoise'
+    ],
+    suggestedCycleWeeks: '6 - 10 weeks per cycle.',
+    deliveryForm: 'injection',
+    realisticGains: 'Lean, quality mass gains of 5-8 lbs with a vascular, dry physique over a 6-10 week cycle. Equivalent to Equipoise results on a condensed timeline with faster post-cycle clearance.',
+    dietaryInteraction: 'Maintain adequate iron and B12 to support EPO-mediated red blood cell expansion. Monitor hematocrit and donate blood if it rises above 50% to prevent cardiovascular strain common to all boldenone compounds.'
+  },
+  {
+    id: 'dht-androstanolone',
+    name: 'DHT (Androstanolone)',
+    chemicalName: '5α-Dihydrotestosterone / Androstanolone (Pure Endogenous Androgen)',
+    category: 'hormones',
+    description: 'The most potent endogenous androgen — the pure non-aromatizable active metabolite of testosterone. DHT delivers hardening, drying, and libido-enhancing androgenic effects with 5× greater androgen receptor binding affinity than testosterone, zero estrogen conversion, and powerful anti-estrogenic competition at breast tissue receptors. Used as a topical gel or short-ester injectable.',
+    clinicalResearch: 'DHT has the highest androgen receptor binding affinity of any natural androgen. It does not aromatize and actively competes with estrogen for binding at breast tissue estrogen receptors — making it genuinely anti-estrogenic. Clinical studies with topical DHT gel confirm dramatic improvements in free testosterone equivalents, gynecomastia reversal, and lean physique composition.',
+    typicalDosage: '70 mg - 125 mg topical gel daily | 100-200 mg Androstanolone Propionate injectable weekly',
+    frequencyText: 'Topical: Applied to scrotal or inner thigh skin daily for continuous absorption. Injectable propionate: Every other day.',
+    halfLife: 'Topical gel: Active 4-12 hours | Injectable propionate ester: Approx. 2-3 days',
+    benefits: [
+      'Plus (+): The highest-affinity androgen receptor agonist in existence — 5× testosterone binding strength',
+      'Plus (+): Zero aromatization — genuinely anti-estrogenic; competes directly with estrogen at breast tissue',
+      'Plus (+): Extreme libido, neurological drive, and aggression enhancement',
+      'Plus (+): Creates the hardest, driest physique of any androgenic compound at moderate doses'
+    ],
+    sideEffects: [
+      'Minus (-): Accelerated androgenic alopecia (hair loss) in genetically predisposed individuals',
+      'Minus (-): Significant cardiovascular lipid impact (elevated LDL, reduced HDL) at sustained doses'
+    ],
+    suggestedCycleWeeks: '8 - 12 weeks injectable | Topical gel can be used under ongoing medical supervision.',
+    deliveryForm: 'injection',
+    realisticGains: 'An immediate, dramatic hardening and drying of the physique within 2-3 weeks. Extreme sexual drive and training motivation enhancement. Commonly used in the final 4-6 weeks of pre-competition prep to eliminate water and maximize muscular density.',
+    dietaryInteraction: 'Topical absorption is maximized on clean, exfoliated skin. Pair with Citrus Bergamot and CoQ10 to protect lipid profiles. Regular blood panel monitoring every 6-8 weeks is essential for cardiovascular health maintenance.'
+  },
+  {
+    id: 'thymalin-bioregulator',
+    name: 'Thymalin',
+    chemicalName: 'Thymalin (Peptide Bioregulator Complex — Thymus-Derived)',
+    category: 'immune',
+    description: 'A natural thymus-derived peptide bioregulator complex that reverses age-related immunosenescence — the progressive collapse of immune competence that occurs with aging. Thymalin stimulates T-lymphocyte maturation, restores thymic function, and corrects dysregulated immune responses. A cornerstone of Russian clinical longevity and healthspan medicine.',
+    clinicalResearch: 'Part of the Khavinson Russian peptide bioregulator research program with 40+ years of clinical data. Long-term studies in elderly populations show Thymalin reduces overall mortality, preserves immune function, and extends healthy lifespan. 15-year follow-up data in aging cohorts demonstrates statistically significant survival and immune competence benefits.',
+    typicalDosage: '5 mg - 10 mg per dose',
+    frequencyText: 'Injected subcutaneously or intramuscularly once daily for 5-10 day course cycles, repeated 2-3 times per year.',
+    reconstitutionText: 'Add 1.0 ml of Bacteriostatic Water to the 10 mg vial. A 5 mg dose = 50 units (0.50 ml) on a standard insulin syringe.',
+    halfLife: 'Approx. 15 to 30 minutes (epigenetic immune-modulatory effects persist weeks to months)',
+    benefits: [
+      'Plus (+): Reverses thymic involution and restores T-lymphocyte immune competence with aging',
+      'Plus (+): 15-year clinical data shows reduced all-cause mortality in elderly treated populations',
+      'Plus (+): Corrects both under-active and over-active immune responses (true bidirectional immunomodulation)',
+      'Plus (+): Foundational compound in the Russian longevity peptide protocol alongside Epithalon'
+    ],
+    sideEffects: [
+      'Minus (-): Mild temporary injection site redness or warmth',
+      'Minus (-): Theoretical immune overstimulation in autoimmune-prone individuals at high doses'
+    ],
+    suggestedCycleWeeks: '5 - 10 day courses, repeated 2-3 times per year as a longevity maintenance protocol.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Restoration of immune function in aging individuals, reduced frequency and severity of infections, and potential healthspan extension based on long-term clinical data. Not an acute performance compound — a foundational anti-aging and immune preservation strategy.',
+    dietaryInteraction: 'Can be administered at any time. Ensure adequate zinc and vitamin D3 supplementation throughout the course — both are essential cofactors for thymic function and T-cell maturation. Stack with Thymosin Alpha-1 for comprehensive thymic immune restoration.'
+  },
+  {
+    id: 'trenbolone-undecanoate',
+    name: 'Trenbolone Undecanoate',
+    chemicalName: 'Trenbolone Undecanoate (Ultra-Long C11 Fatty Acid Ester Tren)',
+    category: 'hormones',
+    description: 'The longest-acting trenbolone ester — extending active trenbolone release across 2-3 weeks per injection. Trenbolone Undecanoate delivers all of trenbolone\'s extraordinary anabolic and nutrient partitioning effects at 5× testosterone potency with extremely infrequent injection scheduling, comparable in convenience to Testosterone Undecanoate (Nebido).',
+    clinicalResearch: 'Formulated to address the major limitations of trenbolone acetate (3-day half-life requiring frequent injections) and trenbolone enanthate (7-10 day half-life). The undecanoate ester extends active release to 2-3 weeks, dramatically reducing injection frequency while maintaining the same extraordinary anabolic potency trenbolone is renowned for.',
+    typicalDosage: '300 mg - 600 mg every 2 to 3 weeks',
+    frequencyText: 'Injected intramuscularly once every 2-3 weeks. The ultra-long duration form of trenbolone for maximum convenience.',
+    halfLife: 'Approx. 14 to 21 days',
+    benefits: [
+      'Plus (+): All trenbolone\'s legendary anabolic benefits (5× testosterone potency) at 1-2 injections per month',
+      'Plus (+): Extraordinary nitrogen retention, protein synthesis, and nutrient partitioning efficiency',
+      'Plus (+): No aromatization — lean, dry, hard mass with zero estrogen conversion',
+      'Plus (+): Extreme simultaneous fat loss and muscle building (body recomposition) potential'
+    ],
+    sideEffects: [
+      'Minus (-): All standard trenbolone side effects apply: night sweats, tren cough, cardiovascular strain',
+      'Minus (-): Extremely difficult to manage or clear if sides emerge — no quick exit from a 21-day ester'
+    ],
+    suggestedCycleWeeks: '12 - 16 weeks per cycle.',
+    deliveryForm: 'injection',
+    realisticGains: 'Same dramatic body recomposition as other trenbolone esters — lean mass gains of 12-18 lbs over 12 weeks with simultaneous significant fat loss. The convenience of monthly injections is the primary advantage over acetate and enanthate for experienced users.',
+    dietaryInteraction: 'High dietary protein (1.8g/lb bodyweight) is essential to leverage trenbolone\'s extraordinary nitrogen retention. Cardiovascular monitoring (blood pressure, HRV) is critical throughout the cycle. Cabergoline for prolactin management. Avoid high-sodium foods to minimize androgenic fluid retention.'
+  },
+  {
+    id: 'epistane-oral',
+    name: 'Epistane',
+    chemicalName: '2α,3α-Epithio-17α-Methyl-5α-Androstan-17β-ol (Methylepitiostanol)',
+    category: 'hormones',
+    description: 'A unique designer oral anabolic steroid of the DHT family featuring an epithio bridge that gives it simultaneous anabolic and anti-estrogenic properties. Epistane acts as both an androgen receptor agonist AND an estrogen receptor antagonist at breast tissue — producing lean, dry, hard mass while actively fighting gynecomastia in a single compound.',
+    clinicalResearch: 'First described in pharmaceutical literature in 1974. The epithio group creates an epitestosterone-like estrogen receptor antagonism at breast tissue while the 17α-methyl group provides oral activity. This dual anabolic + anti-estrogenic mechanism makes Epistane one of the leanest-producing oral anabolics ever documented.',
+    typicalDosage: '20 mg - 40 mg daily',
+    frequencyText: 'Taken orally as a capsule, split into 2 daily doses (AM and PM). Maximum cycle duration: 4-6 weeks.',
+    halfLife: 'Approx. 6 hours',
+    benefits: [
+      'Plus (+): Uniquely both anabolic AND anti-estrogenic — builds lean mass while fighting gyno simultaneously',
+      'Plus (+): Extremely dry, hard, dense muscle gains with minimal water retention or bloat',
+      'Plus (+): No direct aromatization — far less estrogenic than Dianabol or testosterone at equivalent doses',
+      'Plus (+): Historically documented pharmaceutical compound with characterized chemistry'
+    ],
+    sideEffects: [
+      'Minus (-): Hepatotoxic — full liver support (TUDCA, NAC, Milk Thistle) is mandatory throughout the cycle',
+      'Minus (-): Joint dryness and connective tissue strain — the lack of estrogenic lubrication causes discomfort'
+    ],
+    suggestedCycleWeeks: '4 - 6 weeks maximum. Always run with full liver support protocol and structured PCT.',
+    deliveryForm: 'pill',
+    realisticGains: 'Lean, very dry, hard muscular gains of 5-8 lbs over a 4-6 week cycle with virtually no water retention. Strong visual muscle hardness and separation improvement without estrogen-driven bloat.',
+    dietaryInteraction: 'Take with food to minimize hepatic strain. Run TUDCA 500 mg/day throughout and for 4 weeks post-cycle. Taurine supplementation (2-3 g/day) helps manage joint dryness common with all dry, anti-estrogenic oral compounds.'
   }
 ];
 
