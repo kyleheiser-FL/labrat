@@ -1096,9 +1096,6 @@ export default function MembersShop() {
               <span className="text-xl sm:text-2xl font-black tracking-tighter text-white font-sans uppercase">LABRAT</span>
               <span className="text-white">Bioresearch Peptide &amp; Compound Shop</span>
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl leading-relaxed">
-              Authentic bioresearch peptides and protocols for approved laboratory accounts. <strong className="text-amber-400">Strictly for research use only.</strong>
-            </p>
           </div>
 
           {/* Quick toggle navigation for user modes vs admin modes */}
