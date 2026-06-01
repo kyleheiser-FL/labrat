@@ -12,7 +12,9 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   const firstWord = nameParts[0] || 'Peptide';
   const remainingWords = nameParts.slice(1).join(' ');
 
-  const imageSrc = isSolvent ? '/shop/labrat-real-vial-solvent.png' : '/shop/labrat-real-vial-peptide.png';
+  const imageSrc = theme === 'clinical'
+    ? (isSolvent ? '/shop/labrat-professional-vial-solvent.png' : '/shop/labrat-professional-vial-peptide.png')
+    : (isSolvent ? '/shop/labrat-real-vial-solvent.png' : '/shop/labrat-real-vial-peptide.png');
   const glowClass = isSolvent ? 'labrat-real-vial-visual--solvent' : 'labrat-real-vial-visual--peptide';
 
   return (
