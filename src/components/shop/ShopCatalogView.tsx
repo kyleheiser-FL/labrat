@@ -148,17 +148,22 @@ export default function ShopCatalogView({
         {/* Visual border pulse highlight */}
         <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-cyan-500/10 via-sky-500/20 to-indigo-500/10 opacity-75 group-hover/norway-banner:from-cyan-400 group-hover/norway-banner:via-sky-400 group-hover/norway-banner:to-indigo-400 transition-all duration-300" />
 
-        <div className="flex items-center gap-3 relative z-10">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 border border-cyan-500/20 flex items-center justify-center text-base shrink-0 shadow-inner group-hover/norway-banner:scale-105 transition-transform duration-300 select-none">
+        <div className="flex items-start gap-3 relative z-10">
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 border border-cyan-500/20 flex items-center justify-center text-lg shrink-0 shadow-inner group-hover/norway-banner:scale-105 transition-transform duration-300 select-none mt-0.5">
             🇳🇴
           </div>
-          <div className="flex-1 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap mb-1">
               <span className="text-[8px] uppercase font-black tracking-widest text-cyan-400 bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-500/20 select-none">SCANDINAVIAN HERITAGE</span>
               <span className="text-[8px] uppercase font-black tracking-widest text-[#a05eff] bg-[#1e0f35]/60 px-1.5 py-0.5 rounded border border-[#a05eff]/20 select-none">SWISS GMP</span>
-              <span className="text-xs font-bold text-white">Why Norway-sourced peptides?</span>
             </div>
-            <span className="text-xs text-slate-500 group-hover/norway-banner:translate-x-1.5 transition-transform inline-block shrink-0">→</span>
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <p className="text-xs font-black text-white leading-snug">Why Norway-sourced peptides?</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">Glacial water &lt;1ppm TDS · Batch HPLC accountability · 99.2%+ purity</p>
+              </div>
+              <span className="text-slate-500 group-hover/norway-banner:translate-x-1 transition-transform shrink-0 text-sm">→</span>
+            </div>
           </div>
         </div>
       </div>
