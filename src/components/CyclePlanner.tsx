@@ -396,7 +396,8 @@ export default function CyclePlanner({
           const lib = PEPTIDE_LIBRARY.find(l => l.name.toLowerCase().includes(c.name.toLowerCase().split(' ')[0]) || c.name.toLowerCase().includes(l.name.toLowerCase().split(' ')[0]));
           const hlHours = lib ? parseHalfLifeHours(lib.halfLife) : null;
           if (!hlHours) return null;
-          const compLogs = logs.filter(l => l.compoundId === c.id);
+          const compLogs = logs.filter(l => l.compoundId === c.id)
+            .sort((a, b) => new Date(`${a.date}T${a.time || '12:00'}`).getTime() - new Date(`${b.date}T${b.time || '12:00'}`).getTime());
           const lastLog = compLogs.length > 0 ? compLogs[compLogs.length - 1] : null;
           if (!lastLog) return null;
           const lastDoseTime = new Date(`${lastLog.date}T${lastLog.time || '12:00'}`);
