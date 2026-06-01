@@ -1729,7 +1729,7 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
   },
   {
     id: 'metabolic-shred-shield-blend',
-    name: 'Metabolic Shred & Shield [BLEND]',
+    name: 'Cardarine Shred & Shield [BLEND]',
     chemicalName: 'Tirzepatide (5mg) + Cardarine (10mg) Fat-Melter',
     category: 'weight_loss',
     description: 'A cutting-edge synergistic blend combining the metabolic GLP-1/GIP agonist Tirzepatide with the PPAR-delta agonist Cardarine. It shuts down food cravings completely while fueling physical stamina, creating a highly efficient environment for rapid fat loss.',
@@ -2083,58 +2083,6 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     dietaryInteraction: 'Consume alongside a strong liver guard (like TUDCA and NAC) and monitor sodium levels. Highly efficient when paired with high-mineral carb meals pre-workout.'
   },
   {
-    id: 'winstrol-dry',
-    name: 'Winstrol (Stanozolol)',
-    chemicalName: 'Stanozolol (Oral/Injectable DHT-Derived AAS)',
-    category: 'muscle',
-    description: 'A celebrated DHT-derived oral/injectable anabolic steroid. Highly favored for delivering an incredibly dry, hard, shredded physical appearance with zero water retention, while dramatically binding to SHBG.',
-    clinicalResearch: 'Modified to survive first-pass digestion. Shows high anabolic-to-androgenic separation. It lowers Sex Hormone-Binding Globulin (SHBG) dramatically, freeing up other cycle hormones to be highly active.',
-    typicalDosage: '25 mg - 50 mg daily',
-    frequencyText: 'Taken orally as a pill daily in the morning, or before workouts.',
-    halfLife: 'Approx. 9 hours',
-    benefits: [
-      'Plus (+): Forces deep subcutaneous water depletion, drying the skin over the muscles',
-      'Plus (+): Binds aggressively to SHBG, multiplying the free potency of other cycle compounds',
-      'Plus (+): Promotes dry, dense muscle gains and enhanced vascularity',
-      'Plus (+): No risk of estrogen conversion, completely preventing bloating or gynecomastia'
-    ],
-    sideEffects: [
-      'Minus (-): Known to cause joint dryness and achiness (depletes protective joint water)',
-      'Minus (-): Negatively alters lipid profiles, lowering protective HDL cholesterol',
-      'Minus (-): Mild liver strain from oral methylation'
-    ],
-    suggestedCycleWeeks: '5 - 6 weeks maximum, usually added to the second half of cutting cycles.',
-    deliveryForm: 'pill',
-    realisticGains: 'Dramatically alters overall muscle cosmetic appearance. Expect to shed 2.0 to 4.0 lbs of subcutaneous bloating, revealing highly vascular, rock-solid, and deeply defined muscular contours.',
-    dietaryInteraction: 'Pair with supportive joint supplements like Fish Oil and Glucosamine to ease cycle-induced dry joints.'
-  },
-  {
-    id: 'masteron-prop',
-    name: 'Masteron',
-    chemicalName: 'Drostanolone Propionate (DHT-Derived AAS)',
-    category: 'muscle',
-    description: 'A legendary injectable DHT-derived anabolic steroid. Prized by bodybuilders for its native anti-estrogenic properties and its ability to carve out a dense, hard, and deeply defined aesthetic on low body fat.',
-    clinicalResearch: 'Binds strongly to androgen receptors while acting as a weak inhibitor of the aromatase enzyme, actively blocking estrogenic side effects. Known for structural nervous system stimulation.',
-    typicalDosage: '300 mg - 500 mg weekly',
-    frequencyText: 'Injected intramuscularly every other day (EOD) due to the short prop ester.',
-    halfLife: 'Approx. 2.5 days',
-    benefits: [
-      'Plus (+): Acts as an effective anti-estrogen, preventing water log and gyno',
-      'Plus (+): Delivers a deeply hardened, dense cosmetic finish to existing muscle layers',
-      'Plus (+): Upregulates neurological strength, power outputs, and training aggression',
-      'Plus (+): Stimulates rich skin vascularity and clean muscle fullness'
-    ],
-    sideEffects: [
-      'Minus (-): Highly androgenic (accelerates hair shedding in genetically prone individuals)',
-      'Minus (-): Complete suppressive shutdown of natural testosterone axis',
-      'Minus (-): Increases oily skin and potential acne'
-    ],
-    suggestedCycleWeeks: '8 - 12 weeks of sculpting or contest-prep phases.',
-    deliveryForm: 'oil',
-    realisticGains: 'Generates an unparalleled "3D visual pop" and muscle density. Under low body fat (below 10%), it clears superficial soft layers, revealing detailed muscle fiber patterns, dry striations, and full-bellied muscle groups.',
-    dietaryInteraction: 'Highly effective during low-carbohydrate phases to maximize dry cosmetic looks while maintaining training energy.'
-  },
-  {
     id: 'l-carnitine',
     name: 'L-Carnitine',
     chemicalName: 'L-Carnitine Tartrate / Acetyl-L-Carnitine',
@@ -2157,55 +2105,6 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     deliveryForm: 'pill',
     realisticGains: 'Support for lipid transport, steady fat oxidation under clean nutrition, and a reduction in training-related muscle soreness over 4-6 weeks of regular ingestion.',
     dietaryInteraction: 'Consume alongside dietary carbohydrates to utilize the insulin response to naturally optimize carnitine uptake into muscle tissues.'
-  },
-  {
-    id: 'tudca-protect',
-    name: 'TUDCA',
-    chemicalName: 'Tauroursodeoxycholic Acid (systemic Bile Acid)',
-    category: 'supplements',
-    description: 'A highly potent hydrophilic bile acid supplement. Used during intense cycles to prevent cholestasis, protect liver cells from toxic oral methylation, and actively lower elevated hepatic AST/ALT/GGT enzymes back to baseline.',
-    clinicalResearch: 'TUDCA counters the toxic effects of hydrophobic bile acids which accumulate under methylated oral steroid administration, causing cholestatic liver damage. It promotes healthy bile flow and rescues hepatocytes.',
-    typicalDosage: '500 mg - 1,000 mg daily',
-    frequencyText: 'Taken orally as a capsule daily, split into AM/PM doses.',
-    halfLife: 'Approx. 3 hours',
-    benefits: [
-      'Plus (+): Restores normal bile flow, correcting liver blockage and cholestasis',
-      'Plus (+): Rescues hepatocyte membrane structures and lowers hepatic inflammation',
-      'Plus (+): Helps clear AST, ALT, and GGT enzymes back to normal clinical bounds',
-      'Plus (+): Delivers supportive benefits to lipid levels and overall insulin sensitivity'
-    ],
-    sideEffects: [
-      'Minus (-): Highly sensitive to dose limits (excess can cause temporary loose stools)'
-    ],
-    suggestedCycleWeeks: 'Used continuously during any oral steroid or methylated drug cycles.',
-    deliveryForm: 'pill',
-    realisticGains: 'Complete liver cell protection from oral anabolic toxicity. AST/ALT enzyme markers can be effectively kept within healthy physiological bounds or restored to normal within 3 weeks of administration.',
-    dietaryInteraction: 'Best consumed with water. Do NOT consume TUDCA concurrently with alcohol, as the combination can amplify toxic pathways.'
-  },
-  {
-    id: 'anastrozole-estrogen-control',
-    name: 'Arimidex',
-    chemicalName: 'Anastrozole (Selective Aromatase Inhibitor)',
-    category: 'hormones',
-    description: 'A highly selective Type II (non-steroidal) aromatase inhibitor. It binds reversibly to the aromatase enzyme, blocking the conversion of anabolic androgens into estrogen, preventing gynecomastia and excess water retention on cycle.',
-    clinicalResearch: 'Binds competitively to the heme group of the cytochrome P450 aromatase enzyme, reducing systemic estrogen synthesis by up to 85% without altering other crucial adrenal hormones.',
-    typicalDosage: '0.25 mg - 1.0 mg every other day (EOD)',
-    frequencyText: 'Taken orally as a pill as needed (EOD) based on active estrogen levels.',
-    halfLife: 'Approx. 46 hours (very stable, slow clearing)',
-    benefits: [
-      'Plus (+): Rapidly reverses and blocks early signs of gynecomastia (breast growth)',
-      'Plus (+): Prevents subcutaneous water logging, maintaining a tight, hard physical appearance',
-      'Plus (+): Helps keep systemic blood pressure lower by reducing estrogen-related fluid load',
-      'Plus (+): Highly precise control of estradiol levels'
-    ],
-    sideEffects: [
-      'Minus (-): Risk of crushing estrogen too low (causing painful dry joints and brain fog)',
-      'Minus (-): Slightly negative impact on systemic protective HDL cholesterol levels'
-    ],
-    suggestedCycleWeeks: 'Used as-needed during estrogenic cycles (8-16 weeks).',
-    deliveryForm: 'pill',
-    realisticGains: 'Rapid, highly precise control over circulating estrogen (Estradiol). Successfully reverses active nipple itching, fluid retention, or emotional swings within 12-24 hours of dosing.',
-    dietaryInteraction: 'Can be taken with or without food. Ensure regular lipid profile monitoring to balance cardiovascular health.'
   },
   {
     id: 'exemestane-suicide-aromasin',
@@ -2256,31 +2155,6 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     deliveryForm: 'pill',
     realisticGains: 'Extremely fast restart of the hypothalamus-pituitary-gonadal (HPG) axis during Post-Cycle Therapy (PCT). Restores baseline luteinizing hormone and sperm counts back to natural clinical limits within 4 weeks.',
     dietaryInteraction: 'Take daily at any time, ideally with a glass of water. Keep consistent dosing times to maintain steady serum concentrations.'
-  },
-  {
-    id: 'nolvadex-gyno-protection',
-    name: 'Nolvadex',
-    chemicalName: 'Tamoxifen Citrate (Selective Estrogen Receptor Modulator)',
-    category: 'hormones',
-    description: 'An exceptionally popular SERM with high binding affinity for estrogen receptors in breast tissue. Primarily used during cycles or PCT to immediately block breast tissue from developing gynecomastia while supporting pituitary recovery.',
-    clinicalResearch: 'Competes with estradiol for breast estrogen receptors, blocking cellular estrogenic effects. Also acts as an agonist in bone tissue and cholesterol pathways, supporting healthy density and lipids.',
-    typicalDosage: '10 mg - 20 mg daily',
-    frequencyText: 'Taken orally as a pill daily during active cycles or PCT recovery phases.',
-    halfLife: 'Approx. 5 to 7 days',
-    benefits: [
-      'Plus (+): Immediate protection against estrogen-induced gynecomastia (breast sore/lumps)',
-      'Plus (+): Drives pituitary LH and FSH release to restimulate natural testosterone',
-      'Plus (+): Positively influences lipid scores, helping protect cardiovascular profiles on cycle',
-      'Plus (+): Highly effective at very low doses for target tissue defense'
-    ],
-    sideEffects: [
-      'Minus (-): Slightly lowers systemic IGF-1 levels (minor anabolic opposition)',
-      'Minus (-): Potential passing hot flushes or mild fatigue in recovery phases'
-    ],
-    suggestedCycleWeeks: '2 - 4 weeks during active gynecomastia flareups or 4 weeks during PCT.',
-    deliveryForm: 'pill',
-    realisticGains: 'Instant arrest of early-stage gynecomastia (breast tissue lumps / nipple puffiness) within 48 hours of starting, while driving endogenous LH and FSH secretion during recovery phases.',
-    dietaryInteraction: 'Can be taken with or without food. Avoid combining with high-risk hepatic medications during recovery protocols.'
   },
   {
     id: 'dsip-delta-sleep',
@@ -2407,30 +2281,6 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     deliveryForm: 'pill',
     realisticGains: 'Complete liver cell insurance and powerful blood purification. Enhances recovery times from heavy workouts and protects pulmonary structures.',
     dietaryInteraction: 'Consume on an empty stomach with a large glass of water to optimize absorption. Pair with Vitamin C to support peak cellular glutathione synthesis.'
-  },
-  {
-    id: 'citrus-bergamot-lipids-supp',
-    name: 'Citrus Bergamot',
-    chemicalName: 'High-Flavonoid Citrus Bergamot Extract',
-    category: 'supplements',
-    description: 'An organic supplement standardized to high concentrations of cardiotropic flavonoids. Universally deployed on cycles to rescue compromised HDL/LDL cholesterol profiles and support cardiovascular health under strain.',
-    clinicalResearch: 'Bergamot polyphenols inhibit HMG-CoA reductase (the same target as statin drugs) to decrease cholesterol production, while increasing AMPK to improve cellular lipid and glucose oxidation without statin-related muscle aches.',
-    typicalDosage: '500 mg - 1,000 mg daily',
-    frequencyText: 'Taken orally as a pill once or twice daily, shortly before main meals.',
-    halfLife: 'Approx. 4 hours',
-    benefits: [
-      'Plus (+): Clinically shown to rescue HDL cholesterol and dramatically lower LDL fractions',
-      'Plus (+): Improves endothelial vascular function, reducing arterial walls stress',
-      'Plus (+): Supports healthy blood glucose ranges and general metabolic function',
-      'Plus (+): Delivers deep systemic antioxidant support to heart tissues'
-    ],
-    sideEffects: [
-      'Minus (-): Rare, mild stomach acidity if taken completely fasting'
-    ],
-    suggestedCycleWeeks: 'Used continuously during all high-androgen or lipid-altering cycles.',
-    deliveryForm: 'pill',
-    realisticGains: 'Remarkable recovery of systemic lipid markers. Expect protective HDL levels to rise by 15-20% and inflammatory LDL fractions to decline by 20-25% within 4 weeks of consistent administration.',
-    dietaryInteraction: 'Take twice daily before your two largest meals. The polyphenolic compounds are highly active under moderate lipid concentrations.'
   },
   {
     id: 'taurine-supplement',
