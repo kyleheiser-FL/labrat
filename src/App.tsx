@@ -1,5 +1,5 @@
 import { LiveChat } from './components/LiveChat';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AppHeader from './components/AppHeader';
 import ToastContainer from './components/ToastContainer';
 import LegalModal from './components/LegalModal';
@@ -170,6 +170,23 @@ const getInitialBranding = (): LabRatBranding => {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings'>('dashboard');
+
+  // Push a history entry so the hardware/gesture back button navigates between tabs
+  const navigateTab = useCallback((tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => {
+    window.history.pushState({ tab }, '');
+    setActiveTab(tab);
+  }, []);
+
+  useEffect(() => {
+    // Stamp the initial history entry so there is always something to pop back to
+    window.history.replaceState({ tab: 'dashboard' }, '');
+    const onPop = (e: PopStateEvent) => {
+      const tab = e.state?.tab;
+      if (tab) setActiveTab(tab);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   const [labratTheme, setLabratTheme] = useState<LabRatTheme>(getInitialTheme);
   const [labratBranding, setLabratBranding] = useState<LabRatBranding>(getInitialBranding);
@@ -1072,7 +1089,7 @@ export default function App() {
 
   const handleAddLibraryItemToCycle = (item: LibraryItem) => {
     setActiveFromLibrary(item);
-    setActiveTab('planner');
+    navigateTab('planner');
   };
 
   return (
@@ -1087,7 +1104,7 @@ export default function App() {
 
       <AppHeader
         activeTab={activeTab}
-        onSetActiveTab={setActiveTab}
+        onSetActiveTab={navigateTab}
         labratTheme={labratTheme}
         notifications={notifications}
         notificationsOpen={notificationsOpen}
@@ -1141,7 +1158,7 @@ export default function App() {
                   onResetData={handleResetAllData}
                   activeFromLibrary={activeFromLibrary}
                   clearActiveFromLibrary={() => setActiveFromLibrary(null)}
-                  onNavigateToTab={setActiveTab}
+                  onNavigateToTab={navigateTab}
                   labratTheme={labratTheme}
                   visibility={segmentVisibility.planner}
                 />
