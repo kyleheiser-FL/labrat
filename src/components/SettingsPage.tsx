@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Palette, Bell, BellRing, Layout, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2 } from 'lucide-react';
+import { Palette, Bell, BellRing, Layout, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X } from 'lucide-react';
 import { SegmentVisibility } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 
@@ -21,6 +21,10 @@ interface SettingsPageProps {
   onTestNotification: () => void;
   testStatus: 'idle' | 'countdown' | 'triggered' | 'denied' | 'unsupported';
   countdown: number;
+  // Notification history
+  notifications: AppNotification[];
+  onClearAllNotifications: () => void;
+  onMarkNotificationRead: (id: string) => void;
 }
 
 type PageTab = 'dashboard' | 'planner' | 'library' | 'blood';
@@ -87,6 +91,9 @@ export default function SettingsPage({
   onTestNotification,
   testStatus,
   countdown,
+  notifications,
+  onClearAllNotifications,
+  onMarkNotificationRead,
 }: SettingsPageProps) {
   const [activePageTab, setActivePageTab] = useState<PageTab>('dashboard');
 
@@ -360,7 +367,75 @@ export default function SettingsPage({
         </div>
       </div>
 
-      {/* Section 4: Admin (only for kyleheiser@gmail.com) */}
+      {/* Section 4: Notification History */}
+      <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md">
+        <div className="p-6 pb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Bell className="w-4 h-4 text-cyan-400" />
+            <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Alert Feed</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-bold text-slate-100">Notification History</h3>
+            {notifications.length > 0 && (
+              <button
+                type="button"
+                onClick={() => { triggerHaptic('light'); onClearAllNotifications(); }}
+                className="flex items-center gap-1.5 text-[10px] text-red-400 hover:text-red-300 transition font-bold cursor-pointer px-2 py-1 rounded-lg hover:bg-red-500/10"
+              >
+                <Trash2 className="w-3 h-3" /> Clear all
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="divide-y divide-slate-800/70 max-h-[420px] overflow-y-auto custom-scrollbar">
+          {notifications.length === 0 ? (
+            <div className="py-14 px-4 text-center">
+              <Bell className="w-8 h-8 text-slate-700 mx-auto mb-3 opacity-40" />
+              <p className="text-xs text-slate-500 font-mono">No notifications yet</p>
+              <p className="text-[10px] text-slate-600 mt-1 leading-relaxed">
+                System alerts, sync events, and dose warnings will appear here.
+              </p>
+            </div>
+          ) : (
+            notifications.map((notif) => {
+              const dotColor =
+                notif.type === 'success' ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]' :
+                notif.type === 'warning' ? 'bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.7)]' :
+                notif.type === 'reminder' ? 'bg-indigo-500 shadow-[0_0_6px_rgba(99,102,241,0.7)]' :
+                'bg-cyan-500 shadow-[0_0_6px_rgba(6,182,212,0.7)]';
+
+              return (
+                <div
+                  key={notif.id}
+                  onClick={() => onMarkNotificationRead(notif.id)}
+                  className={`px-5 py-3.5 flex items-start gap-3 cursor-pointer transition-colors hover:bg-slate-800/25 ${
+                    !notif.isRead ? 'bg-cyan-500/5 border-l-2 border-cyan-500' : 'border-l-2 border-transparent'
+                  }`}
+                >
+                  <div className={`mt-1.5 shrink-0 w-2 h-2 rounded-full ${dotColor}`} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-[11px] font-bold text-slate-200 truncate">{notif.title}</span>
+                      <span className="text-[9px] font-mono text-slate-600 shrink-0">
+                        {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                      </span>
+                    </div>
+                    {notif.message && (
+                      <p className="text-[10.5px] text-slate-400 leading-snug mt-0.5">{notif.message}</p>
+                    )}
+                  </div>
+                  {!notif.isRead && (
+                    <Check className="w-3 h-3 text-cyan-500/60 shrink-0 mt-1.5" />
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      {/* Section 5: Admin (only for kyleheiser@gmail.com) */}
       {isAdmin && (
         <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
           <div className="flex items-center gap-2 mb-1">

@@ -274,7 +274,6 @@ export default function App() {
 
   // Notifications states
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [activeToasts, setActiveToasts] = useState<AppNotification[]>([]);
 
   // Transport state from Library directly to Planner
@@ -1284,10 +1283,6 @@ export default function App() {
         onSetActiveTab={setActiveTab}
         labratTheme={labratTheme}
         notifications={notifications}
-        notificationsOpen={notificationsOpen}
-        onSetNotificationsOpen={setNotificationsOpen}
-        onClearAllNotifications={handleClearAllNotifications}
-        onMarkNotificationRead={handleMarkNotificationRead}
         user={user}
         authLoading={authLoading}
         isStandalone={isStandalone}
@@ -1384,6 +1379,9 @@ export default function App() {
                   onTestNotification={triggerTestNotification}
                   testStatus={testStatus}
                   countdown={countdown}
+                  notifications={notifications}
+                  onClearAllNotifications={handleClearAllNotifications}
+                  onMarkNotificationRead={handleMarkNotificationRead}
                 />
               )}
             </motion.div>

@@ -7,9 +7,6 @@ import {
   Bell,
   BellRing,
   LogOut,
-  Trash2,
-  Check,
-  X,
   LogIn,
   Download,
   FlaskConical,
@@ -18,7 +15,6 @@ import {
   Palette,
   User as UserProfileIcon,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { User } from 'firebase/auth';
 import { AppNotification } from '../types';
 import { triggerHaptic } from '../lib/haptics';
@@ -30,10 +26,6 @@ interface AppHeaderProps {
   onSetActiveTab: (tab: Tab) => void;
   labratTheme: 'neon' | 'clinical';
   notifications: AppNotification[];
-  notificationsOpen: boolean;
-  onSetNotificationsOpen: (open: boolean) => void;
-  onClearAllNotifications: () => void;
-  onMarkNotificationRead: (id: string) => void;
   user: User | null;
   authLoading: boolean;
   isStandalone: boolean;
@@ -48,10 +40,6 @@ export default function AppHeader({
   onSetActiveTab,
   labratTheme,
   notifications,
-  notificationsOpen,
-  onSetNotificationsOpen,
-  onClearAllNotifications,
-  onMarkNotificationRead,
   user,
   authLoading,
   isStandalone,
@@ -130,16 +118,16 @@ export default function AppHeader({
               </button>
             )}
 
-            {/* Notifications bell */}
+            {/* Notifications bell — navigates to Settings → Notification History */}
             <div className="relative">
               <button
-                onClick={() => onSetNotificationsOpen(!notificationsOpen)}
+                onClick={() => { triggerHaptic('light'); onSetActiveTab('settings'); }}
                 className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center ${
-                  notificationsOpen
+                  activeTab === 'settings'
                     ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400'
                     : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
                 }`}
-                aria-label="Notification center"
+                aria-label="Notification history"
                 id="bell-notification-trigger"
               >
                 {unreadCount > 0 ? (
@@ -153,80 +141,6 @@ export default function AppHeader({
                   </span>
                 )}
               </button>
-
-              <AnimatePresence>
-                {notificationsOpen && (
-                  <>
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="fixed inset-0 bg-[#020617]/70 backdrop-blur-sm z-40 md:hidden"
-                      onClick={() => onSetNotificationsOpen(false)}
-                      id="notifications-mobile-backdrop"
-                    />
-                    <motion.div
-                      initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="fixed md:absolute inset-x-4 md:inset-x-auto top-28 md:top-full md:mt-3 md:right-0 md:left-auto mx-auto md:mx-0 w-auto md:w-80 max-w-[350px] bg-slate-900 border border-slate-800 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] md:shadow-2xl overflow-hidden z-50 text-slate-100"
-                      id="notification-hub-panel"
-                    >
-                      <div className="p-3.5 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center gap-3">
-                        <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">System Notification Feed</span>
-                        <div className="flex items-center gap-2">
-                          {notifications.length > 0 && (
-                            <button
-                              onClick={onClearAllNotifications}
-                              className="text-[10px] text-red-400 hover:text-red-300 transition flex items-center gap-1 font-semibold cursor-pointer"
-                            >
-                              <Trash2 className="w-3 h-3" /> Clear all
-                            </button>
-                          )}
-                          <button
-                            onClick={() => onSetNotificationsOpen(false)}
-                            className="md:hidden text-slate-500 hover:text-slate-300 p-1.5 hover:bg-slate-800/60 rounded-lg transition cursor-pointer"
-                            aria-label="Close notification center"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="max-h-[280px] sm:max-h-[300px] overflow-y-auto divide-y divide-slate-800/80 custom-scrollbar">
-                        {notifications.length === 0 ? (
-                          <div className="py-12 px-4 text-center">
-                            <Bell className="w-7 h-7 text-slate-600 mx-auto mb-2 opacity-50" />
-                            <p className="text-xs text-slate-500">No recent notifications</p>
-                            <span className="text-[9px] font-mono text-slate-600 tracking-normal leading-normal mt-1 block px-2.5">Warnings related to active schedules will be displayed here dynamically.</span>
-                          </div>
-                        ) : (
-                          notifications.map((notif) => (
-                            <div
-                              key={notif.id}
-                              onClick={() => onMarkNotificationRead(notif.id)}
-                              className={`p-3.5 text-left transition-colors duration-200 cursor-pointer hover:bg-slate-800/30 relative ${!notif.isRead ? 'bg-[#06b6d4]/5 border-l-2 border-cyan-500' : ''}`}
-                            >
-                              <div className="flex justify-between items-start gap-1">
-                                <span className="text-[11px] font-bold text-slate-200 leading-normal">{notif.title}</span>
-                                <span className="text-[8px] font-mono text-slate-500 mt-0.5 select-none shrink-0">
-                                  {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                </span>
-                              </div>
-                              <p className="text-[10px] text-slate-400 leading-normal mt-1 pr-6">{notif.message}</p>
-                              {!notif.isRead && (
-                                <span className="absolute bottom-3 right-3 text-[8.5px] font-semibold text-cyan-400 flex items-center gap-0.5 opacity-60 hover:opacity-100 transition">
-                                  <Check className="w-3 h-3" /> Mark read
-                                </span>
-                              )}
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
             </div>
 
             {/* Auth widget */}
