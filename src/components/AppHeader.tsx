@@ -10,7 +10,6 @@ import {
   FlaskConical,
   ShoppingBag,
   Loader2,
-  Palette,
   User as UserProfileIcon,
 } from 'lucide-react';
 import { User } from 'firebase/auth';
@@ -89,14 +88,32 @@ export default function AppHeader({
           </div>
 
           {/* Right side controls */}
-          <div className="flex items-center gap-2 sm:gap-3" id="header-indicators-bar">
+          <div className="flex items-center gap-1.5 sm:gap-2" id="header-indicators-bar">
+
+            {/* Me + Settings icon buttons — always visible */}
+            <button
+              onClick={() => { triggerHaptic('light'); onSetActiveTab('blood'); }}
+              className={`flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
+                activeTab === 'blood'
+                  ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
+                  : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
+              }`}
+              aria-label="Me"
+              title="Me"
+            >
+              <UserProfileIcon className="w-4 h-4" />
+            </button>
             <button
               onClick={() => { triggerHaptic('light'); onSetActiveTab('settings'); }}
-              className="hidden sm:flex items-center justify-center p-2 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/35 hover:bg-cyan-500/10 transition-all cursor-pointer"
-              aria-label="Appearance settings"
-              title="Appearance settings"
+              className={`flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
+                activeTab === 'settings'
+                  ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
+                  : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
+              }`}
+              aria-label="Settings"
+              title="Settings"
             >
-              <Palette className="w-4 h-4" />
+              <Settings className="w-4 h-4" />
             </button>
 
             {!isStandalone && (
@@ -115,10 +132,10 @@ export default function AppHeader({
             {authLoading ? (
               <div className="flex items-center gap-2 bg-[#0f172a]/60 border border-[#1e293b]/50 py-1.5 px-3 rounded-xl text-xs text-slate-400 font-mono">
                 <Loader2 className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
-                <span>Loading Secure Keys...</span>
+                <span className="hidden sm:inline">Loading...</span>
               </div>
             ) : user ? (
-              <div className="flex items-center gap-2 bg-[#0f172a]/75 border border-[#1e293b]/80 p-1 pl-2 rounded-xl text-xs font-mono">
+              <div className="flex items-center gap-1.5 bg-[#0f172a]/75 border border-[#1e293b]/80 p-1 pl-2 rounded-xl text-xs font-mono">
                 <div className="w-7 h-7 rounded-lg overflow-hidden border border-cyan-500/25 bg-cyan-950/45 flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.1)]">
                   {user.photoURL ? (
                     <img src={user.photoURL} alt="User Profile" className="w-full h-full object-cover select-none" referrerPolicy="no-referrer" />
@@ -128,7 +145,7 @@ export default function AppHeader({
                 </div>
                 <div className="hidden sm:flex flex-col text-left">
                   <span className="text-[8px] text-slate-500 uppercase tracking-widest leading-none font-bold">labrat Sync</span>
-                  <span className="text-cyan-400 font-bold max-w-[125px] truncate mt-0.5 text-xs font-sans tracking-tight" title={user.email || ''}>
+                  <span className="text-cyan-400 font-bold max-w-[100px] truncate mt-0.5 text-xs font-sans tracking-tight" title={user.email || ''}>
                     {user.displayName || user.email?.split('@')[0] || 'Active Agent'}
                   </span>
                 </div>
@@ -144,32 +161,30 @@ export default function AppHeader({
             ) : (
               <button
                 onClick={() => { triggerHaptic('light'); onSignInClick(); }}
-                className="flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-slate-950 font-extrabold px-3.5 py-2 rounded-xl text-xs transition duration-300 shadow-[0_0_15px_rgba(34,211,238,0.15)] flex-nowrap cursor-pointer animate-pulse"
+                className="flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-slate-950 font-extrabold px-3 py-2 rounded-xl text-xs transition duration-300 shadow-[0_0_15px_rgba(34,211,238,0.15)] flex-nowrap cursor-pointer animate-pulse"
                 id="google-sign-in"
               >
                 <LogIn className="w-3.5 h-3.5 shrink-0" />
-                <span>Sync / Login</span>
+                <span className="hidden xs:inline">Sync / Login</span>
               </button>
             )}
 
             <div className="hidden lg:flex items-center gap-2 bg-[#0f172a]/60 border border-[#1e293b]/50 py-1.5 px-3 rounded-xl text-xs font-mono">
               <div className={`w-1.5 h-1.5 rounded-full ${user ? 'bg-cyan-500 shadow-[0_0_6px_rgba(34,211,238,0.7)] animate-pulse' : 'bg-amber-500'}`}></div>
-              <span className="text-slate-400">Database Status: </span>
+              <span className="text-slate-400">Database: </span>
               <span className={user ? 'text-cyan-400 font-bold' : 'text-amber-400'}>
-                {user ? 'Firebase Cloud Sync Active' : 'Offline Cache Sandbox'}
+                {user ? 'Cloud Sync Active' : 'Offline Cache'}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Navigation Tab Rail */}
-        <nav className="bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid grid-cols-6 sm:flex sm:flex-row gap-1.5 w-full" id="navigation-tabs-rail">
+        {/* Navigation Tab Rail — core app tabs only */}
+        <nav className="bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid grid-cols-4 sm:flex sm:flex-row gap-1.5 w-full" id="navigation-tabs-rail">
           {tabBtn('dashboard', <CalendarDays className="w-3.5 h-3.5 shrink-0" />, <>Daily <span className="hidden sm:inline">Checklist</span></>)}
           {tabBtn('planner', <Layers className="w-3.5 h-3.5 shrink-0" />, <>Cycle <span className="hidden sm:inline">Architect</span></>)}
           {tabBtn('library', <BookOpen className="w-3.5 h-3.5 shrink-0" />, <>Compound <span className="hidden sm:inline">Encyclopedia</span></>)}
           {!hideShop && tabBtn('shop', <ShoppingBag className="w-3.5 h-3.5 shrink-0 text-cyan-300" />, 'Shop')}
-          {tabBtn('blood', <UserProfileIcon className="w-3.5 h-3.5 shrink-0 text-red-300" />, 'Me')}
-          {tabBtn('settings', <Settings className="w-3.5 h-3.5 shrink-0" />, 'Settings')}
         </nav>
       </div>
     </header>
