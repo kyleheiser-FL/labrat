@@ -1,5 +1,5 @@
 {
-  "name": "@cozy-lantern/mobile",
+  "name": "@circlsquad/mobile",
   "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
@@ -11,7 +11,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@cozy-lantern/shared": "workspace:*",
+    "@circlsquad/shared": "workspace:*",
     "@expo/vector-icons": "~14.0.0",
     "@react-native-async-storage/async-storage": "1.23.1",
     "date-fns": "^3.6.0",

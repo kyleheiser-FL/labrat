@@ -6,8 +6,8 @@ import {
 import { useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '../../firebase';
-import { createUser } from '@cozy-lantern/shared';
-import type { UserProfile } from '@cozy-lantern/shared';
+import { createUser } from '@circlsquad/shared';
+import type { UserProfile } from '@circlsquad/shared';
 
 export default function RegisterScreen() {
   const [displayName, setDisplayName] = useState('');

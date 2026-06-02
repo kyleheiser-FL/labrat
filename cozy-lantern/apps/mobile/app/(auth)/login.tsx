@@ -33,7 +33,7 @@ export default function LoginScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <Text style={styles.logo}>CozyLantern</Text>
+      <Text style={styles.logo}>CirclSquad</Text>
       <Text style={styles.tagline}>Stay close to the ones you love</Text>
 
       <TextInput

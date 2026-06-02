@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { LiveLocation } from '@cozy-lantern/shared';
+import type { LiveLocation } from '@circlsquad/shared';
 
 interface LocationState {
   memberLocations: Record<string, LiveLocation>;

@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 import { db } from '../../firebase';
 import { useAuthStore } from '../../store/authStore';
 import { useFamilyStore } from '../../store/familyStore';
-import { createFamilyTask } from '@cozy-lantern/shared';
+import { createFamilyTask } from '@circlsquad/shared';
 
 export default function AddTaskModal() {
   const [title, setTitle] = useState('');

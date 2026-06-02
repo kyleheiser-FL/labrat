@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, startOfWeek, endOfWeek } from 'date-fns';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
-import { subscribeFamilyEvents, getUser, type FamilyEvent } from '@cozy-lantern/shared';
+import { subscribeFamilyEvents, getUser, type FamilyEvent } from '@circlsquad/shared';
 
 export default function CalendarPage() {
   const [events, setEvents] = useState<FamilyEvent[]>([]);

@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { auth, db } from '../firebase';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
-import { getUser } from '@cozy-lantern/shared';
+import { getUser } from '@circlsquad/shared';
 
 export default function RootLayout() {
   const { setUser, setProfile, setInitialized, initialized } = useAuthStore();

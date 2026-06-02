@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions/v2/firestore';
 import * as admin from 'firebase-admin';
 import { Client } from '@googlemaps/google-maps-services-js';
-import { haversineDistance } from '@cozy-lantern/shared';
+import { haversineDistance } from '@circlsquad/shared';
 
 const mapsClient = new Client();
 const GEOCODE_MIN_MOVE_METERS = 50;

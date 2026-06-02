@@ -6,7 +6,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
-import { BATTERY_MODE_CONFIGS } from '@cozy-lantern/shared';
+import { BATTERY_MODE_CONFIGS } from '@circlsquad/shared';
 import { LOCATION_TASK_NAME } from '../tasks/locationTask';
 
 export function useLocationTracking() {
@@ -72,7 +72,7 @@ async function startTracking(mode: string) {
     activityType: Location.ActivityType.Other,
     pausesUpdatesAutomatically: false,
     foregroundService: {
-      notificationTitle: 'CozyLantern',
+      notificationTitle: 'CirclSquad',
       notificationBody: 'Sharing location with your family',
       notificationColor: '#4f46e5',
     },

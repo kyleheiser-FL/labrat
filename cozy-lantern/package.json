@@ -1,10 +1,10 @@
 {
-  "name": "cozy-lantern",
+  "name": "circlsquad",
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev:mobile": "turbo run dev --filter=@cozy-lantern/mobile",
-    "dev:web": "turbo run dev --filter=@cozy-lantern/web",
+    "dev:mobile": "turbo run dev --filter=@circlsquad/mobile",
+    "dev:web": "turbo run dev --filter=@circlsquad/web",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",

@@ -7,7 +7,7 @@ import { useAuthStore } from '../../store/authStore';
 import {
   subscribeFriendConnections, updateFriendStatus, toggleFriendLocationSharing,
   removeFriend, type FriendConnection,
-} from '@cozy-lantern/shared';
+} from '@circlsquad/shared';
 
 export default function FriendsScreen() {
   const user = useAuthStore(s => s.user);

@@ -24,7 +24,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#0f0f1a] flex items-center justify-center p-6">
       <div className="w-full max-w-sm">
-        <h1 className="text-3xl font-bold text-white text-center mb-2">CozyLantern</h1>
+        <h1 className="text-3xl font-bold text-white text-center mb-2">CirclSquad</h1>
         <p className="text-gray-500 text-center mb-10">Family dashboard</p>
         <form onSubmit={handleLogin} className="space-y-4">
           <input

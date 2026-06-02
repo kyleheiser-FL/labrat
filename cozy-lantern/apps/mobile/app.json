@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "CozyLantern",
-    "slug": "cozy-lantern",
+    "name": "CirclSquad",
+    "slug": "circlsquad",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "cozylantern",
+    "scheme": "circlsquad",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
@@ -14,12 +14,12 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.cozylantern.app",
+      "bundleIdentifier": "com.circlsquad.app",
       "infoPlist": {
         "UIBackgroundModes": ["location", "fetch", "remote-notification"],
-        "NSLocationWhenInUseUsageDescription": "CozyLantern uses your location to show your family where you are.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "CozyLantern needs Always location access to keep your family updated even when the app is in the background.",
-        "NSLocationAlwaysUsageDescription": "CozyLantern needs Always location access to keep your family updated even when the app is in the background."
+        "NSLocationWhenInUseUsageDescription": "CirclSquad uses your location to show your family where you are.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "CirclSquad needs Always location access to keep your family updated even when the app is in the background.",
+        "NSLocationAlwaysUsageDescription": "CirclSquad needs Always location access to keep your family updated even when the app is in the background."
       }
     },
     "android": {
@@ -27,7 +27,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1a1a2e"
       },
-      "package": "com.cozylantern.app",
+      "package": "com.circlsquad.app",
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -46,9 +46,9 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow CozyLantern to use your location to share with your family.",
-          "locationAlwaysPermission": "Allow CozyLantern to use your location in the background to keep your family updated.",
-          "locationWhenInUsePermission": "Allow CozyLantern to use your location to share with your family.",
+          "locationAlwaysAndWhenInUsePermission": "Allow CirclSquad to use your location to share with your family.",
+          "locationAlwaysPermission": "Allow CirclSquad to use your location in the background to keep your family updated.",
+          "locationWhenInUsePermission": "Allow CirclSquad to use your location to share with your family.",
           "isIosBackgroundLocationEnabled": true,
           "isAndroidBackgroundLocationEnabled": true
         }

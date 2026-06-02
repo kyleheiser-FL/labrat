@@ -7,7 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useLocationStore } from '../../store/locationStore';
 import { useFamilyStore } from '../../store/familyStore';
 import { useAuthStore } from '../../store/authStore';
-import { classifyMovement } from '@cozy-lantern/shared';
+import { classifyMovement } from '@circlsquad/shared';
 
 export default function MapScreen() {
   const memberLocations = useLocationStore(s => s.memberLocations);

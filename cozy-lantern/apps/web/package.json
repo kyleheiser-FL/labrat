@@ -1,5 +1,5 @@
 {
-  "name": "@cozy-lantern/web",
+  "name": "@circlsquad/web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@cozy-lantern/shared": "workspace:*",
+    "@circlsquad/shared": "workspace:*",
     "@vis.gl/react-google-maps": "^1.4.0",
     "date-fns": "^3.6.0",
     "firebase": "^12.0.0",

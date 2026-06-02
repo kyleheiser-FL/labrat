@@ -8,8 +8,8 @@ export default function InviteMemberModal() {
   async function handleShare() {
     if (!family) return;
     await Share.share({
-      message: `Join my family on CozyLantern! Use invite code: ${family.inviteCode}\n\nDownload the app at cozylantern.app`,
-      title: 'Join my CozyLantern family',
+      message: `Join my family on CirclSquad! Use invite code: ${family.inviteCode}\n\nDownload the app at circlsquad.app`,
+      title: 'Join my CirclSquad family',
     });
   }
 

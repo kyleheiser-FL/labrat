@@ -3,7 +3,7 @@ import * as Location from 'expo-location';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
-export const LOCATION_TASK_NAME = 'cozy-lantern-background-location';
+export const LOCATION_TASK_NAME = 'circlsquad-background-location';
 
 TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   if (error) {

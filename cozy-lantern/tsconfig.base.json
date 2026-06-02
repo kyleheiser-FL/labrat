@@ -13,7 +13,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@cozy-lantern/shared": ["../../packages/shared/src/index.ts"]
+      "@circlsquad/shared": ["../../packages/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "dist", "build"]

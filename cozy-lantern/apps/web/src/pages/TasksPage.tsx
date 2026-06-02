@@ -4,7 +4,7 @@ import { auth, db } from '../firebase';
 import {
   subscribeFamilyTasks, getFamilyMembers, getUser, completeTask,
   type FamilyTask, type FamilyMember,
-} from '@cozy-lantern/shared';
+} from '@circlsquad/shared';
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<FamilyTask[]>([]);

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Family, FamilyMember } from '@cozy-lantern/shared';
+import type { Family, FamilyMember } from '@circlsquad/shared';
 
 interface FamilyState {
   family: Family | null;

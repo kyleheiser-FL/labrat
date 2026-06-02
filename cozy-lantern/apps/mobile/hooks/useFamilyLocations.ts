@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { db } from '../firebase';
-import { subscribeToLocations } from '@cozy-lantern/shared';
+import { subscribeToLocations } from '@circlsquad/shared';
 import { useFamilyStore } from '../store/familyStore';
 import { useLocationStore } from '../store/locationStore';
 

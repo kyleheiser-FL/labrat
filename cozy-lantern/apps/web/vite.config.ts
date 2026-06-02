@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@cozy-lantern/shared': new URL('../../packages/shared/src/index.ts', import.meta.url).pathname,
+      '@circlsquad/shared': new URL('../../packages/shared/src/index.ts', import.meta.url).pathname,
     },
   },
 });

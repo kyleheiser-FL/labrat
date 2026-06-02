@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useAuthStore } from '../../store/authStore';
-import { BATTERY_MODE_CONFIGS, updateUserSettings, type BatteryMode } from '@cozy-lantern/shared';
+import { BATTERY_MODE_CONFIGS, updateUserSettings, type BatteryMode } from '@circlsquad/shared';
 import { db } from '../../firebase';
 
 const MODE_ICONS: Record<BatteryMode, keyof typeof Ionicons.glyphMap> = {

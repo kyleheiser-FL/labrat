@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 import { db } from '../../firebase';
 import { useAuthStore } from '../../store/authStore';
 import { useFamilyStore } from '../../store/familyStore';
-import { createFamilyEvent } from '@cozy-lantern/shared';
+import { createFamilyEvent } from '@circlsquad/shared';
 
 export default function AddEventModal() {
   const [title, setTitle] = useState('');

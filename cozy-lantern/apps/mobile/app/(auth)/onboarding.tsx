@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 import { doc as firestoreDoc } from 'firebase/firestore';
 import { nanoid } from 'expo-crypto';
 import { auth, db } from '../../firebase';
-import { createFamily, getFamilyByInviteCode, joinFamily, updateUserFamilyId } from '@cozy-lantern/shared';
+import { createFamily, getFamilyByInviteCode, joinFamily, updateUserFamilyId } from '@circlsquad/shared';
 import { useAuthStore } from '../../store/authStore';
 
 export default function OnboardingScreen() {
@@ -65,7 +65,7 @@ export default function OnboardingScreen() {
   if (mode === 'pick') {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Welcome to CozyLantern</Text>
+        <Text style={styles.title}>Welcome to CirclSquad</Text>
         <Text style={styles.sub}>Set up your family group to get started.</Text>
         <TouchableOpacity style={styles.button} onPress={() => setMode('create')}>
           <Text style={styles.buttonText}>Create a Family</Text>

@@ -10,7 +10,7 @@ import { db } from '../../firebase';
 import {
   subscribeFamilyTasks, subscribeFamilyAnnouncements, completeTask,
   type FamilyTask, type FamilyAnnouncement,
-} from '@cozy-lantern/shared';
+} from '@circlsquad/shared';
 
 export default function FamilyScreen() {
   const family = useFamilyStore(s => s.family);

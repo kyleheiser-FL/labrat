@@ -1,4 +1,4 @@
-# CozyLantern — Setup Guide
+# CirclSquad — Setup Guide
 
 ## Prerequisites
 - Node.js 20+
@@ -9,7 +9,7 @@
 ## 1. Create Firebase Project
 
 1. Go to [console.firebase.google.com](https://console.firebase.google.com)
-2. Create a new project (e.g. `cozy-lantern`)
+2. Create a new project (e.g. `circlsquad`)
 3. Enable **Authentication** (Email/Password provider)
 4. Enable **Firestore** (start in production mode)
 5. Enable **Cloud Messaging** (for push notifications)

@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { BatteryMode } from '@cozy-lantern/shared';
+import type { BatteryMode } from '@circlsquad/shared';
 
-const STORAGE_KEY = 'cozy-lantern:batteryMode';
+const STORAGE_KEY = 'circlsquad:batteryMode';
 
 interface SettingsState {
   batteryMode: BatteryMode;

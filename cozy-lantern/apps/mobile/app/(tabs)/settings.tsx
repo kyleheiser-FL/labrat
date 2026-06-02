@@ -5,8 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { auth, db } from '../../firebase';
 import { useAuthStore } from '../../store/authStore';
 import { useSettingsStore } from '../../store/settingsStore';
-import { updateUserSettings } from '@cozy-lantern/shared';
-import { BATTERY_MODE_CONFIGS } from '@cozy-lantern/shared';
+import { updateUserSettings } from '@circlsquad/shared';
+import { BATTERY_MODE_CONFIGS } from '@circlsquad/shared';
 
 export default function SettingsScreen() {
   const user = useAuthStore(s => s.user);

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { User } from 'firebase/auth';
-import type { UserProfile } from '@cozy-lantern/shared';
+import type { UserProfile } from '@circlsquad/shared';
 
 interface AuthState {
   user: User | null;

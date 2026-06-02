@@ -6,7 +6,7 @@ import {
   getFamily, getFamilyMembers, getUser, regenerateInviteCode,
   subscribeFamilyAnnouncements,
   type Family, type FamilyMember, type FamilyAnnouncement,
-} from '@cozy-lantern/shared';
+} from '@circlsquad/shared';
 
 export default function FamilyPage() {
   const [family, setFamily] = useState<Family | null>(null);

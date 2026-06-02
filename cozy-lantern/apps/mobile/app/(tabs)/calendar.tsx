@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, startOfWeek, endOfWeek } from 'date-fns';
 import { useFamilyStore } from '../../store/familyStore';
 import { db } from '../../firebase';
-import { subscribeFamilyEvents, type FamilyEvent } from '@cozy-lantern/shared';
+import { subscribeFamilyEvents, type FamilyEvent } from '@circlsquad/shared';
 
 export default function CalendarScreen() {
   const family = useFamilyStore(s => s.family);

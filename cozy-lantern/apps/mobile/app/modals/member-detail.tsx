@@ -10,7 +10,7 @@ import { useLocationStore } from '../../store/locationStore';
 import {
   getLocationHistory, classifyMovement,
   type LocationHistoryPoint,
-} from '@cozy-lantern/shared';
+} from '@circlsquad/shared';
 
 const PLAYBACK_SPEEDS = [1, 2, 4, 8];
 const TICK_MS = 100; // update marker every 100ms of real time

@@ -23,7 +23,7 @@ export const onFriendConnectionCreate = functions.onDocumentCreated(
         tokens,
         notification: {
           title: 'New Friend Request',
-          body: `${senderName} wants to be your friend on CozyLantern`,
+          body: `${senderName} wants to be your friend on CirclSquad`,
         },
         data: {
           type: 'friend_request',

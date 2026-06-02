@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator 
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useAuthStore } from '../../store/authStore';
-import { sendFriendRequest } from '@cozy-lantern/shared';
+import { sendFriendRequest } from '@circlsquad/shared';
 
 export default function FriendRequestModal() {
   const [email, setEmail] = useState('');

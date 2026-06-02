@@ -6,7 +6,7 @@ import { auth, db } from '../firebase';
 import {
   subscribeToLocations, getFamilyMembers, getUser, classifyMovement,
   type LiveLocation, type FamilyMember,
-} from '@cozy-lantern/shared';
+} from '@circlsquad/shared';
 
 export default function MapPage() {
   const [locations, setLocations] = useState<LiveLocation[]>([]);
@@ -37,7 +37,7 @@ export default function MapPage() {
       <Map
         defaultCenter={{ lat: 37.78825, lng: -122.4324 }}
         defaultZoom={12}
-        mapId="cozy-lantern-map"
+        mapId="circlsquad-map"
         style={{ width: '100%', height: '100%' }}
       >
         {locations.map(loc => {
