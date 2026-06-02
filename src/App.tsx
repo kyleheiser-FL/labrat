@@ -1282,7 +1282,6 @@ export default function App() {
         activeTab={activeTab}
         onSetActiveTab={setActiveTab}
         labratTheme={labratTheme}
-        notifications={notifications}
         user={user}
         authLoading={authLoading}
         isStandalone={isStandalone}

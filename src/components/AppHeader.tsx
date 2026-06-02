@@ -4,8 +4,6 @@ import {
   Layers,
   BookOpen,
   Settings,
-  Bell,
-  BellRing,
   LogOut,
   LogIn,
   Download,
@@ -16,7 +14,6 @@ import {
   User as UserProfileIcon,
 } from 'lucide-react';
 import { User } from 'firebase/auth';
-import { AppNotification } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 
 type Tab = 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings';
@@ -25,7 +22,6 @@ interface AppHeaderProps {
   activeTab: Tab;
   onSetActiveTab: (tab: Tab) => void;
   labratTheme: 'neon' | 'clinical';
-  notifications: AppNotification[];
   user: User | null;
   authLoading: boolean;
   isStandalone: boolean;
@@ -39,7 +35,6 @@ export default function AppHeader({
   activeTab,
   onSetActiveTab,
   labratTheme,
-  notifications,
   user,
   authLoading,
   isStandalone,
@@ -48,8 +43,6 @@ export default function AppHeader({
   onSignInClick,
   hideShop,
 }: AppHeaderProps) {
-  const unreadCount = notifications.filter(n => !n.isRead).length;
-
   const tabBtn = (tab: Tab, icon: React.ReactNode, label: React.ReactNode) => (
     <button
       onClick={() => { triggerHaptic('light'); onSetActiveTab(tab); }}
@@ -117,31 +110,6 @@ export default function AppHeader({
                 <span className="hidden md:inline">Install</span>
               </button>
             )}
-
-            {/* Notifications bell — navigates to Settings → Notification History */}
-            <div className="relative">
-              <button
-                onClick={() => { triggerHaptic('light'); onSetActiveTab('settings'); }}
-                className={`p-2 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center ${
-                  activeTab === 'settings'
-                    ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400'
-                    : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
-                }`}
-                aria-label="Notification history"
-                id="bell-notification-trigger"
-              >
-                {unreadCount > 0 ? (
-                  <BellRing className="w-4 h-4 text-cyan-400 animate-pulse" />
-                ) : (
-                  <Bell className="w-4 h-4" />
-                )}
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500 text-slate-950 text-[9px] font-bold flex items-center justify-center font-mono ring-4 ring-[#030712]">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-            </div>
 
             {/* Auth widget */}
             {authLoading ? (
