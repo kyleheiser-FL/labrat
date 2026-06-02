@@ -39,7 +39,7 @@ export const resolvedConfig = {
 
 console.log("[Firebase Hub] Initializing with auth domain:", resolvedConfig.authDomain);
 
-const app = initializeApp(resolvedConfig);
+export const app = initializeApp(resolvedConfig);
 export const db = initializeFirestore(app, {
   ignoreUndefinedProperties: true
 }, resolvedConfig.firestoreDatabaseId || undefined);

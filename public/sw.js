@@ -1,4 +1,38 @@
-/* LabRat root service worker for PWA install, offline shell, and PWABuilder detection. */
+/* LabRat root service worker — PWA offline shell + FCM background messaging */
+
+/* Firebase compat scripts required for background FCM message handling */
+importScripts('https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.14.0/firebase-messaging-compat.js');
+
+if (!self.firebase.apps.length) {
+  self.firebase.initializeApp({
+    apiKey: "AIzaSyBsrbVzjZ0BDJ8tnwAvOyYEzFx65H-PboM",
+    authDomain: "gen-lang-client-0024879682.firebaseapp.com",
+    projectId: "gen-lang-client-0024879682",
+    storageBucket: "gen-lang-client-0024879682.firebasestorage.app",
+    messagingSenderId: "175813126447",
+    appId: "1:175813126447:web:efafcc7cea26af83ad19da",
+  });
+}
+
+const _messaging = self.firebase.messaging();
+
+/* Background FCM push — fires when the app is closed or backgrounded */
+_messaging.onBackgroundMessage((payload) => {
+  const notif = payload.notification || {};
+  const tag = (payload.data && payload.data.tag) ? payload.data.tag : 'labrat-push';
+  self.registration.showNotification(notif.title || 'LabRat', {
+    body: notif.body || '',
+    icon: notif.icon || '/icon_192.png',
+    badge: '/icon_96.png',
+    tag,
+    renotify: true,
+    requireInteraction: false,
+    vibrate: [200, 100, 200, 100, 200],
+    data: payload.data || {},
+  });
+});
+
 const CACHE_NAME = "labrat-pwa-v9-black-statusbar";
 const APP_SHELL = [
   "/",

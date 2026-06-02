@@ -52,6 +52,7 @@ import SettingsPage from './components/SettingsPage';
 
 // Firebase Setup
 import { auth, db } from './firebase';
+import { registerFCMToken, savePushProfile, initForegroundMessaging } from './lib/fcm';
 import { 
   onAuthStateChanged, 
   signOut, 
@@ -419,6 +420,29 @@ export default function App() {
       });
     } else { startTestCountdown(); }
   };
+
+  // Sync push profile to Firestore whenever reminder settings or compounds change
+  useEffect(() => {
+    if (!user) return;
+    const compoundReminders = compounds
+      .filter(c => c.reminderTime && !c.isCompleted)
+      .map(c => ({ id: c.id, name: c.name, reminderTime: c.reminderTime as string }));
+    savePushProfile(user.uid, {
+      reminderEnabled,
+      reminderTime,
+      timezoneOffset: new Date().getTimezoneOffset(),
+      compounds: compoundReminders,
+    }).catch(() => {});
+  }, [user, reminderEnabled, reminderTime, compounds]);
+
+  // Handle foreground FCM messages (app is open)
+  useEffect(() => {
+    if (!user) return;
+    const unsub = initForegroundMessaging((title, body, tag) => {
+      fireOSNotification(title, body, tag);
+    });
+    return unsub;
+  }, [user]);
 
   // Reminder scheduler useEffect
   useEffect(() => {
@@ -824,6 +848,9 @@ export default function App() {
           setLogs(finalLogs);
           setMetrics(migrateMetricsLegacyWeight(finalMetrics));
           setNotifications(filterTransientNotifs(finalNotifs).sort((a,b) => b.timestamp.localeCompare(a.timestamp)));
+
+          // Register FCM token for background push delivery (non-blocking)
+          registerFCMToken(currentUser.uid).catch(() => {});
 
           safeLocalStorage.setItem('labrat_compounds', JSON.stringify(finalCompounds));
           safeLocalStorage.setItem('labrat_logs', JSON.stringify(finalLogs));

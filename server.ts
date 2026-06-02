@@ -3,6 +3,9 @@ import path from "path";
 import { GoogleGenAI, Type } from "@google/genai";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import firebaseConfig from "./firebase-applet-config.json";
+import { initializeApp as initAdminApp, getApps as getAdminApps, cert } from "firebase-admin/app";
+import { getMessaging as getAdminMessaging } from "firebase-admin/messaging";
+import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
 
 const app = express();
 const PORT = 3000;
@@ -56,6 +59,20 @@ function handleGeminiError(err: any, endpointName: string): { status: number; me
   };
 }
 
+// Firebase Admin SDK — initialized lazily so missing credentials don't crash non-admin endpoints
+function getAdminApp() {
+  if (getAdminApps().length > 0) return getAdminApps()[0];
+  const b64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+  if (!b64) return null;
+  try {
+    const serviceAccount = JSON.parse(Buffer.from(b64, 'base64').toString('utf-8'));
+    return initAdminApp({ credential: cert(serviceAccount) });
+  } catch (e) {
+    console.error('[Admin] Failed to initialize Firebase Admin:', e);
+    return null;
+  }
+}
+
 // Middleware
 app.use(express.json());
 
@@ -66,6 +83,116 @@ app.use(express.json());
       apiReady: !!process.env.GEMINI_API_KEY,
       timestamp: new Date().toISOString()
     });
+  });
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Scheduled reminder sender — called by Vercel Cron every 5 minutes
+  // Reads pushProfiles/{uid} from Firestore and sends FCM when time matches
+  // ──────────────────────────────────────────────────────────────────────────
+  app.get("/api/send-reminders", async (req, res) => {
+    // Verify Vercel cron secret to prevent public access
+    const cronSecret = process.env.CRON_SECRET;
+    if (cronSecret) {
+      const auth = req.headers.authorization || '';
+      if (auth !== `Bearer ${cronSecret}`) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+    }
+
+    const adminApp = getAdminApp();
+    if (!adminApp) {
+      return res.status(503).json({ error: 'Firebase Admin not configured. Set FIREBASE_SERVICE_ACCOUNT_BASE64.' });
+    }
+
+    const firestore = getAdminFirestore(adminApp);
+    const fcmMessaging = getAdminMessaging(adminApp);
+
+    const nowUtc = new Date();
+    const nowUtcMinutes = nowUtc.getUTCHours() * 60 + nowUtc.getUTCMinutes();
+    const todayStr = nowUtc.toISOString().split('T')[0];
+
+    let sent = 0;
+    let errors = 0;
+
+    try {
+      const profilesSnap = await firestore.collection('pushProfiles').where('reminderEnabled', '==', true).get();
+
+      for (const profileDoc of profilesSnap.docs) {
+        const uid = profileDoc.id;
+        const profile = profileDoc.data();
+        const tokens: string[] = profile.fcmTokens || [];
+        if (tokens.length === 0) continue;
+
+        // Compute user's local minute-of-day from UTC + their stored offset
+        // timezoneOffset = getTimezoneOffset() — positive means WEST of UTC
+        const offset: number = typeof profile.timezoneOffset === 'number' ? profile.timezoneOffset : 0;
+        const userLocalMinutes = ((nowUtcMinutes - offset) % 1440 + 1440) % 1440;
+
+        // Check daily reminder time
+        const reminderTime: string = profile.reminderTime || '';
+        if (reminderTime && /^\d{1,2}:\d{2}$/.test(reminderTime)) {
+          const [rh, rm] = reminderTime.split(':').map(Number);
+          const targetMinutes = rh * 60 + rm;
+          const diff = Math.abs(userLocalMinutes - targetMinutes);
+          if (diff < 5) {
+            const guardId = `${uid}_daily_${todayStr}`;
+            const guardRef = firestore.collection('pushGuards').doc(guardId);
+            const guardSnap = await guardRef.get();
+            if (!guardSnap.exists) {
+              for (const token of tokens) {
+                try {
+                  await fcmMessaging.send({
+                    notification: {
+                      title: '🔬 LabRat Dose Reminder',
+                      body: "Time to record today's scheduled administrations.",
+                    },
+                    data: { tag: 'labrat-reminder-daily' },
+                    token,
+                  });
+                  sent++;
+                } catch { errors++; }
+              }
+              await guardRef.set({ sentAt: nowUtc.toISOString() });
+            }
+          }
+        }
+
+        // Check per-compound reminder times
+        const compounds: { id: string; name: string; reminderTime: string }[] = profile.compounds || [];
+        for (const comp of compounds) {
+          if (!comp.reminderTime || !/^\d{1,2}:\d{2}$/.test(comp.reminderTime)) continue;
+          const [ch, cm] = comp.reminderTime.split(':').map(Number);
+          const compTarget = ch * 60 + cm;
+          const compDiff = Math.abs(userLocalMinutes - compTarget);
+          if (compDiff < 5) {
+            const guardId = `${uid}_comp_${comp.id}_${todayStr}`;
+            const guardRef = firestore.collection('pushGuards').doc(guardId);
+            const guardSnap = await guardRef.get();
+            if (!guardSnap.exists) {
+              for (const token of tokens) {
+                try {
+                  await fcmMessaging.send({
+                    notification: {
+                      title: `💉 Time for ${comp.name}`,
+                      body: 'Open LabRat to log your dose.',
+                    },
+                    data: { tag: `comp-${comp.id}` },
+                    token,
+                  });
+                  sent++;
+                } catch { errors++; }
+              }
+              await guardRef.set({ sentAt: nowUtc.toISOString() });
+            }
+          }
+        }
+      }
+
+      res.json({ ok: true, sent, errors, checkedAt: nowUtc.toISOString() });
+    } catch (err: any) {
+      console.error('[send-reminders] Error:', err);
+      res.status(500).json({ error: err?.message || 'Internal error' });
+    }
   });
 
   // Gemini Peptide Advisor API

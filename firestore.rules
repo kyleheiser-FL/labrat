@@ -72,6 +72,16 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // FCM push profile — user writes their own, server reads via Admin SDK (bypasses rules)
+    match /pushProfiles/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Push dedup guards — written server-side only via Admin SDK; deny all client access
+    match /pushGuards/{guardId} {
+      allow read, write: if false;
+    }
+
     // Orders checkout data
     match /orders/{orderId} {
       // Allow read to own orders, admin, or any approved member to compute dynamic inventory stock
