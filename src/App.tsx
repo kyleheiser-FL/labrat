@@ -378,14 +378,28 @@ export default function App() {
     safeLocalStorage.setItem('labrat_reminder_time', time);
   };
 
+  /** Post a message to the service worker so it calls self.showNotification()
+   *  — guarantees an OS-level banner on Android and iOS PWA (not tray-only) */
+  const fireOSNotification = (title: string, body: string, tag = 'labrat-notification') => {
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.ready.then((reg) => {
+      if (reg.active) {
+        reg.active.postMessage({
+          type: 'SHOW_NOTIFICATION',
+          payload: { title, body, tag, icon: '/icon_192.png', badge: '/icon_96.png' },
+        });
+      }
+    }).catch(() => {});
+  };
+
   const firePhysicalNotification = () => {
     setTestStatus('triggered');
     setTimeout(() => setTestStatus('idle'), 4000);
-    const title = '🔬 LabRat Administrator Alert';
-    const options = { body: 'Time to record today\'s dosage checklist administrations. Live sync active!', icon: '/vitamins_icon.png', badge: '/vitamins_icon.png', vibrate: [200, 100, 200], tag: 'labrat-reminder-test', renotify: true };
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(reg => reg.showNotification(title, options).catch(() => new Notification(title, options))).catch(() => new Notification(title, options));
-    } else { new Notification(title, options); }
+    fireOSNotification(
+      '🔬 LabRat Dose Alert',
+      "Time to record today's scheduled administrations.",
+      'labrat-reminder-daily'
+    );
   };
 
   const startTestCountdown = () => {
@@ -425,7 +439,10 @@ export default function App() {
         try {
           const todayStr = new Date().toISOString().split('T')[0];
           const guardKey = `labrat_reminder_fired_${todayStr}`;
-          if (safeLocalStorage.getItem(guardKey) !== 'true') { firePhysicalNotification(); safeLocalStorage.setItem(guardKey, 'true'); }
+          if (safeLocalStorage.getItem(guardKey) !== 'true') {
+            firePhysicalNotification();
+            safeLocalStorage.setItem(guardKey, 'true');
+          }
         } catch (e) { console.warn('[Reminder] foreground fire failed', e); }
         schedule();
       }, msUntilNext());
@@ -448,15 +465,14 @@ export default function App() {
       if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
       const delay = next.getTime() - now.getTime();
       const t = setTimeout(() => {
-        const guardKey = `labrat_comp_reminder_${comp.id}_${new Date().toISOString().split('T')[0]}`;
+        const todayStr = new Date().toISOString().split('T')[0];
+        const guardKey = `labrat_comp_reminder_${comp.id}_${todayStr}`;
         if (safeLocalStorage.getItem(guardKey) === 'true') return;
-        const title = `Time for ${comp.name}`;
-        const body = `${comp.doseAmount}${comp.doseUnit} dose scheduled — log it in LabRat.`;
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.ready.then(reg => reg.showNotification(title, { body, icon: '/vitamins_icon.png', tag: `comp-${comp.id}` })).catch(() => {});
-        } else {
-          new Notification(title, { body });
-        }
+        fireOSNotification(
+          `💉 Time for ${comp.name}`,
+          `${comp.doseAmount}${comp.doseUnit} dose scheduled — open LabRat to log it.`,
+          `comp-${comp.id}`
+        );
         safeLocalStorage.setItem(guardKey, 'true');
       }, delay);
       timers.push(t);
@@ -500,6 +516,13 @@ export default function App() {
     if (prompts.length > 0) {
       setMissedDosePrompts(prompts);
       setMissedDoseIdx(0);
+      const missedTitle = prompts.length === 1
+        ? `⚠️ Missed Dose: ${prompts[0].compound.name}`
+        : `⚠️ ${prompts.length} Missed Doses Detected`;
+      const missedBody = prompts.length === 1
+        ? `No log found for ${prompts[0].date} — open LabRat to confirm.`
+        : 'Open LabRat to review and log retroactively.';
+      fireOSNotification(missedTitle, missedBody, 'labrat-missed-doses');
     }
     safeLocalStorage.setItem(checkKey, 'true');
   }, [compounds, logs]);

@@ -95,6 +95,46 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
+/* ──────────────────────────────────────────────────────────
+   OS banner notifications — triggered from the page via postMessage
+   Routing through the SW guarantees the OS shows a real banner
+   (vs. page-level Notification API which some OSes silently tray)
+   ────────────────────────────────────────────────────────── */
+self.addEventListener("message", (event) => {
+  if (!event.data || event.data.type !== "SHOW_NOTIFICATION") return;
+  const { title, body, tag, icon, badge, vibrate, data } = event.data.payload || {};
+  event.waitUntil(
+    self.registration.showNotification(title || "LabRat", {
+      body: body || "",
+      icon: icon || "/icon_192.png",
+      badge: badge || "/icon_96.png",
+      tag: tag || "labrat-notification",
+      renotify: true,
+      requireInteraction: false,
+      vibrate: vibrate || [200, 100, 200, 100, 200],
+      data: data || {},
+    })
+  );
+});
+
+/* Web Push event — for future server-side push (FCM/VAPID) */
+self.addEventListener("push", (event) => {
+  let payload = { title: "LabRat", body: "You have a new notification." };
+  try { if (event.data) payload = event.data.json(); } catch (_) {}
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body || "",
+      icon: payload.icon || "/icon_192.png",
+      badge: "/icon_96.png",
+      tag: payload.tag || "labrat-push",
+      renotify: true,
+      requireInteraction: false,
+      vibrate: [200, 100, 200, 100, 200],
+      data: payload.data || {},
+    })
+  );
+});
+
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   event.waitUntil(
