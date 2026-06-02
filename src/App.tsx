@@ -673,7 +673,7 @@ export default function App() {
     setActiveToasts(prev => [newNotif, ...prev]);
     setTimeout(() => {
       setActiveToasts(prev => prev.filter(t => t.id !== newNotif.id));
-    }, 4500);
+    }, 3500);
   };
 
   const handleSignOut = async () => {
