@@ -1,0 +1,10 @@
+node_modules/
+dist/
+lib/
+.expo/
+.turbo/
+*.tsbuildinfo
+.env
+.env.local
+apps/mobile/firebase-config.json
+apps/web/.env
