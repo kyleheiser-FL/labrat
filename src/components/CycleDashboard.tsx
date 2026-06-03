@@ -43,7 +43,20 @@ export default function CycleDashboard({
     safeLocalStorage.getItem('labrat_dashboard_disclaimer_dismissed') === 'true'
   );
   const [missedPanelExpanded, setMissedPanelExpanded] = useState(true);
-  const [dismissedMissedKeys, setDismissedMissedKeys] = useState<Set<string>>(new Set());
+  const [dismissedMissedKeys, setDismissedMissedKeys] = useState<Set<string>>(() => {
+    try {
+      const stored = safeLocalStorage.getItem('labrat_dismissed_missed_doses');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
+
+  const dismissMissedKey = (key: string) => {
+    setDismissedMissedKeys(prev => {
+      const next = new Set([...prev, key]);
+      safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify([...next]));
+      return next;
+    });
+  };
 
   const calcUnitsFromDose = (doseStr: string, comp: Compound): string => {
     const d = parseFloat(doseStr);
@@ -300,7 +313,7 @@ export default function CycleDashboard({
                         </button>
                         <button
                           type="button"
-                          onClick={() => setDismissedMissedKeys(prev => new Set([...prev, key]))}
+                          onClick={() => dismissMissedKey(key)}
                           className="p-0.5 text-slate-500 hover:text-rose-400 transition cursor-pointer"
                           aria-label="Dismiss"
                         >
