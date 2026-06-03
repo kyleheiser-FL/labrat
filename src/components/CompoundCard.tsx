@@ -3,6 +3,7 @@ import { AlertTriangle, Activity, CheckSquare, Edit, Trash2, Info, History } fro
 import { Compound, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { findShopProductMatch } from '../lib/shopHelpers';
+import { PEPTIDE_LIBRARY } from '../data/peptides';
 
 interface CompoundCardProps {
   compound: Compound;
@@ -59,6 +60,33 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
     const pctUsed = Math.min(100, (usedMg / totalVialMg) * 100);
     const lowSupply = dosesRemaining <= 3 || (100 - pctUsed) < 20;
     return { remainingMg, totalVialMg, dosesRemaining, dosesPerVial, vialMl, pctUsed, lowSupply };
+  })();
+
+  const decayLevel = (() => {
+    if (comp.isCompleted) return null;
+    const lib = PEPTIDE_LIBRARY.find(l =>
+      l.name.toLowerCase().includes(comp.name.toLowerCase().split(' ')[0]) ||
+      comp.name.toLowerCase().includes(l.name.toLowerCase().split(' ')[0])
+    );
+    if (!lib?.halfLife) return null;
+    const hl = lib.halfLife;
+    let hlHours: number | null = null;
+    const hourMatch = hl.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*h/i);
+    if (hourMatch) { const lo = parseFloat(hourMatch[1]); const hi = hourMatch[2] ? parseFloat(hourMatch[2]) : lo; hlHours = (lo + hi) / 2; }
+    if (!hlHours) {
+      const dayMatch = hl.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*days?/i);
+      if (dayMatch) { const lo = parseFloat(dayMatch[1]); const hi = dayMatch[2] ? parseFloat(dayMatch[2]) : lo; hlHours = ((lo + hi) / 2) * 24; }
+    }
+    if (!hlHours) return null;
+    const lastLog = [...compLogs].sort((a, b) =>
+      new Date(`${b.date}T${b.time || '12:00'}`).getTime() - new Date(`${a.date}T${a.time || '12:00'}`).getTime()
+    )[0];
+    if (!lastLog) return null;
+    const hoursSince = (Date.now() - new Date(`${lastLog.date}T${lastLog.time || '12:00'}`).getTime()) / (1000 * 60 * 60);
+    const level = Math.max(0, Math.pow(0.5, hoursSince / hlHours) * 100);
+    const timeLabel = hoursSince < 24 ? `${hoursSince.toFixed(0)}h ago` : `${(hoursSince / 24).toFixed(1)}d ago`;
+    const status = level < 25 ? 'low' : level > 80 ? 'peak' : 'therapeutic';
+    return { level, timeLabel, hlHours, status, halfLife: lib.halfLife };
   })();
 
   return (
@@ -193,6 +221,34 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
               <div className="h-full rounded-full transition-all" style={{ width: `${oilSupply.pctUsed}%`, backgroundColor: oilSupply.lowSupply ? '#f87171' : '#22d3ee' }} />
             </div>
             <span>{oilSupply.dosesRemaining} dose{oilSupply.dosesRemaining === 1 ? '' : 's'} remaining (~{oilSupply.dosesPerVial.toFixed(1)} per {oilSupply.vialMl}ml vial){oilSupply.lowSupply ? ' — running low, consider reordering' : ''}</span>
+          </div>
+        )}
+
+        {decayLevel && (
+          <div className="bg-indigo-950/20 border border-indigo-500/15 p-2.5 rounded-xl space-y-1.5">
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="font-semibold text-indigo-300 flex items-center gap-1">
+                <Activity className="w-3 h-3" /> Active Level
+              </span>
+              <span className="font-mono text-slate-400">
+                {decayLevel.level.toFixed(0)}% · last dose {decayLevel.timeLabel}
+              </span>
+            </div>
+            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${decayLevel.level}%`,
+                  backgroundColor: decayLevel.status === 'low' ? '#f87171' : decayLevel.status === 'peak' ? comp.color : '#f59e0b'
+                }}
+              />
+            </div>
+            <div className="flex justify-between text-[9px] font-mono text-slate-600">
+              <span>½-life: {decayLevel.halfLife}</span>
+              <span className={decayLevel.status === 'low' ? 'text-rose-400' : decayLevel.status === 'peak' ? 'text-emerald-400' : 'text-amber-400'}>
+                {decayLevel.status === 'low' ? '⚠ Low — consider redosing' : decayLevel.status === 'peak' ? '● Peak active range' : '● Therapeutic range'}
+              </span>
+            </div>
           </div>
         )}
 
