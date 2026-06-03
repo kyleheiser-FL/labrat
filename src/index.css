@@ -11,12 +11,16 @@ body,
 #root {
   margin: 0;
   min-height: 100%;
+  min-height: 100dvh;
   background: #030712;
   color-scheme: dark;
 }
 
 body {
   margin: 0;
+  /* Extend dark background into bottom safe area (iOS home indicator / Android nav bar) */
+  padding-bottom: env(safe-area-inset-bottom);
+  background-color: #030712;
 }
 
 /* html always stays dark — prevents white bleed through status bar safe area.
@@ -24,6 +28,7 @@ body {
 html {
   background: #030712 !important;
   color-scheme: dark !important;
+  min-height: 100dvh;
 }
 
 html:not(.dark) body {
