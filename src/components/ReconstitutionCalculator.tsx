@@ -493,7 +493,7 @@ export default function ReconstitutionCalculator({
           
           <div className="mt-3.5 flex items-center gap-1.5 text-xs text-slate-400 text-center w-full justify-center">
             <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-            <span>Draw the plunger of a <strong>{syringeSize} Units ({(syringeSize * 0.01).toFixed(1)} cc / ml)</strong> syringe to exactly the <strong>{requiredUnits}</strong> unit mark.</span>
+            <span>Draw the plunger of a <strong>{syringeSize} Units ({(syringeSize * 0.01).toFixed(1)} cc / ml)</strong> syringe to exactly the <strong>{requiredUnits}</strong> unit mark <span className="text-cyan-400 font-mono font-bold">(= {(requiredUnits * 0.01).toFixed(2)} ml)</span>.</span>
           </div>
         </div>
       </div>
