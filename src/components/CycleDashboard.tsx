@@ -190,6 +190,10 @@ export default function CycleDashboard({
     return missed;
   }, [compounds, logs, todayStr]);
 
+  const visibleMissedCount = missedDoses.filter(
+    m => !dismissedMissedKeys.has(`${m.compound.id}-${m.date}`)
+  ).length;
+
   const handleAdministerDose = (comp: Compound) => {
     if (logs.some(l => l.compoundId === comp.id && l.date === selectedDate)) return;
 
@@ -238,8 +242,8 @@ export default function CycleDashboard({
             <div><strong>{scheduledCompounds.length}</strong><span>Scheduled</span></div>
             <div><strong>{logs.filter(l => l.date === selectedDate).length}</strong><span>Logged</span></div>
             <div><strong>{compounds.filter(c => !c.isCompleted).length}</strong><span>Active</span></div>
-            {missedDoses.length > 0 && (
-              <div className="missed-metric"><strong>{missedDoses.length}</strong><span>Missed</span></div>
+            {visibleMissedCount > 0 && (
+              <div className="missed-metric"><strong>{visibleMissedCount}</strong><span>Missed</span></div>
             )}
           </div>
         </div>
