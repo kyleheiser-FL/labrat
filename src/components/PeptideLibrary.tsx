@@ -30,11 +30,21 @@ export default function PeptideLibrary({ onAddToCycle, visibility = { filters: t
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Suggested matches list based on keyword matches (name, synonym or benefit)
+  // Sort so exact/prefix name matches appear before substring matches
   const suggestions = searchTerm.trim()
-    ? PEPTIDE_LIBRARY.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.chemicalName?.toLowerCase().includes(searchTerm.toLowerCase())
-      ).slice(0, 5)
+    ? (() => {
+        const q = searchTerm.toLowerCase();
+        const matched = PEPTIDE_LIBRARY.filter((item) =>
+          item.name.toLowerCase().includes(q) ||
+          item.chemicalName?.toLowerCase().includes(q)
+        );
+        matched.sort((a, b) => {
+          const aNameStart = a.name.toLowerCase().startsWith(q) ? 0 : 1;
+          const bNameStart = b.name.toLowerCase().startsWith(q) ? 0 : 1;
+          return aNameStart - bNameStart;
+        });
+        return matched.slice(0, 6);
+      })()
     : [];
 
   const handleSelectSuggestion = (item: LibraryItem) => {
