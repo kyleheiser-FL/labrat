@@ -239,7 +239,7 @@ export default function CycleDashboard({
             <div><strong>{logs.filter(l => l.date === selectedDate).length}</strong><span>Logged</span></div>
             <div><strong>{compounds.filter(c => !c.isCompleted).length}</strong><span>Active</span></div>
             {missedDoses.length > 0 && (
-              <div className="animate-pulse"><strong className="text-rose-400">{missedDoses.length}</strong><span className="text-rose-400">Missed</span></div>
+              <div className="missed-metric"><strong>{missedDoses.length}</strong><span>Missed</span></div>
             )}
           </div>
         </div>
