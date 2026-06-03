@@ -778,15 +778,13 @@ html[data-labrat-theme="neon"] .labrat-command-hero h2 {
 }
 
 .labrat-command-metrics {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
+  display: flex;
+  flex-wrap: nowrap;
   gap: 0.75rem;
   margin-top: 1.25rem;
-  max-width: 720px;
 }
-
 .labrat-command-metrics div {
+  flex: 0 0 auto;
   padding: 0.85rem;
   border-radius: 1.1rem;
   background: rgba(3, 7, 18, 0.42);
