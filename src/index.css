@@ -7,7 +7,13 @@
    Triggers when the 'dark' variant is ABSENT from document element.
    ========================================== */
 html,
-body,
+body {
+  margin: 0;
+  height: 100%;
+  background-color: #030712;
+  color-scheme: dark;
+}
+
 #root {
   margin: 0;
   min-height: 100%;
@@ -18,7 +24,8 @@ body,
 
 body {
   margin: 0;
-  /* Extend dark background into bottom safe area (iOS home indicator / Android nav bar) */
+  /* Extend dark background into bottom safe area (iOS home indicator / Android nav bar).
+     height: 100% + viewport-fit=cover causes Android to blend gesture bar with background. */
   padding-bottom: env(safe-area-inset-bottom);
   background-color: #030712;
 }
@@ -28,7 +35,7 @@ body {
 html {
   background: #030712 !important;
   color-scheme: dark !important;
-  min-height: 100dvh;
+  height: 100%;
 }
 
 html:not(.dark) body {
