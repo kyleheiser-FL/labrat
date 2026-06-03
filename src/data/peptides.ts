@@ -3753,7 +3753,7 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     id: 'nad-plus-direct',
     name: 'NAD+',
     chemicalName: 'Nicotinamide Adenine Dinucleotide (β-NAD⁺, Oxidized Form)',
-    category: 'peptide',
+    category: 'longevity',
     description: 'NAD+ is the master redox coenzyme present in every living cell — the central electron carrier of all mitochondrial energy metabolism (glycolysis, Krebs cycle, and oxidative phosphorylation) and the essential substrate for the SIRT1-7 sirtuin longevity enzyme family, PARP DNA repair enzymes, and CD38 calcium signaling. Administered as a subcutaneous injectable peptide, NAD+ bypasses the NMN biosynthesis conversion step entirely — delivering immediate, direct intracellular replenishment with the fastest onset and highest bioavailability of any NAD+ delivery method outside clinical IV.',
     clinicalResearch: 'Subcutaneous NAD+ injection is an increasingly adopted peptide protocol in longevity and performance medicine, offering the direct replenishment benefits of IV with far greater convenience and no infusion clinic requirement. Modern longevity research from Sinclair Lab (Harvard) and the National Institute on Aging confirms NAD+ decline of ~50% from age 20 to 60 is causal to mitochondrial dysfunction, reduced DNA repair fidelity, and the metabolic hallmarks of aging. Human peptide injection trials confirm subcutaneous delivery produces sustained intracellular NAD+ elevation for 24–72 hours per dose — improving cognitive clarity, physical energy, DNA repair capacity, and sirtuin pathway activation.',
     typicalDosage: '50 mg – 100 mg per subcutaneous injection',
