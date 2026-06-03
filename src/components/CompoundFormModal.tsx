@@ -449,11 +449,13 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                     <div className="space-y-1.5 col-span-2 sm:col-span-1">
                       <div className="flex justify-between items-center">
                         <label className="text-xs font-semibold text-slate-300">Dose Quantity</label>
-                        <button type="button" onClick={() => { triggerHaptic('light'); setShowCalcModal(true); }}
-                          className="text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-mono bg-cyan-950/45 border border-cyan-500/25 hover:border-cyan-500/45 px-2 py-0.5 rounded transition-all cursor-pointer"
-                          id="form-open-recalc-helper">
-                          <Sparkles className="w-3 h-3 text-cyan-400 animate-pulse" /> Peptide Mix Helper
-                        </button>
+                        {type !== 'peptide' && (
+                          <button type="button" onClick={() => { triggerHaptic('light'); setShowCalcModal(true); }}
+                            className="text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-mono bg-cyan-950/45 border border-cyan-500/25 hover:border-cyan-500/45 px-2 py-0.5 rounded transition-all cursor-pointer"
+                            id="form-open-recalc-helper">
+                            <Sparkles className="w-3 h-3 text-cyan-400 animate-pulse" /> Peptide Mix Helper
+                          </button>
+                        )}
                       </div>
                       <div className={`relative transition-all duration-300 rounded-xl ${type === 'peptide' ? 'border border-dashed border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-500/50 hover:bg-cyan-500/10 p-1' : ''}`}>
                         <div className="flex gap-1 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl pr-2 items-center">
@@ -466,9 +468,16 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                         </div>
                       </div>
                       {type === 'peptide' && (
-                        <p className="text-[10px] text-cyan-400 flex items-center gap-1.5 leading-normal opacity-90 mt-1">
-                          💡 Reconstitution active. Tap <span className="underline font-bold cursor-pointer hover:text-cyan-300" onClick={() => setShowCalcModal(true)}>Peptide Mix Helper</span> to calculate syringe tick marks.
-                        </p>
+                        <button
+                          type="button"
+                          onClick={() => { triggerHaptic('medium'); setShowCalcModal(true); }}
+                          id="form-open-recalc-helper"
+                          className="mt-2 w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/50 hover:bg-cyan-500/20 hover:border-cyan-400 text-cyan-300 hover:text-cyan-200 transition-all cursor-pointer shadow-[0_0_18px_rgba(34,211,238,0.18)] animate-pulse hover:animate-none"
+                        >
+                          <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
+                          <span className="text-xs font-bold font-mono tracking-wide">Open Peptide Mix Helper</span>
+                          <span className="text-[10px] text-cyan-500 font-mono hidden sm:inline">→ syringe tick marks</span>
+                        </button>
                       )}
                     </div>
 
