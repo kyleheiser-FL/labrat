@@ -26,7 +26,7 @@ interface CyclePlannerProps {
   clearActiveFromLibrary?: () => void;
   onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => void;
   labratTheme?: 'neon' | 'clinical';
-  visibility?: { gantt: boolean; pct: boolean; dataControls: boolean; };
+  visibility?: { pct: boolean; dataControls: boolean; };
 }
 
 export default function CyclePlanner({
@@ -44,7 +44,7 @@ export default function CyclePlanner({
   clearActiveFromLibrary,
   onNavigateToTab,
   labratTheme = 'neon',
-  visibility = { gantt: true, pct: true, dataControls: true }
+  visibility = { pct: true, dataControls: true }
 }: CyclePlannerProps) {
   const protocolIcon = (name: string) => `/protocol-icons/${name}-${labratTheme === 'clinical' ? 'clinical' : 'neon'}.svg`;
 

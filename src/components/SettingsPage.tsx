@@ -42,7 +42,6 @@ const SEGMENT_CONFIG: Record<PageTab, { key: string; label: string }[]> = {
     { key: 'history', label: 'Admin Ledger' },
   ],
   planner: [
-    { key: 'gantt', label: 'Bio-Timeline Gantt' },
     { key: 'pct', label: 'PCT Advisor' },
     { key: 'dataControls', label: 'Data Controls' },
   ],
