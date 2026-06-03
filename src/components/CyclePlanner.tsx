@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
   Info, Activity, Shield, Apple, Sun, Heart, CheckSquare, History, Clock,
@@ -136,6 +136,14 @@ export default function CyclePlanner({
       setImportError(`Failed parsing JSON: ${err?.message || 'Syntax error'}`);
     }
   };
+
+  useEffect(() => {
+    if (activeFromLibrary) {
+      setEditingCompound(null);
+      setFormPrefill(null);
+      setShowForm(true);
+    }
+  }, [activeFromLibrary]);
 
   const openFormNew = () => {
     setEditingCompound(null); setFormPrefill(null); setShowForm(true);
