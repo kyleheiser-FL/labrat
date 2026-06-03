@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Activity, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
 import SyringeVisual from './SyringeVisual';
@@ -171,6 +171,23 @@ export default function CycleDashboard({
     .map(comp => ({ compound: comp, ...getDoseScheduleForDate(comp, selectedDate) }))
     .filter(item => item.isDue);
 
+  // Missed doses: past 7 days (excluding today), scheduled but not logged
+  const missedDoses = useMemo(() => {
+    const missed: { compound: Compound; date: string; weekNo: number }[] = [];
+    for (let d = 1; d <= 7; d++) {
+      const dt = new Date(todayStr + 'T00:00:00');
+      dt.setDate(dt.getDate() - d);
+      const dateStr = dt.toISOString().split('T')[0];
+      compounds.filter(c => !c.isCompleted).forEach(comp => {
+        const { isDue, weekNo } = getDoseScheduleForDate(comp, dateStr);
+        if (isDue && !logs.some(l => l.compoundId === comp.id && l.date === dateStr)) {
+          missed.push({ compound: comp, date: dateStr, weekNo });
+        }
+      });
+    }
+    return missed;
+  }, [compounds, logs, todayStr]);
+
   const handleAdministerDose = (comp: Compound) => {
     if (logs.some(l => l.compoundId === comp.id && l.date === selectedDate)) return;
 
@@ -219,12 +236,52 @@ export default function CycleDashboard({
             <div><strong>{scheduledCompounds.length}</strong><span>Scheduled</span></div>
             <div><strong>{logs.filter(l => l.date === selectedDate).length}</strong><span>Logged</span></div>
             <div><strong>{compounds.filter(c => !c.isCompleted).length}</strong><span>Active</span></div>
+            {missedDoses.length > 0 && (
+              <div className="animate-pulse"><strong className="text-rose-400">{missedDoses.length}</strong><span className="text-rose-400">Missed</span></div>
+            )}
           </div>
         </div>
         <div className="labrat-command-hero-art" aria-hidden="true">
           <img src={labratTheme === 'clinical' ? '/labrat_hero_rat_dark.png' : '/labrat_top_left_logo_transparent.png'} alt="" />
         </div>
       </section>
+
+      {/* Missed Doses Alert Panel */}
+      {missedDoses.length > 0 && (
+        <div className="bg-rose-500/10 border border-rose-500/35 rounded-2xl p-4 shadow-lg" id="missed-doses-alert">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertCircle className="w-4 h-4 text-rose-400 animate-pulse shrink-0" />
+            <span className="text-sm font-bold text-rose-300">
+              {missedDoses.length} Missed {missedDoses.length === 1 ? 'Dose' : 'Doses'} — Last 7 Days
+            </span>
+          </div>
+          <div className="space-y-1.5">
+            {missedDoses.map((m, i) => {
+              const dt = new Date(m.date + 'T00:00:00');
+              const dayLabel = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+              return (
+                <div key={i} className="flex items-center justify-between bg-rose-500/5 border border-rose-500/20 rounded-xl px-3 py-2 text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-2 h-2 rounded-full bg-rose-400 shrink-0 animate-pulse" />
+                    <span className="font-bold text-slate-200 truncate">{m.compound.name}</span>
+                    <span className="text-slate-500 font-mono text-[10px] shrink-0">Wk {m.weekNo}</span>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-rose-400 font-mono text-[10px]">{dayLabel}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDate(m.date)}
+                      className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 bg-cyan-950/40 border border-cyan-500/25 hover:border-cyan-500/50 px-2 py-0.5 rounded-lg transition cursor-pointer"
+                    >
+                      Log It
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {!disclaimerDismissed && (
         <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg backdrop-blur-sm" id="dashboard-legal-banner">
