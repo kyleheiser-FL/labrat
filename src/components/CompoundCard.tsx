@@ -81,11 +81,11 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
     const lastLog = [...compLogs].sort((a, b) =>
       new Date(`${b.date}T${b.time || '12:00'}`).getTime() - new Date(`${a.date}T${a.time || '12:00'}`).getTime()
     )[0];
-    if (!lastLog) return null;
+    if (!lastLog) return { level: null, timeLabel: null, hlHours, status: 'unlogged' as const, halfLife: lib.halfLife };
     const hoursSince = (Date.now() - new Date(`${lastLog.date}T${lastLog.time || '12:00'}`).getTime()) / (1000 * 60 * 60);
     const level = Math.max(0, Math.pow(0.5, hoursSince / hlHours) * 100);
     const timeLabel = hoursSince < 24 ? `${hoursSince.toFixed(0)}h ago` : `${(hoursSince / 24).toFixed(1)}d ago`;
-    const status = level < 25 ? 'low' : level > 80 ? 'peak' : 'therapeutic';
+    const status = level < 25 ? 'low' as const : level > 80 ? 'peak' as const : 'therapeutic' as const;
     return { level, timeLabel, hlHours, status, halfLife: lib.halfLife };
   })();
 
@@ -231,23 +231,29 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
                 <Activity className="w-3 h-3" /> Active Level
               </span>
               <span className="font-mono text-slate-400">
-                {decayLevel.level.toFixed(0)}% · last dose {decayLevel.timeLabel}
+                {decayLevel.status === 'unlogged'
+                  ? 'No doses logged yet'
+                  : `${decayLevel.level!.toFixed(0)}% · last dose ${decayLevel.timeLabel}`}
               </span>
             </div>
-            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: `${decayLevel.level}%`,
-                  backgroundColor: decayLevel.status === 'low' ? '#f87171' : decayLevel.status === 'peak' ? comp.color : '#f59e0b'
-                }}
-              />
-            </div>
+            {decayLevel.status !== 'unlogged' && (
+              <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${decayLevel.level}%`,
+                    backgroundColor: decayLevel.status === 'low' ? '#f87171' : decayLevel.status === 'peak' ? comp.color : '#f59e0b'
+                  }}
+                />
+              </div>
+            )}
             <div className="flex justify-between text-[9px] font-mono text-slate-600">
               <span>½-life: {decayLevel.halfLife}</span>
-              <span className={decayLevel.status === 'low' ? 'text-rose-400' : decayLevel.status === 'peak' ? 'text-emerald-400' : 'text-amber-400'}>
-                {decayLevel.status === 'low' ? '⚠ Low — consider redosing' : decayLevel.status === 'peak' ? '● Peak active range' : '● Therapeutic range'}
-              </span>
+              {decayLevel.status !== 'unlogged' && (
+                <span className={decayLevel.status === 'low' ? 'text-rose-400' : decayLevel.status === 'peak' ? 'text-emerald-400' : 'text-amber-400'}>
+                  {decayLevel.status === 'low' ? '⚠ Low — consider redosing' : decayLevel.status === 'peak' ? '● Peak active range' : '● Therapeutic range'}
+                </span>
+              )}
             </div>
           </div>
         )}
