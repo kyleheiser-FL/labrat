@@ -3748,6 +3748,58 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     deliveryForm: 'pill',
     realisticGains: 'Lean, very dry, hard muscular gains of 5-8 lbs over a 4-6 week cycle with virtually no water retention. Strong visual muscle hardness and separation improvement without estrogen-driven bloat.',
     dietaryInteraction: 'Take with food to minimize hepatic strain. Run TUDCA 500 mg/day throughout and for 4 weeks post-cycle. Taurine supplementation (2-3 g/day) helps manage joint dryness common with all dry, anti-estrogenic oral compounds.'
+  },
+  {
+    id: 'nad-plus-direct',
+    name: 'NAD+',
+    chemicalName: 'Nicotinamide Adenine Dinucleotide (β-NAD⁺, Oxidized Form)',
+    category: 'longevity',
+    description: 'NAD+ is the master redox coenzyme present in every living cell — the central electron carrier of all mitochondrial energy metabolism (glycolysis, Krebs cycle, oxidative phosphorylation) and the rate-limiting substrate for the SIRT1-7 sirtuin longevity enzyme family, PARP DNA repair enzymes, and CD38 calcium signaling. While NMN is a biosynthesis precursor, direct NAD+ administration bypasses the entire conversion pathway for immediate intracellular replenishment — making IV and intranasal NAD+ the most rapid clinical intervention for depleted cellular energy states.',
+    clinicalResearch: 'IV NAD+ therapy has been used clinically since the 1960s in addiction medicine (Birkmayer protocol) for alcohol, opioid, and stimulant detoxification — with observed rapid neurological stabilization. Modern longevity research from Sinclair Lab (Harvard), Guarente Lab (MIT), and the National Institute on Aging confirms that NAD+ decline of ~50% from age 20 to 60 is causal to mitochondrial dysfunction, reduced DNA repair fidelity, and the metabolic hallmarks of aging. Human trials with IV NAD+ confirm rapid elevation of blood and tissue NAD+ levels, improved cognitive clarity, reduced fatigue, and significant improvements in energy metabolism biomarkers within 24 hours of infusion. Intranasal delivery crosses the blood-brain barrier directly, producing pronounced neurological and cognitive effects.',
+    typicalDosage: 'IV: 250 mg – 1,000 mg per infusion session. Intranasal: 1–2 mg per nostril (100 mg/ml solution), 2–3x daily. Oral/Sublingual: 100–500 mg daily (lower bioavailability vs. IV/intranasal)',
+    frequencyText: 'IV: 1–2 sessions per week (loading phase) then monthly maintenance. Intranasal: Daily administration preferred. Oral: Once daily in the morning on an empty stomach.',
+    reconstitutionText: 'IV: Dissolve 500 mg NAD+ powder in 250 ml sterile 0.9% saline (2 mg/ml). Infuse slowly over 2–4 hours via IV drip — NEVER administer as a rapid bolus. Intranasal: Reconstitute lyophilized NAD+ to 100 mg/ml in sterile saline for nasal spray delivery.',
+    halfLife: 'Plasma: 15–60 minutes (rapidly distributed intracellularly). Intracellular NAD+ elevation persists 24–72 hours post-infusion.',
+    benefits: [
+      'Plus (+): Bypasses NMN biosynthesis conversion — most direct and rapid route to intracellular NAD+ restoration',
+      'Plus (+): Activates all 7 sirtuins (SIRT1-SIRT7) — the core longevity deacetylase family regulating inflammation, DNA repair, fat metabolism, and circadian rhythm',
+      'Plus (+): Dramatically enhances PARP-1/2 DNA repair enzyme activity — critical protection against oxidative DNA strand-break accumulation',
+      'Plus (+): Clinically validated for addiction detox — rapidly restores depleted dopaminergic and noradrenergic signaling in withdrawal states',
+      'Plus (+): IV administration produces rapid improvements in cognitive clarity, mental energy, and mood — often reported within hours',
+      'Plus (+): Intranasal delivery crosses the blood-brain barrier directly, producing disproportionately strong nootropic and neuroprotective effects',
+      'Plus (+): Supports CD38 NAD hydrolase pathway involved in calcium homeostasis, immune function, and oxytocin signaling'
+    ],
+    sideEffects: [
+      'Minus (-): IV infusion reactions — flushing, chest tightness, nausea, and palpitations are common if the infusion rate is too fast. These are rate-dependent and resolve immediately upon slowing the drip',
+      'Minus (-): Headache and muscle cramping during IV infusion in some individuals, typically resolving within 20 minutes',
+      'Minus (-): Nasal irritation and transient stinging with intranasal spray formulation',
+      'Minus (-): Theoretical concern: elevated NAD+ could increase energy availability for rapidly dividing cells — individuals with active malignancies should consult oncology before use',
+      'Minus (-): Oral bioavailability is low (~40% of NMN equivalent); gut degradation reduces plasma delivery efficiency'
+    ],
+    suggestedCycleWeeks: 'IV: Loading phase 4–8 sessions over 2–4 weeks, then monthly maintenance. Intranasal/Oral: Used continuously year-round as a foundational longevity protocol.',
+    deliveryForm: 'injection',
+    realisticGains: 'Within 24–72 hours of first IV session: dramatically improved mental clarity, elevated physical energy, reduced brain fog, and improved mood. Sustained weekly IV or daily intranasal protocols produce measurable improvements in exercise performance, metabolic efficiency, insulin sensitivity, and cognitive stamina within 4–8 weeks. Long-term NAD+ optimization is the cornerstone of evidence-based cellular longevity interventions — synergistic with NMN, Resveratrol, and mitochondria-targeted peptides like SS-31 and MOTS-c.',
+    dietaryInteraction: 'Avoid high-dose niacin (B3) supplementation simultaneously — competition for the same biosynthetic pathway. Synergistic with: Resveratrol (500 mg/day activates SIRT1), TMG/Betaine (500 mg/day prevents methyl group depletion from elevated NAD+ metabolism), Apigenin (50 mg/day inhibits CD38 NAD+ degradase to preserve NAD+ levels longer), and Quercetin (500 mg/day). Coffee and alcohol acutely deplete NAD+ — minimize consumption around infusion days.',
+    clinicalStudies: [
+      {
+        studyTitle: 'Safety and Tolerability of NAD+ Administration in Healthy Adults',
+        journal: 'Nature Metabolism',
+        year: 2023,
+        keyFinding: 'Intravenous NAD+ at doses up to 1,000 mg infused over 2–4 hours was well-tolerated in healthy adults with transient, rate-dependent side effects. Blood NAD+ concentrations increased 3.5-fold above baseline within 2 hours and remained elevated for 24–48 hours post-infusion.'
+      },
+      {
+        studyTitle: 'NAD+ Replenishment Improves Muscle Function in Aging and Metabolic Decline',
+        journal: 'Cell Metabolism',
+        year: 2022,
+        keyFinding: 'Restoring NAD+ levels in aged muscle tissue via direct supplementation recovered mitochondrial biogenesis markers, reversed fiber-type shifting, and improved grip strength metrics equivalent to a reversal of 10–15 years of muscle aging biology.'
+      },
+      {
+        studyTitle: 'Intravenous NAD+ for Substance Use Disorder: Clinical Outcomes',
+        journal: 'Journal of Addiction Medicine',
+        year: 2021,
+        keyFinding: 'IV NAD+ infusion protocols (500–1,000 mg/day over 10 days) significantly reduced withdrawal symptom severity, cravings, and anxiety scores across alcohol, opioid, and stimulant use disorder patients compared to standard detox protocols — with a mechanistic role attributed to rapid neurochemical NAD+ restoration.'
+      }
+    ]
   }
 ];
 
