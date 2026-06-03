@@ -7,7 +7,7 @@ interface GanttTimelineProps {
   compounds: Compound[];
 }
 
-function ganttElapsedWeek(comp: Compound): number {
+export function ganttElapsedWeek(comp: Compound): number {
   const start = new Date(comp.startDate + 'T00:00:00');
   const today = new Date();
   const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -16,13 +16,13 @@ function ganttElapsedWeek(comp: Compound): number {
   return Math.min(comp.durationWeeks, Math.floor(elapsed / 7) + 1);
 }
 
-function ganttLibraryItem(comp: Compound) {
+export function ganttLibraryItem(comp: Compound) {
   return PEPTIDE_LIBRARY.find(
     item => item.id === comp.id || item.name.toLowerCase() === comp.name.toLowerCase()
   );
 }
 
-function ganttPhaseInfo(comp: Compound, week: number) {
+export function ganttPhaseInfo(comp: Compound, week: number) {
   const lib = ganttLibraryItem(comp);
   const ratio = week / comp.durationWeeks;
   const fallbackGains = lib?.realisticGains || 'Observational adjustments in wellness parameters, strength markers, and cellular efficiency.';

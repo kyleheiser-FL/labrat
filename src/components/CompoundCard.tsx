@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { AlertTriangle, Activity, CheckSquare, Edit, Trash2, Info, History } from 'lucide-react';
+import { AlertTriangle, Activity, CheckSquare, Edit, Trash2, Info, History, ChevronDown, ChevronUp } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { findShopProductMatch } from '../lib/shopHelpers';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
+import { ganttElapsedWeek, ganttLibraryItem, ganttPhaseInfo } from './GanttTimeline';
 
 interface CompoundCardProps {
   compound: Compound;
@@ -17,6 +18,8 @@ interface CompoundCardProps {
 
 export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, onUpdateCompound, onOpenRetroLog, onNavigateToTab }: CompoundCardProps) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
+  const [phaseExpanded, setPhaseExpanded] = useState(false);
 
   const start = new Date(comp.startDate + 'T00:00:00');
   const today = new Date();
@@ -261,6 +264,102 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
         {comp.notes && (
           <p className="text-[11px] text-slate-400 italic bg-[#1e293b]/20 p-2.5 rounded-xl border border-slate-800/80">&ldquo;{comp.notes}&rdquo;</p>
         )}
+
+        {/* Mini week timeline strip */}
+        {!comp.isCompleted && (() => {
+          const elapsedWk = ganttElapsedWeek(comp);
+          const activeWk = selectedWeek ?? elapsedWk;
+          const weeks = Array.from({ length: comp.durationWeeks }, (_, i) => i + 1);
+          const phase = ganttPhaseInfo(comp, activeWk);
+          const libItem = ganttLibraryItem(comp);
+          return (
+            <div className="space-y-2">
+              <div className="overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin scrollbar-thumb-slate-800">
+                <div className="flex gap-1.5 min-w-max">
+                  {weeks.map(w => {
+                    const isCurrent = w === elapsedWk;
+                    const isSelected = w === activeWk;
+                    const isInitiation = w <= 2;
+                    const isPeak = w > 2 && w <= Math.round(comp.durationWeeks * 0.7);
+                    const phaseLabel = isInitiation ? 'Onset' : isPeak ? 'Peak' : 'Late';
+                    return (
+                      <button
+                        key={w}
+                        type="button"
+                        onClick={() => { setSelectedWeek(w); setPhaseExpanded(true); }}
+                        className="relative flex flex-col items-center justify-between rounded-lg border text-[9px] font-mono py-1.5 px-2 min-w-[36px] transition-all cursor-pointer hover:scale-105 select-none"
+                        style={
+                          isSelected
+                            ? { backgroundColor: `${comp.color}25`, borderColor: comp.color, color: '#f8fafc', boxShadow: `0 0 8px ${comp.color}30` }
+                            : { backgroundColor: `${comp.color}08`, borderColor: `${comp.color}20`, color: '#94a3b8' }
+                        }
+                      >
+                        {isCurrent && (
+                          <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400" />
+                          </span>
+                        )}
+                        <span className="font-bold text-[9px]">{w}</span>
+                        <span className="text-[8px] opacity-70 mt-0.5">{phaseLabel}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Phase detail — collapsible */}
+              <button
+                type="button"
+                onClick={() => setPhaseExpanded(v => !v)}
+                className="w-full flex items-center justify-between text-[10px] font-mono text-slate-500 hover:text-slate-300 transition px-0.5 cursor-pointer"
+              >
+                <span>Wk {activeWk} — {phase.title}</span>
+                {phaseExpanded ? <ChevronUp className="w-3 h-3 shrink-0" /> : <ChevronDown className="w-3 h-3 shrink-0" />}
+              </button>
+
+              {phaseExpanded && (
+                <div className="bg-[#101b2e]/60 border border-slate-800/60 rounded-xl p-3.5 space-y-3 text-xs">
+                  <p className="text-slate-400 leading-relaxed">{phase.description}</p>
+                  <div className="bg-[#0f172a]/40 border border-[#1e293b]/40 p-2.5 rounded-lg">
+                    <span className="text-[9px] text-cyan-400 font-mono font-bold uppercase tracking-wider block mb-1">Expected Outcomes</span>
+                    <p className="text-slate-300 leading-relaxed text-[11px]">{phase.results}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-emerald-950/20 border border-emerald-500/15 p-2.5 rounded-lg space-y-1">
+                      <span className="text-[9px] text-emerald-400 font-bold uppercase tracking-wider block">✓ Target Results</span>
+                      <ul className="space-y-1">
+                        {phase.benefits.map((b, i) => (
+                          <li key={i} className="text-[10px] text-slate-300 flex gap-1.5"><span className="text-emerald-400 shrink-0">•</span>{b}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="bg-rose-950/20 border border-rose-500/15 p-2.5 rounded-lg space-y-1">
+                      <span className="text-[9px] text-rose-400 font-bold uppercase tracking-wider block">⚠ Warnings</span>
+                      <ul className="space-y-1">
+                        {phase.warnings.map((w, i) => (
+                          <li key={i} className="text-[10px] text-slate-300 flex gap-1.5"><span className="text-rose-400 shrink-0">•</span>{w}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  {phase.diet && (
+                    <div className="flex items-start gap-1.5 text-[10px] text-slate-400 pt-1 border-t border-slate-800/40">
+                      <Info className="w-3 h-3 text-cyan-400 shrink-0 mt-0.5" />
+                      <span><strong className="text-slate-300">Diet:</strong> {phase.diet}</span>
+                    </div>
+                  )}
+                  {libItem?.halfLife && (
+                    <div className="flex gap-3 text-[9px] font-mono text-slate-500 pt-1 border-t border-slate-800/40">
+                      <span>½-life: {libItem.halfLife}</span>
+                      <span>Form: {comp.steroidForm || comp.type}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         <div className="pt-2.5 border-t border-slate-800/40 mt-1 flex justify-end">
           <button type="button" onClick={() => { triggerHaptic('light'); onOpenRetroLog(comp.id); }}

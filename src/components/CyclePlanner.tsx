@@ -1,13 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
-  Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
+  Plus, Trash2, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
   Info, Activity, Shield, Apple, Sun, Heart, CheckSquare, History, Clock,
   Layers, X
 } from 'lucide-react';
 import { Compound, LibraryItem, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
-import GanttTimeline from './GanttTimeline';
 import CompoundCard from './CompoundCard';
 import CompoundFormModal from './CompoundFormModal';
 import RetroactiveLogModal from './RetroactiveLogModal';
@@ -312,16 +311,6 @@ export default function CyclePlanner({
       )}
 
       {/* Gantt Chart */}
-      {visibility.gantt && (
-        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="gantt-chart-card">
-          <div className="flex items-center gap-2 border-b border-[#1e293b]/60 pb-3 mb-5">
-            <Calendar className="w-4.5 h-4.5 text-cyan-400" />
-            <span className="text-sm font-bold text-slate-200">Compound Timeline Visualizer</span>
-          </div>
-          <GanttTimeline compounds={compounds} />
-        </div>
-      )}
-
       {/* Compound Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="compounds-list-grid">
         {compounds.map((comp) => (
