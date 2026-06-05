@@ -62,7 +62,7 @@ import { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption } fro
 import { SAMPLE_INVENTORY } from '../data/shopInventory';
 export type { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption };
 export { findShopProductMatch, getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice } from '../lib/shopHelpers';
-import { getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress, getProductBaseAndSize } from '../lib/shopHelpers';
+import { getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, getKitSellPrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress, getProductBaseAndSize } from '../lib/shopHelpers';
 import ShopCartView from './shop/ShopCartView';
 import ShopCheckoutView from './shop/ShopCheckoutView';
 import ShopOrdersView from './shop/ShopOrdersView';
@@ -134,6 +134,7 @@ export default function MembersShop() {
 
   const isAdminUser = currentUser?.email?.toLowerCase() === 'kyleheiser@gmail.com';
   const isViewingAsAdmin = isAdminUser && !isAdminPreviewCustomer;
+  const isKitPricing = memberProfile?.status === 'kit';
 
   // Application Layout Views
   // Users view: 'catalog' | 'cart' | 'checkout' | 'orders' | 'status_check'
@@ -672,7 +673,7 @@ export default function MembersShop() {
   };
 
   // Admin approval mechanics
-  const handleSetMemberStatus = async (userId: string, status: 'pending' | 'approved' | 'blocked') => {
+  const handleSetMemberStatus = async (userId: string, status: 'pending' | 'approved' | 'blocked' | 'kit') => {
     triggerHaptic('light');
     setActionLoading(`member_${userId}_${status}`);
     try {
@@ -892,7 +893,12 @@ export default function MembersShop() {
   // Get total items and checkout price
   const getCartTotals = () => {
     const totalQty = cart.reduce((acc, item) => acc + item.quantity, 0);
-    const subtotal = cart.reduce((acc, item) => acc + (getSalePrice(item.product.price) * item.quantity), 0);
+    const subtotal = cart.reduce((acc, item) => {
+      const price = isKitPricing
+        ? (getKitSellPrice(item.product.name) || item.product.price)
+        : getSalePrice(item.product.price);
+      return acc + price * item.quantity;
+    }, 0);
     return { totalQty, subtotal };
   };
 
@@ -929,7 +935,9 @@ export default function MembersShop() {
       items: cart.map(item => ({
         id: item.product.id,
         name: item.product.name,
-        price: getSalePrice(item.product.price),
+        price: isKitPricing
+          ? (getKitSellPrice(item.product.name) || item.product.price)
+          : getSalePrice(item.product.price),
         quantity: item.quantity
       })),
       total: subtotal + shippingCost + salesTax,
@@ -1364,6 +1372,7 @@ export default function MembersShop() {
               onSetShowNorwayModal={setShowNorwayModal}
               onSetSelectedCertKey={setSelectedCertKey}
               allOrdersGlobal={allOrdersGlobal}
+              isKitPricing={isKitPricing}
             />
           )}
           {/* USER SHOPPING CART VIEW */}
@@ -1373,6 +1382,7 @@ export default function MembersShop() {
               subtotal={subtotal}
               totalQty={totalQty}
               shippingForm={shippingForm}
+              isKitPricing={isKitPricing}
               onAdjustQuantity={handleAdjustQuantity}
               onRemoveFromCart={handleRemoveFromCart}
               onSetView={setView}
@@ -1495,6 +1505,7 @@ export default function MembersShop() {
           confirmDeleteProductId={confirmDeleteProductId}
           onSetConfirmDeleteProductId={setConfirmDeleteProductId}
           onDeleteProduct={handleDeleteProduct}
+          isKitPricing={isKitPricing}
         />
       )}
 

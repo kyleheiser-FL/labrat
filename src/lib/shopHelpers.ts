@@ -282,10 +282,9 @@ export function parseShippingAddress(addressStr: string) {
   return result;
 }
 
-export function getProductCostPerVial(name: string, basePrice: number): number {
-  const norm = name.toLowerCase();
+// Returns the raw Kaos Labs kit cost (10 vials, no shipping). 0 = unrecognised product.
+function resolveKitCost(norm: string): number {
   let kitCost = 0;
-
   if (norm.includes('bacteriostatic water') || norm.includes('bac water')) {
     if (norm.includes('10ml')) kitCost = 150;
     else kitCost = 125;
@@ -402,10 +401,20 @@ export function getProductCostPerVial(name: string, basePrice: number): number {
     kitCost = 185;
   } else if (norm.includes('kpv')) {
     kitCost = 205;
-  } else {
-    kitCost = Math.round(basePrice * 0.45 * 10);
   }
+  return kitCost;
+}
 
+// Kit sell price: Kaos kit cost × 12.7% markup (anchored to Reta 30mg: $315→$355)
+export function getKitSellPrice(name: string): number {
+  const raw = resolveKitCost(name.toLowerCase());
+  if (!raw) return 0;
+  return Math.round(raw * (355 / 315));
+}
+
+export function getProductCostPerVial(name: string, basePrice: number): number {
+  const norm = name.toLowerCase();
+  const kitCost = resolveKitCost(norm) || Math.round(basePrice * 0.45 * 10);
   const baseCostPerVial = kitCost / 10;
   const shippingChargePerVial = 3.50;
   return Number((baseCostPerVial + shippingChargePerVial).toFixed(2));

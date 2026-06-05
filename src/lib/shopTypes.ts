@@ -12,7 +12,7 @@ export interface MemberProfile {
   id: string;
   email: string;
   displayName: string;
-  status: 'pending' | 'approved' | 'blocked';
+  status: 'pending' | 'approved' | 'blocked' | 'kit';
   shippingAddress: string;
   phone: string;
   createdAt: any;

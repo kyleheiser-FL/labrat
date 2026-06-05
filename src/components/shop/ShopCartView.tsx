@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem } from '../../lib/shopTypes';
-import { getSalePrice } from '../../lib/shopHelpers';
+import { getSalePrice, getKitSellPrice } from '../../lib/shopHelpers';
 
 interface ShopCartViewProps {
   cart: CartItem[];
@@ -13,6 +13,7 @@ interface ShopCartViewProps {
     state: string;
     [key: string]: string;
   };
+  isKitPricing?: boolean;
   onAdjustQuantity: (productId: string, delta: number) => void;
   onRemoveFromCart: (productId: string) => void;
   onSetView: (v: string) => void;
@@ -23,10 +24,13 @@ export default function ShopCartView({
   subtotal,
   totalQty,
   shippingForm,
+  isKitPricing = false,
   onAdjustQuantity,
   onRemoveFromCart,
   onSetView,
 }: ShopCartViewProps) {
+  const effectivePrice = (item: CartItem) =>
+    isKitPricing ? (getKitSellPrice(item.product.name) || item.product.price) : getSalePrice(item.product.price);
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -66,11 +70,18 @@ export default function ShopCartView({
                   <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{item.product.category}</span>
                   <h4 className="text-sm font-bold text-white tracking-tight mt-0.5">{item.product.name}</h4>
                   <div className="flex items-center gap-1.5 mt-1 sm:mt-0.5 flex-wrap">
-                    <span className="text-[10px] text-slate-500 line-through">${item.product.price}.00</span>
-                    <span className="text-xs text-cyan-400 font-semibold inline-block mt-0.5">${getSalePrice(item.product.price)}.00 per vial</span>
-                    <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
-                      {item.product.category === 'Reconstitution Solvents' ? '30ml Volume' : '3ml Volume'}
+                    {!isKitPricing && <span className="text-[10px] text-slate-500 line-through">${item.product.price}.00</span>}
+                    <span className="text-xs text-cyan-400 font-semibold inline-block mt-0.5">
+                      ${effectivePrice(item)}.00 {isKitPricing ? 'per kit · 10 vials' : 'per vial'}
                     </span>
+                    {isKitPricing && (
+                      <span className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">Kit Rate</span>
+                    )}
+                    {!isKitPricing && (
+                      <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
+                        {item.product.category === 'Reconstitution Solvents' ? '30ml Volume' : '3ml Volume'}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -94,7 +105,7 @@ export default function ShopCartView({
 
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-extrabold text-white w-16 text-right">
-                      ${getSalePrice(item.product.price) * item.quantity}.00
+                      ${effectivePrice(item) * item.quantity}.00
                     </span>
                     <button
                       onClick={() => onRemoveFromCart(item.product.id)}
@@ -115,7 +126,7 @@ export default function ShopCartView({
       <div className="lg:col-span-1">
         {cart.length > 0 && (() => {
           const nonBacItems = cart.filter(item => item.product.id !== 'prod_bac_water_30ml');
-          const nonBacSubtotal = nonBacItems.reduce((sum, item) => sum + (getSalePrice(item.product.price) * item.quantity), 0);
+          const nonBacSubtotal = nonBacItems.reduce((sum, item) => sum + (effectivePrice(item) * item.quantity), 0);
           const isFreeShippingEligible = nonBacSubtotal >= 100;
           const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
           const salesTaxRate = 0.06;
