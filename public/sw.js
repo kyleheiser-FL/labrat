@@ -33,7 +33,7 @@ _messaging.onBackgroundMessage((payload) => {
   });
 });
 
-const CACHE_NAME = "labrat-pwa-v9-black-statusbar";
+const CACHE_NAME = "labrat-pwa-v10";
 const APP_SHELL = [
   "/",
   "/index.html",
