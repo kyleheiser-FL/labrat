@@ -1185,38 +1185,42 @@ export default function MembersShop() {
 
       {/* Admin control bar — only visible to admins */}
       {isAdminUser && (
-        <div className="bg-red-950/20 border border-red-500/20 rounded-xl px-3 py-2 flex items-center gap-2 overflow-x-auto scrollbar-hide" id="admin-control-bar">
-          <span className="text-[9px] font-black uppercase tracking-widest text-red-400 shrink-0">Admin</span>
-          <div className="w-px h-4 bg-red-500/20 shrink-0" />
-          <button
-            onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('admin_members'); }}
-            className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative ${view === 'admin_members' && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
-          >
-            <Users className="w-3 h-3" /> Members
-            {pendingApprovalCount > 0 && (
-              <span className="min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-red-500 text-white text-[9px] font-black leading-none flex items-center justify-center animate-pulse">
-                {pendingApprovalCount > 99 ? '99+' : pendingApprovalCount}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('admin_orders'); }}
-            className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative ${view === 'admin_orders' && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
-          >
-            <ClipboardList className="w-3 h-3" /> Orders
-            {newOrderCount > 0 && (
-              <span className="min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-black leading-none flex items-center justify-center animate-pulse">
-                {newOrderCount > 99 ? '99+' : newOrderCount}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('catalog'); }}
-            className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${['catalog', 'admin_products'].includes(view) && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
-          >
-            Products
-          </button>
-          <div className="ml-auto shrink-0 flex items-center gap-1 bg-slate-900/60 border border-slate-800 rounded-xl p-0.5">
+        <div className="bg-red-950/20 border border-red-500/20 rounded-xl px-3 py-2 flex flex-col gap-2" id="admin-control-bar">
+          {/* Row 1: nav tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+            <span className="text-[9px] font-black uppercase tracking-widest text-red-400 shrink-0">Admin</span>
+            <div className="w-px h-4 bg-red-500/20 shrink-0" />
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('admin_members'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative shrink-0 ${view === 'admin_members' && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
+            >
+              <Users className="w-3 h-3" /> Members
+              {pendingApprovalCount > 0 && (
+                <span className="min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-red-500 text-white text-[9px] font-black leading-none flex items-center justify-center animate-pulse">
+                  {pendingApprovalCount > 99 ? '99+' : pendingApprovalCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('admin_orders'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative shrink-0 ${view === 'admin_orders' && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
+            >
+              <ClipboardList className="w-3 h-3" /> Orders
+              {newOrderCount > 0 && (
+                <span className="min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-black leading-none flex items-center justify-center animate-pulse">
+                  {newOrderCount > 99 ? '99+' : newOrderCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('catalog'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer shrink-0 ${['catalog', 'admin_products'].includes(view) && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
+            >
+              Products
+            </button>
+          </div>
+          {/* Row 2: view toggle pill — always fully visible */}
+          <div className="flex items-center gap-1 bg-slate-900/60 border border-slate-800 rounded-xl p-0.5 self-start">
             <button
               onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); setIsAdminPreviewKit(false); navigateView('admin_members'); }}
               className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
