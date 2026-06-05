@@ -87,23 +87,58 @@ export default function AdminMembersPanel({
               </div>
 
               <div className="flex flex-wrap items-center justify-end gap-2 self-end md:self-center shrink-0">
-                {member.status !== 'approved' && (
-                  <button
-                    onClick={() => onSetMemberStatus(member.id, 'approved')}
-                    disabled={actionLoading !== null}
-                    className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <UserCheck className="w-3.5 h-3.5" /> Approve
-                  </button>
-                )}
-                {member.status !== 'kit' && (
+                {/* Pending members get two approval options; others get a toggle */}
+                {member.status === 'pending' ? (
+                  <>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'approved')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <UserCheck className="w-3.5 h-3.5" /> Approve (Per Vial)
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'kit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-cyan-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Package className="w-3.5 h-3.5" /> Approve (Kit)
+                    </button>
+                  </>
+                ) : member.status === 'approved' ? (
                   <button
                     onClick={() => onSetMemberStatus(member.id, 'kit')}
                     disabled={actionLoading !== null}
                     className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Package className="w-3.5 h-3.5" /> Kit Pricing
+                    <Package className="w-3.5 h-3.5" /> Switch to Kit
                   </button>
+                ) : member.status === 'kit' ? (
+                  <button
+                    onClick={() => onSetMemberStatus(member.id, 'approved')}
+                    disabled={actionLoading !== null}
+                    className="px-3 py-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-bold rounded-lg cursor-pointer border border-emerald-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <UserCheck className="w-3.5 h-3.5" /> Switch to Per Vial
+                  </button>
+                ) : (
+                  /* blocked — show both approval options */
+                  <>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'approved')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <UserCheck className="w-3.5 h-3.5" /> Restore (Per Vial)
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'kit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Package className="w-3.5 h-3.5" /> Restore (Kit)
+                    </button>
+                  </>
                 )}
                 {member.status !== 'blocked' && (
                   <button

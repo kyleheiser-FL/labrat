@@ -522,8 +522,8 @@ export default function MembersShop() {
   };
 
   useEffect(() => {
-    // Only load catalog if the user is verified/approved or an Admin
-    if (isAdminUser || (memberProfile && memberProfile.status === 'approved')) {
+    // Only load catalog if the user is verified/approved/kit or an Admin
+    if (isAdminUser || (memberProfile && (memberProfile.status === 'approved' || memberProfile.status === 'kit'))) {
       fetchProducts();
     }
   }, [memberProfile, isAdminUser]);
@@ -587,7 +587,7 @@ export default function MembersShop() {
         list.push({ id: docSnap.id, ...docSnap.data() } as MemberProfile);
       });
       list.sort((a, b) => {
-        const rank: Record<MemberProfile['status'], number> = { pending: 0, approved: 1, blocked: 2 };
+        const rank: Record<MemberProfile['status'], number> = { pending: 0, approved: 1, kit: 2, blocked: 3 };
         const statusRank = rank[a.status] - rank[b.status];
         if (statusRank !== 0) return statusRank;
         return (b.updatedAt || b.createdAt || '').toString().localeCompare((a.updatedAt || a.createdAt || '').toString());
@@ -1134,7 +1134,7 @@ export default function MembersShop() {
           </h1>
 
           {/* Customer nav — same for everyone including admin-in-preview */}
-          {(memberProfile?.status === 'approved' || isAdminUser) && (
+          {(memberProfile?.status === 'approved' || memberProfile?.status === 'kit' || isAdminUser) && (
             <div className="flex items-center gap-1 w-full bg-slate-950 p-1 rounded-xl border border-slate-800 mt-2">
               <button
                 onClick={() => { triggerHaptic('light'); navigateView('catalog'); }}
