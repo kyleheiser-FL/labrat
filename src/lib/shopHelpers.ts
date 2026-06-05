@@ -350,14 +350,22 @@ export function getProductCostPerVial(name: string, basePrice: number): number {
     if (norm.includes('10mg')) kitCost = 100;
     else kitCost = 70;
   } else if (norm.includes('klow')) {
-    kitCost = 180;
+    kitCost = 310;
+  } else if (norm.includes('glow') && (norm.includes('ghk') || norm.includes('bpc') || norm.includes('tb500') || norm.includes('tb-500'))) {
+    kitCost = 295;
   } else if (norm.includes('ghk-cu') || norm.includes('copper peptide')) {
     if (norm.includes('100mg')) kitCost = 280;
     else if (norm.includes('50mg')) kitCost = 185;
     else kitCost = 80;
-  } else if (norm.includes('melanotan')) {
+  } else if (norm.includes('melanotan ii') || norm.includes('melanotan 2')) {
     if (norm.includes('20mg')) kitCost = 310;
     else kitCost = 195;
+  } else if (norm.includes('melanotan')) {
+    kitCost = 200;
+  } else if (norm.includes('mazdutide')) {
+    kitCost = 295;
+  } else if (norm.includes('igf-1') || norm.includes('igf1')) {
+    kitCost = 315;
   } else if (norm.includes('pt-141') || norm.includes('bremelanotide')) {
     if (norm.includes('20mg')) kitCost = 310;
     else kitCost = 195;
@@ -392,6 +400,8 @@ export function getProductCostPerVial(name: string, basePrice: number): number {
     kitCost = 170;
   } else if (norm.includes('lemon bottle')) {
     kitCost = 185;
+  } else if (norm.includes('kpv')) {
+    kitCost = 205;
   } else {
     kitCost = Math.round(basePrice * 0.45 * 10);
   }
