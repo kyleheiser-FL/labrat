@@ -104,6 +104,7 @@ export default function MembersShop() {
   };
 
   const [isAdminPreviewCustomer, setIsAdminPreviewCustomer] = useState(false);
+  const [isAdminPreviewKit, setIsAdminPreviewKit] = useState(false);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -134,7 +135,7 @@ export default function MembersShop() {
 
   const isAdminUser = currentUser?.email?.toLowerCase() === 'kyleheiser@gmail.com';
   const isViewingAsAdmin = isAdminUser && !isAdminPreviewCustomer;
-  const isKitPricing = memberProfile?.status === 'kit';
+  const isKitPricing = memberProfile?.status === 'kit' || (isAdminUser && isAdminPreviewKit);
 
   // Application Layout Views
   // Users view: 'catalog' | 'cart' | 'checkout' | 'orders' | 'status_check'
@@ -1186,17 +1187,32 @@ export default function MembersShop() {
           >
             Products
           </button>
-          <button
-            onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(!isAdminPreviewCustomer); navigateView('catalog'); }}
-            className={`ml-auto shrink-0 px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border ${
-              isAdminPreviewCustomer
-                ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                : 'text-slate-400 border-transparent hover:text-cyan-300 hover:bg-cyan-500/10'
-            }`}
-          >
-            <ShoppingBag className="w-3 h-3" />
-            {isAdminPreviewCustomer ? 'Customer View: ON' : 'Preview as Customer'}
-          </button>
+          <div className="ml-auto shrink-0 flex items-center gap-1 bg-slate-900/60 border border-slate-800 rounded-xl p-0.5">
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); setIsAdminPreviewKit(false); navigateView('admin_members'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+                !isAdminPreviewCustomer && !isAdminPreviewKit ? 'bg-red-500/20 text-red-300' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              Admin
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(false); navigateView('catalog'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                isAdminPreviewCustomer && !isAdminPreviewKit ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              <ShoppingBag className="w-3 h-3" /> Standard
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(true); navigateView('catalog'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                isAdminPreviewKit ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              <Package className="w-3 h-3" /> Kit
+            </button>
+          </div>
         </div>
       )}
 
