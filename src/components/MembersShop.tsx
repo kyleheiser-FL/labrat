@@ -133,6 +133,8 @@ export default function MembersShop() {
     return () => unsubscribe();
   }, []);
 
+  const [memberProfile, setMemberProfile] = useState<MemberProfile | null>(null);
+
   const isAdminUser = currentUser?.email?.toLowerCase() === 'kyleheiser@gmail.com';
   const isViewingAsAdmin = isAdminUser && !isAdminPreviewCustomer;
   const isKitPricing = memberProfile?.status === 'kit' || (isAdminUser && isAdminPreviewKit);
@@ -179,7 +181,6 @@ export default function MembersShop() {
   }, [isAdminUser, isAdminPreviewCustomer]);
   
   // Database States
-  const [memberProfile, setMemberProfile] = useState<MemberProfile | null>(null);
   const [products, setProducts] = useState<ShopProduct[]>([]);
   const [allOrdersGlobal, setAllOrdersGlobal] = useState<OrderDetail[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<Record<string, string>>({});
