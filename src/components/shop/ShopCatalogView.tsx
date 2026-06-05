@@ -573,7 +573,7 @@ export default function ShopCatalogView({
                           {group.options.map(opt => {
                             const isSelected = activeProdId === opt.id;
                             const optStock = getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal);
-                            const isInStock = optStock > 0;
+                            const isInStock = isKitPricing || optStock > 0;
                             return (
                               <button
                                 key={opt.id}
