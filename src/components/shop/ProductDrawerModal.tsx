@@ -222,13 +222,13 @@ export default function ProductDrawerModal({
                   </div>
 
                   {(() => {
-                    const available = getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
+                    const available = isKitPricing ? 999 : getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
                     return (
                       <div className="flex items-center gap-1.5 text-xs">
                         <span className="text-slate-400">Inventory:</span>
                         {available > 0 ? (
                           <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
-                            {available} vials in stock
+                            {isKitPricing ? 'In Stock' : `${available} vials in stock`}
                           </span>
                         ) : (
                           <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
@@ -317,7 +317,7 @@ export default function ProductDrawerModal({
                   onClick={() => {
                     triggerHaptic('light');
                     const activeOpt = selectedParentProductGroup?.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup?.options[0];
-                    const available = activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0;
+                    const available = isKitPricing ? 999 : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
                     setDrawerQuantity((prev: number) => Math.min(available, prev + 1));
                   }}
                   className="p-1 px-1.5 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-white transition-all cursor-pointer"

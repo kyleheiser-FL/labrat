@@ -7,6 +7,8 @@ import AdministrationLedger from './AdministrationLedger';
 import CycleProgressCard from './CycleProgressCard';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
+import { db, auth } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface CycleDashboardProps {
   compounds: Compound[];
@@ -50,10 +52,31 @@ export default function CycleDashboard({
     } catch { return new Set(); }
   });
 
+  // On mount, merge Firestore-persisted dismissals so they survive localStorage clears
+  React.useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) return;
+    getDoc(doc(db, 'users', user.uid)).then(snap => {
+      if (!snap.exists()) return;
+      const remote: string[] = snap.data().dismissedMissedDoses || [];
+      if (remote.length === 0) return;
+      setDismissedMissedKeys(prev => {
+        const next = new Set([...prev, ...remote]);
+        safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify([...next]));
+        return next;
+      });
+    }).catch(() => {});
+  }, []);
+
   const dismissMissedKey = (key: string) => {
     setDismissedMissedKeys(prev => {
       const next = new Set([...prev, key]);
-      safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify([...next]));
+      const arr = [...next];
+      safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify(arr));
+      const user = auth.currentUser;
+      if (user) {
+        setDoc(doc(db, 'users', user.uid), { dismissedMissedDoses: arr }, { merge: true }).catch(() => {});
+      }
       return next;
     });
   };

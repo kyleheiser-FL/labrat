@@ -544,10 +544,10 @@ export default function ShopCatalogView({
                           <span className="text-[11px] ml-auto">
                             {(() => {
                               const activeOpt = group.options.find(o => o.id === activeProdId) || firstOption;
-                              const activeOptStock = activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0;
+                              const activeOptStock = isKitPricing ? 999 : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
                               return activeOptStock > 0 ? (
                                 <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> {activeOptStock} vials in stock
+                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> {isKitPricing ? 'In Stock' : `${activeOptStock} vials in stock`}
                                 </span>
                               ) : (
                                 <span className="text-amber-400 font-semibold flex items-center gap-1">
@@ -607,7 +607,7 @@ export default function ShopCatalogView({
                     {(() => {
                       const activeProduct = group.options.find(o => o.id === activeProdId) || firstOption;
                       if (!activeProduct) return null;
-                      const isOutOfStock = getProductAvailableStock(activeProduct.id, activeProduct.inventory, allOrdersGlobal) <= 0;
+                      const isOutOfStock = !isKitPricing && getProductAvailableStock(activeProduct.id, activeProduct.inventory, allOrdersGlobal) <= 0;
 
                       return (
                         <div className="bg-slate-950 border-t border-[#1e293b]/70 p-4 flex items-center justify-between gap-4">

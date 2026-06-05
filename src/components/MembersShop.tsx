@@ -402,8 +402,9 @@ export default function MembersShop() {
 
   // Unified available stock computer (takes base product stock and subtracting quantities from active orders)
   function getProductAvailableStock(prodId: string, baseInventory: number): number {
+    if (isKitPricing) return 999;
     let stock = baseInventory;
-    
+
     allOrdersGlobal.forEach(order => {
       const item = order.items?.find((i: any) => i.id === prodId);
       if (item) {
