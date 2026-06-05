@@ -1886,7 +1886,7 @@ export default function MembersShop() {
             exit={{ scale: 0, opacity: 0, y: 20 }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             onClick={() => { triggerHaptic('light'); navigateView('cart'); }}
-            className="fixed bottom-6 right-4 z-[999] flex items-center gap-2.5 px-4 py-3 bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-slate-950 font-black text-sm rounded-2xl shadow-xl shadow-cyan-500/30 cursor-pointer transition-colors"
+            className="fixed bottom-6 left-4 z-[999] flex items-center gap-2.5 px-4 py-3 bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-slate-950 font-black text-sm rounded-2xl shadow-xl shadow-cyan-500/30 cursor-pointer transition-colors"
           >
             <ShoppingCart className="w-4 h-4" />
             <span>View Cart</span>
