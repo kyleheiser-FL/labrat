@@ -1875,6 +1875,27 @@ export default function MembersShop() {
         selectedCertKey={selectedCertKey}
         onClose={() => setSelectedCertKey(null)}
       />
+
+      {/* FLOATING CART BUTTON — appears when cart has items and user isn't already on cart/checkout */}
+      <AnimatePresence>
+        {totalQty > 0 && !['cart', 'checkout'].includes(view) && !selectedParentProductGroup && (
+          <motion.button
+            key="floating-cart"
+            initial={{ scale: 0, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0, opacity: 0, y: 20 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            onClick={() => { triggerHaptic('light'); navigateView('cart'); }}
+            className="fixed bottom-6 right-4 z-[999] flex items-center gap-2.5 px-4 py-3 bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-slate-950 font-black text-sm rounded-2xl shadow-xl shadow-cyan-500/30 cursor-pointer transition-colors"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            <span>View Cart</span>
+            <span className="bg-slate-950/20 text-slate-950 text-[11px] font-black px-2 py-0.5 rounded-full min-w-[1.4rem] text-center">
+              {totalQty}
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
