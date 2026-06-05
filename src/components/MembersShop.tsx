@@ -293,7 +293,8 @@ export default function MembersShop() {
   // Registration / Join Waitlist inputs
   const [joinForm, setJoinForm] = useState({
     shippingAddress: '',
-    phone: ''
+    phone: '',
+    pricingPreference: 'vial' as 'vial' | 'kit'
   });
 
   // Shipping details for checkout inputs
@@ -649,6 +650,7 @@ export default function MembersShop() {
         email: currentUser.email || '',
         displayName: currentUser.displayName || 'Anonymous LabRat',
         status: 'pending',
+        pricingPreference: joinForm.pricingPreference,
         shippingAddress: joinForm.shippingAddress,
         phone: joinForm.phone,
         createdAt: new Date().toISOString(),
@@ -1306,6 +1308,32 @@ export default function MembersShop() {
                   onChange={(e) => setJoinForm(prev => ({ ...prev, phone: e.target.value }))}
                   className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-xl text-sm focus:outline-none transition-all"
                 />
+              </div>
+
+              {/* Pricing Preference */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Preferred Pricing Model</label>
+                <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">How would you like to purchase? Per-vial lets you order any quantity; kit pricing is 10 vials at a time at a lower rate.</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setJoinForm(prev => ({ ...prev, pricingPreference: 'vial' }))}
+                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.pricingPreference === 'vial' ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
+                  >
+                    <span className={`text-xs font-bold mb-1 ${joinForm.pricingPreference === 'vial' ? 'text-cyan-300' : 'text-slate-300'}`}>Per Vial</span>
+                    <span className="text-[10px] text-slate-500 leading-normal">Order any quantity, single-vial pricing with 15% member discount.</span>
+                    {joinForm.pricingPreference === 'vial' && <span className="mt-2 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Selected</span>}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setJoinForm(prev => ({ ...prev, pricingPreference: 'kit' }))}
+                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.pricingPreference === 'kit' ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
+                  >
+                    <span className={`text-xs font-bold mb-1 ${joinForm.pricingPreference === 'kit' ? 'text-cyan-300' : 'text-slate-300'}`}>Kit Pricing</span>
+                    <span className="text-[10px] text-slate-500 leading-normal">10 vials per order at a reduced kit rate. Best value for regular use.</span>
+                    {joinForm.pricingPreference === 'kit' && <span className="mt-2 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Selected</span>}
+                  </button>
+                </div>
               </div>
 
               <button

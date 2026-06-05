@@ -13,6 +13,7 @@ export interface MemberProfile {
   email: string;
   displayName: string;
   status: 'pending' | 'approved' | 'blocked' | 'kit';
+  pricingPreference?: 'vial' | 'kit';
   shippingAddress: string;
   phone: string;
   createdAt: any;

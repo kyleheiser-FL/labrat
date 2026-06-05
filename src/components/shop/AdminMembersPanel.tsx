@@ -77,6 +77,13 @@ export default function AdminMembersPanel({
                 <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-slate-500" /> {member.phone}
                 </p>
+                {member.pricingPreference && (
+                  <p className="text-[10px] text-slate-500 mt-1.5">
+                    Requested: <span className={`font-semibold ${member.pricingPreference === 'kit' ? 'text-cyan-400' : 'text-amber-400'}`}>
+                      {member.pricingPreference === 'kit' ? 'Kit Pricing (10 vials)' : 'Per Vial'}
+                    </span>
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-wrap items-center justify-end gap-2 self-end md:self-center shrink-0">
