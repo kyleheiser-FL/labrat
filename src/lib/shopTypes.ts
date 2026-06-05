@@ -14,6 +14,8 @@ export interface MemberProfile {
   displayName: string;
   status: 'pending' | 'approved' | 'blocked' | 'kit';
   pricingPreference?: 'vial' | 'kit';
+  kitUpgradeRequested?: boolean;
+  kitUpgradeRequestedAt?: string;
   shippingAddress: string;
   phone: string;
   createdAt: any;

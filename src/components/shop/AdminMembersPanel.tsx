@@ -23,6 +23,8 @@ export default function AdminMembersPanel({
   onDeleteMemberProfile,
   onSetConfirmDeleteMemberId,
 }: AdminMembersPanelProps) {
+  const kitUpgradeCount = adminMembersList.filter(m => m.kitUpgradeRequested && m.status === 'approved').length;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -31,6 +33,11 @@ export default function AdminMembersPanel({
           {pendingApprovalCount > 0 && (
             <span className="ml-1 rounded-full bg-red-500/15 border border-red-500/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-red-200">
               {pendingApprovalCount} pending
+            </span>
+          )}
+          {kitUpgradeCount > 0 && (
+            <span className="ml-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-200">
+              {kitUpgradeCount} kit request{kitUpgradeCount > 1 ? 's' : ''}
             </span>
           )}
         </h2>
@@ -55,18 +62,23 @@ export default function AdminMembersPanel({
       ) : (
         <div className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden divide-y divide-slate-800">
           {adminMembersList.map(member => (
-            <div key={member.id} className="p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:bg-slate-900/40">
+            <div key={member.id} className={`p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:bg-slate-900/40 ${member.kitUpgradeRequested && member.status === 'approved' ? 'border-l-2 border-amber-400/50' : ''}`}>
               <div>
-                <div className="flex items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2">
                   <h4 className="text-sm font-bold text-white">{member.displayName}</h4>
                   <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide ${
                     member.status === 'approved' ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' :
-                    member.status === 'kit' ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20' :
-                    member.status === 'blocked' ? 'bg-red-500/10 text-red-300 border border-red-500/20' :
-                    'bg-amber-500/10 text-amber-300 border border-amber-500/20'
+                    member.status === 'kit'      ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20' :
+                    member.status === 'blocked'  ? 'bg-red-500/10 text-red-300 border border-red-500/20' :
+                                                   'bg-amber-500/10 text-amber-300 border border-amber-500/20'
                   }`}>
                     {member.status === 'kit' ? '📦 Kit Pricing' : member.status}
                   </span>
+                  {member.kitUpgradeRequested && member.status === 'approved' && (
+                    <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide bg-amber-400/15 text-amber-300 border border-amber-400/30 animate-pulse">
+                      🔔 Wants Kit Pricing
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-slate-500" /> {member.email}
@@ -87,7 +99,6 @@ export default function AdminMembersPanel({
               </div>
 
               <div className="flex flex-wrap items-center justify-end gap-2 self-end md:self-center shrink-0">
-                {/* Pending members get two approval options; others get a toggle */}
                 {member.status === 'pending' ? (
                   <>
                     <button
@@ -109,9 +120,14 @@ export default function AdminMembersPanel({
                   <button
                     onClick={() => onSetMemberStatus(member.id, 'kit')}
                     disabled={actionLoading !== null}
-                    className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all ${
+                      member.kitUpgradeRequested
+                        ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
+                        : 'bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30'
+                    }`}
                   >
-                    <Package className="w-3.5 h-3.5" /> Switch to Kit
+                    <Package className="w-3.5 h-3.5" />
+                    {member.kitUpgradeRequested ? 'Upgrade to Kit ✓' : 'Switch to Kit'}
                   </button>
                 ) : member.status === 'kit' ? (
                   <button
@@ -122,7 +138,7 @@ export default function AdminMembersPanel({
                     <UserCheck className="w-3.5 h-3.5" /> Switch to Per Vial
                   </button>
                 ) : (
-                  /* blocked — show both approval options */
+                  /* blocked */
                   <>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'approved')}
@@ -140,6 +156,7 @@ export default function AdminMembersPanel({
                     </button>
                   </>
                 )}
+
                 {member.status !== 'blocked' && (
                   <button
                     onClick={() => onSetMemberStatus(member.id, 'blocked')}
@@ -149,6 +166,7 @@ export default function AdminMembersPanel({
                     <XCircle className="w-3.5 h-3.5" /> Restrict
                   </button>
                 )}
+
                 {confirmDeleteMemberId === member.id ? (
                   <div className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 p-1">
                     <button
