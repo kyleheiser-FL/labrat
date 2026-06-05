@@ -921,9 +921,9 @@ export default function MembersShop() {
 
     const { subtotal } = getCartTotals();
     const totalVials = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const shippingDetails = getShippingOptions(shippingForm.zipCode, totalVials, cart);
-    const selectedOption = shippingDetails.options.find(o => o.id === selectedShippingOptionId) || shippingDetails.options[0];
-    const shippingCost = selectedOption ? selectedOption.cost : 0;
+    const shippingDetails = isKitPricing ? null : getShippingOptions(shippingForm.zipCode, totalVials, cart);
+    const selectedOption = isKitPricing ? null : (shippingDetails!.options.find(o => o.id === selectedShippingOptionId) || shippingDetails!.options[0]);
+    const shippingCost = isKitPricing ? 25 : (selectedOption ? selectedOption.cost : 0);
 
     // Florida sales tax check (6.0%)
     const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
@@ -945,13 +945,13 @@ export default function MembersShop() {
       })),
       total: subtotal + shippingCost + salesTax,
       tax: salesTax,
-      shippingInfo: { 
+      shippingInfo: {
         ...shippingForm,
-        carrier: selectedOption?.carrier,
-        method: selectedOption?.name,
-        cost: selectedOption?.cost,
-        deliveryEstimate: selectedOption?.estimatedDeliveryDate,
-        weightLbs: shippingDetails.weightLbs
+        carrier: isKitPricing ? undefined : selectedOption?.carrier,
+        method: isKitPricing ? 'Kit Flat Rate' : selectedOption?.name,
+        cost: shippingCost,
+        deliveryEstimate: isKitPricing ? undefined : selectedOption?.estimatedDeliveryDate,
+        weightLbs: isKitPricing ? undefined : shippingDetails?.weightLbs
       },
       status: 'placed',
       createdAt: new Date().toISOString()
