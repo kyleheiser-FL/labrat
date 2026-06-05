@@ -1442,6 +1442,7 @@ export default function MembersShop() {
               selectedShippingOptionId={selectedShippingOptionId}
               shippingCarrierFilter={shippingCarrierFilter}
               actionLoading={actionLoading}
+              isKitPricing={isKitPricing}
               onSetShippingForm={setShippingForm}
               onSetShippingCarrierFilter={setShippingCarrierFilter}
               onSetSelectedShippingOptionId={setSelectedShippingOptionId}
