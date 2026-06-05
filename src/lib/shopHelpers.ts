@@ -287,11 +287,10 @@ export function getProductCostPerVial(name: string, basePrice: number): number {
   let kitCost = 0;
 
   if (norm.includes('bacteriostatic water') || norm.includes('bac water')) {
-    if (norm.includes('10ml')) kitCost = 125;
-    else if (norm.includes('3ml')) kitCost = 125;
+    if (norm.includes('10ml')) kitCost = 150;
     else kitCost = 125;
   } else if (norm.includes('bpc-157') && norm.includes('tb-500') && norm.includes('blend')) {
-    if (norm.includes('20mg')) kitCost = 225;
+    if (norm.includes('20mg')) kitCost = 325;
     else kitCost = 225;
   } else if (norm.includes('bpc-157')) {
     if (norm.includes('20mg')) kitCost = 150;
@@ -310,54 +309,89 @@ export function getProductCostPerVial(name: string, basePrice: number): number {
     else if (norm.includes('10mg')) kitCost = 215;
     else kitCost = 190;
   } else if (norm.includes('tirzepatide')) {
-    if (norm.includes('100mg')) kitCost = 480;
-    else if (norm.includes('60mg')) kitCost = 350;
+    if (norm.includes('120mg')) kitCost = 525;
+    else if (norm.includes('100mg')) kitCost = 480;
+    else if (norm.includes('70mg')) kitCost = 415;
+    else if (norm.includes('60mg')) kitCost = 380;
     else if (norm.includes('50mg')) kitCost = 300;
-    else if (norm.includes('30mg')) kitCost = 220;
-    else if (norm.includes('20mg')) kitCost = 160;
-    else if (norm.includes('15mg')) kitCost = 130;
-    else kitCost = 100;
+    else if (norm.includes('40mg')) kitCost = 329;
+    else if (norm.includes('30mg')) kitCost = 300;
+    else if (norm.includes('20mg')) kitCost = 255;
+    else if (norm.includes('15mg')) kitCost = 215;
+    else kitCost = 185;
   } else if (norm.includes('semaglutide')) {
     if (norm.includes('60mg')) kitCost = 320;
     else if (norm.includes('50mg')) kitCost = 280;
-    else if (norm.includes('30mg')) kitCost = 190;
-    else if (norm.includes('20mg')) kitCost = 150;
-    else if (norm.includes('10mg')) kitCost = 100;
+    else if (norm.includes('30mg')) kitCost = 240;
+    else if (norm.includes('20mg')) kitCost = 210;
+    else if (norm.includes('15mg')) kitCost = 185;
+    else if (norm.includes('10mg')) kitCost = 160;
     else kitCost = 65;
   } else if (norm.includes('cjc-1295') && norm.includes('ipamorelin')) {
     if (norm.includes('20mg')) kitCost = 200;
-    else kitCost = 130;
+    else kitCost = 255;
   } else if (norm.includes('cjc-1295')) {
-    if (norm.includes('20mg')) kitCost = 120;
-    else kitCost = 80;
+    if (norm.includes('10mg')) kitCost = 320;
+    else kitCost = 295;
   } else if (norm.includes('ipamorelin')) {
-    if (norm.includes('20mg')) kitCost = 130;
-    else kitCost = 85;
+    if (norm.includes('10mg')) kitCost = 270;
+    else kitCost = 195;
   } else if (norm.includes('tesamorelin')) {
-    if (norm.includes('20mg')) kitCost = 180;
-    else kitCost = 110;
+    if (norm.includes('10mg')) kitCost = 290;
+    else kitCost = 230;
   } else if (norm.includes('cagrilintide')) {
     if (norm.includes('20mg')) kitCost = 160;
     else if (norm.includes('10mg')) kitCost = 285;
     else kitCost = 205;
+  } else if (norm.includes('sermorelin')) {
+    if (norm.includes('10mg')) kitCost = 280;
+    else kitCost = 210;
   } else if (norm.includes('aod-9604')) {
     if (norm.includes('10mg')) kitCost = 100;
     else kitCost = 70;
   } else if (norm.includes('klow')) {
     kitCost = 180;
-  } else if (norm.includes('ghk-cu')) {
-    if (norm.includes('100mg')) kitCost = 210;
-    else if (norm.includes('50mg')) kitCost = 140;
+  } else if (norm.includes('ghk-cu') || norm.includes('copper peptide')) {
+    if (norm.includes('100mg')) kitCost = 280;
+    else if (norm.includes('50mg')) kitCost = 185;
     else kitCost = 80;
   } else if (norm.includes('melanotan')) {
-    if (norm.includes('20mg')) kitCost = 90;
-    else kitCost = 50;
-  } else if (norm.includes('pt-141')) {
-    if (norm.includes('20mg')) kitCost = 100;
-    else kitCost = 65;
+    if (norm.includes('20mg')) kitCost = 310;
+    else kitCost = 195;
+  } else if (norm.includes('pt-141') || norm.includes('bremelanotide')) {
+    if (norm.includes('20mg')) kitCost = 310;
+    else kitCost = 195;
   } else if (norm.includes('nad+')) {
-    if (norm.includes('1000mg')) kitCost = 180;
-    else kitCost = 115;
+    if (norm.includes('2000mg')) kitCost = 430;
+    else if (norm.includes('1000mg')) kitCost = 275;
+    else kitCost = 185;
+  } else if (norm.includes('mots-c')) {
+    kitCost = 255;
+  } else if (norm.includes('ss-31') || norm.includes('elamipretide')) {
+    if (norm.includes('50mg')) kitCost = 415;
+    else kitCost = 210;
+  } else if (norm.includes('thymosin alpha')) {
+    kitCost = 230;
+  } else if (norm.includes('selank')) {
+    kitCost = 210;
+  } else if (norm.includes('semax')) {
+    kitCost = 180;
+  } else if (norm.includes('epitalon')) {
+    if (norm.includes('50mg')) kitCost = 120;
+    else kitCost = 210;
+  } else if (norm.includes('dsip')) {
+    if (norm.includes('10mg')) kitCost = 235;
+    else kitCost = 165;
+  } else if (norm.includes('slu-pp') || norm.includes('slupp')) {
+    kitCost = 220;
+  } else if (norm.includes('snap-8')) {
+    kitCost = 185;
+  } else if (norm.includes('5-amino') || norm.includes('1mq')) {
+    kitCost = 170;
+  } else if (norm.includes('arachidonic') || norm.includes('ara ')) {
+    kitCost = 170;
+  } else if (norm.includes('lemon bottle')) {
+    kitCost = 185;
   } else {
     kitCost = Math.round(basePrice * 0.45 * 10);
   }
