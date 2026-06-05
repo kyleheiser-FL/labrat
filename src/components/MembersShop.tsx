@@ -1516,7 +1516,6 @@ export default function MembersShop() {
               onSimulateDeliveryCheck={handleSimulateDeliveryCheck}
               onDeleteOrder={handleDeleteOrder}
               onSetConfirmDeleteOrderId={setConfirmDeleteOrderId}
-              onSeedDemoOrder={handleSeedDemoOrder}
             />
           )}
 
