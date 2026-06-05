@@ -41,19 +41,20 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, auth } from '../firebase';
-import { 
-  collection, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
   where,
   addDoc,
   serverTimestamp,
-  writeBatch
+  writeBatch,
+  onSnapshot
 } from 'firebase/firestore';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
@@ -338,47 +339,52 @@ export default function MembersShop() {
     inventory: 50
   });
 
-  // Fetch Member Profile Approval status from firestore
+  // Live-subscribe to member profile so status changes (e.g. approved → kit) take effect immediately
   useEffect(() => {
     if (!currentUser) {
+      setMemberProfile(null);
       setProfileLoading(false);
       return;
     }
 
-    const fetchProfileAndInit = async () => {
-      setProfileLoading(true);
-      try {
-        const profilRef = doc(db, 'members', currentUser.uid);
-        const profilSnap = await getDoc(profilRef);
-        
-        if (profilSnap.exists()) {
-          const profileData = profilSnap.data() as MemberProfile;
+    setProfileLoading(true);
+    let formInitialized = false;
+
+    const unsubscribe = onSnapshot(
+      doc(db, 'members', currentUser.uid),
+      (snap) => {
+        setProfileLoading(false);
+        if (snap.exists()) {
+          const profileData = snap.data() as MemberProfile;
           setMemberProfile(profileData);
-          setJoinForm({
-            shippingAddress: profileData.shippingAddress || '',
-            phone: profileData.phone || ''
-          });
-          const parsed = parseShippingAddress(profileData.shippingAddress || '');
-          setShippingForm(prev => ({
-            ...prev,
-            fullName: prev.fullName || currentUser.displayName || '',
-            addressLine1: parsed.addressLine1 || '',
-            city: parsed.city || '',
-            state: parsed.state || '',
-            zipCode: parsed.zipCode || '',
-            phone: profileData.phone || prev.phone || ''
-          }));
+          if (!formInitialized) {
+            formInitialized = true;
+            setJoinForm({
+              shippingAddress: profileData.shippingAddress || '',
+              phone: profileData.phone || ''
+            });
+            const parsed = parseShippingAddress(profileData.shippingAddress || '');
+            setShippingForm(prev => ({
+              ...prev,
+              fullName: prev.fullName || currentUser.displayName || '',
+              addressLine1: parsed.addressLine1 || '',
+              city: parsed.city || '',
+              state: parsed.state || '',
+              zipCode: parsed.zipCode || '',
+              phone: profileData.phone || prev.phone || ''
+            }));
+          }
         } else {
           setMemberProfile(null);
         }
-      } catch (e) {
-        console.error('Error fetching member verification status', e);
-      } finally {
+      },
+      (e) => {
+        console.error('Error subscribing to member profile', e);
         setProfileLoading(false);
       }
-    };
+    );
 
-    fetchProfileAndInit();
+    return () => unsubscribe();
   }, [currentUser]);
 
   // Sync Cart to LocalStorage
