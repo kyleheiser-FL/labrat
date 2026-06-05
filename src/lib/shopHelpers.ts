@@ -287,25 +287,28 @@ export function getProductCostPerVial(name: string, basePrice: number): number {
   let kitCost = 0;
 
   if (norm.includes('bacteriostatic water') || norm.includes('bac water')) {
-    kitCost = 20;
+    if (norm.includes('10ml')) kitCost = 125;
+    else if (norm.includes('3ml')) kitCost = 125;
+    else kitCost = 125;
   } else if (norm.includes('bpc-157') && norm.includes('tb-500') && norm.includes('blend')) {
-    kitCost = 140;
+    if (norm.includes('20mg')) kitCost = 225;
+    else kitCost = 225;
   } else if (norm.includes('bpc-157')) {
     if (norm.includes('20mg')) kitCost = 150;
-    else if (norm.includes('10mg')) kitCost = 90;
+    else if (norm.includes('10mg')) kitCost = 185;
     else kitCost = 55;
   } else if (norm.includes('tb-500')) {
     if (norm.includes('20mg')) kitCost = 160;
-    else if (norm.includes('10mg')) kitCost = 100;
+    else if (norm.includes('10mg')) kitCost = 255;
     else kitCost = 60;
   } else if (norm.includes('retatrutide')) {
-    if (norm.includes('100mg')) kitCost = 550;
-    else if (norm.includes('60mg')) kitCost = 420;
-    else if (norm.includes('50mg')) kitCost = 360;
-    else if (norm.includes('30mg')) kitCost = 250;
-    else if (norm.includes('20mg')) kitCost = 190;
-    else if (norm.includes('10mg')) kitCost = 120;
-    else kitCost = 80;
+    if (norm.includes('100mg')) kitCost = 995;
+    else if (norm.includes('60mg')) kitCost = 555;
+    else if (norm.includes('50mg')) kitCost = 475;
+    else if (norm.includes('30mg')) kitCost = 315;
+    else if (norm.includes('20mg')) kitCost = 295;
+    else if (norm.includes('10mg')) kitCost = 215;
+    else kitCost = 190;
   } else if (norm.includes('tirzepatide')) {
     if (norm.includes('100mg')) kitCost = 480;
     else if (norm.includes('60mg')) kitCost = 350;
@@ -335,8 +338,8 @@ export function getProductCostPerVial(name: string, basePrice: number): number {
     else kitCost = 110;
   } else if (norm.includes('cagrilintide')) {
     if (norm.includes('20mg')) kitCost = 160;
-    else if (norm.includes('10mg')) kitCost = 110;
-    else kitCost = 80;
+    else if (norm.includes('10mg')) kitCost = 285;
+    else kitCost = 205;
   } else if (norm.includes('aod-9604')) {
     if (norm.includes('10mg')) kitCost = 100;
     else kitCost = 70;
