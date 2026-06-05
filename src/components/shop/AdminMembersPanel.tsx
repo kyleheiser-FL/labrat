@@ -149,15 +149,6 @@ export default function AdminMembersPanel({
                     <XCircle className="w-3.5 h-3.5" /> Restrict
                   </button>
                 )}
-                {member.status !== 'pending' && (
-                  <button
-                    onClick={() => onSetMemberStatus(member.id, 'pending')}
-                    disabled={actionLoading !== null}
-                    className="px-2 py-1.5 bg-slate-900 text-slate-400 text-xs hover:text-white rounded-lg cursor-pointer border border-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Reset
-                  </button>
-                )}
                 {confirmDeleteMemberId === member.id ? (
                   <div className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 p-1">
                     <button
