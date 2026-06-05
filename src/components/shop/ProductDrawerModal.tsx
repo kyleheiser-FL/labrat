@@ -239,9 +239,15 @@ export default function ProductDrawerModal({
               const estimatedProfit = salePrice - estimatedCost;
               const markupPercent = Math.round((estimatedProfit / estimatedCost) * 100);
 
+              const kitPrice = Math.round((estimatedCost - 3.50) * 10);
+
               return (
                 <div className="bg-amber-500/5 p-4 rounded-xl border border-amber-500/15 text-left font-mono text-xs space-y-1.5 text-amber-200">
                   <div className="text-amber-400 font-extrabold uppercase tracking-wider text-[10px]">Admin Financial Highlights</div>
+                  <div className="flex justify-between">
+                    <span>KaosLabs Kit Price (10 vials):</span>
+                    <span className="text-slate-300 font-bold">${kitPrice}</span>
+                  </div>
                   <div className="flex justify-between">
                     <span>KaosLabs Cost per Vial:</span>
                     <span className="text-slate-300 font-bold">${estimatedCost.toFixed(2)} <span className="text-[10px] text-slate-500">(+$3.50 shipping allocation)</span></span>
