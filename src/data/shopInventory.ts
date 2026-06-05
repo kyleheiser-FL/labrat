@@ -105,7 +105,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     name: 'Retatrutide (30mg)',
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
-    price: 315,
+    price: 197,
     inventory: 0
   },
   {
