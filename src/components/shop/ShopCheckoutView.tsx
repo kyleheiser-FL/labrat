@@ -168,11 +168,11 @@ export default function ShopCheckoutView({
                 </div>
                 <div className="text-left font-sans">
                   <span className="text-[9px] uppercase font-black text-slate-500 font-mono tracking-widest block">Dispatch Hub Origin</span>
-                  <span className="font-extrabold text-slate-200">Greater Tampa Bay</span>
+                  <span className="font-extrabold text-slate-200">{isKitPricing ? 'Oslo, Norway' : 'Greater Tampa Bay'}</span>
                 </div>
               </div>
               <span className="text-[9.5px] font-bold text-cyan-400 bg-cyan-950/40 border border-cyan-500/15 px-2.5 py-1 rounded-md font-mono select-none uppercase tracking-wide shrink-0">
-                📍 USA Shipping Facility
+                {isKitPricing ? '🇳🇴 Norway Warehouse' : '📍 USA Shipping Facility'}
               </span>
             </div>
 
