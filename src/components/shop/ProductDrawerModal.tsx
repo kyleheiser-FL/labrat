@@ -64,6 +64,8 @@ interface ProductDrawerModalProps {
   isKitPricing?: boolean;
   isChinaKitPricing?: boolean;
   isChinaVialPricing?: boolean;
+  isVialCustomer?: boolean;
+  isKitCustomer?: boolean;
 }
 
 export default function ProductDrawerModal({
@@ -89,7 +91,10 @@ export default function ProductDrawerModal({
   isKitPricing = false,
   isChinaKitPricing = false,
   isChinaVialPricing = false,
+  isVialCustomer = false,
+  isKitCustomer = false,
 }: ProductDrawerModalProps) {
+  const customerView = !isViewingAsAdmin && (isVialCustomer || isKitCustomer);
   const selectedParentProductGroup = group;
   const selectedOptionIdInDrawer = selectedOptionId;
   const setSelectedOptionIdInDrawer = onSetSelectedOptionId;
@@ -172,11 +177,7 @@ export default function ProductDrawerModal({
                 {selectedParentProductGroup.options.map(opt => {
                   const isSelected = selectedOptionIdInDrawer === opt.id;
                   const optStock = getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal);
-                  const isInStock = isKitPricing || isChinaKitPricing
-                    ? true
-                    : isChinaVialPricing
-                    ? isChinaVialAvailable(opt.name)
-                    : optStock > 0;
+                  const isInStock = customerView ? true : optStock > 0;
                   return (
                     <button
                       key={opt.id}
@@ -240,23 +241,30 @@ export default function ProductDrawerModal({
                   </div>
 
                   {(() => {
-                    const isFlatInStock = isKitPricing || isChinaKitPricing;
-                    const available = isFlatInStock
+                    const available = customerView
                       ? 999
-                      : isChinaVialPricing
-                      ? (isChinaVialAvailable(activeOpt.name) ? 999 : 0)
                       : getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
+                    const shipOrigin = customerView
+                      ? isChinaKitPricing
+                        ? '🇨🇳 Ships from China'
+                        : isChinaVialPricing
+                        ? (isChinaVialAvailable(activeOpt.name) ? '🇺🇸 Ships from USA' : '🇨🇳 Ships from China')
+                        : '🇳🇴 Ships from Norway'
+                      : null;
                     return (
-                      <div className="flex items-center gap-1.5 text-xs">
+                      <div className="flex items-center gap-1.5 text-xs flex-wrap">
                         <span className="text-slate-400">Inventory:</span>
                         {available > 0 ? (
                           <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
-                            {(isFlatInStock || isChinaVialPricing) ? 'In Stock' : `${available} vials in stock`}
+                            {customerView ? 'In Stock' : `${available} vials`}
                           </span>
                         ) : (
                           <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
-                            Manufacturing Phase
+                            Low Stock
                           </span>
+                        )}
+                        {shipOrigin && (
+                          <span className="text-[10px] text-slate-500 font-mono">{shipOrigin}</span>
                         )}
                       </div>
                     );
@@ -379,11 +387,8 @@ export default function ProductDrawerModal({
                   onClick={() => {
                     triggerHaptic('light');
                     const activeOpt = selectedParentProductGroup?.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup?.options[0];
-                    const isFlatInStock2 = isKitPricing || isChinaKitPricing;
-                    const available = isFlatInStock2
+                    const available = customerView
                       ? 999
-                      : isChinaVialPricing
-                      ? (activeOpt && isChinaVialAvailable(activeOpt.name) ? 999 : 0)
                       : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
                     setDrawerQuantity((prev: number) => Math.min(available, prev + 1));
                   }}
@@ -401,11 +406,8 @@ export default function ProductDrawerModal({
               const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
               if (!activeOpt) return null;
 
-              const isFlatInStock3 = isKitPricing || isChinaKitPricing;
-              const canAdd = isFlatInStock3
+              const canAdd = customerView
                 ? true
-                : isChinaVialPricing
-                ? isChinaVialAvailable(activeOpt.name)
                 : getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) > 0;
 
               const activePrice = isKitPricing

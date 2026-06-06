@@ -529,11 +529,16 @@ export function getChinaKitSellPrice(name: string): number {
   return Math.round(raw * (355 / 315));
 }
 
-// China vial sell price: per-vial cost × 12.7% markup (US warehouse cost takes priority for Retatrutide)
+// China vial sell price: per-vial cost × 12.7% markup
+// US warehouse cost (Retatrutide) is already per-vial — applied directly.
+// All other products derive per-vial price from China kit cost ÷ 10.
 export function getChinaVialSellPrice(name: string): number {
   const norm = name.toLowerCase();
   const usWarehouseCost = resolveChineseUsWarehouseCost(norm);
-  const kitCost = usWarehouseCost || resolveChineseKitCost(norm);
+  if (usWarehouseCost) {
+    return Math.round(usWarehouseCost * (355 / 315));
+  }
+  const kitCost = resolveChineseKitCost(norm);
   if (!kitCost) return 0;
   return Math.round((kitCost / 10) * (355 / 315));
 }
