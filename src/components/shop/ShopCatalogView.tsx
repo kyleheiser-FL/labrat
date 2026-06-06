@@ -133,7 +133,11 @@ export default function ShopCatalogView({
   const customerView = !isViewingAsAdmin;
   // Hide China-only products when customer is on Norway source (or non-China admin preview)
   const isChineseSource = isChinaKitPricing || isChinaVialPricing;
-  const sourceVisibleProducts = products.filter(p => !p.sourceRestriction || isChineseSource);
+  const sourceVisibleProducts = products.filter(p => {
+    if (p.sourceRestriction === 'china') return isChineseSource;
+    if (p.sourceRestriction === 'norway') return !isChineseSource;
+    return true;
+  });
 
   const categories = ['All', ...Array.from(new Set(sourceVisibleProducts.map(p => p.category)))];
 

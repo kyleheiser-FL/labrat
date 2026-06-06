@@ -461,41 +461,48 @@ function resolveChineseKitCost(norm: string): number {
     if (norm.includes('20mg')) kitCost = 165;
     else kitCost = 100;
   } else if (norm.includes('retatrutide')) {
+    // 10mg/20mg/30mg come from US warehouse — handled by resolveChineseUsWarehouseCost
     if (norm.includes('60mg')) kitCost = 325;
-    else if (norm.includes('30mg')) kitCost = 230;
-    else if (norm.includes('20mg')) kitCost = 200;
     else if (norm.includes('15mg')) kitCost = 155;
-    else kitCost = 110;
+    // 5mg, 50mg, 100mg not on China list
   } else if (norm.includes('tirzepatide')) {
     if (norm.includes('60mg')) kitCost = 195;
     else if (norm.includes('30mg')) kitCost = 135;
     else if (norm.includes('20mg')) kitCost = 110;
     else if (norm.includes('15mg')) kitCost = 95;
-    else kitCost = 75;
+    else if (norm.includes('10mg')) kitCost = 75;
+    // 5mg, 50mg, 100mg not on China list
   } else if (norm.includes('cjc-1295') && norm.includes('ipamorelin')) {
     if (norm.includes('20mg')) kitCost = 200;
-    else kitCost = 100;
+    else if (norm.includes('10mg')) kitCost = 100;
   } else if (norm.includes('cjc-1295') || (norm.includes('cjc') && norm.includes('no dac'))) {
-    kitCost = 149;
+    if (norm.includes('10mg')) kitCost = 149;
+    // 20mg not on China list
   } else if (norm.includes('ipamorelin')) {
-    kitCost = 80;
+    if (norm.includes('10mg')) kitCost = 80;
+    // 20mg not on China list
   } else if (norm.includes('tesamorelin')) {
-    kitCost = 99;
+    if (norm.includes('5mg')) kitCost = 99;
+    // 10mg, 20mg not on China list
   } else if (norm.includes('bpc-157')) {
-    kitCost = 70;
+    if (norm.includes('10mg')) kitCost = 70;
+    // 5mg, 20mg not on China list
   } else if (norm.includes('tb-500') || norm.includes('tb500')) {
-    kitCost = 69;
+    if (norm.includes('5mg')) kitCost = 69;
+    // 10mg, 20mg not on China list
   } else if (norm.includes('mots-c') || norm.includes('mots c')) {
     if (norm.includes('10mg')) kitCost = 70;
-    else kitCost = 59;
+    else if (norm.includes('5mg')) kitCost = 59;
   } else if (norm.includes('nad+') || norm.includes('nad ')) {
     if (norm.includes('1000mg')) kitCost = 140;
-    else kitCost = 75;
+    else if (norm.includes('500mg')) kitCost = 75;
   } else if (norm.includes('ghk-cu') || norm.includes('copper peptide')) {
     if (norm.includes('100mg')) kitCost = 60;
-    else kitCost = 39;
+    else if (norm.includes('50mg')) kitCost = 39;
+    // 20mg not on China list
   } else if (norm.includes('epitalon')) {
-    kitCost = 65;
+    if (norm.includes('10mg')) kitCost = 65;
+    // 50mg not on China list
   } else if (norm.includes('semax')) {
     if (norm.includes('10mg')) kitCost = 75;
     else kitCost = 55;
@@ -515,40 +522,38 @@ function resolveChineseKitCost(norm: string): number {
   return kitCost;
 }
 
-// Returns the China US warehouse kit cost override (Retatrutide only). 0 = use China kit cost.
+// Returns the US warehouse kit cost for Retatrutide (10/20/30mg only). 0 = not in US warehouse.
 function resolveChineseUsWarehouseCost(norm: string): number {
   if (norm.includes('retatrutide')) {
     if (norm.includes('30mg')) return 210;
     if (norm.includes('20mg')) return 170;
-    return 110;
+    if (norm.includes('10mg')) return 110;
   }
   return 0;
 }
 
-// China kit sell price: China lab kit cost + 25% markup
+// China kit sell price: 25% markup on US warehouse cost (if applicable) or China lab cost
 export function getChinaKitSellPrice(name: string): number {
-  const raw = resolveChineseKitCost(name.toLowerCase());
+  const norm = name.toLowerCase();
+  const raw = resolveChineseUsWarehouseCost(norm) || resolveChineseKitCost(norm);
   if (!raw) return 0;
   return Math.round(raw * 1.25);
 }
 
-// China vial sell price: per-vial cost + 25% markup
-// US warehouse cost (Retatrutide) is already per-vial — applied directly.
-// All other products derive per-vial price from China kit cost ÷ 10.
+// China vial sell price: (kit cost ÷ 10) × 1.25 markup
+// US warehouse kit costs and China kit costs are both per-kit-of-10, so divide by 10 for per-vial.
 export function getChinaVialSellPrice(name: string): number {
   const norm = name.toLowerCase();
-  const usWarehouseCost = resolveChineseUsWarehouseCost(norm);
-  if (usWarehouseCost) {
-    return Math.round(usWarehouseCost * 1.25);
-  }
-  const kitCost = resolveChineseKitCost(norm);
+  const kitCost = resolveChineseUsWarehouseCost(norm) || resolveChineseKitCost(norm);
   if (!kitCost) return 0;
   return Math.round((kitCost / 10) * 1.25);
 }
 
-// Returns true if the product is stocked in the China US warehouse (chinavial tier)
+// Returns true if the product ships from the China US warehouse (Retatrutide 10/20/30mg only)
 export function isChinaVialAvailable(name: string): boolean {
-  return name.toLowerCase().includes('retatrutide');
+  const norm = name.toLowerCase();
+  if (!norm.includes('retatrutide')) return false;
+  return norm.includes('10mg') || norm.includes('20mg') || norm.includes('30mg');
 }
 
 export function getSalePrice(price: number): number {
