@@ -1,13 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
-  Plus, Trash2, Calendar, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
+  Plus, Trash2, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
   Info, Activity, Shield, Apple, Sun, Heart, CheckSquare, History, Clock,
-  Layers, BarChart2, X
+  Layers, X
 } from 'lucide-react';
 import { Compound, LibraryItem, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
-import GanttTimeline from './GanttTimeline';
 import CompoundCard from './CompoundCard';
 import CompoundFormModal from './CompoundFormModal';
 import RetroactiveLogModal from './RetroactiveLogModal';
@@ -27,7 +26,7 @@ interface CyclePlannerProps {
   clearActiveFromLibrary?: () => void;
   onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => void;
   labratTheme?: 'neon' | 'clinical';
-  visibility?: { gantt: boolean; pct: boolean; dataControls: boolean; };
+  visibility?: { pct: boolean; dataControls: boolean; };
 }
 
 export default function CyclePlanner({
@@ -45,7 +44,7 @@ export default function CyclePlanner({
   clearActiveFromLibrary,
   onNavigateToTab,
   labratTheme = 'neon',
-  visibility = { gantt: true, pct: true, dataControls: true }
+  visibility = { pct: true, dataControls: true }
 }: CyclePlannerProps) {
   const protocolIcon = (name: string) => `/protocol-icons/${name}-${labratTheme === 'clinical' ? 'clinical' : 'neon'}.svg`;
 
@@ -136,6 +135,14 @@ export default function CyclePlanner({
       setImportError(`Failed parsing JSON: ${err?.message || 'Syntax error'}`);
     }
   };
+
+  useEffect(() => {
+    if (activeFromLibrary) {
+      setEditingCompound(null);
+      setFormPrefill(null);
+      setShowForm(true);
+    }
+  }, [activeFromLibrary]);
 
   const openFormNew = () => {
     setEditingCompound(null); setFormPrefill(null); setShowForm(true);
@@ -304,16 +311,6 @@ export default function CyclePlanner({
       )}
 
       {/* Gantt Chart */}
-      {visibility.gantt && (
-        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="gantt-chart-card">
-          <div className="flex items-center gap-2 border-b border-[#1e293b]/60 pb-3 mb-5">
-            <Calendar className="w-4.5 h-4.5 text-cyan-400" />
-            <span className="text-sm font-bold text-slate-200">Compound Timeline Visualizer</span>
-          </div>
-          <GanttTimeline compounds={compounds} />
-        </div>
-      )}
-
       {/* Compound Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="compounds-list-grid">
         {compounds.map((comp) => (
@@ -368,77 +365,6 @@ export default function CyclePlanner({
                   );
                 })}
               </div>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* Half-life Decay Visualization */}
-      {(() => {
-        const parseHalfLifeHours = (hl: string): number | null => {
-          if (!hl) return null;
-          const hourMatch = hl.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*hours?/i);
-          if (hourMatch) {
-            const lo = parseFloat(hourMatch[1]);
-            const hi = hourMatch[2] ? parseFloat(hourMatch[2]) : lo;
-            return (lo + hi) / 2;
-          }
-          const dayMatch = hl.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*days?/i);
-          if (dayMatch) {
-            const lo = parseFloat(dayMatch[1]);
-            const hi = dayMatch[2] ? parseFloat(dayMatch[2]) : lo;
-            return ((lo + hi) / 2) * 24;
-          }
-          return null;
-        };
-        const activeCompounds = compounds.filter(c => !c.isCompleted);
-        const items = activeCompounds.map(c => {
-          const lib = PEPTIDE_LIBRARY.find(l => l.name.toLowerCase().includes(c.name.toLowerCase().split(' ')[0]) || c.name.toLowerCase().includes(l.name.toLowerCase().split(' ')[0]));
-          const hlHours = lib ? parseHalfLifeHours(lib.halfLife) : null;
-          if (!hlHours) return null;
-          const compLogs = logs.filter(l => l.compoundId === c.id)
-            .sort((a, b) => new Date(`${a.date}T${a.time || '12:00'}`).getTime() - new Date(`${b.date}T${b.time || '12:00'}`).getTime());
-          const lastLog = compLogs.length > 0 ? compLogs[compLogs.length - 1] : null;
-          if (!lastLog) return null;
-          const lastDoseTime = new Date(`${lastLog.date}T${lastLog.time || '12:00'}`);
-          const hoursSince = (Date.now() - lastDoseTime.getTime()) / (1000 * 60 * 60);
-          const level = Math.max(0, Math.pow(0.5, hoursSince / hlHours) * 100);
-          return { compound: c, hlHours, hoursSince, level, lib };
-        }).filter(Boolean);
-        type DecayItem = { compound: Compound; hlHours: number; hoursSince: number; level: number; lib: typeof PEPTIDE_LIBRARY[0] };
-        const decayItems = items as DecayItem[];
-        if (decayItems.length === 0) return null;
-        return (
-          <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
-            <div className="flex items-center gap-2 border-b border-[#1e293b]/60 pb-3 mb-4">
-              <BarChart2 className="w-4 h-4 text-indigo-400" />
-              <h4 className="text-sm font-bold text-slate-200">Active Compound Levels</h4>
-              <span className="ml-auto text-[10px] text-slate-500 font-mono">Based on last dose + half-life</span>
-            </div>
-            <div className="space-y-3">
-              {decayItems.map((item) => (
-                <div key={item.compound.id}>
-                  <div className="flex items-center justify-between text-[11px] mb-1">
-                    <span className="font-semibold text-slate-300">{item.compound.name}</span>
-                    <span className="font-mono text-slate-500">
-                      {item.level.toFixed(0)}% active · last dose {item.hoursSince < 24 ? `${item.hoursSince.toFixed(0)}h ago` : `${(item.hoursSince / 24).toFixed(1)}d ago`}
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${item.level}%`,
-                        backgroundColor: item.level > 60 ? item.compound.color : item.level > 25 ? '#f59e0b' : '#f87171'
-                      }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-[9px] font-mono text-slate-600 mt-0.5">
-                    <span>Half-life: {item.lib?.halfLife}</span>
-                    <span>{item.level < 25 ? '⚠ Low — consider redosing' : item.level > 80 ? '● Peak active range' : '● Therapeutic range'}</span>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         );

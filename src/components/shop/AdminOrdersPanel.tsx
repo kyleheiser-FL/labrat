@@ -16,7 +16,6 @@ interface AdminOrdersPanelProps {
   onSimulateDeliveryCheck: (orderId: string) => void;
   onDeleteOrder: (orderId: string) => void;
   onSetConfirmDeleteOrderId: (id: string | null) => void;
-  onSeedDemoOrder: () => void;
 }
 
 export default function AdminOrdersPanel({
@@ -31,7 +30,6 @@ export default function AdminOrdersPanel({
   onSimulateDeliveryCheck,
   onDeleteOrder,
   onSetConfirmDeleteOrderId,
-  onSeedDemoOrder,
 }: AdminOrdersPanelProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -49,21 +47,6 @@ export default function AdminOrdersPanel({
             Verify physical payments, dispatch compounds, and manage cold-chain tracking.
           </div>
         </div>
-        <button
-          onClick={onSeedDemoOrder}
-          disabled={actionLoading === 'seed_order'}
-          className="px-4 py-2 bg-gradient-to-r from-red-600 to-amber-500 text-slate-950 hover:from-red-500 hover:to-amber-400 text-xs font-black rounded-xl uppercase tracking-wider shadow-[0_4px_12px_rgba(239,68,68,0.2)] disabled:opacity-50 cursor-pointer flex items-center gap-2 self-start sm:self-center transition-all hover:scale-[1.02]"
-        >
-          {actionLoading === 'seed_order' ? (
-            <>
-              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Seeding Order...
-            </>
-          ) : (
-            <>
-              🚀 Send Sample Order to KyleHeiser@gmail.com
-            </>
-          )}
-        </button>
       </div>
 
       {ordersLoading ? (
@@ -76,7 +59,7 @@ export default function AdminOrdersPanel({
           <ClipboardList className="w-12 h-12 text-slate-700 mx-auto mb-3" />
           <h3 className="text-base font-bold text-white">No orders placed on the network</h3>
           <p className="text-slate-400 text-xs mt-1 max-w-sm mx-auto">
-            Retail accounts have not requested compound dispatch yet or click "Send Sample Order" above to seed a demo.
+            Retail accounts have not requested compound dispatch yet.
           </p>
         </div>
       ) : (

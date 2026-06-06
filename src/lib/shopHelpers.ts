@@ -282,83 +282,139 @@ export function parseShippingAddress(addressStr: string) {
   return result;
 }
 
-export function getProductCostPerVial(name: string, basePrice: number): number {
-  const norm = name.toLowerCase();
+// Returns the raw Kaos Labs kit cost (10 vials, no shipping). 0 = unrecognised product.
+function resolveKitCost(norm: string): number {
   let kitCost = 0;
-
   if (norm.includes('bacteriostatic water') || norm.includes('bac water')) {
-    kitCost = 20;
+    if (norm.includes('10ml')) kitCost = 150;
+    else kitCost = 125;
   } else if (norm.includes('bpc-157') && norm.includes('tb-500') && norm.includes('blend')) {
-    kitCost = 140;
+    if (norm.includes('20mg')) kitCost = 325;
+    else kitCost = 225;
   } else if (norm.includes('bpc-157')) {
     if (norm.includes('20mg')) kitCost = 150;
-    else if (norm.includes('10mg')) kitCost = 90;
+    else if (norm.includes('10mg')) kitCost = 185;
     else kitCost = 55;
   } else if (norm.includes('tb-500')) {
     if (norm.includes('20mg')) kitCost = 160;
-    else if (norm.includes('10mg')) kitCost = 100;
+    else if (norm.includes('10mg')) kitCost = 255;
     else kitCost = 60;
   } else if (norm.includes('retatrutide')) {
-    if (norm.includes('100mg')) kitCost = 550;
-    else if (norm.includes('60mg')) kitCost = 420;
-    else if (norm.includes('50mg')) kitCost = 360;
-    else if (norm.includes('30mg')) kitCost = 250;
-    else if (norm.includes('20mg')) kitCost = 190;
-    else if (norm.includes('10mg')) kitCost = 120;
-    else kitCost = 80;
+    if (norm.includes('100mg')) kitCost = 995;
+    else if (norm.includes('60mg')) kitCost = 555;
+    else if (norm.includes('50mg')) kitCost = 475;
+    else if (norm.includes('30mg')) kitCost = 315;
+    else if (norm.includes('20mg')) kitCost = 295;
+    else if (norm.includes('10mg')) kitCost = 215;
+    else kitCost = 190;
   } else if (norm.includes('tirzepatide')) {
-    if (norm.includes('100mg')) kitCost = 480;
-    else if (norm.includes('60mg')) kitCost = 350;
+    if (norm.includes('120mg')) kitCost = 525;
+    else if (norm.includes('100mg')) kitCost = 480;
+    else if (norm.includes('70mg')) kitCost = 415;
+    else if (norm.includes('60mg')) kitCost = 380;
     else if (norm.includes('50mg')) kitCost = 300;
-    else if (norm.includes('30mg')) kitCost = 220;
-    else if (norm.includes('20mg')) kitCost = 160;
-    else if (norm.includes('15mg')) kitCost = 130;
-    else kitCost = 100;
+    else if (norm.includes('40mg')) kitCost = 329;
+    else if (norm.includes('30mg')) kitCost = 300;
+    else if (norm.includes('20mg')) kitCost = 255;
+    else if (norm.includes('15mg')) kitCost = 215;
+    else kitCost = 185;
   } else if (norm.includes('semaglutide')) {
     if (norm.includes('60mg')) kitCost = 320;
     else if (norm.includes('50mg')) kitCost = 280;
-    else if (norm.includes('30mg')) kitCost = 190;
-    else if (norm.includes('20mg')) kitCost = 150;
-    else if (norm.includes('10mg')) kitCost = 100;
+    else if (norm.includes('30mg')) kitCost = 240;
+    else if (norm.includes('20mg')) kitCost = 210;
+    else if (norm.includes('15mg')) kitCost = 185;
+    else if (norm.includes('10mg')) kitCost = 160;
     else kitCost = 65;
   } else if (norm.includes('cjc-1295') && norm.includes('ipamorelin')) {
     if (norm.includes('20mg')) kitCost = 200;
-    else kitCost = 130;
+    else kitCost = 255;
   } else if (norm.includes('cjc-1295')) {
-    if (norm.includes('20mg')) kitCost = 120;
-    else kitCost = 80;
+    if (norm.includes('10mg')) kitCost = 320;
+    else kitCost = 295;
   } else if (norm.includes('ipamorelin')) {
-    if (norm.includes('20mg')) kitCost = 130;
-    else kitCost = 85;
+    if (norm.includes('10mg')) kitCost = 270;
+    else kitCost = 195;
   } else if (norm.includes('tesamorelin')) {
-    if (norm.includes('20mg')) kitCost = 180;
-    else kitCost = 110;
+    if (norm.includes('10mg')) kitCost = 290;
+    else kitCost = 230;
   } else if (norm.includes('cagrilintide')) {
     if (norm.includes('20mg')) kitCost = 160;
-    else if (norm.includes('10mg')) kitCost = 110;
-    else kitCost = 80;
+    else if (norm.includes('10mg')) kitCost = 285;
+    else kitCost = 205;
+  } else if (norm.includes('sermorelin')) {
+    if (norm.includes('10mg')) kitCost = 280;
+    else kitCost = 210;
   } else if (norm.includes('aod-9604')) {
     if (norm.includes('10mg')) kitCost = 100;
     else kitCost = 70;
   } else if (norm.includes('klow')) {
-    kitCost = 180;
-  } else if (norm.includes('ghk-cu')) {
-    if (norm.includes('100mg')) kitCost = 210;
-    else if (norm.includes('50mg')) kitCost = 140;
+    kitCost = 310;
+  } else if (norm.includes('glow') && (norm.includes('ghk') || norm.includes('bpc') || norm.includes('tb500') || norm.includes('tb-500'))) {
+    kitCost = 295;
+  } else if (norm.includes('ghk-cu') || norm.includes('copper peptide')) {
+    if (norm.includes('100mg')) kitCost = 280;
+    else if (norm.includes('50mg')) kitCost = 185;
     else kitCost = 80;
+  } else if (norm.includes('melanotan ii') || norm.includes('melanotan 2')) {
+    if (norm.includes('20mg')) kitCost = 310;
+    else kitCost = 195;
   } else if (norm.includes('melanotan')) {
-    if (norm.includes('20mg')) kitCost = 90;
-    else kitCost = 50;
-  } else if (norm.includes('pt-141')) {
-    if (norm.includes('20mg')) kitCost = 100;
-    else kitCost = 65;
+    kitCost = 200;
+  } else if (norm.includes('mazdutide')) {
+    kitCost = 295;
+  } else if (norm.includes('igf-1') || norm.includes('igf1')) {
+    kitCost = 315;
+  } else if (norm.includes('pt-141') || norm.includes('bremelanotide')) {
+    if (norm.includes('20mg')) kitCost = 310;
+    else kitCost = 195;
   } else if (norm.includes('nad+')) {
-    if (norm.includes('1000mg')) kitCost = 180;
-    else kitCost = 115;
-  } else {
-    kitCost = Math.round(basePrice * 0.45 * 10);
+    if (norm.includes('2000mg')) kitCost = 430;
+    else if (norm.includes('1000mg')) kitCost = 275;
+    else kitCost = 185;
+  } else if (norm.includes('mots-c')) {
+    kitCost = 255;
+  } else if (norm.includes('ss-31') || norm.includes('elamipretide')) {
+    if (norm.includes('50mg')) kitCost = 415;
+    else kitCost = 210;
+  } else if (norm.includes('thymosin alpha')) {
+    kitCost = 230;
+  } else if (norm.includes('selank')) {
+    kitCost = 210;
+  } else if (norm.includes('semax')) {
+    kitCost = 180;
+  } else if (norm.includes('epitalon')) {
+    if (norm.includes('50mg')) kitCost = 120;
+    else kitCost = 210;
+  } else if (norm.includes('dsip')) {
+    if (norm.includes('10mg')) kitCost = 235;
+    else kitCost = 165;
+  } else if (norm.includes('slu-pp') || norm.includes('slupp')) {
+    kitCost = 220;
+  } else if (norm.includes('snap-8')) {
+    kitCost = 185;
+  } else if (norm.includes('5-amino') || norm.includes('1mq')) {
+    kitCost = 170;
+  } else if (norm.includes('arachidonic') || norm.includes('ara ')) {
+    kitCost = 170;
+  } else if (norm.includes('lemon bottle')) {
+    kitCost = 185;
+  } else if (norm.includes('kpv')) {
+    kitCost = 205;
   }
+  return kitCost;
+}
 
+// Kit sell price: Kaos kit cost × 12.7% markup (anchored to Reta 30mg: $315→$355)
+export function getKitSellPrice(name: string): number {
+  const raw = resolveKitCost(name.toLowerCase());
+  if (!raw) return 0;
+  return Math.round(raw * (355 / 315));
+}
+
+export function getProductCostPerVial(name: string, basePrice: number): number {
+  const norm = name.toLowerCase();
+  const kitCost = resolveKitCost(norm) || Math.round(basePrice * 0.45 * 10);
   const baseCostPerVial = kitCost / 10;
   const shippingChargePerVial = 3.50;
   return Number((baseCostPerVial + shippingChargePerVial).toFixed(2));

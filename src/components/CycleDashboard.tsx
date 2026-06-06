@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Activity, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Activity, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
 import SyringeVisual from './SyringeVisual';
 import ChecklistItem from './ChecklistItem';
@@ -7,6 +7,8 @@ import AdministrationLedger from './AdministrationLedger';
 import CycleProgressCard from './CycleProgressCard';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
+import { db, auth } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface CycleDashboardProps {
   compounds: Compound[];
@@ -42,6 +44,42 @@ export default function CycleDashboard({
   const [disclaimerDismissed, setDisclaimerDismissed] = useState(() =>
     safeLocalStorage.getItem('labrat_dashboard_disclaimer_dismissed') === 'true'
   );
+  const [missedPanelExpanded, setMissedPanelExpanded] = useState(true);
+  const [dismissedMissedKeys, setDismissedMissedKeys] = useState<Set<string>>(() => {
+    try {
+      const stored = safeLocalStorage.getItem('labrat_dismissed_missed_doses');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
+
+  // On mount, merge Firestore-persisted dismissals so they survive localStorage clears
+  React.useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) return;
+    getDoc(doc(db, 'users', user.uid)).then(snap => {
+      if (!snap.exists()) return;
+      const remote: string[] = snap.data().dismissedMissedDoses || [];
+      if (remote.length === 0) return;
+      setDismissedMissedKeys(prev => {
+        const next = new Set([...prev, ...remote]);
+        safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify([...next]));
+        return next;
+      });
+    }).catch(() => {});
+  }, []);
+
+  const dismissMissedKey = (key: string) => {
+    setDismissedMissedKeys(prev => {
+      const next = new Set([...prev, key]);
+      const arr = [...next];
+      safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify(arr));
+      const user = auth.currentUser;
+      if (user) {
+        setDoc(doc(db, 'users', user.uid), { dismissedMissedDoses: arr }, { merge: true }).catch(() => {});
+      }
+      return next;
+    });
+  };
 
   const calcUnitsFromDose = (doseStr: string, comp: Compound): string => {
     const d = parseFloat(doseStr);
@@ -171,6 +209,27 @@ export default function CycleDashboard({
     .map(comp => ({ compound: comp, ...getDoseScheduleForDate(comp, selectedDate) }))
     .filter(item => item.isDue);
 
+  // Missed doses: past 7 days (excluding today), scheduled but not logged
+  const missedDoses = useMemo(() => {
+    const missed: { compound: Compound; date: string; weekNo: number }[] = [];
+    for (let d = 1; d <= 7; d++) {
+      const dt = new Date(todayStr + 'T00:00:00');
+      dt.setDate(dt.getDate() - d);
+      const dateStr = dt.toISOString().split('T')[0];
+      compounds.filter(c => !c.isCompleted).forEach(comp => {
+        const { isDue, weekNo } = getDoseScheduleForDate(comp, dateStr);
+        if (isDue && !logs.some(l => l.compoundId === comp.id && l.date === dateStr)) {
+          missed.push({ compound: comp, date: dateStr, weekNo });
+        }
+      });
+    }
+    return missed;
+  }, [compounds, logs, todayStr]);
+
+  const visibleMissedCount = missedDoses.filter(
+    m => !dismissedMissedKeys.has(`${m.compound.id}-${m.date}`)
+  ).length;
+
   const handleAdministerDose = (comp: Compound) => {
     if (logs.some(l => l.compoundId === comp.id && l.date === selectedDate)) return;
 
@@ -219,12 +278,79 @@ export default function CycleDashboard({
             <div><strong>{scheduledCompounds.length}</strong><span>Scheduled</span></div>
             <div><strong>{logs.filter(l => l.date === selectedDate).length}</strong><span>Logged</span></div>
             <div><strong>{compounds.filter(c => !c.isCompleted).length}</strong><span>Active</span></div>
+            {visibleMissedCount > 0 && (
+              <div className="missed-metric"><strong>{visibleMissedCount}</strong><span>Missed</span></div>
+            )}
           </div>
         </div>
         <div className="labrat-command-hero-art" aria-hidden="true">
           <img src={labratTheme === 'clinical' ? '/labrat_hero_rat_dark.png' : '/labrat_top_left_logo_transparent.png'} alt="" />
         </div>
       </section>
+
+      {/* Missed Doses Alert Panel */}
+      {missedDoses.length > 0 && (() => {
+        const visibleMissed = missedDoses.filter(m => !dismissedMissedKeys.has(`${m.compound.id}-${m.date}`));
+        if (visibleMissed.length === 0) return null;
+        return (
+          <div className="bg-rose-500/10 border border-rose-500/35 rounded-2xl shadow-lg overflow-hidden" id="missed-doses-alert">
+            {/* Header row — always visible */}
+            <button
+              type="button"
+              onClick={() => setMissedPanelExpanded(v => !v)}
+              className="w-full flex items-center justify-between gap-2 px-4 py-3 cursor-pointer hover:bg-rose-500/5 transition"
+            >
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-400 animate-pulse shrink-0" />
+                <span className="text-sm font-bold text-rose-300">
+                  {visibleMissed.length} Missed {visibleMissed.length === 1 ? 'Dose' : 'Doses'} — Last 7 Days
+                </span>
+              </div>
+              {missedPanelExpanded
+                ? <ChevronUp className="w-4 h-4 text-rose-400 shrink-0" />
+                : <ChevronDown className="w-4 h-4 text-rose-400 shrink-0" />}
+            </button>
+
+            {/* Expandable list */}
+            {missedPanelExpanded && (
+              <div className="px-4 pb-4 space-y-1.5">
+                {visibleMissed.map((m) => {
+                  const key = `${m.compound.id}-${m.date}`;
+                  const dt = new Date(m.date + 'T00:00:00');
+                  const dayLabel = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                  return (
+                    <div key={key} className="flex items-center justify-between bg-rose-500/5 border border-rose-500/20 rounded-xl px-3 py-2 text-xs gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-2 h-2 rounded-full bg-rose-400 shrink-0" />
+                        <span className="font-bold text-slate-200 truncate">{m.compound.name}</span>
+                        <span className="text-slate-500 font-mono text-[10px] shrink-0">Wk {m.weekNo}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-rose-400 font-mono text-[10px]">{dayLabel}</span>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDate(m.date)}
+                          className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 bg-cyan-950/40 border border-cyan-500/25 hover:border-cyan-500/50 px-2 py-0.5 rounded-lg transition cursor-pointer"
+                        >
+                          Log It
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => dismissMissedKey(key)}
+                          className="p-0.5 text-slate-500 hover:text-rose-400 transition cursor-pointer"
+                          aria-label="Dismiss"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {!disclaimerDismissed && (
         <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg backdrop-blur-sm" id="dashboard-legal-banner">

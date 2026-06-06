@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { AlertTriangle, Activity, CheckSquare, Edit, Trash2, Info, History } from 'lucide-react';
+import { AlertTriangle, Activity, CheckSquare, Edit, Trash2, Info, History, ChevronDown, ChevronUp } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { findShopProductMatch } from '../lib/shopHelpers';
+import { PEPTIDE_LIBRARY } from '../data/peptides';
+import { ganttElapsedWeek, ganttLibraryItem, ganttPhaseInfo } from './GanttTimeline';
 
 interface CompoundCardProps {
   compound: Compound;
@@ -16,6 +18,8 @@ interface CompoundCardProps {
 
 export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, onUpdateCompound, onOpenRetroLog, onNavigateToTab }: CompoundCardProps) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
+  const [phaseExpanded, setPhaseExpanded] = useState(false);
 
   const start = new Date(comp.startDate + 'T00:00:00');
   const today = new Date();
@@ -59,6 +63,33 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
     const pctUsed = Math.min(100, (usedMg / totalVialMg) * 100);
     const lowSupply = dosesRemaining <= 3 || (100 - pctUsed) < 20;
     return { remainingMg, totalVialMg, dosesRemaining, dosesPerVial, vialMl, pctUsed, lowSupply };
+  })();
+
+  const decayLevel = (() => {
+    if (comp.isCompleted) return null;
+    const lib = PEPTIDE_LIBRARY.find(l =>
+      l.name.toLowerCase().includes(comp.name.toLowerCase().split(' ')[0]) ||
+      comp.name.toLowerCase().includes(l.name.toLowerCase().split(' ')[0])
+    );
+    if (!lib?.halfLife) return null;
+    const hl = lib.halfLife;
+    let hlHours: number | null = null;
+    const hourMatch = hl.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*h/i);
+    if (hourMatch) { const lo = parseFloat(hourMatch[1]); const hi = hourMatch[2] ? parseFloat(hourMatch[2]) : lo; hlHours = (lo + hi) / 2; }
+    if (!hlHours) {
+      const dayMatch = hl.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*days?/i);
+      if (dayMatch) { const lo = parseFloat(dayMatch[1]); const hi = dayMatch[2] ? parseFloat(dayMatch[2]) : lo; hlHours = ((lo + hi) / 2) * 24; }
+    }
+    if (!hlHours) return null;
+    const lastLog = [...compLogs].sort((a, b) =>
+      new Date(`${b.date}T${b.time || '12:00'}`).getTime() - new Date(`${a.date}T${a.time || '12:00'}`).getTime()
+    )[0];
+    if (!lastLog) return { level: null, timeLabel: null, hlHours, status: 'unlogged' as const, halfLife: lib.halfLife };
+    const hoursSince = (Date.now() - new Date(`${lastLog.date}T${lastLog.time || '12:00'}`).getTime()) / (1000 * 60 * 60);
+    const level = Math.max(0, Math.pow(0.5, hoursSince / hlHours) * 100);
+    const timeLabel = hoursSince < 24 ? `${hoursSince.toFixed(0)}h ago` : `${(hoursSince / 24).toFixed(1)}d ago`;
+    const status = level < 25 ? 'low' as const : level > 80 ? 'peak' as const : 'therapeutic' as const;
+    return { level, timeLabel, hlHours, status, halfLife: lib.halfLife };
   })();
 
   return (
@@ -196,9 +227,139 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
           </div>
         )}
 
+        {decayLevel && (
+          <div className="bg-indigo-950/20 border border-indigo-500/15 p-2.5 rounded-xl space-y-1.5">
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="font-semibold text-indigo-300 flex items-center gap-1">
+                <Activity className="w-3 h-3" /> Active Level
+              </span>
+              <span className="font-mono text-slate-400">
+                {decayLevel.status === 'unlogged'
+                  ? 'No doses logged yet'
+                  : `${decayLevel.level!.toFixed(0)}% · last dose ${decayLevel.timeLabel}`}
+              </span>
+            </div>
+            {decayLevel.status !== 'unlogged' && (
+              <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${decayLevel.level}%`,
+                    backgroundColor: decayLevel.status === 'low' ? '#f87171' : decayLevel.status === 'peak' ? comp.color : '#f59e0b'
+                  }}
+                />
+              </div>
+            )}
+            <div className="flex justify-between text-[9px] font-mono text-slate-600">
+              <span>½-life: {decayLevel.halfLife}</span>
+              {decayLevel.status !== 'unlogged' && (
+                <span className={decayLevel.status === 'low' ? 'text-rose-400' : decayLevel.status === 'peak' ? 'text-emerald-400' : 'text-amber-400'}>
+                  {decayLevel.status === 'low' ? '⚠ Low — consider redosing' : decayLevel.status === 'peak' ? '● Peak active range' : '● Therapeutic range'}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
         {comp.notes && (
           <p className="text-[11px] text-slate-400 italic bg-[#1e293b]/20 p-2.5 rounded-xl border border-slate-800/80">&ldquo;{comp.notes}&rdquo;</p>
         )}
+
+        {/* Mini week timeline strip */}
+        {!comp.isCompleted && (() => {
+          const elapsedWk = ganttElapsedWeek(comp);
+          const activeWk = selectedWeek ?? elapsedWk;
+          const weeks = Array.from({ length: comp.durationWeeks }, (_, i) => i + 1);
+          const phase = ganttPhaseInfo(comp, activeWk);
+          const libItem = ganttLibraryItem(comp);
+          return (
+            <div className="space-y-2">
+              <div className="overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin scrollbar-thumb-slate-800">
+                <div className="flex gap-1.5 min-w-max">
+                  {weeks.map(w => {
+                    const isCurrent = w === elapsedWk;
+                    const isSelected = w === activeWk;
+                    const isInitiation = w <= 2;
+                    const isPeak = w > 2 && w <= Math.round(comp.durationWeeks * 0.7);
+                    const phaseLabel = isInitiation ? 'Onset' : isPeak ? 'Peak' : 'Late';
+                    return (
+                      <button
+                        key={w}
+                        type="button"
+                        onClick={() => { setSelectedWeek(w); setPhaseExpanded(true); }}
+                        className="relative flex flex-col items-center justify-between rounded-lg border text-[9px] font-mono py-1.5 px-2 min-w-[36px] transition-all cursor-pointer hover:scale-105 select-none"
+                        style={
+                          isSelected
+                            ? { backgroundColor: `${comp.color}25`, borderColor: comp.color, color: '#f8fafc', boxShadow: `0 0 8px ${comp.color}30` }
+                            : { backgroundColor: `${comp.color}08`, borderColor: `${comp.color}20`, color: '#94a3b8' }
+                        }
+                      >
+                        {isCurrent && (
+                          <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400" />
+                          </span>
+                        )}
+                        <span className="font-bold text-[9px]">{w}</span>
+                        <span className="text-[8px] opacity-70 mt-0.5">{phaseLabel}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Phase detail — collapsible */}
+              <button
+                type="button"
+                onClick={() => setPhaseExpanded(v => !v)}
+                className="w-full flex items-center justify-between text-[10px] font-mono text-slate-500 hover:text-slate-300 transition px-0.5 cursor-pointer"
+              >
+                <span>Wk {activeWk} — {phase.title}</span>
+                {phaseExpanded ? <ChevronUp className="w-3 h-3 shrink-0" /> : <ChevronDown className="w-3 h-3 shrink-0" />}
+              </button>
+
+              {phaseExpanded && (
+                <div className="bg-[#101b2e]/60 border border-slate-800/60 rounded-xl p-3.5 space-y-3 text-xs">
+                  <p className="text-slate-400 leading-relaxed">{phase.description}</p>
+                  <div className="bg-[#0f172a]/40 border border-[#1e293b]/40 p-2.5 rounded-lg">
+                    <span className="text-[9px] text-cyan-400 font-mono font-bold uppercase tracking-wider block mb-1">Expected Outcomes</span>
+                    <p className="text-slate-300 leading-relaxed text-[11px]">{phase.results}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-emerald-950/20 border border-emerald-500/15 p-2.5 rounded-lg space-y-1">
+                      <span className="text-[9px] text-emerald-400 font-bold uppercase tracking-wider block">✓ Target Results</span>
+                      <ul className="space-y-1">
+                        {phase.benefits.map((b, i) => (
+                          <li key={i} className="text-[10px] text-slate-300 flex gap-1.5"><span className="text-emerald-400 shrink-0">•</span>{b}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="bg-rose-950/20 border border-rose-500/15 p-2.5 rounded-lg space-y-1">
+                      <span className="text-[9px] text-rose-400 font-bold uppercase tracking-wider block">⚠ Warnings</span>
+                      <ul className="space-y-1">
+                        {phase.warnings.map((w, i) => (
+                          <li key={i} className="text-[10px] text-slate-300 flex gap-1.5"><span className="text-rose-400 shrink-0">•</span>{w}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  {phase.diet && (
+                    <div className="flex items-start gap-1.5 text-[10px] text-slate-400 pt-1 border-t border-slate-800/40">
+                      <Info className="w-3 h-3 text-cyan-400 shrink-0 mt-0.5" />
+                      <span><strong className="text-slate-300">Diet:</strong> {phase.diet}</span>
+                    </div>
+                  )}
+                  {libItem?.halfLife && (
+                    <div className="flex gap-3 text-[9px] font-mono text-slate-500 pt-1 border-t border-slate-800/40">
+                      <span>½-life: {libItem.halfLife}</span>
+                      <span>Form: {comp.steroidForm || comp.type}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         <div className="pt-2.5 border-t border-slate-800/40 mt-1 flex justify-end">
           <button type="button" onClick={() => { triggerHaptic('light'); onOpenRetroLog(comp.id); }}

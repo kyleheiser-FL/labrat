@@ -104,7 +104,7 @@ app.use(express.json());
       return res.status(503).json({ error: 'Firebase Admin not configured. Set FIREBASE_SERVICE_ACCOUNT_BASE64.' });
     }
 
-    const firestore = getAdminFirestore(adminApp);
+    const firestore = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
     const fcmMessaging = getAdminMessaging(adminApp);
 
     const nowUtc = new Date();
@@ -191,6 +191,87 @@ app.use(express.json());
       res.json({ ok: true, sent, errors, checkedAt: nowUtc.toISOString() });
     } catch (err: any) {
       console.error('[send-reminders] Error:', err);
+      res.status(500).json({ error: err?.message || 'Internal error' });
+    }
+  });
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Order notification sender — called by the client after order events
+  // type 'order_placed'  → notifies admin
+  // type 'status_change' → notifies the customer whose order changed
+  // ──────────────────────────────────────────────────────────────────────────
+  app.post("/api/notify-order", async (req, res) => {
+    const { type, orderId, customerEmail, customerUserId, status } = req.body || {};
+    if (!type || !orderId) return res.status(400).json({ error: 'Missing type or orderId' });
+
+    const adminApp = getAdminApp();
+    if (!adminApp) return res.status(503).json({ error: 'Push service not configured' });
+
+    const db = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
+    const fcmMessaging = getAdminMessaging(adminApp);
+
+    const ADMIN_UID = 'kyleheiser@gmail.com';
+
+    try {
+      if (type === 'order_placed') {
+        // Look up admin UID via Firebase Auth by email, then fetch their push tokens
+        const adminAuth = await adminApp && (await import('firebase-admin/auth')).getAuth(adminApp);
+        let adminUid: string | null = null;
+        try {
+          const adminUser = await adminAuth!.getUserByEmail('kyleheiser@gmail.com');
+          adminUid = adminUser.uid;
+        } catch { /* admin not found */ }
+
+        if (!adminUid) return res.json({ ok: true, sent: 0 });
+
+        const profileDoc = await db.collection('pushProfiles').doc(adminUid).get();
+        const tokens: string[] = profileDoc.data()?.fcmTokens || [];
+        let sent = 0;
+        for (const token of tokens) {
+          try {
+            await fcmMessaging.send({
+              notification: {
+                title: '🛒 New Order Placed',
+                body: `${customerEmail || 'A customer'} placed order ${orderId}`,
+              },
+              data: { tag: 'labrat-new-order', orderId },
+              token,
+            });
+            sent++;
+          } catch { /* stale token */ }
+        }
+        return res.json({ ok: true, sent });
+      }
+
+      if (type === 'status_change') {
+        if (!customerUserId || !status) return res.status(400).json({ error: 'Missing customerUserId or status' });
+        const profileDoc = await db.collection('pushProfiles').doc(customerUserId).get();
+        if (!profileDoc.exists) return res.json({ ok: true, sent: 0 });
+        const tokens: string[] = profileDoc.data()?.fcmTokens || [];
+        const statusLabel: Record<string, string> = {
+          processing: '⚙️ Your order is being processed',
+          shipped: '📦 Your order has shipped!',
+          completed: '✅ Your order has been delivered',
+          cancelled: '❌ Your order was cancelled',
+        };
+        const body = statusLabel[status] || `Order status updated to: ${status}`;
+        let sent = 0;
+        for (const token of tokens) {
+          try {
+            await fcmMessaging.send({
+              notification: { title: '📬 LabRat Order Update', body },
+              data: { tag: `labrat-order-${orderId}`, orderId, status },
+              token,
+            });
+            sent++;
+          } catch { /* stale token */ }
+        }
+        return res.json({ ok: true, sent });
+      }
+
+      return res.status(400).json({ error: 'Unknown notification type' });
+    } catch (err: any) {
+      console.error('[notify-order] Error:', err);
       res.status(500).json({ error: err?.message || 'Internal error' });
     }
   });

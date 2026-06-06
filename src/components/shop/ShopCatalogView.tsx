@@ -23,6 +23,7 @@ import {
   getSecondaryBenefit,
   getSecondaryBenefitStyle,
   getSalePrice,
+  getKitSellPrice,
   getCleanDescription,
 } from '../../lib/shopHelpers';
 import ProductVialVisual from './ProductVialVisual';
@@ -78,6 +79,7 @@ interface ShopCatalogViewProps {
   onSetShowNorwayModal: (v: boolean) => void;
   onSetSelectedCertKey: (k: string | null) => void;
   allOrdersGlobal: OrderDetail[];
+  isKitPricing?: boolean;
 }
 
 export default function ShopCatalogView({
@@ -109,6 +111,7 @@ export default function ShopCatalogView({
   onSetShowNorwayModal,
   onSetSelectedCertKey,
   allOrdersGlobal,
+  isKitPricing = false,
 }: ShopCatalogViewProps) {
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
@@ -122,21 +125,38 @@ export default function ShopCatalogView({
   return (
     <div className="flex flex-col gap-6">
 
-      {/* Consolidated Launch Sale & Per-vial pricing notice */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 border border-cyan-500/20 rounded-xl p-3 sm:p-4 text-left shadow-[0_0_15px_rgba(6,182,212,0.03)] focus-within:ring-1 focus-within:ring-cyan-500/30">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2 mb-2">
-          <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
-            Grand Opening Sale: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">15% Off Site-Wide</span>
-          </h3>
-          <div className="text-[9px] uppercase font-black tracking-widest text-[#22d3ee] bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
-            Automatic Checkout Discount
+      {/* Pricing notice banner — different for kit vs standard members */}
+      {isKitPricing ? (
+        <div className="bg-gradient-to-r from-cyan-950/30 via-[#0a0f1d] to-cyan-950/30 border border-cyan-500/30 rounded-xl p-3 sm:p-4 text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
+            <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
+              <Package className="w-4 h-4 text-cyan-400" />
+              Kit Pricing Member: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">10 Vials per Kit</span>
+            </h3>
+            <div className="text-[9px] uppercase font-black tracking-widest text-cyan-300 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
+              Wholesale Rate
+            </div>
           </div>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            You are enrolled in <strong className="text-cyan-300 font-bold">kit pricing</strong>. Every listed price is for a <strong className="text-cyan-300 font-bold">full kit of 10 vials</strong>. Standard per-vial pricing and the 15% launch sale do not apply to your account.
+          </p>
         </div>
-        <p className="text-xs text-slate-400 leading-relaxed">
-          Prices are auto-discounted to celebrate our application launch! Please note: <strong className="text-cyan-300 font-bold">every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed.
-        </p>
-      </div>
+      ) : (
+        <div className="bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 border border-cyan-500/20 rounded-xl p-3 sm:p-4 text-left shadow-[0_0_15px_rgba(6,182,212,0.03)] focus-within:ring-1 focus-within:ring-cyan-500/30">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2 mb-2">
+            <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
+              Grand Opening Sale: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">15% Off Site-Wide</span>
+            </h3>
+            <div className="text-[9px] uppercase font-black tracking-widest text-[#22d3ee] bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
+              Automatic Checkout Discount
+            </div>
+          </div>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Prices are auto-discounted to celebrate our application launch! Please note: <strong className="text-cyan-300 font-bold">every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed.
+          </p>
+        </div>
+      )}
 
       {/* Norway & Switzerland Heritage Banner */}
       <div
@@ -524,10 +544,10 @@ export default function ShopCatalogView({
                           <span className="text-[11px] ml-auto">
                             {(() => {
                               const activeOpt = group.options.find(o => o.id === activeProdId) || firstOption;
-                              const activeOptStock = activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0;
+                              const activeOptStock = isKitPricing ? 999 : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
                               return activeOptStock > 0 ? (
                                 <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> {activeOptStock} vials in stock
+                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> {isKitPricing ? 'In Stock' : `${activeOptStock} vials in stock`}
                                 </span>
                               ) : (
                                 <span className="text-amber-400 font-semibold flex items-center gap-1">
@@ -553,7 +573,7 @@ export default function ShopCatalogView({
                           {group.options.map(opt => {
                             const isSelected = activeProdId === opt.id;
                             const optStock = getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal);
-                            const isInStock = optStock > 0;
+                            const isInStock = isKitPricing || optStock > 0;
                             return (
                               <button
                                 key={opt.id}
@@ -587,21 +607,29 @@ export default function ShopCatalogView({
                     {(() => {
                       const activeProduct = group.options.find(o => o.id === activeProdId) || firstOption;
                       if (!activeProduct) return null;
-                      const isOutOfStock = getProductAvailableStock(activeProduct.id, activeProduct.inventory, allOrdersGlobal) <= 0;
+                      const isOutOfStock = !isKitPricing && getProductAvailableStock(activeProduct.id, activeProduct.inventory, allOrdersGlobal) <= 0;
 
                       return (
                         <div className="bg-slate-950 border-t border-[#1e293b]/70 p-4 flex items-center justify-between gap-4">
                           <div className="flex flex-col text-left flex-1 min-w-0 pr-1">
                             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider truncate block">
-                              Research Price ({getProductBaseAndSize(activeProduct.name).size || 'each'})
+                              {isKitPricing ? `Kit Price · 10 vials (${getProductBaseAndSize(activeProduct.name).size || 'each'})` : `Research Price (${getProductBaseAndSize(activeProduct.name).size || 'each'})`}
                             </span>
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs text-slate-500 line-through">
-                                ${activeProduct.price}.00
-                              </span>
-                              <span className="text-sm font-black text-cyan-400">
-                                ${getSalePrice(activeProduct.price)}.00
-                              </span>
+                              {isKitPricing ? (
+                                <span className="text-sm font-black text-cyan-400">
+                                  ${getKitSellPrice(activeProduct.name) || activeProduct.price}.00
+                                </span>
+                              ) : (
+                                <>
+                                  <span className="text-xs text-slate-500 line-through">
+                                    ${activeProduct.price}.00
+                                  </span>
+                                  <span className="text-sm font-black text-cyan-400">
+                                    ${getSalePrice(activeProduct.price)}.00
+                                  </span>
+                                </>
+                              )}
                             </div>
                           </div>
 

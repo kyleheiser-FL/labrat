@@ -56,13 +56,16 @@ service cloud.firestore {
     match /shopItems/{itemId} {
       // Allowed if Admin, or if authenticated and approved member in the members collection
       allow read: if request.auth != null && (
-                    isAdmin() || 
+                    isAdmin() ||
                     (
-                      exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
-                      get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved"
+                      exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
+                      (
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved" ||
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit"
+                      )
                     )
                   );
-      
+
       allow write: if isAdmin();
     }
 
@@ -86,21 +89,27 @@ service cloud.firestore {
     match /orders/{orderId} {
       // Allow read to own orders, admin, or any approved member to compute dynamic inventory stock
       allow read: if request.auth != null && (
-                    resource.data.userId == request.auth.uid || 
-                    isAdmin() || 
+                    resource.data.userId == request.auth.uid ||
+                    isAdmin() ||
                     (
-                      exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
-                      get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved"
+                      exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
+                      (
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved" ||
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit"
+                      )
                     )
                   );
       
       // Members must be approved to place orders
       allow create: if request.auth != null && (
-                      isAdmin() || 
+                      isAdmin() ||
                       (
-                        request.resource.data.userId == request.auth.uid && 
-                        exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
-                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved"
+                        request.resource.data.userId == request.auth.uid &&
+                        exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
+                        (
+                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved" ||
+                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit"
+                        )
                       )
                     );
                     
@@ -108,3 +117,4 @@ service cloud.firestore {
     }
   }
 }
+

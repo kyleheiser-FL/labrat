@@ -431,14 +431,31 @@ export default function ReconstitutionCalculator({
                 {/* Measurable Active Range Container */}
                 <div className="absolute top-0 bottom-0 pointer-events-none" style={{ left: '15px', width: '140px' }}>
                   
-                  {/* Sub-divisions/tick labels overlaid */}
+                  {/* ml scale labels — top of barrel (for ml-graduated syringes) */}
+                  <div className="absolute inset-x-0 top-1 h-3 flex justify-between text-[7px] font-mono text-slate-500 items-start leading-none">
+                    {[0, 0.2, 0.4, 0.6, 0.8, 1.0].map((ratio) => {
+                      const mlVal = (syringeSize * 0.01 * ratio).toFixed(ratio === 0 ? 0 : 1);
+                      const displayVal = ratio === 1.0 ? `${mlVal}ml` : ratio === 0 ? '' : mlVal;
+                      return (
+                        <span
+                          key={`ml-${ratio}`}
+                          className="absolute top-0 -translate-x-1/2"
+                          style={{ left: `${ratio * 100}%` }}
+                        >
+                          {displayVal}
+                        </span>
+                      );
+                    })}
+                  </div>
+
+                  {/* Unit scale labels — bottom of barrel */}
                   <div className="absolute inset-x-0 bottom-1 h-3 flex justify-between text-[8px] font-mono text-slate-400 font-bold items-end leading-none">
                     {[0, 0.2, 0.4, 0.6, 0.8, 1.0].map((ratio) => {
                       const val = Math.round(syringeSize * ratio);
                       const displayVal = ratio === 1.0 ? `${val}U` : val;
                       return (
-                        <span 
-                          key={ratio} 
+                        <span
+                          key={ratio}
                           className="absolute bottom-0 -translate-x-1/2"
                           style={{ left: `${ratio * 100}%` }}
                         >
@@ -491,9 +508,14 @@ export default function ReconstitutionCalculator({
             </div>
           </div>
           
-          <div className="mt-3.5 flex items-center gap-1.5 text-xs text-slate-400 text-center w-full justify-center">
-            <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-            <span>Draw the plunger of a <strong>{syringeSize} Units ({(syringeSize * 0.01).toFixed(1)} cc / ml)</strong> syringe to exactly the <strong>{requiredUnits}</strong> unit mark.</span>
+          <div className="mt-3.5 flex items-start gap-1.5 text-xs text-slate-400 text-center w-full justify-center flex-col">
+            <div className="flex items-center gap-1.5 w-full justify-center">
+              <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <span>Draw the plunger of a <strong>{syringeSize} Units ({(syringeSize * 0.01).toFixed(1)} cc / ml)</strong> syringe to exactly the <strong>{requiredUnits}</strong> unit mark <span className="text-cyan-400 font-mono font-bold">(= {(requiredUnits * 0.01).toFixed(2)} ml)</span>.</span>
+            </div>
+            <p className="text-[10px] text-slate-500 text-center w-full font-mono">
+              Some syringes use ml marks instead of units — the grey scale above the barrel shows your ml equivalent. <strong className="text-slate-400">{requiredUnits} units = {(requiredUnits * 0.01).toFixed(2)} ml</strong> on any 100U / 1.0 ml syringe.
+            </p>
           </div>
         </div>
       </div>
