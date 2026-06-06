@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ShoppingBag,
   Plus,
@@ -133,6 +133,9 @@ export default function ShopCatalogView({
   const customerView = !isViewingAsAdmin;
   // Hide China-only products when customer is on Norway source (or non-China admin preview)
   const isChineseSource = isChinaKitPricing || isChinaVialPricing;
+
+  const [usaShipFilter, setUsaShipFilter] = useState(false);
+
   const sourceVisibleProducts = products.filter(p => {
     if (p.sourceRestriction === 'china') return isChineseSource;
     if (p.sourceRestriction === 'norway') return !isChineseSource;
@@ -142,6 +145,7 @@ export default function ShopCatalogView({
   const categories = ['All', ...Array.from(new Set(sourceVisibleProducts.map(p => p.category)))];
 
   const filteredProducts = sourceVisibleProducts.filter(p => {
+    if (usaShipFilter && isChineseSource && !isChinaVialAvailable(p.name)) return false;
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     const q = searchQuery.toLowerCase();
     const matchesSearch = !q || p.name.toLowerCase().includes(q) || (p as any).chemicalName?.toLowerCase().includes(q);
@@ -164,7 +168,7 @@ export default function ShopCatalogView({
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Sourcing Region:</span>
             <div className="flex gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
               <button
-                onClick={() => { triggerHaptic('light'); onSetCustomerSourceToggle!('norway'); }}
+                onClick={() => { triggerHaptic('light'); onSetCustomerSourceToggle!('norway'); setUsaShipFilter(false); }}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-black transition-all duration-200 flex items-center gap-1.5 cursor-pointer ${
                   customerSourceToggle === 'norway'
                     ? 'bg-cyan-500 text-slate-950 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
@@ -430,18 +434,32 @@ export default function ShopCatalogView({
 
         {/* Advanced Category Visual Tabs Deck */}
         <div className="bg-[#0b1329]/40 border border-slate-850 p-3 sm:p-4 rounded-xl space-y-2.5">
-          <div className="flex items-center justify-between px-1 select-none">
-            <span className="text-[9px] font-black tracking-widest text-[#22d3ee] uppercase flex items-center gap-1.5">
+          <div className="flex items-center justify-between px-1 select-none gap-2">
+            <span className="text-[9px] font-black tracking-widest text-[#22d3ee] uppercase flex items-center gap-1.5 shrink-0">
               <Sparkles className="w-3 h-3 text-cyan-400 animate-pulse" /> Sourcing Categories
             </span>
-            {selectedCategory !== 'All' && (
-              <button
-                onClick={() => { triggerHaptic('light'); onSetSelectedCategory('All'); }}
-                className="text-[9px] font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer hover:underline transition"
-              >
-                Clear Filter ({selectedCategory})
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {isChineseSource && (
+                <button
+                  onClick={() => { triggerHaptic('light'); setUsaShipFilter(v => !v); }}
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border transition-all cursor-pointer ${
+                    usaShipFilter
+                      ? 'bg-blue-500 text-white border-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.4)]'
+                      : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-blue-500/50 hover:text-blue-300'
+                  }`}
+                >
+                  🇺🇸 Ships from USA
+                </button>
+              )}
+              {selectedCategory !== 'All' && (
+                <button
+                  onClick={() => { triggerHaptic('light'); onSetSelectedCategory('All'); }}
+                  className="text-[9px] font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer hover:underline transition shrink-0"
+                >
+                  Clear ({selectedCategory})
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="relative w-full overflow-hidden select-none">
