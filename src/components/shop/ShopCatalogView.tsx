@@ -691,10 +691,7 @@ export default function ShopCatalogView({
                           <span className="text-[11px] ml-auto">
                             {(() => {
                               const activeOpt = group.options.find(o => o.id === activeProdId) || firstOption;
-                              const activeOptStock = customerView
-                                ? 999
-                                : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
-                              // Determine shipping origin label for customer view
+                                  // Determine shipping origin label for customer view
                               const shipOrigin = customerView
                                 ? isChinaKitPricing
                                   ? '🇨🇳 China'
@@ -702,15 +699,11 @@ export default function ShopCatalogView({
                                   ? (isChinaVialAvailable(activeOpt?.name || '') ? '🇺🇸 USA' : '🇨🇳 China')
                                   : '🇳🇴 Norway'
                                 : null;
-                              return activeOptStock > 0 ? (
+                              return (
                                 <span className="text-emerald-400 font-semibold flex items-center gap-1 flex-wrap">
                                   <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                                  <span>{customerView ? 'In Stock' : `${activeOptStock} in stock`}</span>
+                                  <span>In Stock</span>
                                   {shipOrigin && <span className="text-[10px] text-slate-500 font-normal">· {shipOrigin}</span>}
-                                </span>
-                              ) : (
-                                <span className="text-amber-400 font-semibold flex items-center gap-1">
-                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Low Stock
                                 </span>
                               );
                             })()}
@@ -731,8 +724,7 @@ export default function ShopCatalogView({
                         <div className="flex flex-wrap gap-1.5">
                           {group.options.map(opt => {
                             const isSelected = activeProdId === opt.id;
-                            const optStock = getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal);
-                            const isInStock = customerView ? true : optStock > 0;
+                            const isInStock = true;
                             return (
                               <button
                                 key={opt.id}
@@ -766,9 +758,7 @@ export default function ShopCatalogView({
                     {(() => {
                       const activeProduct = group.options.find(o => o.id === activeProdId) || firstOption;
                       if (!activeProduct) return null;
-                      const isOutOfStock = customerView
-                        ? false
-                        : getProductAvailableStock(activeProduct.id, activeProduct.inventory, allOrdersGlobal) <= 0;
+                      const isOutOfStock = false;
 
                       return (
                         <div className="bg-slate-950 border-t border-[#1e293b]/70 p-4 flex items-center justify-between gap-4">
