@@ -538,6 +538,11 @@ export function getChinaVialSellPrice(name: string): number {
   return Math.round((kitCost / 10) * (355 / 315));
 }
 
+// Returns true if the product is stocked in the China US warehouse (chinavial tier)
+export function isChinaVialAvailable(name: string): boolean {
+  return name.toLowerCase().includes('retatrutide');
+}
+
 export function getSalePrice(price: number): number {
   return Math.round(price * 0.85);
 }
