@@ -12,7 +12,10 @@ export interface MemberProfile {
   id: string;
   email: string;
   displayName: string;
-  status: 'pending' | 'approved' | 'blocked';
+  status: 'pending' | 'approved' | 'blocked' | 'kit' | 'chinakit' | 'chinavial';
+  pricingPreference?: 'vial' | 'kit';
+  kitUpgradeRequested?: boolean;
+  kitUpgradeRequestedAt?: string;
   shippingAddress: string;
   phone: string;
   createdAt: any;

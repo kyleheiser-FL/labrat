@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Loader2, Mail, MapPin, Phone, UserCheck, XCircle, Trash2 } from 'lucide-react';
+import { Users, Loader2, Mail, MapPin, Phone, UserCheck, XCircle, Trash2, Package } from 'lucide-react';
 import { MemberProfile } from '../../lib/shopTypes';
 
 interface AdminMembersPanelProps {
@@ -8,7 +8,7 @@ interface AdminMembersPanelProps {
   actionLoading: string | null;
   pendingApprovalCount: number;
   confirmDeleteMemberId: string | null;
-  onSetMemberStatus: (memberId: string, status: 'approved' | 'blocked' | 'pending') => void;
+  onSetMemberStatus: (memberId: string, status: 'approved' | 'blocked' | 'pending' | 'kit' | 'chinakit' | 'chinavial') => void;
   onDeleteMemberProfile: (memberId: string) => void;
   onSetConfirmDeleteMemberId: (id: string | null) => void;
 }
@@ -23,6 +23,8 @@ export default function AdminMembersPanel({
   onDeleteMemberProfile,
   onSetConfirmDeleteMemberId,
 }: AdminMembersPanelProps) {
+  const kitUpgradeCount = adminMembersList.filter(m => m.kitUpgradeRequested && m.status === 'approved').length;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -31,6 +33,11 @@ export default function AdminMembersPanel({
           {pendingApprovalCount > 0 && (
             <span className="ml-1 rounded-full bg-red-500/15 border border-red-500/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-red-200">
               {pendingApprovalCount} pending
+            </span>
+          )}
+          {kitUpgradeCount > 0 && (
+            <span className="ml-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-200">
+              {kitUpgradeCount} kit request{kitUpgradeCount > 1 ? 's' : ''}
             </span>
           )}
         </h2>
@@ -55,17 +62,28 @@ export default function AdminMembersPanel({
       ) : (
         <div className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden divide-y divide-slate-800">
           {adminMembersList.map(member => (
-            <div key={member.id} className="p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:bg-slate-900/40">
+            <div key={member.id} className={`p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all hover:bg-slate-900/40 ${member.kitUpgradeRequested && member.status === 'approved' ? 'border-l-2 border-amber-400/50' : ''}`}>
               <div>
-                <div className="flex items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2">
                   <h4 className="text-sm font-bold text-white">{member.displayName}</h4>
                   <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide ${
-                    member.status === 'approved' ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' :
-                    member.status === 'blocked' ? 'bg-red-500/10 text-red-300 border border-red-500/20' :
-                    'bg-amber-500/10 text-amber-300 border border-amber-500/20'
+                    member.status === 'approved'   ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' :
+                    member.status === 'kit'        ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20' :
+                    member.status === 'chinakit'   ? 'bg-red-500/10 text-red-300 border border-red-500/20' :
+                    member.status === 'chinavial'  ? 'bg-orange-500/10 text-orange-300 border border-orange-500/20' :
+                    member.status === 'blocked'    ? 'bg-slate-500/10 text-slate-400 border border-slate-500/20' :
+                                                     'bg-amber-500/10 text-amber-300 border border-amber-500/20'
                   }`}>
-                    {member.status}
+                    {member.status === 'kit' ? '📦 Norway Kit' :
+                     member.status === 'chinakit' ? '🇨🇳 China Kit' :
+                     member.status === 'chinavial' ? '🇨🇳 China Vial' :
+                     member.status}
                   </span>
+                  {member.kitUpgradeRequested && member.status === 'approved' && (
+                    <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide bg-amber-400/15 text-amber-300 border border-amber-400/30 animate-pulse">
+                      🔔 Wants Kit Pricing
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-slate-500" /> {member.email}
@@ -76,18 +94,168 @@ export default function AdminMembersPanel({
                 <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-slate-500" /> {member.phone}
                 </p>
+                {member.pricingPreference && (
+                  <p className="text-[10px] text-slate-500 mt-1.5">
+                    Requested: <span className={`font-semibold ${member.pricingPreference === 'kit' ? 'text-cyan-400' : 'text-amber-400'}`}>
+                      {member.pricingPreference === 'kit' ? 'Kit Pricing (10 vials)' : 'Per Vial'}
+                    </span>
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-wrap items-center justify-end gap-2 self-end md:self-center shrink-0">
-                {member.status !== 'approved' && (
-                  <button
-                    onClick={() => onSetMemberStatus(member.id, 'approved')}
-                    disabled={actionLoading !== null}
-                    className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <UserCheck className="w-3.5 h-3.5" /> Approve
-                  </button>
+                {member.status === 'pending' ? (
+                  <>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'approved')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <UserCheck className="w-3.5 h-3.5" /> Approve (Per Vial)
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'kit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-cyan-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Package className="w-3.5 h-3.5" /> Approve (Norway Kit)
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-red-500/80 text-white text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Kit
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinavial')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-orange-500/80 text-white text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Vial
+                    </button>
+                  </>
+                ) : member.status === 'approved' ? (
+                  <>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'kit')}
+                      disabled={actionLoading !== null}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all ${
+                        member.kitUpgradeRequested
+                          ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
+                          : 'bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30'
+                      }`}
+                    >
+                      <Package className="w-3.5 h-3.5" />
+                      {member.kitUpgradeRequested ? 'Upgrade to Kit ✓' : '🇳🇴 Norway Kit'}
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-bold rounded-lg cursor-pointer border border-red-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Kit
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinavial')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Vial
+                    </button>
+                  </>
+                ) : member.status === 'kit' ? (
+                  <>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'approved')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-bold rounded-lg cursor-pointer border border-emerald-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <UserCheck className="w-3.5 h-3.5" /> Per Vial
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-bold rounded-lg cursor-pointer border border-red-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Kit
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinavial')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Vial
+                    </button>
+                  </>
+                ) : member.status === 'chinakit' ? (
+                  <>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'approved')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-bold rounded-lg cursor-pointer border border-emerald-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <UserCheck className="w-3.5 h-3.5" /> Per Vial
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'kit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Norway Kit
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinavial')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Vial
+                    </button>
+                  </>
+                ) : member.status === 'chinavial' ? (
+                  <>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'approved')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-bold rounded-lg cursor-pointer border border-emerald-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <UserCheck className="w-3.5 h-3.5" /> Per Vial
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'kit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Norway Kit
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-bold rounded-lg cursor-pointer border border-red-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Kit
+                    </button>
+                  </>
+                ) : (
+                  /* blocked */
+                  <>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'approved')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <UserCheck className="w-3.5 h-3.5" /> Restore (Per Vial)
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'kit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Package className="w-3.5 h-3.5" /> Restore (Kit)
+                    </button>
+                  </>
                 )}
+
                 {member.status !== 'blocked' && (
                   <button
                     onClick={() => onSetMemberStatus(member.id, 'blocked')}
@@ -97,15 +265,7 @@ export default function AdminMembersPanel({
                     <XCircle className="w-3.5 h-3.5" /> Restrict
                   </button>
                 )}
-                {member.status !== 'pending' && (
-                  <button
-                    onClick={() => onSetMemberStatus(member.id, 'pending')}
-                    disabled={actionLoading !== null}
-                    className="px-2 py-1.5 bg-slate-900 text-slate-400 text-xs hover:text-white rounded-lg cursor-pointer border border-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Reset
-                  </button>
-                )}
+
                 {confirmDeleteMemberId === member.id ? (
                   <div className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 p-1">
                     <button

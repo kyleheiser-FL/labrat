@@ -41,19 +41,20 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, auth } from '../firebase';
-import { 
-  collection, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
   where,
   addDoc,
   serverTimestamp,
-  writeBatch
+  writeBatch,
+  onSnapshot
 } from 'firebase/firestore';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
@@ -62,7 +63,7 @@ import { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption } fro
 import { SAMPLE_INVENTORY } from '../data/shopInventory';
 export type { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption };
 export { findShopProductMatch, getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice } from '../lib/shopHelpers';
-import { getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress, getProductBaseAndSize } from '../lib/shopHelpers';
+import { getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress, getProductBaseAndSize } from '../lib/shopHelpers';
 import ShopCartView from './shop/ShopCartView';
 import ShopCheckoutView from './shop/ShopCheckoutView';
 import ShopOrdersView from './shop/ShopOrdersView';
@@ -104,6 +105,9 @@ export default function MembersShop() {
   };
 
   const [isAdminPreviewCustomer, setIsAdminPreviewCustomer] = useState(false);
+  const [isAdminPreviewKit, setIsAdminPreviewKit] = useState(false);
+  const [isAdminPreviewChinaKit, setIsAdminPreviewChinaKit] = useState(false);
+  const [isAdminPreviewChinaVial, setIsAdminPreviewChinaVial] = useState(false);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -132,8 +136,13 @@ export default function MembersShop() {
     return () => unsubscribe();
   }, []);
 
+  const [memberProfile, setMemberProfile] = useState<MemberProfile | null>(null);
+
   const isAdminUser = currentUser?.email?.toLowerCase() === 'kyleheiser@gmail.com';
   const isViewingAsAdmin = isAdminUser && !isAdminPreviewCustomer;
+  const isKitPricing = memberProfile?.status === 'kit' || (isAdminUser && isAdminPreviewKit);
+  const isChinaKitPricing = memberProfile?.status === 'chinakit' || (isAdminUser && isAdminPreviewChinaKit);
+  const isChinaVialPricing = memberProfile?.status === 'chinavial' || (isAdminUser && isAdminPreviewChinaVial);
 
   // Application Layout Views
   // Users view: 'catalog' | 'cart' | 'checkout' | 'orders' | 'status_check'
@@ -177,7 +186,6 @@ export default function MembersShop() {
   }, [isAdminUser, isAdminPreviewCustomer]);
   
   // Database States
-  const [memberProfile, setMemberProfile] = useState<MemberProfile | null>(null);
   const [products, setProducts] = useState<ShopProduct[]>([]);
   const [allOrdersGlobal, setAllOrdersGlobal] = useState<OrderDetail[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<Record<string, string>>({});
@@ -291,7 +299,8 @@ export default function MembersShop() {
   // Registration / Join Waitlist inputs
   const [joinForm, setJoinForm] = useState({
     shippingAddress: '',
-    phone: ''
+    phone: '',
+    pricingPreference: 'vial' as 'vial' | 'kit'
   });
 
   // Shipping details for checkout inputs
@@ -334,47 +343,52 @@ export default function MembersShop() {
     inventory: 50
   });
 
-  // Fetch Member Profile Approval status from firestore
+  // Live-subscribe to member profile so status changes (e.g. approved → kit) take effect immediately
   useEffect(() => {
     if (!currentUser) {
+      setMemberProfile(null);
       setProfileLoading(false);
       return;
     }
 
-    const fetchProfileAndInit = async () => {
-      setProfileLoading(true);
-      try {
-        const profilRef = doc(db, 'members', currentUser.uid);
-        const profilSnap = await getDoc(profilRef);
-        
-        if (profilSnap.exists()) {
-          const profileData = profilSnap.data() as MemberProfile;
+    setProfileLoading(true);
+    let formInitialized = false;
+
+    const unsubscribe = onSnapshot(
+      doc(db, 'members', currentUser.uid),
+      (snap) => {
+        setProfileLoading(false);
+        if (snap.exists()) {
+          const profileData = snap.data() as MemberProfile;
           setMemberProfile(profileData);
-          setJoinForm({
-            shippingAddress: profileData.shippingAddress || '',
-            phone: profileData.phone || ''
-          });
-          const parsed = parseShippingAddress(profileData.shippingAddress || '');
-          setShippingForm(prev => ({
-            ...prev,
-            fullName: prev.fullName || currentUser.displayName || '',
-            addressLine1: parsed.addressLine1 || '',
-            city: parsed.city || '',
-            state: parsed.state || '',
-            zipCode: parsed.zipCode || '',
-            phone: profileData.phone || prev.phone || ''
-          }));
+          if (!formInitialized) {
+            formInitialized = true;
+            setJoinForm({
+              shippingAddress: profileData.shippingAddress || '',
+              phone: profileData.phone || ''
+            });
+            const parsed = parseShippingAddress(profileData.shippingAddress || '');
+            setShippingForm(prev => ({
+              ...prev,
+              fullName: prev.fullName || currentUser.displayName || '',
+              addressLine1: parsed.addressLine1 || '',
+              city: parsed.city || '',
+              state: parsed.state || '',
+              zipCode: parsed.zipCode || '',
+              phone: profileData.phone || prev.phone || ''
+            }));
+          }
         } else {
           setMemberProfile(null);
         }
-      } catch (e) {
-        console.error('Error fetching member verification status', e);
-      } finally {
+      },
+      (e) => {
+        console.error('Error subscribing to member profile', e);
         setProfileLoading(false);
       }
-    };
+    );
 
-    fetchProfileAndInit();
+    return () => unsubscribe();
   }, [currentUser]);
 
   // Sync Cart to LocalStorage
@@ -398,8 +412,9 @@ export default function MembersShop() {
 
   // Unified available stock computer (takes base product stock and subtracting quantities from active orders)
   function getProductAvailableStock(prodId: string, baseInventory: number): number {
+    if (isKitPricing || isChinaKitPricing || isChinaVialPricing) return 999;
     let stock = baseInventory;
-    
+
     allOrdersGlobal.forEach(order => {
       const item = order.items?.find((i: any) => i.id === prodId);
       if (item) {
@@ -511,8 +526,8 @@ export default function MembersShop() {
   };
 
   useEffect(() => {
-    // Only load catalog if the user is verified/approved or an Admin
-    if (isAdminUser || (memberProfile && memberProfile.status === 'approved')) {
+    // Only load catalog if the user is verified/approved/kit or an Admin
+    if (isAdminUser || (memberProfile && (memberProfile.status === 'approved' || memberProfile.status === 'kit'))) {
       fetchProducts();
     }
   }, [memberProfile, isAdminUser]);
@@ -576,7 +591,7 @@ export default function MembersShop() {
         list.push({ id: docSnap.id, ...docSnap.data() } as MemberProfile);
       });
       list.sort((a, b) => {
-        const rank: Record<MemberProfile['status'], number> = { pending: 0, approved: 1, blocked: 2 };
+        const rank: Record<MemberProfile['status'], number> = { pending: 0, approved: 1, kit: 2, chinakit: 3, chinavial: 4, blocked: 5 };
         const statusRank = rank[a.status] - rank[b.status];
         if (statusRank !== 0) return statusRank;
         return (b.updatedAt || b.createdAt || '').toString().localeCompare((a.updatedAt || a.createdAt || '').toString());
@@ -647,6 +662,7 @@ export default function MembersShop() {
         email: currentUser.email || '',
         displayName: currentUser.displayName || 'Anonymous LabRat',
         status: 'pending',
+        pricingPreference: joinForm.pricingPreference,
         shippingAddress: joinForm.shippingAddress,
         phone: joinForm.phone,
         createdAt: new Date().toISOString(),
@@ -672,7 +688,7 @@ export default function MembersShop() {
   };
 
   // Admin approval mechanics
-  const handleSetMemberStatus = async (userId: string, status: 'pending' | 'approved' | 'blocked') => {
+  const handleSetMemberStatus = async (userId: string, status: 'pending' | 'approved' | 'blocked' | 'kit' | 'chinakit' | 'chinavial') => {
     triggerHaptic('light');
     setActionLoading(`member_${userId}_${status}`);
     try {
@@ -685,6 +701,25 @@ export default function MembersShop() {
       setAdminMembersList(prev => prev.map(m => m.id === userId ? { ...m, status } : m));
     } catch (e) {
       console.error('Failed to change member privilege', e);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Member requests kit pricing upgrade
+  const handleRequestKitUpgrade = async () => {
+    if (!currentUser) return;
+    triggerHaptic('medium');
+    setActionLoading('kit_upgrade_request');
+    try {
+      await updateDoc(doc(db, 'members', currentUser.uid), {
+        kitUpgradeRequested: true,
+        kitUpgradeRequestedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      setMemberProfile(prev => prev ? { ...prev, kitUpgradeRequested: true } : prev);
+    } catch (e) {
+      console.error('Failed to submit kit upgrade request', e);
     } finally {
       setActionLoading(null);
     }
@@ -716,6 +751,15 @@ export default function MembersShop() {
       setAdminOrdersList(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
       setAllOrdersGlobal(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+      // Notify customer of status change (fire-and-forget)
+      const order = allOrdersGlobal.find(o => o.id === orderId);
+      if (order?.userId) {
+        fetch('/api/notify-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'status_change', orderId, customerUserId: order.userId, status }),
+        }).catch(() => {});
+      }
     } catch (e) {
       console.error('Failed changing order status flag', e);
     } finally {
@@ -892,7 +936,16 @@ export default function MembersShop() {
   // Get total items and checkout price
   const getCartTotals = () => {
     const totalQty = cart.reduce((acc, item) => acc + item.quantity, 0);
-    const subtotal = cart.reduce((acc, item) => acc + (getSalePrice(item.product.price) * item.quantity), 0);
+    const subtotal = cart.reduce((acc, item) => {
+      const price = isKitPricing
+        ? (getKitSellPrice(item.product.name) || item.product.price)
+        : isChinaKitPricing
+        ? (getChinaKitSellPrice(item.product.name) || item.product.price)
+        : isChinaVialPricing
+        ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price))
+        : getSalePrice(item.product.price);
+      return acc + price * item.quantity;
+    }, 0);
     return { totalQty, subtotal };
   };
 
@@ -912,9 +965,10 @@ export default function MembersShop() {
 
     const { subtotal } = getCartTotals();
     const totalVials = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const shippingDetails = getShippingOptions(shippingForm.zipCode, totalVials, cart);
-    const selectedOption = shippingDetails.options.find(o => o.id === selectedShippingOptionId) || shippingDetails.options[0];
-    const shippingCost = selectedOption ? selectedOption.cost : 0;
+    const isFixedShipping = isKitPricing || isChinaKitPricing || isChinaVialPricing;
+    const shippingDetails = isFixedShipping ? null : getShippingOptions(shippingForm.zipCode, totalVials, cart);
+    const selectedOption = isFixedShipping ? null : (shippingDetails!.options.find(o => o.id === selectedShippingOptionId) || shippingDetails!.options[0]);
+    const shippingCost = isKitPricing ? 25 : isChinaKitPricing ? 50 : isChinaVialPricing ? 0 : (selectedOption ? selectedOption.cost : 0);
 
     // Florida sales tax check (6.0%)
     const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
@@ -929,18 +983,24 @@ export default function MembersShop() {
       items: cart.map(item => ({
         id: item.product.id,
         name: item.product.name,
-        price: getSalePrice(item.product.price),
+        price: isKitPricing
+          ? (getKitSellPrice(item.product.name) || item.product.price)
+          : isChinaKitPricing
+          ? (getChinaKitSellPrice(item.product.name) || item.product.price)
+          : isChinaVialPricing
+          ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price))
+          : getSalePrice(item.product.price),
         quantity: item.quantity
       })),
       total: subtotal + shippingCost + salesTax,
       tax: salesTax,
-      shippingInfo: { 
+      shippingInfo: {
         ...shippingForm,
-        carrier: selectedOption?.carrier,
-        method: selectedOption?.name,
-        cost: selectedOption?.cost,
-        deliveryEstimate: selectedOption?.estimatedDeliveryDate,
-        weightLbs: shippingDetails.weightLbs
+        carrier: isFixedShipping ? undefined : selectedOption?.carrier,
+        method: isKitPricing ? 'Norway Kit Flat Rate' : isChinaKitPricing ? 'China Kit Flat Rate' : isChinaVialPricing ? 'China Vial Free Shipping' : selectedOption?.name,
+        cost: shippingCost,
+        deliveryEstimate: isFixedShipping ? undefined : selectedOption?.estimatedDeliveryDate,
+        weightLbs: isFixedShipping ? undefined : shippingDetails?.weightLbs
       },
       status: 'placed',
       createdAt: new Date().toISOString()
@@ -957,6 +1017,12 @@ export default function MembersShop() {
       setCart([]);
       setShowOrderSuccessModal(true);
       setView('catalog');
+      // Notify admin of new order (fire-and-forget)
+      fetch('/api/notify-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'order_placed', orderId, customerEmail: currentUser.email }),
+      }).catch(() => {});
     } catch (e) {
       console.error('Error recording retail order', e);
     } finally {
@@ -1115,7 +1181,7 @@ export default function MembersShop() {
           </h1>
 
           {/* Customer nav — same for everyone including admin-in-preview */}
-          {(memberProfile?.status === 'approved' || isAdminUser) && (
+          {(memberProfile?.status === 'approved' || memberProfile?.status === 'kit' || memberProfile?.status === 'chinakit' || memberProfile?.status === 'chinavial' || isAdminUser) && (
             <div className="flex items-center gap-1 w-full bg-slate-950 p-1 rounded-xl border border-slate-800 mt-2">
               <button
                 onClick={() => { triggerHaptic('light'); navigateView('catalog'); }}
@@ -1147,48 +1213,83 @@ export default function MembersShop() {
 
       {/* Admin control bar — only visible to admins */}
       {isAdminUser && (
-        <div className="bg-red-950/20 border border-red-500/20 rounded-xl px-3 py-2 flex items-center gap-2 overflow-x-auto scrollbar-hide" id="admin-control-bar">
-          <span className="text-[9px] font-black uppercase tracking-widest text-red-400 shrink-0">Admin</span>
-          <div className="w-px h-4 bg-red-500/20 shrink-0" />
-          <button
-            onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('admin_members'); }}
-            className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative ${view === 'admin_members' && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
-          >
-            <Users className="w-3 h-3" /> Members
-            {pendingApprovalCount > 0 && (
-              <span className="min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-red-500 text-white text-[9px] font-black leading-none flex items-center justify-center animate-pulse">
-                {pendingApprovalCount > 99 ? '99+' : pendingApprovalCount}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('admin_orders'); }}
-            className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative ${view === 'admin_orders' && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
-          >
-            <ClipboardList className="w-3 h-3" /> Orders
-            {newOrderCount > 0 && (
-              <span className="min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-black leading-none flex items-center justify-center animate-pulse">
-                {newOrderCount > 99 ? '99+' : newOrderCount}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('catalog'); }}
-            className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${['catalog', 'admin_products'].includes(view) && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
-          >
-            Products
-          </button>
-          <button
-            onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(!isAdminPreviewCustomer); navigateView('catalog'); }}
-            className={`ml-auto shrink-0 px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border ${
-              isAdminPreviewCustomer
-                ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                : 'text-slate-400 border-transparent hover:text-cyan-300 hover:bg-cyan-500/10'
-            }`}
-          >
-            <ShoppingBag className="w-3 h-3" />
-            {isAdminPreviewCustomer ? 'Customer View: ON' : 'Preview as Customer'}
-          </button>
+        <div className="bg-red-950/20 border border-red-500/20 rounded-xl px-3 py-2 flex flex-col gap-2" id="admin-control-bar">
+          {/* Row 1: nav tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+            <span className="text-[9px] font-black uppercase tracking-widest text-red-400 shrink-0">Admin</span>
+            <div className="w-px h-4 bg-red-500/20 shrink-0" />
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('admin_members'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative shrink-0 ${view === 'admin_members' && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
+            >
+              <Users className="w-3 h-3" /> Members
+              {pendingApprovalCount > 0 && (
+                <span className="min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-red-500 text-white text-[9px] font-black leading-none flex items-center justify-center animate-pulse">
+                  {pendingApprovalCount > 99 ? '99+' : pendingApprovalCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('admin_orders'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 relative shrink-0 ${view === 'admin_orders' && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
+            >
+              <ClipboardList className="w-3 h-3" /> Orders
+              {newOrderCount > 0 && (
+                <span className="min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-black leading-none flex items-center justify-center animate-pulse">
+                  {newOrderCount > 99 ? '99+' : newOrderCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('catalog'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer shrink-0 ${['catalog', 'admin_products'].includes(view) && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
+            >
+              Products
+            </button>
+          </div>
+          {/* Row 2: view toggle pill — always fully visible */}
+          <div className="flex flex-wrap items-center gap-1 bg-slate-900/60 border border-slate-800 rounded-xl p-0.5 self-start">
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(false); navigateView('admin_members'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+                !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              Admin
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(false); navigateView('catalog'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              <ShoppingBag className="w-3 h-3" /> Standard
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(true); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(false); navigateView('catalog'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                isAdminPreviewKit ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              <Package className="w-3 h-3" /> 🇳🇴 Kit
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(true); setIsAdminPreviewChinaVial(false); navigateView('catalog'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                isAdminPreviewChinaKit ? 'bg-red-500/20 text-red-300' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              🇨🇳 China Kit
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(true); navigateView('catalog'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                isAdminPreviewChinaVial ? 'bg-orange-500/20 text-orange-300' : 'text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              🇨🇳 China Vial
+            </button>
+          </div>
         </div>
       )}
 
@@ -1284,6 +1385,32 @@ export default function MembersShop() {
                 />
               </div>
 
+              {/* Pricing Preference */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Preferred Pricing Model</label>
+                <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">How would you like to purchase? Per-vial lets you order any quantity; kit pricing is 10 vials at a time at a lower rate.</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setJoinForm(prev => ({ ...prev, pricingPreference: 'vial' }))}
+                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.pricingPreference === 'vial' ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
+                  >
+                    <span className={`text-xs font-bold mb-1 ${joinForm.pricingPreference === 'vial' ? 'text-cyan-300' : 'text-slate-300'}`}>Per Vial</span>
+                    <span className="text-[10px] text-slate-500 leading-normal">Order any quantity, single-vial pricing with 15% member discount.</span>
+                    {joinForm.pricingPreference === 'vial' && <span className="mt-2 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Selected</span>}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setJoinForm(prev => ({ ...prev, pricingPreference: 'kit' }))}
+                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.pricingPreference === 'kit' ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
+                  >
+                    <span className={`text-xs font-bold mb-1 ${joinForm.pricingPreference === 'kit' ? 'text-cyan-300' : 'text-slate-300'}`}>Kit Pricing</span>
+                    <span className="text-[10px] text-slate-500 leading-normal">10 vials per order at a reduced kit rate. Best value for regular use.</span>
+                    {joinForm.pricingPreference === 'kit' && <span className="mt-2 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Selected</span>}
+                  </button>
+                </div>
+              </div>
+
               <button
                 type="submit"
                 disabled={actionLoading === 'join'}
@@ -1333,6 +1460,29 @@ export default function MembersShop() {
         /* FULL SHOPPING MODULE - VISIBLE TO APPROVED MEMBERS OR ADMINS */
         <div className="flex flex-col gap-6" id="active-shop-interface">
           
+          {/* KIT PRICING INTEREST BANNER — approved (per-vial) members only */}
+          {((memberProfile?.status === 'approved' && !isAdminPreviewCustomer) || (isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial)) && view === 'catalog' && (
+            <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold text-cyan-300">Interested in Kit Pricing?</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">Order 10 vials at a time at a reduced rate, shipped directly from our Norway warehouse.</p>
+              </div>
+              {!isAdminPreviewCustomer && memberProfile?.kitUpgradeRequested ? (
+                <span className="shrink-0 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-bold rounded-lg">
+                  ✓ Request Sent
+                </span>
+              ) : (
+                <button
+                  onClick={isAdminPreviewCustomer ? undefined : handleRequestKitUpgrade}
+                  disabled={!isAdminPreviewCustomer && actionLoading === 'kit_upgrade_request'}
+                  className="shrink-0 px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-[11px] font-bold rounded-lg cursor-pointer transition-all disabled:opacity-50"
+                >
+                  {!isAdminPreviewCustomer && actionLoading === 'kit_upgrade_request' ? <Loader2 className="w-3.5 h-3.5 animate-spin inline" /> : 'Request Kit Pricing →'}
+                </button>
+              )}
+            </div>
+          )}
+
           {/* USER CATALOG VIEW */}
           {['catalog', 'admin_products'].includes(view) && (
             <ShopCatalogView
@@ -1364,6 +1514,7 @@ export default function MembersShop() {
               onSetShowNorwayModal={setShowNorwayModal}
               onSetSelectedCertKey={setSelectedCertKey}
               allOrdersGlobal={allOrdersGlobal}
+              isKitPricing={isKitPricing}
             />
           )}
           {/* USER SHOPPING CART VIEW */}
@@ -1373,6 +1524,9 @@ export default function MembersShop() {
               subtotal={subtotal}
               totalQty={totalQty}
               shippingForm={shippingForm}
+              isKitPricing={isKitPricing}
+              isChinaKitPricing={isChinaKitPricing}
+              isChinaVialPricing={isChinaVialPricing}
               onAdjustQuantity={handleAdjustQuantity}
               onRemoveFromCart={handleRemoveFromCart}
               onSetView={setView}
@@ -1388,6 +1542,9 @@ export default function MembersShop() {
               selectedShippingOptionId={selectedShippingOptionId}
               shippingCarrierFilter={shippingCarrierFilter}
               actionLoading={actionLoading}
+              isKitPricing={isKitPricing}
+              isChinaKitPricing={isChinaKitPricing}
+              isChinaVialPricing={isChinaVialPricing}
               onSetShippingForm={setShippingForm}
               onSetShippingCarrierFilter={setShippingCarrierFilter}
               onSetSelectedShippingOptionId={setSelectedShippingOptionId}
@@ -1453,7 +1610,6 @@ export default function MembersShop() {
               onSimulateDeliveryCheck={handleSimulateDeliveryCheck}
               onDeleteOrder={handleDeleteOrder}
               onSetConfirmDeleteOrderId={setConfirmDeleteOrderId}
-              onSeedDemoOrder={handleSeedDemoOrder}
             />
           )}
 
@@ -1495,6 +1651,7 @@ export default function MembersShop() {
           confirmDeleteProductId={confirmDeleteProductId}
           onSetConfirmDeleteProductId={setConfirmDeleteProductId}
           onDeleteProduct={handleDeleteProduct}
+          isKitPricing={isKitPricing}
         />
       )}
 
@@ -1811,6 +1968,37 @@ export default function MembersShop() {
         selectedCertKey={selectedCertKey}
         onClose={() => setSelectedCertKey(null)}
       />
+
+      {/* FLOATING CART BUTTON — appears when cart has items and user isn't already on cart/checkout */}
+      <AnimatePresence>
+        {totalQty > 0 && !['cart', 'checkout'].includes(view) && !selectedParentProductGroup && (
+          <motion.button
+            key="floating-cart"
+            initial={{ scale: 0, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0, opacity: 0, y: 20 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            onClick={() => { triggerHaptic('light'); navigateView('cart'); }}
+            className="fixed bottom-6 left-4 z-[999] flex items-center gap-2.5 px-4 py-3 active:scale-95 font-black text-sm rounded-2xl shadow-xl cursor-pointer"
+            style={{
+              backgroundColor: labratTheme === 'clinical' ? '#3b82f6' : '#06b6d4',
+              color: '#ffffff',
+              boxShadow: labratTheme === 'clinical'
+                ? '0 10px 25px -5px rgba(59,130,246,0.4)'
+                : '0 10px 25px -5px rgba(6,182,212,0.4)',
+            }}
+          >
+            <ShoppingCart className="w-4 h-4" style={{ color: '#ffffff' }} />
+            <span style={{ color: '#ffffff' }}>View Cart</span>
+            <span
+              className="text-[11px] font-black px-2 py-0.5 rounded-full min-w-[1.4rem] text-center"
+              style={{ backgroundColor: 'rgba(255,255,255,0.25)', color: '#ffffff' }}
+            >
+              {totalQty}
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

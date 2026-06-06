@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem } from '../../lib/shopTypes';
-import { getSalePrice } from '../../lib/shopHelpers';
+import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice } from '../../lib/shopHelpers';
 
 interface ShopCartViewProps {
   cart: CartItem[];
@@ -13,6 +13,9 @@ interface ShopCartViewProps {
     state: string;
     [key: string]: string;
   };
+  isKitPricing?: boolean;
+  isChinaKitPricing?: boolean;
+  isChinaVialPricing?: boolean;
   onAdjustQuantity: (productId: string, delta: number) => void;
   onRemoveFromCart: (productId: string) => void;
   onSetView: (v: string) => void;
@@ -23,10 +26,18 @@ export default function ShopCartView({
   subtotal,
   totalQty,
   shippingForm,
+  isKitPricing = false,
+  isChinaKitPricing = false,
+  isChinaVialPricing = false,
   onAdjustQuantity,
   onRemoveFromCart,
   onSetView,
 }: ShopCartViewProps) {
+  const effectivePrice = (item: CartItem) =>
+    isKitPricing ? (getKitSellPrice(item.product.name) || item.product.price) :
+    isChinaKitPricing ? (getChinaKitSellPrice(item.product.name) || item.product.price) :
+    isChinaVialPricing ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price)) :
+    getSalePrice(item.product.price);
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -66,11 +77,24 @@ export default function ShopCartView({
                   <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{item.product.category}</span>
                   <h4 className="text-sm font-bold text-white tracking-tight mt-0.5">{item.product.name}</h4>
                   <div className="flex items-center gap-1.5 mt-1 sm:mt-0.5 flex-wrap">
-                    <span className="text-[10px] text-slate-500 line-through">${item.product.price}.00</span>
-                    <span className="text-xs text-cyan-400 font-semibold inline-block mt-0.5">${getSalePrice(item.product.price)}.00 per vial</span>
-                    <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
-                      {item.product.category === 'Reconstitution Solvents' ? '30ml Volume' : '3ml Volume'}
+                    {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && <span className="text-[10px] text-slate-500 line-through">${item.product.price}.00</span>}
+                    <span className="text-xs text-cyan-400 font-semibold inline-block mt-0.5">
+                      ${effectivePrice(item)}.00 {(isKitPricing || isChinaKitPricing) ? 'per kit · 10 vials' : 'per vial'}
                     </span>
+                    {isKitPricing && (
+                      <span className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">🇳🇴 Norway Kit</span>
+                    )}
+                    {isChinaKitPricing && (
+                      <span className="bg-red-500/10 text-red-300 border border-red-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">🇨🇳 China Kit</span>
+                    )}
+                    {isChinaVialPricing && (
+                      <span className="bg-orange-500/10 text-orange-300 border border-orange-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">🇨🇳 China Vial</span>
+                    )}
+                    {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && (
+                      <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
+                        {item.product.category === 'Reconstitution Solvents' ? '30ml Volume' : '3ml Volume'}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -94,7 +118,7 @@ export default function ShopCartView({
 
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-extrabold text-white w-16 text-right">
-                      ${getSalePrice(item.product.price) * item.quantity}.00
+                      ${effectivePrice(item) * item.quantity}.00
                     </span>
                     <button
                       onClick={() => onRemoveFromCart(item.product.id)}
@@ -115,7 +139,7 @@ export default function ShopCartView({
       <div className="lg:col-span-1">
         {cart.length > 0 && (() => {
           const nonBacItems = cart.filter(item => item.product.id !== 'prod_bac_water_30ml');
-          const nonBacSubtotal = nonBacItems.reduce((sum, item) => sum + (getSalePrice(item.product.price) * item.quantity), 0);
+          const nonBacSubtotal = nonBacItems.reduce((sum, item) => sum + (effectivePrice(item) * item.quantity), 0);
           const isFreeShippingEligible = nonBacSubtotal >= 100;
           const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
           const salesTaxRate = 0.06;
@@ -123,37 +147,57 @@ export default function ShopCartView({
 
           return (
             <div className="space-y-4 sticky top-6 text-left">
-              {/* Free Shipping Progress Card */}
-              <div className="bg-[#0b1329] border border-[#1e293b] p-5 rounded-2xl shadow-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-slate-300">Free Shipping Progress</span>
-                  {isFreeShippingEligible ? (
-                    <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider animate-pulse border border-emerald-500/10">Unlocked</span>
-                  ) : (
-                    <span className="text-[10px] bg-cyan-500/10 text-cyan-400 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-cyan-500/10">In Progress</span>
-                  )}
+              {/* Shipping info card */}
+              {(isKitPricing || isChinaKitPricing || isChinaVialPricing) ? (
+                <div className={`bg-[#0b1329] p-5 rounded-2xl shadow-lg border ${isChinaVialPricing ? 'border-emerald-500/20' : 'border-cyan-500/20'}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-slate-300">
+                      {isChinaVialPricing ? 'Free USA Shipping' : 'Flat Rate Shipping'}
+                    </span>
+                    <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${isChinaVialPricing ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'}`}>
+                      {isChinaVialPricing ? 'Free' : 'Flat Rate'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-normal">
+                    {isChinaVialPricing
+                      ? 'China-sourced compounds ship from our USA warehouse with free shipping on every order.'
+                      : isChinaKitPricing
+                      ? <>China kit orders ship for a flat <span className="text-cyan-400 font-semibold">$50.00</span> international rate. Carrier selected at dispatch.</>
+                      : <>Norway kit orders ship for a flat <span className="text-cyan-400 font-semibold">$25.00</span> regardless of order size. Carrier and method selected at dispatch.</>
+                    }
+                  </p>
                 </div>
+              ) : (
+                <div className="bg-[#0b1329] border border-[#1e293b] p-5 rounded-2xl shadow-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-slate-300">Free Shipping Progress</span>
+                    {isFreeShippingEligible ? (
+                      <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider animate-pulse border border-emerald-500/10">Unlocked</span>
+                    ) : (
+                      <span className="text-[10px] bg-cyan-500/10 text-cyan-400 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-cyan-500/10">In Progress</span>
+                    )}
+                  </div>
 
-                <p className="text-[11px] text-slate-400 leading-normal mb-4">
-                  Spend <span className="text-cyan-400 font-semibold">$100.00</span> or more in eligible compounds to unlock <span className="text-emerald-400 font-semibold">FREE ground delivery</span>!
-                </p>
+                  <p className="text-[11px] text-slate-400 leading-normal mb-4">
+                    Spend <span className="text-cyan-400 font-semibold">$100.00</span> or more in eligible compounds to unlock <span className="text-emerald-400 font-semibold">FREE ground delivery</span>!
+                  </p>
 
-                <div className="space-y-3">
-                  {/* Price Progress */}
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
-                      <span>Eligible Subtotal: ${nonBacSubtotal} / $100</span>
-                      <span className={isFreeShippingEligible ? 'text-emerald-400 font-bold' : 'text-slate-400'}>{Math.min(100, Math.round((nonBacSubtotal / 100) * 100))}%</span>
-                    </div>
-                    <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${isFreeShippingEligible ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-cyan-500'}`}
-                        style={{ width: `${Math.min(100, (nonBacSubtotal / 100) * 100)}%` }}
-                      />
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
+                        <span>Eligible Subtotal: ${nonBacSubtotal} / $100</span>
+                        <span className={isFreeShippingEligible ? 'text-emerald-400 font-bold' : 'text-slate-400'}>{Math.min(100, Math.round((nonBacSubtotal / 100) * 100))}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${isFreeShippingEligible ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-cyan-500'}`}
+                          style={{ width: `${Math.min(100, (nonBacSubtotal / 100) * 100)}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="bg-[#0b1329] border border-[#1e293b] p-6 rounded-2xl">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 pb-2 border-b border-[#1e293b]">

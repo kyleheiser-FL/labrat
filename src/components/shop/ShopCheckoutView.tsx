@@ -2,7 +2,7 @@ import React from 'react';
 import { MapPin, Truck, Loader2, Send, BadgeCheck } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem, ShippingOption } from '../../lib/shopTypes';
-import { getSalePrice, getShippingOptions } from '../../lib/shopHelpers';
+import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getShippingOptions } from '../../lib/shopHelpers';
 
 interface ShippingFormState {
   fullName: string;
@@ -21,6 +21,9 @@ interface ShopCheckoutViewProps {
   selectedShippingOptionId: string;
   shippingCarrierFilter: 'ALL' | 'USPS' | 'UPS';
   actionLoading: string | null;
+  isKitPricing?: boolean;
+  isChinaKitPricing?: boolean;
+  isChinaVialPricing?: boolean;
   onSetShippingForm: (updater: (prev: ShippingFormState) => ShippingFormState) => void;
   onSetShippingCarrierFilter: (carrier: 'ALL' | 'USPS' | 'UPS') => void;
   onSetSelectedShippingOptionId: (id: string) => void;
@@ -35,6 +38,9 @@ export default function ShopCheckoutView({
   selectedShippingOptionId,
   shippingCarrierFilter,
   actionLoading,
+  isKitPricing = false,
+  isChinaKitPricing = false,
+  isChinaVialPricing = false,
   onSetShippingForm,
   onSetShippingCarrierFilter,
   onSetSelectedShippingOptionId,
@@ -56,7 +62,7 @@ export default function ShopCheckoutView({
   const selectedOption = isAddressProvided
     ? (shippingDetails.options.find(o => o.id === selectedShippingOptionId) || shippingDetails.options[0])
     : null;
-  const shippingCost = selectedOption ? selectedOption.cost : 0;
+  const shippingCost = isKitPricing ? 25 : isChinaKitPricing ? 50 : isChinaVialPricing ? 0 : (selectedOption ? selectedOption.cost : 0);
   const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
   const salesTaxRate = 0.06;
   const salesTax = isFlorida ? Math.round(subtotal * salesTaxRate * 100) / 100 : 0;
@@ -166,115 +172,147 @@ export default function ShopCheckoutView({
                 </div>
                 <div className="text-left font-sans">
                   <span className="text-[9px] uppercase font-black text-slate-500 font-mono tracking-widest block">Dispatch Hub Origin</span>
-                  <span className="font-extrabold text-slate-200">Greater Tampa Bay</span>
+                  <span className="font-extrabold text-slate-200">
+                    {isKitPricing ? 'Oslo, Norway' : isChinaKitPricing ? 'Beijing, China' : 'Greater Tampa Bay'}
+                  </span>
                 </div>
               </div>
               <span className="text-[9.5px] font-bold text-cyan-400 bg-cyan-950/40 border border-cyan-500/15 px-2.5 py-1 rounded-md font-mono select-none uppercase tracking-wide shrink-0">
-                📍 USA Shipping Facility
+                {isKitPricing ? '🇳🇴 Norway Warehouse' : isChinaKitPricing ? '🇨🇳 China Warehouse' : '📍 USA Shipping Facility'}
               </span>
             </div>
 
             {/* POSTAGE CARRIER & SHIPPING SERVICE SELECTOR */}
-            <div className="bg-slate-950/40 p-4 rounded-xl border border-slate-800/80 my-4 text-left">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/60 pb-3 mb-3">
-                <div>
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest block font-mono">POSTAGE & IN-TRANSIT RATES</span>
-                  <h4 className="text-xs font-black text-slate-200 mt-0.5 flex items-center gap-1.5">
-                    <Truck className="w-3.5 h-3.5 text-cyan-400" /> Carrier Dispatch Estimates
-                  </h4>
+            {(isKitPricing || isChinaKitPricing || isChinaVialPricing) ? (
+              <div className={`p-4 rounded-xl border my-4 text-left flex items-center gap-4 ${
+                isChinaVialPricing ? 'bg-emerald-950/20 border-emerald-500/20' : 'bg-cyan-950/20 border-cyan-500/20'
+              }`}>
+                <div className={`p-2 bg-slate-950 rounded-lg border shrink-0 ${
+                  isChinaVialPricing ? 'border-emerald-500/20' : 'border-cyan-500/20'
+                }`}>
+                  <Truck className={`w-5 h-5 ${isChinaVialPricing ? 'text-emerald-400' : 'text-cyan-400'}`} />
                 </div>
-                <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono">
-                  <span className="bg-slate-900 border border-slate-800 px-2 py-0.5 rounded text-slate-400">
-                    📦 Weight: <b className="text-slate-300 font-bold">{shippingDetails.weightLbs} lbs</b>
-                  </span>
-                  <span className="bg-slate-900 border border-slate-800 px-2 py-0.5 rounded text-slate-400">
-                    📍 {isAddressProvided ? shippingDetails.zoneName : 'Pending Address'}
-                  </span>
+                <div>
+                  {isChinaVialPricing ? (
+                    <>
+                      <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest block font-mono">China Vial — Free USA Shipping</span>
+                      <p className="text-xs text-slate-300 mt-0.5">China-sourced compounds ship from our <span className="text-emerald-400 font-black">USA warehouse</span> with <span className="text-emerald-400 font-black">FREE shipping</span> on all orders.</p>
+                    </>
+                  ) : isChinaKitPricing ? (
+                    <>
+                      <span className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest block font-mono">China Kit — Flat Rate Shipping</span>
+                      <p className="text-xs text-slate-300 mt-0.5">A flat <span className="text-cyan-400 font-black">$50.00</span> international shipping fee applies. Ships directly from China warehouse.</p>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest block font-mono">Norway Kit — Flat Rate Shipping</span>
+                      <p className="text-xs text-slate-300 mt-0.5">A flat <span className="text-cyan-400 font-black">$25.00</span> shipping fee applies to all kit orders. Carrier and method will be selected at time of dispatch.</p>
+                    </>
+                  )}
                 </div>
               </div>
-
-              {isAddressProvided ? (
-                <>
-                  {/* Carrier Filters */}
-                  <div className="flex gap-2 mb-4">
-                    {(['ALL', 'USPS', 'UPS'] as const).map(carrier => (
-                      <button
-                        key={carrier}
-                        type="button"
-                        onClick={() => { triggerHaptic('light'); onSetShippingCarrierFilter(carrier); }}
-                        className={`px-3 py-1 text-[10px] font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer ${
-                          shippingCarrierFilter === carrier
-                            ? 'bg-cyan-500 text-slate-950 font-black shadow-md'
-                            : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 hover:bg-slate-800/50'
-                        }`}
-                      >
-                        {carrier === 'ALL' ? 'All Services' : carrier}
-                      </button>
-                    ))}
+            ) : (
+              <div className="bg-slate-950/40 p-4 rounded-xl border border-slate-800/80 my-4 text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/60 pb-3 mb-3">
+                  <div>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest block font-mono">POSTAGE & IN-TRANSIT RATES</span>
+                    <h4 className="text-xs font-black text-slate-200 mt-0.5 flex items-center gap-1.5">
+                      <Truck className="w-3.5 h-3.5 text-cyan-400" /> Carrier Dispatch Estimates
+                    </h4>
                   </div>
-
-                  {/* Options List */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-[300px] overflow-y-auto pr-1">
-                    {shippingDetails.options
-                      .filter(opt => shippingCarrierFilter === 'ALL' || opt.carrier === shippingCarrierFilter)
-                      .map(opt => {
-                        const isSelected = selectedShippingOptionId === opt.id;
-                        return (
-                          <div
-                            key={opt.id}
-                            onClick={() => { triggerHaptic('light'); onSetSelectedShippingOptionId(opt.id); }}
-                            className={`border rounded-xl p-3 flex flex-col justify-between transition-all cursor-pointer relative overflow-hidden group select-none min-h-[92px] ${
-                              isSelected
-                                ? 'bg-cyan-950/25 border-cyan-500 shadow-[0_0_12px_rgba(6,182,212,0.06)]'
-                                : 'bg-slate-950 border-slate-800 hover:bg-slate-900 hover:border-slate-700'
-                            }`}
-                          >
-                            <div className="flex items-start justify-between gap-1.5">
-                              <div className="flex items-center gap-1.5">
-                                <span className={`text-[8px] font-black uppercase tracking-tight px-1.5 py-0.5 rounded ${
-                                  opt.carrier === 'USPS'
-                                    ? 'bg-blue-600/20 text-blue-400'
-                                    : 'bg-amber-600/20 text-amber-500'
-                                }`}>
-                                  {opt.carrier}
-                                </span>
-                                <span className="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors leading-tight">
-                                  {opt.name.replace('USPS ', '').replace('UPS® ', '')}
-                                </span>
-                              </div>
-                              <span className={`text-xs font-black font-mono select-all ${isSelected ? 'text-cyan-400' : 'text-slate-200'}`}>
-                                ${opt.cost.toFixed(2)}
-                              </span>
-                            </div>
-
-                            <div className="flex items-end justify-between mt-3 text-[10px] font-mono">
-                              <div className="space-y-0.5">
-                                <div className="text-slate-500 text-[9.5px]">Est: {opt.transitDaysMin === opt.transitDaysMax ? `${opt.transitDaysMin} Business Day` : `${opt.transitDaysMin}-${opt.transitDaysMax} Business Days`}</div>
-                                <div className="text-cyan-400/85">📅 {opt.estimatedDeliveryDate}</div>
-                              </div>
-                              <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${
-                                isSelected ? 'border-cyan-500 bg-cyan-500' : 'border-slate-700'
-                              }`}>
-                                {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </>
-              ) : (
-                <div className="bg-slate-950/50 border border-dashed border-slate-800 rounded-xl p-6 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2">
-                  <MapPin className="w-7 h-7 text-slate-600" />
-                  <div className="space-y-1 max-w-sm">
-                    <p className="font-bold text-slate-300">Awaiting Dispatch Address Details</p>
-                    <p className="text-[10.5px] text-slate-500 leading-normal">
-                      Enter your full dispatch name, street address, city, state, and complete 5-digit ZIP code above to calculate shipping options instantly.
-                    </p>
+                  <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono">
+                    <span className="bg-slate-900 border border-slate-800 px-2 py-0.5 rounded text-slate-400">
+                      📦 Weight: <b className="text-slate-300 font-bold">{shippingDetails.weightLbs} lbs</b>
+                    </span>
+                    <span className="bg-slate-900 border border-slate-800 px-2 py-0.5 rounded text-slate-400">
+                      📍 {isAddressProvided ? shippingDetails.zoneName : 'Pending Address'}
+                    </span>
                   </div>
                 </div>
-              )}
-            </div>
+
+                {isAddressProvided ? (
+                  <>
+                    {/* Carrier Filters */}
+                    <div className="flex gap-2 mb-4">
+                      {(['ALL', 'USPS', 'UPS'] as const).map(carrier => (
+                        <button
+                          key={carrier}
+                          type="button"
+                          onClick={() => { triggerHaptic('light'); onSetShippingCarrierFilter(carrier); }}
+                          className={`px-3 py-1 text-[10px] font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer ${
+                            shippingCarrierFilter === carrier
+                              ? 'bg-cyan-500 text-slate-950 font-black shadow-md'
+                              : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 hover:bg-slate-800/50'
+                          }`}
+                        >
+                          {carrier === 'ALL' ? 'All Services' : carrier}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Options List */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-[300px] overflow-y-auto pr-1">
+                      {shippingDetails.options
+                        .filter(opt => shippingCarrierFilter === 'ALL' || opt.carrier === shippingCarrierFilter)
+                        .map(opt => {
+                          const isSelected = selectedShippingOptionId === opt.id;
+                          return (
+                            <div
+                              key={opt.id}
+                              onClick={() => { triggerHaptic('light'); onSetSelectedShippingOptionId(opt.id); }}
+                              className={`border rounded-xl p-3 flex flex-col justify-between transition-all cursor-pointer relative overflow-hidden group select-none min-h-[92px] ${
+                                isSelected
+                                  ? 'bg-cyan-950/25 border-cyan-500 shadow-[0_0_12px_rgba(6,182,212,0.06)]'
+                                  : 'bg-slate-950 border-slate-800 hover:bg-slate-900 hover:border-slate-700'
+                              }`}
+                            >
+                              <div className="flex items-start justify-between gap-1.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`text-[8px] font-black uppercase tracking-tight px-1.5 py-0.5 rounded ${
+                                    opt.carrier === 'USPS'
+                                      ? 'bg-blue-600/20 text-blue-400'
+                                      : 'bg-amber-600/20 text-amber-500'
+                                  }`}>
+                                    {opt.carrier}
+                                  </span>
+                                  <span className="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors leading-tight">
+                                    {opt.name.replace('USPS ', '').replace('UPS® ', '')}
+                                  </span>
+                                </div>
+                                <span className={`text-xs font-black font-mono select-all ${isSelected ? 'text-cyan-400' : 'text-slate-200'}`}>
+                                  ${opt.cost.toFixed(2)}
+                                </span>
+                              </div>
+
+                              <div className="flex items-end justify-between mt-3 text-[10px] font-mono">
+                                <div className="space-y-0.5">
+                                  <div className="text-slate-500 text-[9.5px]">Est: {opt.transitDaysMin === opt.transitDaysMax ? `${opt.transitDaysMin} Business Day` : `${opt.transitDaysMin}-${opt.transitDaysMax} Business Days`}</div>
+                                  <div className="text-cyan-400/85">📅 {opt.estimatedDeliveryDate}</div>
+                                </div>
+                                <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${
+                                  isSelected ? 'border-cyan-500 bg-cyan-500' : 'border-slate-700'
+                                }`}>
+                                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </>
+                ) : (
+                  <div className="bg-slate-950/50 border border-dashed border-slate-800 rounded-xl p-6 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-2">
+                    <MapPin className="w-7 h-7 text-slate-600" />
+                    <div className="space-y-1 max-w-sm">
+                      <p className="font-bold text-slate-300">Awaiting Dispatch Address Details</p>
+                      <p className="text-[10.5px] text-slate-500 leading-normal">
+                        Enter your full dispatch name, street address, city, state, and complete 5-digit ZIP code above to calculate shipping options instantly.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-semibold text-slate-400 mb-1.5" htmlFor="ship-notes">Special Dispatch / Delivery Instructions</label>
@@ -329,8 +367,16 @@ export default function ShopCheckoutView({
                   {item.product.name}
                 </div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-[10px] text-slate-600 line-through">${item.product.price * item.quantity}</span>
-                  <span className="font-bold text-slate-200">${getSalePrice(item.product.price) * item.quantity}</span>
+                  {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && <span className="text-[10px] text-slate-600 line-through">${item.product.price * item.quantity}</span>}
+                  <span className="font-bold text-slate-200">
+                    ${(isKitPricing
+                      ? (getKitSellPrice(item.product.name) || item.product.price)
+                      : isChinaKitPricing
+                      ? (getChinaKitSellPrice(item.product.name) || item.product.price)
+                      : isChinaVialPricing
+                      ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price))
+                      : getSalePrice(item.product.price)) * item.quantity}
+                  </span>
                 </div>
               </div>
             ))}
@@ -348,11 +394,11 @@ export default function ShopCheckoutView({
               <div className="text-left">
                 <span>Postage Dispatch:</span>
                 <span className="block text-[9.5px] text-slate-500 font-mono">
-                  {selectedOption ? `${selectedOption.carrier} ${selectedOption.name.replace('USPS ', '').replace('UPS® ', '')}` : 'Pending Address'}
+                  {isKitPricing ? 'Norway Kit Flat Rate' : isChinaKitPricing ? 'China Kit Flat Rate' : isChinaVialPricing ? 'China Vial — Free Shipping' : (selectedOption ? `${selectedOption.carrier} ${selectedOption.name.replace('USPS ', '').replace('UPS® ', '')}` : 'Pending Address')}
                 </span>
               </div>
               <span className="font-semibold text-slate-300 font-mono">
-                {selectedOption ? `+$${shippingCost.toFixed(2)}` : '--'}
+                {isKitPricing ? '+$25.00' : isChinaKitPricing ? '+$50.00' : isChinaVialPricing ? 'FREE' : (selectedOption ? `+$${shippingCost.toFixed(2)}` : '--')}
               </span>
             </div>
             {isFlorida && (
