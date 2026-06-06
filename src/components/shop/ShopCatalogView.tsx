@@ -131,12 +131,16 @@ export default function ShopCatalogView({
   const hasSourceToggle = (isVialCustomer || isKitCustomer) && !!onSetCustomerSourceToggle;
   // Customers always see everything in stock; admin sees real counts
   const customerView = !isViewingAsAdmin;
-  const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
+  // Hide China-only products when customer is on Norway source (or non-China admin preview)
+  const isChineseSource = isChinaKitPricing || isChinaVialPricing;
+  const sourceVisibleProducts = products.filter(p => !p.sourceRestriction || isChineseSource);
 
-  const filteredProducts = products.filter(p => {
+  const categories = ['All', ...Array.from(new Set(sourceVisibleProducts.map(p => p.category)))];
+
+  const filteredProducts = sourceVisibleProducts.filter(p => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     const q = searchQuery.toLowerCase();
-    const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.chemicalName?.toLowerCase().includes(q);
+    const matchesSearch = !q || p.name.toLowerCase().includes(q) || (p as any).chemicalName?.toLowerCase().includes(q);
     return matchesCategory && matchesSearch;
   });
 
@@ -204,7 +208,7 @@ export default function ShopCatalogView({
                   <span className="text-xs font-black text-white flex items-center gap-1.5"><Package className="w-3.5 h-3.5 text-red-400" /> 🇨🇳 China Kit · <span className="text-red-400">10 Vials per Kit</span></span>
                   <span className="text-[9px] font-black uppercase tracking-widest text-red-300 bg-red-950/60 px-2 py-0.5 rounded border border-red-500/20">$50 Flat Shipping</span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">XTP-Bella China source. Every price is for a <strong className="text-red-300">full kit of 10 vials</strong> shipped directly from China. Flat <strong className="text-red-300">$50</strong> international rate per order. All compounds in stock.</p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">Well vetted China lab with confirmed shipments and confirmed purity. Every price is for a <strong className="text-red-300">full kit of 10 vials</strong> shipped directly from China. Flat <strong className="text-red-300">$50</strong> international rate per order. All compounds in stock.</p>
               </div>
             ) : (
               <div>

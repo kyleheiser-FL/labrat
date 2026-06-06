@@ -6,6 +6,7 @@ export interface ShopProduct {
   price: number;
   inventory: number;
   imageUrl?: string;
+  sourceRestriction?: 'china'; // when set, only visible to China-source customers
 }
 
 export interface MemberProfile {

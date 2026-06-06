@@ -326,7 +326,7 @@ export default function ProductDrawerModal({
                   {/* China financials */}
                   {(chinaKitSell > 0 || chinaVialSell > 0) && (
                     <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/15 text-left font-mono text-xs space-y-1.5 text-red-200">
-                      <div className="text-red-400 font-extrabold uppercase tracking-wider text-[10px]">🇨🇳 XTP-Bella / China Financials</div>
+                      <div className="text-red-400 font-extrabold uppercase tracking-wider text-[10px]">🇨🇳 China Lab Financials</div>
                       {chinaKitSell > 0 && (
                         <>
                           <div className="flex justify-between">
