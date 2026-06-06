@@ -1946,11 +1946,21 @@ export default function MembersShop() {
             exit={{ scale: 0, opacity: 0, y: 20 }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             onClick={() => { triggerHaptic('light'); navigateView('cart'); }}
-            className="fixed bottom-6 left-4 z-[999] flex items-center gap-2.5 px-4 py-3 bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-slate-950 font-black text-sm rounded-2xl shadow-xl shadow-cyan-500/30 cursor-pointer transition-colors"
+            className="fixed bottom-6 left-4 z-[999] flex items-center gap-2.5 px-4 py-3 active:scale-95 font-black text-sm rounded-2xl shadow-xl cursor-pointer"
+            style={{
+              backgroundColor: labratTheme === 'clinical' ? '#3b82f6' : '#06b6d4',
+              color: '#ffffff',
+              boxShadow: labratTheme === 'clinical'
+                ? '0 10px 25px -5px rgba(59,130,246,0.4)'
+                : '0 10px 25px -5px rgba(6,182,212,0.4)',
+            }}
           >
-            <ShoppingCart className="w-4 h-4" />
-            <span>View Cart</span>
-            <span className="bg-slate-950/20 text-slate-950 text-[11px] font-black px-2 py-0.5 rounded-full min-w-[1.4rem] text-center">
+            <ShoppingCart className="w-4 h-4" style={{ color: '#ffffff' }} />
+            <span style={{ color: '#ffffff' }}>View Cart</span>
+            <span
+              className="text-[11px] font-black px-2 py-0.5 rounded-full min-w-[1.4rem] text-center"
+              style={{ backgroundColor: 'rgba(255,255,255,0.25)', color: '#ffffff' }}
+            >
               {totalQty}
             </span>
           </motion.button>
