@@ -90,12 +90,11 @@ export default function ProductDrawerModal({
   isChinaKitPricing = false,
   isChinaVialPricing = false,
 }: ProductDrawerModalProps) {
-  const customerView = !isViewingAsAdmin;
+  const isChineseSource = isChinaKitPricing || isChinaVialPricing;
   const selectedParentProductGroup = group;
   const selectedOptionIdInDrawer = selectedOptionId;
   const setSelectedOptionIdInDrawer = onSetSelectedOptionId;
   const setDrawerQuantity = onSetDrawerQuantity;
-  const setSelectedParentProductGroup = (_: null) => onClose();
 
   return (
     <AnimatePresence>
@@ -151,17 +150,21 @@ export default function ProductDrawerModal({
                   <span className="flex items-center gap-1 bg-amber-500/10 text-amber-300 px-2 py-1 rounded border border-amber-500/20 font-black">
                     {selectedParentProductGroup.category === 'Reconstitution Solvents' ? 'Volume: 30ml Bottle' : 'Volume: 3ml Vial'}
                   </span>
-                  {!isChinaKitPricing && !isChinaVialPricing && (
-                    <span className="flex items-center gap-1 bg-[#0b1329] px-2 py-1 rounded border border-slate-800">
-                      Purity: 99%+
-                    </span>
-                  )}
-                  <span className="flex items-center gap-1 bg-[#0b1329] px-2 py-1 rounded border border-slate-800">
-                    Sourced: Certified Labs
-                  </span>
-                  {!isChinaKitPricing && !isChinaVialPricing && (
-                    <span className="flex items-center gap-1 bg-[#0b1329] px-2 py-1 rounded border border-slate-800 text-cyan-400">
-                      COA Certified
+                  {!isChineseSource ? (
+                    <>
+                      <span className="flex items-center gap-1 bg-[#0b1329] px-2 py-1 rounded border border-slate-800">
+                        Purity: 99%+
+                      </span>
+                      <span className="flex items-center gap-1 bg-[#0b1329] px-2 py-1 rounded border border-slate-800">
+                        Sourced: Certified Labs
+                      </span>
+                      <span className="flex items-center gap-1 bg-[#0b1329] px-2 py-1 rounded border border-slate-800 text-cyan-400">
+                        COA Certified
+                      </span>
+                    </>
+                  ) : (
+                    <span className="flex items-center gap-1 bg-red-500/10 px-2 py-1 rounded border border-red-500/20 text-red-300">
+                      🇨🇳 China Source
                     </span>
                   )}
                 </div>
@@ -176,7 +179,7 @@ export default function ProductDrawerModal({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {selectedParentProductGroup.options.map(opt => {
                   const isSelected = selectedOptionIdInDrawer === opt.id;
-                  const isInStock = true;
+                  const isInStock = isChineseSource || isKitPricing || getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal) > 0;
                   return (
                     <button
                       key={opt.id}
@@ -197,20 +200,20 @@ export default function ProductDrawerModal({
                     >
                       <span className="font-mono text-sm font-black tracking-wide">{opt.size || '10mg'}</span>
                       <div className="flex flex-col items-center mt-1 scale-90">
-                        {isKitPricing ? (
+                        {isChinaKitPricing ? (
                           <>
-                            <span className="text-[8px] text-cyan-500 font-bold uppercase">kit · 10 vials</span>
-                            <span className="text-xs text-cyan-400 font-bold">${getKitSellPrice(opt.name) || opt.price}</span>
-                          </>
-                        ) : isChinaKitPricing ? (
-                          <>
-                            <span className="text-[8px] text-red-400 font-bold uppercase">cn kit · 10 vials</span>
-                            <span className="text-xs text-red-400 font-bold">${getChinaKitSellPrice(opt.name) || opt.price}</span>
+                            <span className="text-[8px] text-red-400 font-bold uppercase">🇨🇳 kit · 10 vials</span>
+                            <span className="text-xs text-red-300 font-bold">${getChinaKitSellPrice(opt.name) || opt.price}</span>
                           </>
                         ) : isChinaVialPricing ? (
                           <>
-                            <span className="text-[8px] text-orange-400 font-bold uppercase">per vial</span>
-                            <span className="text-xs text-orange-400 font-bold">${getChinaVialSellPrice(opt.name) || opt.price}</span>
+                            <span className="text-[8px] text-orange-400 font-bold uppercase">🇨🇳 per vial</span>
+                            <span className="text-xs text-orange-300 font-bold">${getChinaVialSellPrice(opt.name) || opt.price}</span>
+                          </>
+                        ) : isKitPricing ? (
+                          <>
+                            <span className="text-[8px] text-cyan-500 font-bold uppercase">kit · 10 vials</span>
+                            <span className="text-xs text-cyan-400 font-bold">${getKitSellPrice(opt.name) || opt.price}</span>
                           </>
                         ) : (
                           <>
@@ -240,21 +243,22 @@ export default function ProductDrawerModal({
                   </div>
 
                   {(() => {
-                    const shipOrigin = customerView
-                      ? isChinaKitPricing
-                        ? '🇨🇳 Ships from China'
-                        : isChinaVialPricing
-                        ? (isChinaVialAvailable(activeOpt.name) ? '🇺🇸 Ships from USA' : '🇨🇳 Ships from China')
-                        : '🇳🇴 Ships from Norway'
+                    const available = (isKitPricing || isChineseSource) ? 999 : getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
+                    const shipOrigin = isChinaKitPricing
+                      ? '🇨🇳 Ships from China'
+                      : isChinaVialPricing
+                      ? (isChinaVialAvailable(activeOpt.name) ? '🇺🇸 Ships from USA' : '🇨🇳 Ships from China')
                       : null;
                     return (
                       <div className="flex items-center gap-1.5 text-xs flex-wrap">
                         <span className="text-slate-400">Availability:</span>
                         <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
-                          In Stock
+                          {available > 0 ? 'In Stock' : 'Manufacturing Phase'}
                         </span>
                         {shipOrigin && (
-                          <span className="text-[10px] text-slate-500 font-mono">{shipOrigin}</span>
+                          <span className="bg-slate-900 text-slate-400 border border-slate-800 px-2 py-0.5 rounded font-bold text-[10px]">
+                            {shipOrigin}
+                          </span>
                         )}
                       </div>
                     );
@@ -266,6 +270,8 @@ export default function ProductDrawerModal({
             {isViewingAsAdmin && (() => {
               const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
               if (!activeOpt) return null;
+
+              // Norway financials
               const estimatedCost = getProductCostPerVial(activeOpt.name, activeOpt.price);
               const kaosKitCost = Math.round((estimatedCost - 3.50) * 10);
               const kitSellPrice = getKitSellPrice(activeOpt.name);
@@ -275,14 +281,14 @@ export default function ProductDrawerModal({
               const vialProfit = salePrice - estimatedCost;
               const vialMarkupPct = Math.round((vialProfit / estimatedCost) * 100);
 
+              // China financials
               const chinaKitSell = getChinaKitSellPrice(activeOpt.name);
               const chinaVialSell = getChinaVialSellPrice(activeOpt.name);
 
               return (
-                <div className="space-y-2">
-                  {/* KaosLabs / Norway financials */}
+                <>
                   <div className="bg-amber-500/5 p-4 rounded-xl border border-amber-500/15 text-left font-mono text-xs space-y-1.5 text-amber-200">
-                    <div className="text-amber-400 font-extrabold uppercase tracking-wider text-[10px]">🇳🇴 KaosLabs / Norway Financials</div>
+                    <div className="text-amber-400 font-extrabold uppercase tracking-wider text-[10px]">🇳🇴 Norway — Admin Financial Highlights</div>
                     <div className="flex justify-between">
                       <span>KaosLabs Kit Cost (10 vials):</span>
                       <span className="text-slate-300 font-bold">${kaosKitCost}</span>
@@ -313,58 +319,40 @@ export default function ProductDrawerModal({
                     </div>
                   </div>
 
-                  {/* China financials */}
-                  {(chinaKitSell > 0 || chinaVialSell > 0) && (() => {
-                    const chinaKitCost = chinaKitSell > 0 ? Math.round(chinaKitSell / 1.25) : 0;
-                    const chinaKitProfit = chinaKitSell - chinaKitCost;
-                    const chinaVialCost = chinaVialSell > 0 ? +(chinaVialSell / 1.25).toFixed(2) : 0;
-                    const chinaVialProfit = +(chinaVialSell - chinaVialCost).toFixed(2);
-                    const usWh = isChinaVialAvailable(activeOpt.name);
-                    return (
-                      <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/15 text-left font-mono text-xs space-y-1.5 text-red-200">
-                        <div className="text-red-400 font-extrabold uppercase tracking-wider text-[10px]">🇨🇳 China Lab Financials</div>
-                        {chinaKitSell > 0 && (
-                          <>
-                            <div className="flex justify-between">
-                              <span>China Lab Kit Cost (10 vials):</span>
-                              <span className="text-slate-300 font-bold">${chinaKitCost}</span>
-                            </div>
-                            <div className="flex justify-between text-[11px] text-slate-400">
-                              <span>+ $50 flat ship (customer pays)</span>
-                            </div>
-                            <div className="flex justify-between border-t border-red-500/10 pt-1.5 mt-0.5">
-                              <span>Kit Sell Price (10 vials):</span>
-                              <span className="text-red-300 font-bold">${chinaKitSell}</span>
-                            </div>
+                  {(chinaKitSell > 0 || chinaVialSell > 0) && (
+                    <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/15 text-left font-mono text-xs space-y-1.5 text-red-200">
+                      <div className="text-red-400 font-extrabold uppercase tracking-wider text-[10px]">🇨🇳 China — Admin Financial Highlights</div>
+                      {chinaKitSell > 0 && (
+                        <>
+                          <div className="flex justify-between">
+                            <span>China Kit Sell Price (10 vials):</span>
+                            <span className="text-red-300 font-bold">${chinaKitSell}</span>
+                          </div>
+                          {kaosKitCost > 0 && (
                             <div className="flex justify-between font-bold text-red-200">
-                              <span>Kit Profit:</span>
-                              <span>${chinaKitProfit} (<span className="text-emerald-400">+25%</span>)</span>
+                              <span>China Kit Profit:</span>
+                              <span>${chinaKitSell - kaosKitCost} (<span className="text-emerald-400">+{Math.round(((chinaKitSell - kaosKitCost) / kaosKitCost) * 100)}%</span>)</span>
                             </div>
-                          </>
-                        )}
-                        {chinaVialSell > 0 && (
-                          <>
-                            <div className="flex justify-between border-t border-red-500/10 pt-1.5 mt-0.5">
-                              <span>China Vial Cost (per vial):</span>
-                              <span className="text-slate-300 font-bold">${chinaVialCost}</span>
+                          )}
+                        </>
+                      )}
+                      {chinaVialSell > 0 && (
+                        <>
+                          <div className="flex justify-between border-t border-red-500/10 pt-1.5 mt-0.5">
+                            <span>China Vial Sell Price:</span>
+                            <span className="text-orange-300 font-bold">${chinaVialSell}</span>
+                          </div>
+                          {estimatedCost > 0 && (
+                            <div className="flex justify-between font-bold text-orange-200">
+                              <span>China Vial Profit:</span>
+                              <span>${(chinaVialSell - estimatedCost).toFixed(2)} (<span className="text-emerald-400">+{Math.round(((chinaVialSell - estimatedCost) / estimatedCost) * 100)}%</span>)</span>
                             </div>
-                            <div className="flex justify-between text-[11px] text-slate-400">
-                              <span>{usWh ? 'Ships free · US warehouse' : 'Ships free · China'}</span>
-                            </div>
-                            <div className="flex justify-between border-t border-red-500/10 pt-1.5 mt-0.5">
-                              <span>Vial Sell Price:</span>
-                              <span className="text-orange-300 font-bold">${chinaVialSell}</span>
-                            </div>
-                            <div className="flex justify-between font-bold text-red-200">
-                              <span>Vial Profit:</span>
-                              <span>${chinaVialProfit} (<span className="text-emerald-400">+25%</span>)</span>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </>
               );
             })()}
 
@@ -374,8 +362,15 @@ export default function ProductDrawerModal({
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
                   Purchase Volume:
                 </label>
-                <p className="text-[10px] text-cyan-400 mt-0.5 normal-case font-semibold flex items-center gap-1"><Package className="w-3.5 h-3.5 text-cyan-500 inline" />
-                  {(isKitPricing || isChinaKitPricing) ? 'Kit Rate (price = 10 vials per kit)' : 'Single-Vial Rate (All prices are per individual vial)'}
+                <p className="text-[10px] text-cyan-400 mt-0.5 normal-case font-semibold flex items-center gap-1">
+                  <Package className="w-3.5 h-3.5 text-cyan-500 inline" />
+                  {isChinaKitPricing
+                    ? '🇨🇳 China Kit Rate (price = 10 vials per kit)'
+                    : isChinaVialPricing
+                    ? '🇨🇳 China Vial Rate (per individual vial)'
+                    : isKitPricing
+                    ? 'Kit Rate (price = 10 vials per kit)'
+                    : 'Single-Vial Rate (All prices are per individual vial)'}
                 </p>
               </div>
 
@@ -397,7 +392,13 @@ export default function ProductDrawerModal({
                   type="button"
                   onClick={() => {
                     triggerHaptic('light');
-                    setDrawerQuantity((prev: number) => prev + 1);
+                    if (isChineseSource || isKitPricing) {
+                      setDrawerQuantity((prev: number) => prev + 1);
+                    } else {
+                      const activeOpt = selectedParentProductGroup?.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup?.options[0];
+                      const available = activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0;
+                      setDrawerQuantity((prev: number) => Math.min(available, prev + 1));
+                    }
                   }}
                   className="p-1 px-1.5 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-white transition-all cursor-pointer"
                 >
@@ -413,34 +414,43 @@ export default function ProductDrawerModal({
               const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
               if (!activeOpt) return null;
 
-              const canAdd = true;
+              const canAdd = isChineseSource || isKitPricing || getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) > 0;
 
-              const activePrice = isKitPricing
-                ? (getKitSellPrice(activeOpt.name) || activeOpt.price)
-                : isChinaKitPricing
-                ? (getChinaKitSellPrice(activeOpt.name) || activeOpt.price)
-                : isChinaVialPricing
-                ? (getChinaVialSellPrice(activeOpt.name) || activeOpt.price)
-                : getSalePrice(activeOpt.price);
-              const totalSum = activePrice * drawerQuantity;
+              let displayPrice: number;
+              let totalSum: number;
+              let priceLabel: string;
+              let strikePrice: number | null = null;
 
-              const footerLabel = isKitPricing
-                ? 'Kit Total (10 vials each)'
-                : isChinaKitPricing
-                ? 'China Kit Total (10 vials each)'
-                : isChinaVialPricing
-                ? 'Estimated Total (Free Shipping)'
-                : 'Estimated Total (15% Sale Applied)';
+              if (isChinaKitPricing) {
+                displayPrice = getChinaKitSellPrice(activeOpt.name) || activeOpt.price;
+                totalSum = displayPrice * drawerQuantity;
+                priceLabel = '🇨🇳 China Kit Total';
+              } else if (isChinaVialPricing) {
+                displayPrice = getChinaVialSellPrice(activeOpt.name) || activeOpt.price;
+                totalSum = displayPrice * drawerQuantity;
+                priceLabel = '🇨🇳 China Vial Total';
+              } else if (isKitPricing) {
+                displayPrice = getKitSellPrice(activeOpt.name) || activeOpt.price;
+                totalSum = displayPrice * drawerQuantity;
+                priceLabel = '🇳🇴 Norway Kit Total';
+              } else {
+                displayPrice = getSalePrice(activeOpt.price);
+                totalSum = displayPrice * drawerQuantity;
+                strikePrice = activeOpt.price * drawerQuantity;
+                priceLabel = 'Estimated Total (15% Sale Applied)';
+              }
 
               return (
                 <>
                   <div className="text-left w-full sm:w-auto">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">{footerLabel}</span>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">{priceLabel}</span>
                     <div className="flex items-baseline gap-2">
-                      {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && (
-                        <span className="text-xs text-slate-500 line-through">${activeOpt.price * drawerQuantity}.00</span>
+                      {strikePrice !== null && (
+                        <span className="text-xs text-slate-500 line-through">${strikePrice}.00</span>
                       )}
-                      <div className={`text-xl font-black ${isChinaKitPricing ? 'text-red-400' : isChinaVialPricing ? 'text-orange-400' : 'text-cyan-400'}`}>${totalSum}.00</div>
+                      <div className={`text-xl font-black ${isChinaKitPricing ? 'text-red-400' : isChinaVialPricing ? 'text-orange-400' : 'text-cyan-400'}`}>
+                        ${totalSum}.00
+                      </div>
                     </div>
                   </div>
 
@@ -545,12 +555,12 @@ export default function ProductDrawerModal({
                           {canAdd ? (
                             <>
                               <ShoppingCart className="w-4 h-4" />
-                              {(isKitPricing || isChinaKitPricing)
+                              {isChinaKitPricing
                                 ? `Add ${drawerQuantity} Kit${drawerQuantity > 1 ? 's' : ''} to Cart`
                                 : `Add ${drawerQuantity} Vial${drawerQuantity > 1 ? 's' : ''} to Cart`}
                             </>
                           ) : (
-                            <>Manufacturing Phase</>
+                            'Manufacturing Phase'
                           )}
                         </button>
                       </div>
