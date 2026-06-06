@@ -283,9 +283,13 @@ export default function ProductDrawerModal({
               const vialProfit = salePrice - estimatedCost;
               const vialMarkupPct = Math.round((vialProfit / estimatedCost) * 100);
 
-              // China financials
+              // China financials — profit vs China source cost (always 25% markup)
               const chinaKitSell = getChinaKitSellPrice(activeOpt.name);
               const chinaVialSell = getChinaVialSellPrice(activeOpt.name);
+              const chinaKitRawCost = chinaKitSell > 0 ? Math.round(chinaKitSell / 1.25) : 0;
+              const chinaKitProfit = chinaKitSell - chinaKitRawCost;
+              const chinaVialRawCost = chinaVialSell > 0 ? Math.round(chinaVialSell / 1.25) : 0;
+              const chinaVialProfit = chinaVialSell - chinaVialRawCost;
 
               return (
                 <>
@@ -327,29 +331,33 @@ export default function ProductDrawerModal({
                       {chinaKitSell > 0 && (
                         <>
                           <div className="flex justify-between">
+                            <span>China Source Cost (10 vials):</span>
+                            <span className="text-slate-300 font-bold">${chinaKitRawCost}</span>
+                          </div>
+                          <div className="flex justify-between">
                             <span>China Kit Sell Price (10 vials):</span>
                             <span className="text-red-300 font-bold">${chinaKitSell}</span>
                           </div>
-                          {kaosKitCost > 0 && (
-                            <div className="flex justify-between font-bold text-red-200">
-                              <span>China Kit Profit:</span>
-                              <span>${chinaKitSell - kaosKitCost} (<span className="text-emerald-400">+{Math.round(((chinaKitSell - kaosKitCost) / kaosKitCost) * 100)}%</span>)</span>
-                            </div>
-                          )}
+                          <div className="flex justify-between font-bold text-red-200">
+                            <span>China Kit Profit:</span>
+                            <span>${chinaKitProfit} (<span className="text-emerald-400">+25%</span>)</span>
+                          </div>
                         </>
                       )}
                       {chinaVialSell > 0 && (
                         <>
                           <div className="flex justify-between border-t border-red-500/10 pt-1.5 mt-0.5">
+                            <span>China Vial Source Cost:</span>
+                            <span className="text-slate-300 font-bold">${chinaVialRawCost}</span>
+                          </div>
+                          <div className="flex justify-between">
                             <span>China Vial Sell Price:</span>
                             <span className="text-orange-300 font-bold">${chinaVialSell}</span>
                           </div>
-                          {estimatedCost > 0 && (
-                            <div className="flex justify-between font-bold text-orange-200">
-                              <span>China Vial Profit:</span>
-                              <span>${(chinaVialSell - estimatedCost).toFixed(2)} (<span className="text-emerald-400">+{Math.round(((chinaVialSell - estimatedCost) / estimatedCost) * 100)}%</span>)</span>
-                            </div>
-                          )}
+                          <div className="flex justify-between font-bold text-orange-200">
+                            <span>China Vial Profit:</span>
+                            <span>${chinaVialProfit} (<span className="text-emerald-400">+25%</span>)</span>
+                          </div>
                         </>
                       )}
                     </div>

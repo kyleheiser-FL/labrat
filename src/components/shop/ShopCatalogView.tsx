@@ -364,7 +364,7 @@ export default function ShopCatalogView({
                       : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-blue-500/50 hover:text-blue-300'
                   }`}
                 >
-                  🇺🇸 Ships from USA
+                  ⚡ Fast Shipping · 🇺🇸 USA
                 </button>
               )}
               {selectedCategory !== 'All' && (
@@ -604,6 +604,11 @@ export default function ShopCatalogView({
                               </span>
                             );
                           })()}
+                          {isChineseSource && group.options.some(o => isChinaVialAvailable(o.name)) && (
+                            <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 text-[10px] font-black tracking-wider uppercase">
+                              ⚡ Fast Ship
+                            </span>
+                          )}
                           <span className="text-[11px] ml-auto">
                             {(() => {
                               const activeOpt = group.options.find(o => o.id === activeProdId) || firstOption;
