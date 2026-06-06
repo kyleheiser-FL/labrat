@@ -1652,6 +1652,8 @@ export default function MembersShop() {
           onSetConfirmDeleteProductId={setConfirmDeleteProductId}
           onDeleteProduct={handleDeleteProduct}
           isKitPricing={isKitPricing}
+          isChinaKitPricing={isChinaKitPricing}
+          isChinaVialPricing={isChinaVialPricing}
         />
       )}
 

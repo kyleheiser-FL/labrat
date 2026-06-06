@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { ShopProduct, CartItem, OrderDetail } from '../../lib/shopTypes';
-import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice } from '../../lib/shopHelpers';
+import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, isChinaVialAvailable } from '../../lib/shopHelpers';
 import ProductVialVisual from './ProductVialVisual';
 
 function getProductAvailableStock(prodId: string, baseInventory: number, allOrdersGlobal: OrderDetail[]): number {
@@ -62,6 +62,8 @@ interface ProductDrawerModalProps {
   onSetConfirmDeleteProductId: (id: string | null) => void;
   onDeleteProduct: (id: string) => Promise<void>;
   isKitPricing?: boolean;
+  isChinaKitPricing?: boolean;
+  isChinaVialPricing?: boolean;
 }
 
 export default function ProductDrawerModal({
@@ -85,6 +87,8 @@ export default function ProductDrawerModal({
   onSetConfirmDeleteProductId,
   onDeleteProduct,
   isKitPricing = false,
+  isChinaKitPricing = false,
+  isChinaVialPricing = false,
 }: ProductDrawerModalProps) {
   const selectedParentProductGroup = group;
   const selectedOptionIdInDrawer = selectedOptionId;
@@ -168,7 +172,11 @@ export default function ProductDrawerModal({
                 {selectedParentProductGroup.options.map(opt => {
                   const isSelected = selectedOptionIdInDrawer === opt.id;
                   const optStock = getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal);
-                  const isInStock = isKitPricing || optStock > 0;
+                  const isInStock = isKitPricing || isChinaKitPricing
+                    ? true
+                    : isChinaVialPricing
+                    ? isChinaVialAvailable(opt.name)
+                    : optStock > 0;
                   return (
                     <button
                       key={opt.id}
@@ -193,6 +201,16 @@ export default function ProductDrawerModal({
                           <>
                             <span className="text-[8px] text-cyan-500 font-bold uppercase">kit · 10 vials</span>
                             <span className="text-xs text-cyan-400 font-bold">${getKitSellPrice(opt.name) || opt.price}</span>
+                          </>
+                        ) : isChinaKitPricing ? (
+                          <>
+                            <span className="text-[8px] text-red-400 font-bold uppercase">cn kit · 10 vials</span>
+                            <span className="text-xs text-red-400 font-bold">${getChinaKitSellPrice(opt.name) || opt.price}</span>
+                          </>
+                        ) : isChinaVialPricing ? (
+                          <>
+                            <span className="text-[8px] text-orange-400 font-bold uppercase">per vial</span>
+                            <span className="text-xs text-orange-400 font-bold">${getChinaVialSellPrice(opt.name) || opt.price}</span>
                           </>
                         ) : (
                           <>
@@ -222,13 +240,18 @@ export default function ProductDrawerModal({
                   </div>
 
                   {(() => {
-                    const available = isKitPricing ? 999 : getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
+                    const isFlatInStock = isKitPricing || isChinaKitPricing;
+                    const available = isFlatInStock
+                      ? 999
+                      : isChinaVialPricing
+                      ? (isChinaVialAvailable(activeOpt.name) ? 999 : 0)
+                      : getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
                     return (
                       <div className="flex items-center gap-1.5 text-xs">
                         <span className="text-slate-400">Inventory:</span>
                         {available > 0 ? (
                           <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
-                            {isKitPricing ? 'In Stock' : `${available} vials in stock`}
+                            {(isFlatInStock || isChinaVialPricing) ? 'In Stock' : `${available} vials in stock`}
                           </span>
                         ) : (
                           <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
@@ -254,37 +277,74 @@ export default function ProductDrawerModal({
               const vialProfit = salePrice - estimatedCost;
               const vialMarkupPct = Math.round((vialProfit / estimatedCost) * 100);
 
+              const chinaKitSell = getChinaKitSellPrice(activeOpt.name);
+              const chinaVialSell = getChinaVialSellPrice(activeOpt.name);
+
               return (
-                <div className="bg-amber-500/5 p-4 rounded-xl border border-amber-500/15 text-left font-mono text-xs space-y-1.5 text-amber-200">
-                  <div className="text-amber-400 font-extrabold uppercase tracking-wider text-[10px]">Admin Financial Highlights</div>
-                  <div className="flex justify-between">
-                    <span>KaosLabs Kit Cost (10 vials):</span>
-                    <span className="text-slate-300 font-bold">${kaosKitCost}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>KaosLabs Cost per Vial:</span>
-                    <span className="text-slate-300 font-bold">${estimatedCost.toFixed(2)} <span className="text-[10px] text-slate-500">(+$3.50 ship)</span></span>
-                  </div>
-                  {kitSellPrice > 0 && (
+                <div className="space-y-2">
+                  {/* KaosLabs / Norway financials */}
+                  <div className="bg-amber-500/5 p-4 rounded-xl border border-amber-500/15 text-left font-mono text-xs space-y-1.5 text-amber-200">
+                    <div className="text-amber-400 font-extrabold uppercase tracking-wider text-[10px]">🇳🇴 KaosLabs / Norway Financials</div>
+                    <div className="flex justify-between">
+                      <span>KaosLabs Kit Cost (10 vials):</span>
+                      <span className="text-slate-300 font-bold">${kaosKitCost}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>KaosLabs Cost per Vial:</span>
+                      <span className="text-slate-300 font-bold">${estimatedCost.toFixed(2)} <span className="text-[10px] text-slate-500">(+$3.50 ship)</span></span>
+                    </div>
+                    {kitSellPrice > 0 && (
+                      <div className="flex justify-between border-t border-amber-500/10 pt-1.5 mt-0.5">
+                        <span>Kit Sell Price (10 vials):</span>
+                        <span className="text-cyan-300 font-bold">${kitSellPrice}</span>
+                      </div>
+                    )}
+                    {kitSellPrice > 0 && (
+                      <div className="flex justify-between font-bold text-cyan-200">
+                        <span>Kit Profit:</span>
+                        <span>${kitProfit} (<span className="text-emerald-400">+{kitMarkupPct}%</span>)</span>
+                      </div>
+                    )}
                     <div className="flex justify-between border-t border-amber-500/10 pt-1.5 mt-0.5">
-                      <span>Kit Sell Price (10 vials):</span>
-                      <span className="text-cyan-300 font-bold">${kitSellPrice}</span>
+                      <span>Vial Sale Price (-15%):</span>
+                      <span className="text-slate-300 font-bold">${salePrice}.00</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-amber-300">
+                      <span>Vial Profit:</span>
+                      <span>${vialProfit.toFixed(2)} (<span className="text-emerald-400">+{vialMarkupPct}%</span>)</span>
+                    </div>
+                  </div>
+
+                  {/* China financials */}
+                  {(chinaKitSell > 0 || chinaVialSell > 0) && (
+                    <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/15 text-left font-mono text-xs space-y-1.5 text-red-200">
+                      <div className="text-red-400 font-extrabold uppercase tracking-wider text-[10px]">🇨🇳 XTP-Bella / China Financials</div>
+                      {chinaKitSell > 0 && (
+                        <>
+                          <div className="flex justify-between">
+                            <span>China Kit Sell Price (10 vials):</span>
+                            <span className="text-red-300 font-bold">${chinaKitSell}</span>
+                          </div>
+                          <div className="flex justify-between text-[11px] text-slate-400">
+                            <span>+ $50 flat ship (kit)</span>
+                          </div>
+                        </>
+                      )}
+                      {chinaVialSell > 0 && (
+                        <>
+                          <div className="flex justify-between border-t border-red-500/10 pt-1.5 mt-0.5">
+                            <span>China Vial Sell Price:</span>
+                            <span className={`font-bold ${isChinaVialAvailable(activeOpt.name) ? 'text-orange-300' : 'text-slate-500'}`}>
+                              ${chinaVialSell} {!isChinaVialAvailable(activeOpt.name) && <span className="text-[9px] text-amber-500">(mfg phase)</span>}
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-[11px] text-slate-400">
+                            <span>Free ship from US warehouse</span>
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
-                  {kitSellPrice > 0 && (
-                    <div className="flex justify-between font-bold text-cyan-200">
-                      <span>Kit Profit:</span>
-                      <span>${kitProfit} (<span className="text-emerald-400">+{kitMarkupPct}%</span>)</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between border-t border-amber-500/10 pt-1.5 mt-0.5">
-                    <span>Vial Sale Price (-15%):</span>
-                    <span className="text-slate-300 font-bold">${salePrice}.00</span>
-                  </div>
-                  <div className="flex justify-between font-bold text-amber-300">
-                    <span>Vial Profit:</span>
-                    <span>${vialProfit.toFixed(2)} (<span className="text-emerald-400">+{vialMarkupPct}%</span>)</span>
-                  </div>
                 </div>
               );
             })()}
@@ -295,7 +355,9 @@ export default function ProductDrawerModal({
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
                   Purchase Volume:
                 </label>
-                <p className="text-[10px] text-cyan-400 mt-0.5 normal-case font-semibold flex items-center gap-1"><Package className="w-3.5 h-3.5 text-cyan-500 inline" /> {isKitPricing ? 'Kit Rate (price = 10 vials per kit)' : 'Single-Vial Rate (All prices are per individual vial)'}</p>
+                <p className="text-[10px] text-cyan-400 mt-0.5 normal-case font-semibold flex items-center gap-1"><Package className="w-3.5 h-3.5 text-cyan-500 inline" />
+                  {(isKitPricing || isChinaKitPricing) ? 'Kit Rate (price = 10 vials per kit)' : 'Single-Vial Rate (All prices are per individual vial)'}
+                </p>
               </div>
 
               <div className="flex items-center gap-3 bg-slate-950 p-1.5 rounded-xl border border-slate-900">
@@ -317,7 +379,12 @@ export default function ProductDrawerModal({
                   onClick={() => {
                     triggerHaptic('light');
                     const activeOpt = selectedParentProductGroup?.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup?.options[0];
-                    const available = isKitPricing ? 999 : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
+                    const isFlatInStock2 = isKitPricing || isChinaKitPricing;
+                    const available = isFlatInStock2
+                      ? 999
+                      : isChinaVialPricing
+                      ? (activeOpt && isChinaVialAvailable(activeOpt.name) ? 999 : 0)
+                      : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
                     setDrawerQuantity((prev: number) => Math.min(available, prev + 1));
                   }}
                   className="p-1 px-1.5 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-white transition-all cursor-pointer"
@@ -334,18 +401,39 @@ export default function ProductDrawerModal({
               const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
               if (!activeOpt) return null;
 
-              const activePrice = getSalePrice(activeOpt.price);
+              const isFlatInStock3 = isKitPricing || isChinaKitPricing;
+              const canAdd = isFlatInStock3
+                ? true
+                : isChinaVialPricing
+                ? isChinaVialAvailable(activeOpt.name)
+                : getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) > 0;
+
+              const activePrice = isKitPricing
+                ? (getKitSellPrice(activeOpt.name) || activeOpt.price)
+                : isChinaKitPricing
+                ? (getChinaKitSellPrice(activeOpt.name) || activeOpt.price)
+                : isChinaVialPricing
+                ? (getChinaVialSellPrice(activeOpt.name) || activeOpt.price)
+                : getSalePrice(activeOpt.price);
               const totalSum = activePrice * drawerQuantity;
-              const available = getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
-              const canAdd = available > 0;
+
+              const footerLabel = isKitPricing
+                ? 'Kit Total (10 vials each)'
+                : isChinaKitPricing
+                ? 'China Kit Total (10 vials each)'
+                : isChinaVialPricing
+                ? 'Estimated Total (Free Shipping)'
+                : 'Estimated Total (15% Sale Applied)';
 
               return (
                 <>
                   <div className="text-left w-full sm:w-auto">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Estimated Total (15% Sale Applied)</span>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">{footerLabel}</span>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-xs text-slate-500 line-through">${activeOpt.price * drawerQuantity}.00</span>
-                      <div className="text-xl font-black text-cyan-400">${totalSum}.00</div>
+                      {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && (
+                        <span className="text-xs text-slate-500 line-through">${activeOpt.price * drawerQuantity}.00</span>
+                      )}
+                      <div className={`text-xl font-black ${isChinaKitPricing ? 'text-red-400' : isChinaVialPricing ? 'text-orange-400' : 'text-cyan-400'}`}>${totalSum}.00</div>
                     </div>
                   </div>
 
@@ -449,12 +537,13 @@ export default function ProductDrawerModal({
                         >
                           {canAdd ? (
                             <>
-                              <ShoppingCart className="w-4 h-4" /> Add {drawerQuantity} Vial{drawerQuantity > 1 ? 's' : ''} to Cart
+                              <ShoppingCart className="w-4 h-4" />
+                              {(isKitPricing || isChinaKitPricing)
+                                ? `Add ${drawerQuantity} Kit${drawerQuantity > 1 ? 's' : ''} to Cart`
+                                : `Add ${drawerQuantity} Vial${drawerQuantity > 1 ? 's' : ''} to Cart`}
                             </>
                           ) : (
-                            <>
-                              Manufacturing Phase
-                            </>
+                            <>Manufacturing Phase</>
                           )}
                         </button>
                       </div>
