@@ -747,6 +747,15 @@ export default function MembersShop() {
       setAdminOrdersList(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
       setAllOrdersGlobal(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+      // Notify customer of status change (fire-and-forget)
+      const order = allOrdersGlobal.find(o => o.id === orderId);
+      if (order?.userId) {
+        fetch('/api/notify-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'status_change', orderId, customerUserId: order.userId, status }),
+        }).catch(() => {});
+      }
     } catch (e) {
       console.error('Failed changing order status flag', e);
     } finally {
@@ -995,6 +1004,12 @@ export default function MembersShop() {
       setCart([]);
       setShowOrderSuccessModal(true);
       setView('catalog');
+      // Notify admin of new order (fire-and-forget)
+      fetch('/api/notify-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'order_placed', orderId, customerEmail: currentUser.email }),
+      }).catch(() => {});
     } catch (e) {
       console.error('Error recording retail order', e);
     } finally {
