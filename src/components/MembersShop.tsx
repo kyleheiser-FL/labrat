@@ -1432,23 +1432,23 @@ export default function MembersShop() {
         <div className="flex flex-col gap-6" id="active-shop-interface">
           
           {/* KIT PRICING INTEREST BANNER — approved (per-vial) members only */}
-          {memberProfile?.status === 'approved' && !isAdminPreviewCustomer && view === 'catalog' && (
+          {((memberProfile?.status === 'approved' && !isAdminPreviewCustomer) || (isAdminPreviewCustomer && !isAdminPreviewKit)) && view === 'catalog' && (
             <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-bold text-cyan-300">Interested in Kit Pricing?</p>
                 <p className="text-[11px] text-slate-400 mt-0.5">Order 10 vials at a time at a reduced rate, shipped directly from our Norway warehouse.</p>
               </div>
-              {memberProfile.kitUpgradeRequested ? (
+              {!isAdminPreviewCustomer && memberProfile?.kitUpgradeRequested ? (
                 <span className="shrink-0 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-bold rounded-lg">
                   ✓ Request Sent
                 </span>
               ) : (
                 <button
-                  onClick={handleRequestKitUpgrade}
-                  disabled={actionLoading === 'kit_upgrade_request'}
+                  onClick={isAdminPreviewCustomer ? undefined : handleRequestKitUpgrade}
+                  disabled={!isAdminPreviewCustomer && actionLoading === 'kit_upgrade_request'}
                   className="shrink-0 px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-[11px] font-bold rounded-lg cursor-pointer transition-all disabled:opacity-50"
                 >
-                  {actionLoading === 'kit_upgrade_request' ? <Loader2 className="w-3.5 h-3.5 animate-spin inline" /> : 'Request Kit Pricing →'}
+                  {!isAdminPreviewCustomer && actionLoading === 'kit_upgrade_request' ? <Loader2 className="w-3.5 h-3.5 animate-spin inline" /> : 'Request Kit Pricing →'}
                 </button>
               )}
             </div>
