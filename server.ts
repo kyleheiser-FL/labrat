@@ -104,7 +104,7 @@ app.use(express.json());
       return res.status(503).json({ error: 'Firebase Admin not configured. Set FIREBASE_SERVICE_ACCOUNT_BASE64.' });
     }
 
-    const firestore = getAdminFirestore(adminApp);
+    const firestore = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
     const fcmMessaging = getAdminMessaging(adminApp);
 
     const nowUtc = new Date();
@@ -207,7 +207,7 @@ app.use(express.json());
     const adminApp = getAdminApp();
     if (!adminApp) return res.status(503).json({ error: 'Push service not configured' });
 
-    const db = getAdminFirestore(adminApp);
+    const db = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
     const fcmMessaging = getAdminMessaging(adminApp);
 
     const ADMIN_UID = 'kyleheiser@gmail.com';
