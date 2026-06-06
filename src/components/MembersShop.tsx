@@ -1660,6 +1660,7 @@ export default function MembersShop() {
           isKitPricing={isKitPricing}
           isChinaKitPricing={isChinaKitPricing}
           isChinaVialPricing={isChinaVialPricing}
+          isAdminUser={isAdminUser}
         />
       )}
 

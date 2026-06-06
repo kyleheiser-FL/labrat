@@ -64,6 +64,7 @@ interface ProductDrawerModalProps {
   isKitPricing?: boolean;
   isChinaKitPricing?: boolean;
   isChinaVialPricing?: boolean;
+  isAdminUser?: boolean;
 }
 
 export default function ProductDrawerModal({
@@ -89,6 +90,7 @@ export default function ProductDrawerModal({
   isKitPricing = false,
   isChinaKitPricing = false,
   isChinaVialPricing = false,
+  isAdminUser = false,
 }: ProductDrawerModalProps) {
   const isChineseSource = isChinaKitPricing || isChinaVialPricing;
   const selectedParentProductGroup = group;
@@ -267,7 +269,7 @@ export default function ProductDrawerModal({
               );
             })()}
 
-            {isViewingAsAdmin && (() => {
+            {isAdminUser && (() => {
               const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
               if (!activeOpt) return null;
 
