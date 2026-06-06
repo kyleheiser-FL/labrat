@@ -109,8 +109,6 @@ export default function MembersShop() {
   const [isAdminPreviewChinaKit, setIsAdminPreviewChinaKit] = useState(false);
   const [isAdminPreviewChinaVial, setIsAdminPreviewChinaVial] = useState(false);
 
-  // Customer source toggle: Norway or China. Initialized from member status once profile loads.
-  const [customerSourceToggle, setCustomerSourceToggle] = useState<'norway' | 'china'>('norway');
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -144,23 +142,10 @@ export default function MembersShop() {
   const isAdminUser = currentUser?.email?.toLowerCase() === 'kyleheiser@gmail.com';
   const isViewingAsAdmin = isAdminUser && !isAdminPreviewCustomer;
 
-  // Customer tier detection — drives the Norway/China source toggle
-  const isVialCustomer = !isAdminUser && (memberProfile?.status === 'approved' || memberProfile?.status === 'chinavial');
-  const isKitCustomer = !isAdminUser && (memberProfile?.status === 'kit' || memberProfile?.status === 'chinakit');
-
-  // Initialize toggle to China for China-native member statuses
-  React.useEffect(() => {
-    if (memberProfile?.status === 'chinakit' || memberProfile?.status === 'chinavial') {
-      setCustomerSourceToggle('china');
-    } else {
-      setCustomerSourceToggle('norway');
-    }
-  }, [memberProfile?.status]);
-
-  // Effective pricing flags: customer toggle OR admin preview override
-  const isKitPricing = (isKitCustomer && customerSourceToggle === 'norway') || (isAdminUser && isAdminPreviewKit);
-  const isChinaKitPricing = (isKitCustomer && customerSourceToggle === 'china') || (isAdminUser && isAdminPreviewChinaKit);
-  const isChinaVialPricing = (isVialCustomer && customerSourceToggle === 'china') || (isAdminUser && isAdminPreviewChinaVial);
+  // Each status tier is locked to its own pricing — no cross-source toggle
+  const isKitPricing = (memberProfile?.status === 'kit' && !isAdminUser) || (isAdminUser && isAdminPreviewKit);
+  const isChinaKitPricing = (memberProfile?.status === 'chinakit' && !isAdminUser) || (isAdminUser && isAdminPreviewChinaKit);
+  const isChinaVialPricing = (memberProfile?.status === 'chinavial' && !isAdminUser) || (isAdminUser && isAdminPreviewChinaVial);
 
   // Application Layout Views
   // Users view: 'catalog' | 'cart' | 'checkout' | 'orders' | 'status_check'
@@ -1536,10 +1521,6 @@ export default function MembersShop() {
               isKitPricing={isKitPricing}
               isChinaKitPricing={isChinaKitPricing}
               isChinaVialPricing={isChinaVialPricing}
-              customerSourceToggle={customerSourceToggle}
-              onSetCustomerSourceToggle={setCustomerSourceToggle}
-              isVialCustomer={isVialCustomer}
-              isKitCustomer={isKitCustomer}
             />
           )}
           {/* USER SHOPPING CART VIEW */}
@@ -1679,8 +1660,6 @@ export default function MembersShop() {
           isKitPricing={isKitPricing}
           isChinaKitPricing={isChinaKitPricing}
           isChinaVialPricing={isChinaVialPricing}
-          isVialCustomer={isVialCustomer}
-          isKitCustomer={isKitCustomer}
         />
       )}
 

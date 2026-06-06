@@ -85,10 +85,6 @@ interface ShopCatalogViewProps {
   isKitPricing?: boolean;
   isChinaKitPricing?: boolean;
   isChinaVialPricing?: boolean;
-  customerSourceToggle?: 'norway' | 'china';
-  onSetCustomerSourceToggle?: (v: 'norway' | 'china') => void;
-  isVialCustomer?: boolean;
-  isKitCustomer?: boolean;
 }
 
 export default function ShopCatalogView({
@@ -123,15 +119,8 @@ export default function ShopCatalogView({
   isKitPricing = false,
   isChinaKitPricing = false,
   isChinaVialPricing = false,
-  customerSourceToggle = 'norway',
-  onSetCustomerSourceToggle,
-  isVialCustomer = false,
-  isKitCustomer = false,
 }: ShopCatalogViewProps) {
-  const hasSourceToggle = (isVialCustomer || isKitCustomer) && !!onSetCustomerSourceToggle;
-  // Customers always see everything in stock; admin sees real counts
   const customerView = !isViewingAsAdmin;
-  // Hide China-only products when customer is on Norway source (or non-China admin preview)
   const isChineseSource = isChinaKitPricing || isChinaVialPricing;
 
   const [usaShipFilter, setUsaShipFilter] = useState(false);
@@ -156,85 +145,12 @@ export default function ShopCatalogView({
     <div className="flex flex-col gap-6">
 
       {/* Pricing / source banner */}
-      {hasSourceToggle ? (
-        /* Customer source toggle banner */
-        <div className={`border rounded-xl p-3 sm:p-4 text-left transition-all duration-300 ${
-          customerSourceToggle === 'china'
-            ? (isKitCustomer ? 'bg-gradient-to-r from-red-950/20 via-[#0a0f1d] to-red-950/20 border-red-500/30' : 'bg-gradient-to-r from-orange-950/20 via-[#0a0f1d] to-orange-950/20 border-orange-500/30')
-            : 'bg-gradient-to-r from-cyan-950/20 via-[#0a0f1d] to-cyan-950/20 border-cyan-500/30'
-        }`}>
-          {/* Toggle row */}
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Sourcing Region:</span>
-            <div className="flex gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
-              <button
-                onClick={() => { triggerHaptic('light'); onSetCustomerSourceToggle!('norway'); setUsaShipFilter(false); }}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-black transition-all duration-200 flex items-center gap-1.5 cursor-pointer ${
-                  customerSourceToggle === 'norway'
-                    ? 'bg-cyan-500 text-slate-950 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                🇳🇴 Norway
-              </button>
-              <button
-                onClick={() => { triggerHaptic('light'); onSetCustomerSourceToggle!('china'); }}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-black transition-all duration-200 flex items-center gap-1.5 cursor-pointer ${
-                  customerSourceToggle === 'china'
-                    ? (isKitCustomer ? 'bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,0.3)]' : 'bg-orange-500 text-white shadow-[0_0_10px_rgba(249,115,22,0.3)]')
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                🇨🇳 China
-              </button>
-            </div>
-          </div>
-
-          {/* Source-specific info */}
-          {customerSourceToggle === 'norway' ? (
-            isKitCustomer ? (
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-black text-white flex items-center gap-1.5"><Package className="w-3.5 h-3.5 text-cyan-400" /> 🇳🇴 Norway Kit · <span className="text-cyan-400">10 Vials per Kit</span></span>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/20">$25 Flat Shipping</span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">Norway GMP-certified source. Every price is for a <strong className="text-cyan-300">full kit of 10 vials</strong> shipped from Oslo. Flat <strong className="text-cyan-300">$25</strong> per order. All compounds in stock.</p>
-              </div>
-            ) : (
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-black text-white flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" /> 🇳🇴 Norway Vials · <span className="text-cyan-400">Per Vial Pricing</span></span>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/20">Ships from Norway</span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">GMP-certified Norway source. Grand Opening <strong className="text-cyan-300">15% discount</strong> applied automatically. Free shipping on orders <strong className="text-cyan-300">$100+</strong>. All compounds in stock.</p>
-              </div>
-            )
-          ) : (
-            isKitCustomer ? (
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-black text-white flex items-center gap-1.5"><Package className="w-3.5 h-3.5 text-red-400" /> 🇨🇳 China Kit · <span className="text-red-400">10 Vials per Kit</span></span>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-red-300 bg-red-950/60 px-2 py-0.5 rounded border border-red-500/20">$50 Flat Shipping</span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">Well vetted China lab with confirmed shipments and confirmed purity. Every price is for a <strong className="text-red-300">full kit of 10 vials</strong> shipped directly from China. Flat <strong className="text-red-300">$50</strong> international rate per order. All compounds in stock.</p>
-              </div>
-            ) : (
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-black text-white flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-orange-400 animate-pulse" /> 🇨🇳 China Vials · <span className="text-orange-400">Per Vial Pricing</span></span>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-orange-300 bg-orange-950/60 px-2 py-0.5 rounded border border-orange-500/20">Free Shipping</span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">China-sourced compounds. <strong className="text-orange-300">Retatrutide</strong> ships free from our <strong className="text-orange-300">🇺🇸 US Warehouse</strong>. All other compounds ship free directly from <strong className="text-orange-300">🇨🇳 China</strong>.</p>
-              </div>
-            )
-          )}
-        </div>
-      ) : isKitPricing ? (
+      {isKitPricing ? (
         <div className="bg-gradient-to-r from-cyan-950/30 via-[#0a0f1d] to-cyan-950/30 border border-cyan-500/30 rounded-xl p-3 sm:p-4 text-left">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Package className="w-4 h-4 text-cyan-400" />
-              🇳🇴 Norway Kit Member: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">10 Vials per Kit</span>
+              🇳🇴 Norway Kit · <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">10 Vials per Kit</span>
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-cyan-300 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
               Wholesale Rate · $25 Flat Ship
@@ -249,14 +165,14 @@ export default function ShopCatalogView({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-red-900/40 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Package className="w-4 h-4 text-red-400" />
-              🇨🇳 China Kit (Admin Preview): <span className="text-red-400 bg-red-950/65 px-2 py-0.5 rounded border border-red-500/20 text-xs font-black">10 Vials per Kit</span>
+              🇨🇳 China Kit · <span className="text-red-400 bg-red-950/65 px-2 py-0.5 rounded border border-red-500/20 text-xs font-black">10 Vials per Kit</span>
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-red-300 bg-red-950/45 px-2.5 py-0.5 rounded border border-red-500/20 self-start sm:self-center">
               China Source · $50 Flat Ship
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            China kit pricing preview. Every price is for a <strong className="text-red-300 font-bold">full kit of 10 vials</strong> shipped directly from China. Flat <strong className="text-red-300 font-bold">$50 international shipping</strong>.
+            {isViewingAsAdmin ? 'China kit pricing preview. ' : 'You are enrolled in China kit pricing. '}Every price is for a <strong className="text-red-300 font-bold">full kit of 10 vials</strong> shipped directly from China. Flat <strong className="text-red-300 font-bold">$50 international shipping</strong>.
           </p>
         </div>
       ) : isChinaVialPricing ? (
@@ -264,14 +180,14 @@ export default function ShopCatalogView({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-orange-900/40 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-orange-400 animate-pulse" />
-              🇨🇳 China Vial (Admin Preview): <span className="text-orange-400 bg-orange-950/65 px-2 py-0.5 rounded border border-orange-500/20 text-xs font-black">Free Shipping</span>
+              🇨🇳 China Vials · <span className="text-orange-400 bg-orange-950/65 px-2 py-0.5 rounded border border-orange-500/20 text-xs font-black">Free Shipping</span>
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-orange-300 bg-orange-950/45 px-2.5 py-0.5 rounded border border-orange-500/20 self-start sm:self-center">
               China Source · US Warehouse
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            China vial pricing preview. Retatrutide ships from US warehouse free. All other compounds ship from China.
+            {isViewingAsAdmin ? 'China vial pricing preview. ' : 'You are enrolled in China vial pricing. '}Retatrutide ships free from our <strong className="text-orange-300 font-bold">🇺🇸 US Warehouse</strong>. All other compounds ship free directly from <strong className="text-orange-300 font-bold">🇨🇳 China</strong>.
           </p>
         </div>
       ) : (
@@ -356,7 +272,7 @@ export default function ShopCatalogView({
               const q = searchQuery.toLowerCase();
               const shopSuggestions = products.filter(p =>
                 p.name.toLowerCase().includes(q) ||
-                p.chemicalName?.toLowerCase().includes(q)
+                p.description?.toLowerCase().includes(q)
               ).slice(0, 5);
 
               return (

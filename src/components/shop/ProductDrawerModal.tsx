@@ -64,8 +64,6 @@ interface ProductDrawerModalProps {
   isKitPricing?: boolean;
   isChinaKitPricing?: boolean;
   isChinaVialPricing?: boolean;
-  isVialCustomer?: boolean;
-  isKitCustomer?: boolean;
 }
 
 export default function ProductDrawerModal({
@@ -91,10 +89,8 @@ export default function ProductDrawerModal({
   isKitPricing = false,
   isChinaKitPricing = false,
   isChinaVialPricing = false,
-  isVialCustomer = false,
-  isKitCustomer = false,
 }: ProductDrawerModalProps) {
-  const customerView = !isViewingAsAdmin && (isVialCustomer || isKitCustomer);
+  const customerView = !isViewingAsAdmin;
   const selectedParentProductGroup = group;
   const selectedOptionIdInDrawer = selectedOptionId;
   const setSelectedOptionIdInDrawer = onSetSelectedOptionId;
