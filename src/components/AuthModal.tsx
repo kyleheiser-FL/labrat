@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldCheck, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
@@ -11,15 +11,24 @@ interface AuthModalProps {
   onClose: () => void;
   onNotification: (title: string, message: string, type: 'info' | 'success' | 'warning' | 'reminder', persist?: boolean) => void;
   onSignUpSuccess?: (user: User) => void;
+  initialMode?: 'signin' | 'signup';
 }
 
-export default function AuthModal({ open, onClose, onNotification, onSignUpSuccess }: AuthModalProps) {
+export default function AuthModal({ open, onClose, onNotification, onSignUpSuccess, initialMode }: AuthModalProps) {
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [authUsername, setAuthUsername] = useState('');
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [authError, setAuthError] = useState('');
   const [authSubmitting, setAuthSubmitting] = useState(false);
+
+  // Re-sync the sign-in/sign-up tab to the caller's preference each time the modal opens
+  useEffect(() => {
+    if (open) {
+      setIsSignUpMode(initialMode === 'signup');
+      setAuthError('');
+    }
+  }, [open, initialMode]);
 
   const handleClose = () => {
     setAuthError('');

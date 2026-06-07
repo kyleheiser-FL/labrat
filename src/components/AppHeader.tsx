@@ -169,7 +169,7 @@ export default function AppHeader({
                 id="google-sign-in"
               >
                 <LogIn className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden xs:inline">Sync / Login</span>
+                <span className="hidden xs:inline">Register / Login</span>
               </button>
             )}
 

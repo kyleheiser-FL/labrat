@@ -37,7 +37,9 @@ import {
   Droplet,
   Moon,
   Dna,
-  TrendingUp
+  TrendingUp,
+  UserPlus,
+  LogIn
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, auth } from '../firebase';
@@ -83,7 +85,11 @@ function resolveLabratTheme(): LabratThemeMode {
 }
 
 
-export default function MembersShop() {
+interface MembersShopProps {
+  onRequestAuth?: (mode: 'signin' | 'signup') => void;
+}
+
+export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   const [currentUser, setCurrentUser] = useState<any>(auth.currentUser);
   const [labratTheme, setLabratTheme] = useState<LabratThemeMode>(() => resolveLabratTheme());
   
@@ -1315,8 +1321,26 @@ export default function MembersShop() {
           </div>
           <h2 className="text-xl font-bold text-white tracking-tight">Login Credentials Required</h2>
           <p className="text-slate-400 text-sm mt-2 max-w-sm mx-auto">
-            Viewing and placing chemical requests on the LabRat network requires authenticating with your account in the checklist tab.
+            Viewing and placing chemical requests on the LabRat network requires a free labrat account. New here? Registration takes less than a minute.
           </p>
+          <div className="flex flex-col xs:flex-row items-stretch gap-2.5 mt-6 w-full max-w-xs mx-auto">
+            <button
+              onClick={() => { triggerHaptic('medium'); onRequestAuth?.('signup'); }}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-[0_0_20px_rgba(6,182,212,0.25)] cursor-pointer uppercase tracking-wider"
+              id="shop-cta-create-account"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Create Free Account</span>
+            </button>
+            <button
+              onClick={() => { triggerHaptic('light'); onRequestAuth?.('signin'); }}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#1e293b] hover:bg-[#334155] text-slate-200 font-bold rounded-xl text-xs transition-all cursor-pointer uppercase tracking-wider border border-slate-700/60"
+              id="shop-cta-sign-in"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Sign In</span>
+            </button>
+          </div>
         </div>
       ) : !isAdminUser && !memberProfile ? (
         /* PROFILE NOT REQUESTED YET: SHOW REGISTER SHEET */

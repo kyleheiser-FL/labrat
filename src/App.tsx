@@ -596,6 +596,11 @@ export default function App() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
+  const openAuthModal = useCallback((mode: 'signin' | 'signup' = 'signin') => {
+    setAuthModalMode(mode);
+    setShowAuthModal(true);
+  }, []);
 
   useEffect(() => {
     const checkStandalone = () => {
@@ -1316,7 +1321,7 @@ export default function App() {
         isStandalone={isStandalone}
         onInstallApp={handleInstallApp}
         onSignOut={handleSignOut}
-        onSignInClick={() => setShowAuthModal(true)}
+        onSignInClick={() => openAuthModal('signin')}
         hideShop={hideShop}
         trackingEnabled={trackingEnabled}
       />
@@ -1387,7 +1392,7 @@ export default function App() {
               )}
 
               {activeTab === 'shop' && !hideShop && (
-                <MembersShop />
+                <MembersShop onRequestAuth={openAuthModal} />
               )}
 
               {activeTab === 'settings' && (
@@ -1448,7 +1453,7 @@ export default function App() {
       <LegalModal open={showLegalModal} onClose={() => setShowLegalModal(false)} />
       <FirstBootThemePicker open={showFirstBootThemePicker} onSelectTheme={applyThemeSelection} />
       <AppearanceModal open={showAppearanceModal} onClose={() => setShowAppearanceModal(false)} currentTheme={labratTheme} onSelectTheme={applyThemeSelection} />
-      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} onNotification={triggerNotification} onSignUpSuccess={(u) => setUser(u as any)} />
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} onNotification={triggerNotification} onSignUpSuccess={(u) => setUser(u as any)} initialMode={authModalMode} />
       {activeTab === 'shop' && <LiveChat />}
     </div>
   );
