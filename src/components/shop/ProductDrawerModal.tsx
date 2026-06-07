@@ -94,6 +94,13 @@ export default function ProductDrawerModal({
 }: ProductDrawerModalProps) {
   const isChineseSource = isChinaKitPricing || isChinaVialPricing;
   const selectedParentProductGroup = group;
+  // China price lists only cover specific dosage strengths per compound — hide strengths
+  // that aren't on the China list rather than showing them with a fallback Norway price.
+  const availableOptions = isChinaKitPricing
+    ? selectedParentProductGroup.options.filter(o => getChinaKitSellPrice(o.name) > 0)
+    : isChinaVialPricing
+    ? selectedParentProductGroup.options.filter(o => getChinaVialSellPrice(o.name) > 0)
+    : selectedParentProductGroup.options;
   const selectedOptionIdInDrawer = selectedOptionId;
   const setSelectedOptionIdInDrawer = onSetSelectedOptionId;
   const setDrawerQuantity = onSetDrawerQuantity;
@@ -140,7 +147,7 @@ export default function ProductDrawerModal({
             <div className="flex flex-col md:flex-row gap-5 items-stretch md:items-center bg-slate-950/60 p-4 rounded-xl border border-slate-900">
               <div className="w-full md:w-[22rem] lg:w-[24rem] shrink-0">
                 {(() => {
-                  const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
+                  const activeOpt = availableOptions.find(o => o.id === selectedOptionIdInDrawer) || availableOptions[0];
                   return <ProductVialVisual name={activeOpt ? activeOpt.name : selectedParentProductGroup.baseName} category={selectedParentProductGroup.category} theme={labratTheme} />;
                 })()}
               </div>
@@ -179,7 +186,7 @@ export default function ProductDrawerModal({
                 Select Milligrams (Dosage Strength):
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {selectedParentProductGroup.options.map(opt => {
+                {availableOptions.map(opt => {
                   const isSelected = selectedOptionIdInDrawer === opt.id;
                   const isInStock = isChineseSource || isKitPricing || getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal) > 0;
                   return (
@@ -232,7 +239,7 @@ export default function ProductDrawerModal({
 
             {/* Selected Item Stock & Specs */}
             {(() => {
-              const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
+              const activeOpt = availableOptions.find(o => o.id === selectedOptionIdInDrawer) || availableOptions[0];
               if (!activeOpt) return null;
 
               return (
@@ -270,7 +277,7 @@ export default function ProductDrawerModal({
             })()}
 
             {isAdminUser && (() => {
-              const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
+              const activeOpt = availableOptions.find(o => o.id === selectedOptionIdInDrawer) || availableOptions[0];
               if (!activeOpt) return null;
 
               if (isChinaKitPricing || isChinaVialPricing) {
@@ -421,7 +428,7 @@ export default function ProductDrawerModal({
           {/* Dynamic Footer Area with Checkout Summary and CTA */}
           <div className="p-5 bg-slate-950/80 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4">
             {(() => {
-              const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
+              const activeOpt = availableOptions.find(o => o.id === selectedOptionIdInDrawer) || availableOptions[0];
               if (!activeOpt) return null;
 
               const canAdd = isChineseSource || isKitPricing || getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) > 0;
