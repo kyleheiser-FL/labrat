@@ -456,7 +456,8 @@ function resolveChineseKitCost(norm: string): number {
   let kitCost = 0;
   if (norm.includes('bacteriostatic water') || norm.includes('bac water')) {
     if (norm.includes('10ml')) kitCost = 15;
-    else kitCost = 10;
+    else if (norm.includes('3ml')) kitCost = 10;
+    // 30ml not on China list
   } else if (norm.includes('bpc-157') && (norm.includes('tb-500') || norm.includes('tb500')) && (norm.includes('blend') || norm.includes('+'))) {
     if (norm.includes('20mg')) kitCost = 165;
     else kitCost = 100;
