@@ -169,8 +169,26 @@ const getInitialBranding = (): LabRatBranding => {
   return saved === 'mascot' || saved === 'wordmark' || saved === 'lr' ? saved : 'mascot';
 };
 
+// New visitors land in shop-only mode until they opt in to tracking features.
+// Returning users who already set up compounds before this change keep full access.
+const getInitialTrackingEnabled = (): boolean => {
+  const saved = safeLocalStorage.getItem('labrat_tracking_enabled');
+  if (saved === 'true') return true;
+  if (saved === 'false') return false;
+  return safeLocalStorage.getItem('labrat_compounds_initialized') === 'true';
+};
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings'>(
+    () => (getInitialTrackingEnabled() ? 'dashboard' : 'shop')
+  );
+  const [trackingEnabled, setTrackingEnabled] = useState<boolean>(getInitialTrackingEnabled);
+
+  const handleToggleTracking = useCallback((enabled: boolean) => {
+    setTrackingEnabled(enabled);
+    safeLocalStorage.setItem('labrat_tracking_enabled', enabled ? 'true' : 'false');
+    triggerHaptic(enabled ? 'success' : 'medium');
+  }, []);
 
   // Push a history entry so the hardware/gesture back button navigates between tabs
   const navigateTab = useCallback((tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => {
@@ -316,12 +334,18 @@ export default function App() {
     return () => unsub();
   }, [isHardcompiledAppStore]);
 
-  // Fallback structural safety routing adjustments
+  // Fallback structural safety routing adjustments — redirect away from any tab
+  // that's currently hidden (shop disabled globally, or tracking features opted out)
   useEffect(() => {
-    if (hideShop && activeTab === 'shop') {
-      setActiveTab('dashboard');
+    const isTabVisible = (tab: typeof activeTab) => {
+      if (tab === 'shop') return !hideShop;
+      if (tab === 'settings') return true;
+      return trackingEnabled;
+    };
+    if (!isTabVisible(activeTab)) {
+      setActiveTab(trackingEnabled ? 'dashboard' : (!hideShop ? 'shop' : 'settings'));
     }
-  }, [hideShop, activeTab]);
+  }, [hideShop, trackingEnabled, activeTab]);
 
   const handleToggleHideShop = async (hide: boolean) => {
     if (isHardcompiledAppStore) return;
@@ -1289,6 +1313,7 @@ export default function App() {
         onSignOut={handleSignOut}
         onSignInClick={() => setShowAuthModal(true)}
         hideShop={hideShop}
+        trackingEnabled={trackingEnabled}
       />
 
       {/* Main Responsive Layout Wrapper */}
@@ -1367,6 +1392,8 @@ export default function App() {
                   user={user}
                   hideShop={hideShop}
                   onToggleHideShop={handleToggleHideShop}
+                  trackingEnabled={trackingEnabled}
+                  onToggleTracking={handleToggleTracking}
                   segmentVisibility={segmentVisibility}
                   onSegmentChange={handleSegmentChange}
                   notificationPermission={notificationPermission}
