@@ -713,6 +713,11 @@ export default function App() {
       safeLocalStorage.removeItem('labrat_compounds_initialized');
       safeLocalStorage.removeItem('labrat_just_clicked_signin');
 
+      // Re-derive shop-only vs. full access now that the "returning user" signal
+      // (labrat_compounds_initialized) has been cleared — without this, signing
+      // out would leave the tracking tabs visible until a hard page reload.
+      setTrackingEnabled(getInitialTrackingEnabled());
+
       await signOut(auth);
       setNotificationsOpen(false);
     } catch (err) {
