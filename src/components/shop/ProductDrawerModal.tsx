@@ -299,7 +299,7 @@ export default function ProductDrawerModal({
                   );
                 }
 
-                const chinaVialRawCost = chinaVialSell > 0 ? Math.round(chinaVialSell / 1.25) : 0;
+                const chinaVialRawCost = chinaVialSell > 0 ? Math.round(chinaVialSell / 1.35) : 0;
                 const chinaVialProfit = chinaVialSell - chinaVialRawCost;
                 return (
                   <div className="bg-orange-500/5 p-4 rounded-xl border border-orange-500/15 text-left font-mono text-xs space-y-1.5 text-orange-200">
@@ -314,7 +314,7 @@ export default function ProductDrawerModal({
                     </div>
                     <div className="flex justify-between font-bold text-orange-200">
                       <span>China Vial Profit:</span>
-                      <span>${chinaVialProfit} (<span className="text-emerald-400">+25%</span>)</span>
+                      <span>${chinaVialProfit} (<span className="text-emerald-400">+35%</span>)</span>
                     </div>
                   </div>
                 );
