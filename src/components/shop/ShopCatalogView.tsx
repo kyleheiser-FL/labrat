@@ -533,7 +533,17 @@ export default function ShopCatalogView({
             if (customerView) return true; // all products available for customers
             return group.options.reduce((sum, o) => sum + getProductAvailableStock(o.id, o.inventory, allOrdersGlobal), 0) > 0;
           };
-          groupedDisplayItems.sort((a, b) => {
+          // China price lists only cover specific compounds/strengths — drop entire groups
+          // with no China-priced option, and within remaining groups show only the
+          // strengths actually on the China list (rather than falling back to Norway prices).
+          const chinaFilterFn = isChinaKitPricing
+            ? (o: ShopProduct) => getChinaKitSellPrice(o.name) > 0
+            : (o: ShopProduct) => getChinaVialSellPrice(o.name) > 0;
+          const visibleGroups = isChineseSource
+            ? groupedDisplayItems.filter(g => g.options.some(chinaFilterFn))
+            : groupedDisplayItems;
+
+          visibleGroups.sort((a, b) => {
             const hasStockA = groupIsAvailable(a) ? 1 : 0;
             const hasStockB = groupIsAvailable(b) ? 1 : 0;
             if (hasStockA !== hasStockB) return hasStockB - hasStockA;
@@ -542,14 +552,15 @@ export default function ShopCatalogView({
 
           return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {groupedDisplayItems.map(group => {
-                const prices = group.options.map(o => o.price);
+              {visibleGroups.map(group => {
+                const availableOptions = isChineseSource ? group.options.filter(chinaFilterFn) : group.options;
+                const prices = availableOptions.map(o => o.price);
                 const minPrice = Math.min(...prices);
                 const maxPrice = Math.max(...prices);
-                const totalStock = group.options.reduce((sum, o) => sum + getProductAvailableStock(o.id, o.inventory, allOrdersGlobal), 0);
+                const totalStock = availableOptions.reduce((sum, o) => sum + getProductAvailableStock(o.id, o.inventory, allOrdersGlobal), 0);
                 const hasStock = totalStock > 0;
-                const firstOption = group.options[0];
-                const inStockOption = group.options.find(o => getProductAvailableStock(o.id, o.inventory, allOrdersGlobal) > 0);
+                const firstOption = availableOptions[0];
+                const inStockOption = availableOptions.find(o => getProductAvailableStock(o.id, o.inventory, allOrdersGlobal) > 0);
                 const preferredDefault = inStockOption || firstOption;
                 const activeProdId = selectedProductIds[group.baseName] || preferredDefault?.id;
 
@@ -566,7 +577,7 @@ export default function ShopCatalogView({
                           baseName: group.baseName,
                           category: group.category,
                           description: firstOption?.description || '',
-                          options: group.options
+                          options: availableOptions
                         });
                         onSetSelectedOptionIdInDrawer(activeProdId || firstOption?.id || '');
                         onSetDrawerQuantity(1);
@@ -585,7 +596,7 @@ export default function ShopCatalogView({
                             baseName: group.baseName,
                             category: group.category,
                             description: firstOption?.description || '',
-                            options: group.options
+                            options: availableOptions
                           });
                           onSetSelectedOptionIdInDrawer(activeProdId || firstOption?.id || '');
                           onSetDrawerQuantity(1);
@@ -604,14 +615,14 @@ export default function ShopCatalogView({
                               </span>
                             );
                           })()}
-                          {isChineseSource && group.options.some(o => isChinaVialAvailable(o.name)) && (
+                          {isChineseSource && availableOptions.some(o => isChinaVialAvailable(o.name)) && (
                             <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 text-[10px] font-black tracking-wider uppercase">
                               ⚡ Fast Ship
                             </span>
                           )}
                           <span className="text-[11px] ml-auto">
                             {(() => {
-                              const activeOpt = group.options.find(o => o.id === activeProdId) || firstOption;
+                              const activeOpt = availableOptions.find(o => o.id === activeProdId) || firstOption;
                                   // Determine shipping origin label for customer view
                               const shipOrigin = customerView
                                 ? isChinaKitPricing
@@ -643,7 +654,7 @@ export default function ShopCatalogView({
                       <div className="border-t border-slate-800/50 pt-3 mt-1">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Available Strengths:</span>
                         <div className="flex flex-wrap gap-1.5">
-                          {group.options.map(opt => {
+                          {availableOptions.map(opt => {
                             const isSelected = activeProdId === opt.id;
                             const isInStock = true;
                             return (
@@ -677,7 +688,7 @@ export default function ShopCatalogView({
                     </div>
 
                     {(() => {
-                      const activeProduct = group.options.find(o => o.id === activeProdId) || firstOption;
+                      const activeProduct = availableOptions.find(o => o.id === activeProdId) || firstOption;
                       if (!activeProduct) return null;
                       const isOutOfStock = false;
 
