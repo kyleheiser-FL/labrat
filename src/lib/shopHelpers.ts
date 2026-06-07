@@ -540,13 +540,13 @@ export function getChinaKitSellPrice(name: string): number {
   return Math.round(raw * 1.25);
 }
 
-// China vial sell price: (kit cost ÷ 10) × 1.35 markup
+// China vial sell price: (kit cost ÷ 10) × 1.35 markup, then +35% on top (compounded: ×1.8225 over cost)
 // US warehouse kit costs and China kit costs are both per-kit-of-10, so divide by 10 for per-vial.
 export function getChinaVialSellPrice(name: string): number {
   const norm = name.toLowerCase();
   const kitCost = resolveChineseUsWarehouseCost(norm) || resolveChineseKitCost(norm);
   if (!kitCost) return 0;
-  return Math.round((kitCost / 10) * 1.35);
+  return Math.round((kitCost / 10) * 1.35 * 1.35);
 }
 
 // Returns true if the product ships from the China US warehouse (Retatrutide 10/20/30mg only)
