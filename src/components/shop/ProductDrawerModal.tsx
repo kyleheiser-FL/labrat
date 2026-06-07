@@ -273,6 +273,53 @@ export default function ProductDrawerModal({
               const activeOpt = selectedParentProductGroup.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup.options[0];
               if (!activeOpt) return null;
 
+              if (isChinaKitPricing || isChinaVialPricing) {
+                const chinaKitSell = getChinaKitSellPrice(activeOpt.name);
+                const chinaVialSell = getChinaVialSellPrice(activeOpt.name);
+
+                if (isChinaKitPricing) {
+                  const chinaKitRawCost = chinaKitSell > 0 ? Math.round(chinaKitSell / 1.25) : 0;
+                  const chinaKitProfit = chinaKitSell - chinaKitRawCost;
+                  return (
+                    <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/15 text-left font-mono text-xs space-y-1.5 text-red-200">
+                      <div className="text-red-400 font-extrabold uppercase tracking-wider text-[10px]">🇨🇳 China Kit — Admin Financial Highlights</div>
+                      <div className="flex justify-between">
+                        <span>China Source Cost (10 vials):</span>
+                        <span className="text-slate-300 font-bold">${chinaKitRawCost || '—'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>China Kit Sell Price (10 vials):</span>
+                        <span className="text-red-300 font-bold">${chinaKitSell || '—'}</span>
+                      </div>
+                      <div className="flex justify-between font-bold text-red-200">
+                        <span>China Kit Profit:</span>
+                        <span>${chinaKitProfit} (<span className="text-emerald-400">+25%</span>)</span>
+                      </div>
+                    </div>
+                  );
+                }
+
+                const chinaVialRawCost = chinaVialSell > 0 ? Math.round(chinaVialSell / 1.25) : 0;
+                const chinaVialProfit = chinaVialSell - chinaVialRawCost;
+                return (
+                  <div className="bg-orange-500/5 p-4 rounded-xl border border-orange-500/15 text-left font-mono text-xs space-y-1.5 text-orange-200">
+                    <div className="text-orange-400 font-extrabold uppercase tracking-wider text-[10px]">🇨🇳 China Vial — Admin Financial Highlights</div>
+                    <div className="flex justify-between">
+                      <span>China Vial Source Cost:</span>
+                      <span className="text-slate-300 font-bold">${chinaVialRawCost || '—'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>China Vial Sell Price:</span>
+                      <span className="text-orange-300 font-bold">${chinaVialSell || '—'}</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-orange-200">
+                      <span>China Vial Profit:</span>
+                      <span>${chinaVialProfit} (<span className="text-emerald-400">+25%</span>)</span>
+                    </div>
+                  </div>
+                );
+              }
+
               // Norway financials
               const estimatedCost = getProductCostPerVial(activeOpt.name, activeOpt.price);
               const kaosKitCost = Math.round((estimatedCost - 3.50) * 10);
@@ -283,86 +330,38 @@ export default function ProductDrawerModal({
               const vialProfit = salePrice - estimatedCost;
               const vialMarkupPct = Math.round((vialProfit / estimatedCost) * 100);
 
-              // China financials — profit vs China source cost (always 25% markup)
-              const chinaKitSell = getChinaKitSellPrice(activeOpt.name);
-              const chinaVialSell = getChinaVialSellPrice(activeOpt.name);
-              const chinaKitRawCost = chinaKitSell > 0 ? Math.round(chinaKitSell / 1.25) : 0;
-              const chinaKitProfit = chinaKitSell - chinaKitRawCost;
-              const chinaVialRawCost = chinaVialSell > 0 ? Math.round(chinaVialSell / 1.25) : 0;
-              const chinaVialProfit = chinaVialSell - chinaVialRawCost;
-
               return (
-                <>
-                  <div className="bg-amber-500/5 p-4 rounded-xl border border-amber-500/15 text-left font-mono text-xs space-y-1.5 text-amber-200">
-                    <div className="text-amber-400 font-extrabold uppercase tracking-wider text-[10px]">🇳🇴 Norway — Admin Financial Highlights</div>
-                    <div className="flex justify-between">
-                      <span>KaosLabs Kit Cost (10 vials):</span>
-                      <span className="text-slate-300 font-bold">${kaosKitCost}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>KaosLabs Cost per Vial:</span>
-                      <span className="text-slate-300 font-bold">${estimatedCost.toFixed(2)} <span className="text-[10px] text-slate-500">(+$3.50 ship)</span></span>
-                    </div>
-                    {kitSellPrice > 0 && (
-                      <div className="flex justify-between border-t border-amber-500/10 pt-1.5 mt-0.5">
-                        <span>Kit Sell Price (10 vials):</span>
-                        <span className="text-cyan-300 font-bold">${kitSellPrice}</span>
-                      </div>
-                    )}
-                    {kitSellPrice > 0 && (
-                      <div className="flex justify-between font-bold text-cyan-200">
-                        <span>Kit Profit:</span>
-                        <span>${kitProfit} (<span className="text-emerald-400">+{kitMarkupPct}%</span>)</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between border-t border-amber-500/10 pt-1.5 mt-0.5">
-                      <span>Vial Sale Price (-15%):</span>
-                      <span className="text-slate-300 font-bold">${salePrice}.00</span>
-                    </div>
-                    <div className="flex justify-between font-bold text-amber-300">
-                      <span>Vial Profit:</span>
-                      <span>${vialProfit.toFixed(2)} (<span className="text-emerald-400">+{vialMarkupPct}%</span>)</span>
-                    </div>
+                <div className="bg-amber-500/5 p-4 rounded-xl border border-amber-500/15 text-left font-mono text-xs space-y-1.5 text-amber-200">
+                  <div className="text-amber-400 font-extrabold uppercase tracking-wider text-[10px]">🇳🇴 Norway — Admin Financial Highlights</div>
+                  <div className="flex justify-between">
+                    <span>KaosLabs Kit Cost (10 vials):</span>
+                    <span className="text-slate-300 font-bold">${kaosKitCost}</span>
                   </div>
-
-                  {(chinaKitSell > 0 || chinaVialSell > 0) && (
-                    <div className="bg-red-500/5 p-4 rounded-xl border border-red-500/15 text-left font-mono text-xs space-y-1.5 text-red-200">
-                      <div className="text-red-400 font-extrabold uppercase tracking-wider text-[10px]">🇨🇳 China — Admin Financial Highlights</div>
-                      {chinaKitSell > 0 && (
-                        <>
-                          <div className="flex justify-between">
-                            <span>China Source Cost (10 vials):</span>
-                            <span className="text-slate-300 font-bold">${chinaKitRawCost}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>China Kit Sell Price (10 vials):</span>
-                            <span className="text-red-300 font-bold">${chinaKitSell}</span>
-                          </div>
-                          <div className="flex justify-between font-bold text-red-200">
-                            <span>China Kit Profit:</span>
-                            <span>${chinaKitProfit} (<span className="text-emerald-400">+25%</span>)</span>
-                          </div>
-                        </>
-                      )}
-                      {chinaVialSell > 0 && (
-                        <>
-                          <div className="flex justify-between border-t border-red-500/10 pt-1.5 mt-0.5">
-                            <span>China Vial Source Cost:</span>
-                            <span className="text-slate-300 font-bold">${chinaVialRawCost}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>China Vial Sell Price:</span>
-                            <span className="text-orange-300 font-bold">${chinaVialSell}</span>
-                          </div>
-                          <div className="flex justify-between font-bold text-orange-200">
-                            <span>China Vial Profit:</span>
-                            <span>${chinaVialProfit} (<span className="text-emerald-400">+25%</span>)</span>
-                          </div>
-                        </>
-                      )}
+                  <div className="flex justify-between">
+                    <span>KaosLabs Cost per Vial:</span>
+                    <span className="text-slate-300 font-bold">${estimatedCost.toFixed(2)} <span className="text-[10px] text-slate-500">(+$3.50 ship)</span></span>
+                  </div>
+                  {kitSellPrice > 0 && (
+                    <div className="flex justify-between border-t border-amber-500/10 pt-1.5 mt-0.5">
+                      <span>Kit Sell Price (10 vials):</span>
+                      <span className="text-cyan-300 font-bold">${kitSellPrice}</span>
                     </div>
                   )}
-                </>
+                  {kitSellPrice > 0 && (
+                    <div className="flex justify-between font-bold text-cyan-200">
+                      <span>Kit Profit:</span>
+                      <span>${kitProfit} (<span className="text-emerald-400">+{kitMarkupPct}%</span>)</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between border-t border-amber-500/10 pt-1.5 mt-0.5">
+                    <span>Vial Sale Price (-15%):</span>
+                    <span className="text-slate-300 font-bold">${salePrice}.00</span>
+                  </div>
+                  <div className="flex justify-between font-bold text-amber-300">
+                    <span>Vial Profit:</span>
+                    <span>${vialProfit.toFixed(2)} (<span className="text-emerald-400">+{vialMarkupPct}%</span>)</span>
+                  </div>
+                </div>
               );
             })()}
 
