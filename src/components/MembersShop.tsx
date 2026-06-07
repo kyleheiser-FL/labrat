@@ -1515,6 +1515,8 @@ export default function MembersShop() {
               onSetSelectedCertKey={setSelectedCertKey}
               allOrdersGlobal={allOrdersGlobal}
               isKitPricing={isKitPricing}
+              isChinaKitPricing={isChinaKitPricing}
+              isChinaVialPricing={isChinaVialPricing}
             />
           )}
           {/* USER SHOPPING CART VIEW */}
@@ -1644,6 +1646,8 @@ export default function MembersShop() {
           }}
           onClose={() => setSelectedParentProductGroup(null)}
           isViewingAsAdmin={isViewingAsAdmin}
+          isChinaKitPricing={isChinaKitPricing}
+          isChinaVialPricing={isChinaVialPricing}
           onSetEditingProduct={setEditingProduct}
           onSetProductValidationError={setProductValidationError}
           onSetProductForm={setProductForm}

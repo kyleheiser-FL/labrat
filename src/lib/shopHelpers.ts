@@ -522,6 +522,18 @@ function resolveChineseUsWarehouseCost(norm: string): number {
   return 0;
 }
 
+// Raw China kit sourcing cost (10 vials, XTP-Bella price sheet). 0 = unrecognised product.
+export function getChinaKitCost(name: string): number {
+  return resolveChineseKitCost(name.toLowerCase());
+}
+
+// Raw China per-vial sourcing cost (US warehouse override takes priority for Retatrutide). 0 = unrecognised product.
+export function getChinaVialCost(name: string): number {
+  const norm = name.toLowerCase();
+  const kitCost = resolveChineseUsWarehouseCost(norm) || resolveChineseKitCost(norm);
+  return kitCost ? kitCost / 10 : 0;
+}
+
 // China kit sell price: XTP-Bella kit cost × 12.7% markup
 export function getChinaKitSellPrice(name: string): number {
   const raw = resolveChineseKitCost(name.toLowerCase());
