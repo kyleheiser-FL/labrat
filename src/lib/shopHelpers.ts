@@ -406,11 +406,11 @@ function resolveKitCost(norm: string): number {
   return kitCost;
 }
 
-// Kit sell price: Kaos kit cost × 12.7% markup (anchored to Reta 30mg: $315→$355)
+// Kit sell price: Kaos kit cost × 15% markup
 export function getKitSellPrice(name: string): number {
   const raw = resolveKitCost(name.toLowerCase());
   if (!raw) return 0;
-  return Math.round(raw * (355 / 315));
+  return Math.round(raw * 1.15);
 }
 
 export function getKitWholesaleCost(name: string): number {
@@ -539,12 +539,12 @@ export function getChinaKitSellPrice(name: string): number {
   return Math.round(raw * 1.65);
 }
 
-// China vial sell price: (raw kit cost / 10) × 2.0 (100% markup for US warehouse, else 165%)
+// China vial sell price: (raw kit cost / 10) × 1.65 (65% markup for all paths)
 export function getChinaVialSellPrice(name: string): number {
   const norm = name.toLowerCase();
   const usCost = resolveChineseUsWarehouseCost(norm);
   if (usCost) {
-    return Math.round((usCost / 10) * 2.0);
+    return Math.round((usCost / 10) * 1.65);
   }
   const kitCost = resolveChineseKitCost(norm);
   if (!kitCost) return 0;
@@ -588,7 +588,7 @@ export const getEstimatedDeliveryDate = (minDays: number, maxDays: number) => {
 };
 
 export function getSalePrice(price: number): number {
-  return Math.round(price * 0.85);
+  return price;
 }
 
 export const getShippingOptions = (zip: string, totalVials: number, cart: CartItem[] = []): { options: ShippingOption[]; zoneName: string; weightLbs: number; isFreeShipping: boolean; nonBacVialsCount: number; nonBacSubtotal: number } => {
