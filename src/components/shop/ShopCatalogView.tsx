@@ -543,7 +543,9 @@ export default function ShopCatalogView({
                 const totalStock = group.options.reduce((sum, o) => sum + getProductAvailableStock(o.id, o.inventory, allOrdersGlobal), 0);
                 const hasStock = totalStock > 0;
                 const firstOption = group.options[0];
-                const inStockOption = group.options.find(o => getProductAvailableStock(o.id, o.inventory, allOrdersGlobal) > 0);
+                const inStockOption = isUnlimitedStockTier
+                  ? firstOption
+                  : group.options.find(o => getProductAvailableStock(o.id, o.inventory, allOrdersGlobal) > 0);
                 const preferredDefault = inStockOption || firstOption;
                 const activeProdId = selectedProductIds[group.baseName] || preferredDefault?.id;
 
