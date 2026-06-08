@@ -76,7 +76,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Potent GHRH analog researched for somatic growth factors, visceral mass, and peptide signaling.',
     category: 'Muscle Growth',
     price: 100,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_tesa_20mg',
@@ -284,7 +285,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     category: 'Weight Loss',
     price: 50,
     inventory: 0,
-    sourceRestriction: 'china'
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_10mg',
@@ -292,7 +293,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Highly selective GLP-1 receptor agonist studied for satiety mechanisms, gastric motility, and insulin pathways.',
     category: 'Weight Loss',
     price: 73,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_15mg',
@@ -309,7 +311,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Highly selective GLP-1 receptor agonist studied for satiety mechanisms, gastric motility, and insulin pathways.',
     category: 'Weight Loss',
     price: 109,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_30mg',
@@ -317,7 +320,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Highly selective GLP-1 receptor agonist studied for satiety mechanisms, gastric motility, and insulin pathways.',
     category: 'Weight Loss',
     price: 144,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_50mg',
@@ -326,7 +330,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     category: 'Weight Loss',
     price: 191,
     inventory: 0,
-    sourceRestriction: 'china'
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_60mg',
@@ -335,7 +339,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     category: 'Weight Loss',
     price: 219,
     inventory: 0,
-    sourceRestriction: 'china'
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_cagri_5mg',
@@ -609,7 +613,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Synergy duo blend pairing Semax with Selank. Studied for memory executive speeds and anxiety resistance pathways.',
     category: 'Cognitive & Focus',
     price: 95,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'china'
   },
   {
     id: 'prod_semax_5mg',

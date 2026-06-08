@@ -84,6 +84,7 @@ interface ShopCatalogViewProps {
   isKitPricing?: boolean;
   isChinaKitPricing?: boolean;
   isChinaVialPricing?: boolean;
+  isApprovedVialPricing?: boolean;
 }
 
 export default function ShopCatalogView({
@@ -118,6 +119,7 @@ export default function ShopCatalogView({
   isKitPricing = false,
   isChinaKitPricing = false,
   isChinaVialPricing = false,
+  isApprovedVialPricing = false,
 }: ShopCatalogViewProps) {
   const isUnlimitedStockTier = isKitPricing || isChinaKitPricing || isChinaVialPricing;
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
@@ -136,8 +138,8 @@ export default function ShopCatalogView({
       if (!isChinaTier && p.sourceRestriction === 'china') return false;
     }
 
-    // Hide out-of-stock items from per-vial members (kit/admin tiers can always see all)
-    if (!isUnlimitedStockTier && !isViewingAsAdmin) {
+    // Hide out-of-stock items only from non-approved tiers (kit/china/approved members see all)
+    if (!isUnlimitedStockTier && !isApprovedVialPricing && !isViewingAsAdmin) {
       const stock = getProductAvailableStock(p.id, p.inventory, allOrdersGlobal);
       if (stock <= 0) return false;
     }

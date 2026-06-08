@@ -144,6 +144,8 @@ export default function MembersShop() {
   const isKitPricing = memberProfile?.status === 'kit' || (isAdminUser && isAdminPreviewKit);
   const isChinaKitPricing = memberProfile?.status === 'chinakit' || (isAdminUser && isAdminPreviewChinaKit);
   const isChinaVialPricing = memberProfile?.status === 'chinavial' || (isAdminUser && isAdminPreviewChinaVial);
+  const isApprovedVialPricing = (memberProfile?.status === 'approved' && !isAdminUser) ||
+    (isAdminUser && isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial);
 
   // Application Layout Views
   // Users view: 'catalog' | 'cart' | 'checkout' | 'orders' | 'status_check'
@@ -1288,7 +1290,7 @@ export default function MembersShop() {
                 isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              <ShoppingBag className="w-3 h-3" /> Standard
+              🇳🇴 Vial
             </button>
             <button
               onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(true); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(false); navigateView('catalog'); }}
@@ -1304,7 +1306,7 @@ export default function MembersShop() {
                 isAdminPreviewChinaKit ? 'bg-red-500/20 text-red-300' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              🇨🇳 China Kit
+              🇨🇳 Kit
             </button>
             <button
               onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(true); navigateView('catalog'); }}
@@ -1312,7 +1314,7 @@ export default function MembersShop() {
                 isAdminPreviewChinaVial ? 'bg-orange-500/20 text-orange-300' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              🇨🇳 China Vial
+              🇨🇳 Vial
             </button>
           </div>
         </div>
@@ -1491,12 +1493,12 @@ export default function MembersShop() {
               <span className="text-2xl shrink-0">🇨🇳</span>
               <div>
                 <p className="text-xs font-bold text-orange-300">
-                  {isChinaKitPricing ? 'China Kit Pricing — XTP-Bella Direct (10-Vial Kits)' : 'China Per-Vial Pricing — XTP-Bella Direct'}
+                  {isChinaKitPricing ? 'China Kit Pricing — 10-Vial Kits' : 'China Per-Vial Pricing'}
                 </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   {isChinaKitPricing
                     ? 'Products priced per 10-vial kit. Flat rate $50 shipping from China. Select products ship from US warehouse.'
-                    : 'Per-vial pricing from XTP-Bella China supplier. US warehouse stock ships faster.'}
+                    : 'Per-vial pricing sourced from China. US warehouse stock ships faster.'}
                 </p>
               </div>
             </div>
@@ -1559,6 +1561,7 @@ export default function MembersShop() {
               isKitPricing={isKitPricing}
               isChinaKitPricing={isChinaKitPricing}
               isChinaVialPricing={isChinaVialPricing}
+              isApprovedVialPricing={isApprovedVialPricing}
             />
           )}
           {/* USER SHOPPING CART VIEW */}
