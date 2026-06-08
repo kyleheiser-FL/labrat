@@ -289,16 +289,15 @@ function resolveKitCost(norm: string): number {
     if (norm.includes('10ml')) kitCost = 150;
     else kitCost = 125;
   } else if (norm.includes('bpc-157') && norm.includes('tb-500') && norm.includes('blend')) {
+    // Norway/KaosLabs sells: 10mg and 20mg
     if (norm.includes('20mg')) kitCost = 325;
-    else kitCost = 225;
+    else if (norm.includes('10mg')) kitCost = 225;
   } else if (norm.includes('bpc-157')) {
-    if (norm.includes('20mg')) kitCost = 150;
-    else if (norm.includes('10mg')) kitCost = 185;
-    else kitCost = 55;
+    // Norway/KaosLabs sells: 10mg only
+    if (norm.includes('10mg')) kitCost = 185;
   } else if (norm.includes('tb-500')) {
-    if (norm.includes('20mg')) kitCost = 160;
-    else if (norm.includes('10mg')) kitCost = 255;
-    else kitCost = 60;
+    // Norway/KaosLabs sells: 10mg only
+    if (norm.includes('10mg')) kitCost = 255;
   } else if (norm.includes('retatrutide')) {
     if (norm.includes('100mg')) kitCost = 995;
     else if (norm.includes('60mg')) kitCost = 555;
@@ -326,21 +325,22 @@ function resolveKitCost(norm: string): number {
     else if (norm.includes('10mg')) kitCost = 160;
     else kitCost = 65;
   } else if (norm.includes('cjc-1295') && norm.includes('ipamorelin')) {
-    if (norm.includes('20mg')) kitCost = 200;
-    else kitCost = 255;
+    // Norway/KaosLabs sells: 10mg only
+    if (norm.includes('10mg')) kitCost = 255;
   } else if (norm.includes('cjc-1295')) {
+    // Norway/KaosLabs sells: 5mg and 10mg
     if (norm.includes('10mg')) kitCost = 320;
-    else kitCost = 295;
+    else if (norm.includes('5mg')) kitCost = 295;
   } else if (norm.includes('ipamorelin')) {
+    // Norway/KaosLabs sells: 10mg only
     if (norm.includes('10mg')) kitCost = 190;
-    else kitCost = 190;
   } else if (norm.includes('tesamorelin')) {
     if (norm.includes('10mg')) kitCost = 290;
     else kitCost = 230;
   } else if (norm.includes('cagrilintide')) {
-    if (norm.includes('20mg')) kitCost = 160;
-    else if (norm.includes('10mg')) kitCost = 285;
-    else kitCost = 205;
+    // Norway/KaosLabs sells: 5mg and 10mg only
+    if (norm.includes('10mg')) kitCost = 285;
+    else if (norm.includes('5mg')) kitCost = 205;
   } else if (norm.includes('sermorelin')) {
     if (norm.includes('10mg')) kitCost = 280;
     else kitCost = 210;
@@ -353,9 +353,9 @@ function resolveKitCost(norm: string): number {
     if (norm.includes('70mg')) kitCost = 330;
     else kitCost = 295;
   } else if (norm.includes('ghk-cu') || norm.includes('copper peptide')) {
+    // Norway/KaosLabs sells: 50mg and 100mg only
     if (norm.includes('100mg')) kitCost = 225;
     else if (norm.includes('50mg')) kitCost = 185;
-    else kitCost = 80;
   } else if (norm.includes('melanotan ii') || norm.includes('melanotan 2')) {
     kitCost = 230;
   } else if (norm.includes('melanotan')) {
@@ -370,8 +370,9 @@ function resolveKitCost(norm: string): number {
     // Norway/KaosLabs only sells 500mg NAD+; 1000mg+ are China-only
     if (!norm.includes('1000mg') && !norm.includes('2000mg')) kitCost = 185;
   } else if (norm.includes('mots-c')) {
+    // Norway/KaosLabs sells: 10mg and 40mg only
     if (norm.includes('40mg')) kitCost = 330;
-    else kitCost = 210;
+    else if (norm.includes('10mg')) kitCost = 210;
   } else if (norm.includes('ss-31') || norm.includes('elamipretide')) {
     if (norm.includes('50mg')) kitCost = 415;
     else kitCost = 210;
@@ -393,7 +394,8 @@ function resolveKitCost(norm: string): number {
   } else if (norm.includes('snap-8')) {
     kitCost = 185;
   } else if (norm.includes('5-amino') || norm.includes('1mq')) {
-    kitCost = 170;
+    // Norway/KaosLabs sells: 10mg only
+    if (norm.includes('10mg')) kitCost = 170;
   } else if (norm.includes('arachidonic') || norm.includes('ara ')) {
     kitCost = 170;
   } else if (norm.includes('lemon bottle')) {
@@ -447,11 +449,11 @@ function resolveChineseKitCost(norm: string): number {
     if (norm.includes('20mg')) kitCost = 165;
     else kitCost = 100;
   } else if (norm.includes('bpc-157')) {
+    // China/XTP-Bella sells: 10mg only
     if (norm.includes('10mg')) kitCost = 70;
-    else kitCost = 70;
   } else if (norm.includes('tb-500')) {
+    // China/XTP-Bella sells: 5mg only
     if (norm.includes('5mg')) kitCost = 69;
-    else kitCost = 69;
   } else if (norm.includes('retatrutide')) {
     // China/XTP-Bella sells: 10, 15, 20, 30, 60mg (also 10, 20, 30mg via US warehouse)
     const usCost = resolveChineseUsWarehouseCost(norm);
@@ -471,24 +473,30 @@ function resolveChineseKitCost(norm: string): number {
     else if (norm.includes('10mg')) kitCost = 75;
     // 40mg, 50mg, 70mg, 120mg not sold by China — kitCost stays 0
   } else if (norm.includes('cjc-1295') && norm.includes('ipamorelin')) {
+    // China/XTP-Bella sells: 10mg and 20mg
     if (norm.includes('20mg')) kitCost = 200;
-    else kitCost = 100;
+    else if (norm.includes('10mg')) kitCost = 100;
   } else if (norm.includes('cjc-1295')) {
-    kitCost = 149;
+    // China/XTP-Bella sells: 10mg only
+    if (norm.includes('10mg')) kitCost = 149;
   } else if (norm.includes('ipamorelin')) {
-    kitCost = 80;
+    // China/XTP-Bella sells: 10mg only
+    if (norm.includes('10mg')) kitCost = 80;
   } else if (norm.includes('tesamorelin')) {
-    kitCost = 99;
+    // China/XTP-Bella sells: 5mg only
+    if (norm.includes('5mg')) kitCost = 99;
   } else if (norm.includes('ghk-cu') || norm.includes('copper peptide')) {
+    // China/XTP-Bella sells: 50mg and 100mg only
     if (norm.includes('100mg')) kitCost = 60;
-    else kitCost = 39;
+    else if (norm.includes('50mg')) kitCost = 39;
   } else if (norm.includes('mots-c')) {
     // China/XTP-Bella sells: 5mg and 10mg
     if (norm.includes('10mg')) kitCost = 70;
     else if (norm.includes('5mg')) kitCost = 59;
     // 40mg not sold by China — kitCost stays 0
   } else if (norm.includes('ss-31') || norm.includes('elamipretide')) {
-    kitCost = 90;
+    // China/XTP-Bella sells: 10mg only
+    if (norm.includes('10mg')) kitCost = 90;
   } else if (norm.includes('semax') && norm.includes('selank')) {
     kitCost = 115;
   } else if (norm.includes('semax')) {
@@ -497,7 +505,8 @@ function resolveChineseKitCost(norm: string): number {
   } else if (norm.includes('selank')) {
     kitCost = 75;
   } else if (norm.includes('epitalon')) {
-    kitCost = 65;
+    // China/XTP-Bella sells: 10mg only
+    if (norm.includes('10mg')) kitCost = 65;
   } else if (norm.includes('snap-8')) {
     kitCost = 60;
   } else if (norm.includes('glow')) {
@@ -505,8 +514,12 @@ function resolveChineseKitCost(norm: string): number {
   } else if (norm.includes('nad+') || norm.includes('nicotinamide adenine')) {
     if (norm.includes('1000mg')) kitCost = 140;
     else kitCost = 75;
+  } else if (norm.includes('glutathione')) {
+    // China/XTP-Bella sells: 600mg only
+    if (norm.includes('600mg')) kitCost = 80;
   } else if (norm.includes('5-amino') || norm.includes('1mq')) {
-    kitCost = 125;
+    // China/XTP-Bella sells: 50mg only
+    if (norm.includes('50mg')) kitCost = 125;
   }
   return kitCost;
 }

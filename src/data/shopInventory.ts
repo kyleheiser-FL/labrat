@@ -97,6 +97,15 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     inventory: 20
   },
   {
+    id: 'prod_mots_c_5mg',
+    name: 'MOTS-C (5mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Mitochondrial-derived peptide researched for metabolic optimization, cellular vitality, and exercise performance pathways.',
+    category: 'Muscle Growth',
+    price: 42,
+    inventory: 0,
+    sourceRestriction: 'china'
+  },
+  {
     id: 'prod_mots_c_40mg',
     name: 'MOTS-C (40mg)',
     description: 'Mitochondrial-derived peptide researched for metabolic optimization, muscle growth energy pathways, cellular vitality, and premium exercise modeling.',
@@ -703,6 +712,15 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     price: 67,
     inventory: 0,
     sourceRestriction: 'norway'
+  },
+  {
+    id: 'prod_5amino_50mg',
+    name: '5-Amino-1MQ (50mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. NNMT inhibitor researched for metabolic activation, adipocyte shrinkage, and cellular energy expenditure augmentation.',
+    category: 'Longevity & Cellular',
+    price: 94,
+    inventory: 0,
+    sourceRestriction: 'china'
   },
 
   // --- IMMUNE & HEALTH ---
