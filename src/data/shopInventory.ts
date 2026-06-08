@@ -130,7 +130,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
     price: 392,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_tirz_10mg',
@@ -194,7 +195,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Highly selective GLP-1 receptor agonist studied for satiety mechanisms, gastric motility, and insulin pathways.',
     category: 'Weight Loss',
     price: 50,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_10mg',
@@ -202,7 +204,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Highly selective GLP-1 receptor agonist studied for satiety mechanisms, gastric motility, and insulin pathways.',
     category: 'Weight Loss',
     price: 73,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_20mg',
@@ -210,7 +213,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Highly selective GLP-1 receptor agonist studied for satiety mechanisms, gastric motility, and insulin pathways.',
     category: 'Weight Loss',
     price: 109,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_30mg',
@@ -218,7 +222,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Highly selective GLP-1 receptor agonist studied for satiety mechanisms, gastric motility, and insulin pathways.',
     category: 'Weight Loss',
     price: 144,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_50mg',
@@ -226,7 +231,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Highly selective GLP-1 receptor agonist studied for satiety mechanisms, gastric motility, and insulin pathways.',
     category: 'Weight Loss',
     price: 191,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_sema_60mg',
@@ -234,7 +240,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Highly selective GLP-1 receptor agonist studied for satiety mechanisms, gastric motility, and insulin pathways.',
     category: 'Weight Loss',
     price: 219,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_cagri_5mg',
@@ -242,7 +249,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Long-acting amylin receptor agonist investigated for metabolic path synergy when co-analyzed with GLP-1 agonists.',
     category: 'Weight Loss',
     price: 58,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_cagri_10mg',
@@ -250,7 +258,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Long-acting amylin receptor agonist investigated for metabolic path synergy when co-analyzed with GLP-1 agonists.',
     category: 'Weight Loss',
     price: 77,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_cagri_20mg',
@@ -258,7 +267,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Long-acting amylin receptor agonist investigated for metabolic path synergy when co-analyzed with GLP-1 agonists.',
     category: 'Weight Loss',
     price: 117,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_aod_5mg',
@@ -266,7 +276,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. High-quality synthetic C-terminal fragment of human growth hormone researched for selective lipid metabolism pathways.',
     category: 'Weight Loss',
     price: 55,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_aod_10mg',
@@ -274,7 +285,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. High-quality synthetic C-terminal fragment of human growth hormone researched for selective lipid metabolism pathways.',
     category: 'Weight Loss',
     price: 75,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
 
   // --- HEALING & REPAIR ---
@@ -342,7 +354,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied as an exclusive beauty and skin radiance regulatory peptide engineered in premium 80mg kits to research dermis remodeling targets.',
     category: 'Beauty & Radiance',
     price: 124,
-    inventory: 20
+    inventory: 20,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_ghk_20mg',
@@ -374,7 +387,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Strong alpha-MSH receptor agonist investigated for skin pigment adaptation patterns and photoprotective modeling.',
     category: 'Beauty & Radiance',
     price: 45,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_mt2_20mg',
@@ -382,7 +396,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Strong alpha-MSH receptor agonist investigated for skin pigment adaptation patterns and photoprotective modeling.',
     category: 'Beauty & Radiance',
     price: 69,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_pt141_10mg',
@@ -390,7 +405,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Bremelanotide synthetic candidate studied for melanocortin receptor activation pathways and autonomic vascular regulation.',
     category: 'Beauty & Radiance',
     price: 50,
-    inventory: 10
+    inventory: 10,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_pt141_20mg',
@@ -398,7 +414,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Bremelanotide synthetic candidate studied for melanocortin receptor activation pathways and autonomic vascular regulation.',
     category: 'Beauty & Radiance',
     price: 73,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_nad_500mg',
@@ -476,7 +493,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Active sequence mature phenolic thymic peptide studied for selective T-cell, cytotoxic, and helper activation.',
     category: 'Immune & Health',
     price: 65,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_kpv_10mg',
@@ -484,7 +502,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Tripeptide fragment of alpha-MSH, researched for cell-specific NF-kB metabolic block and gastrointestinal soothing.',
     category: 'Immune & Health',
     price: 48,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
 
   // --- SLEEP & RECOVERY ---
@@ -494,7 +513,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Delta Sleep-Inducing Peptide. Pure somnotropic peptide studied for slow-wave delta rhythms and biorhythm adjustment.',
     category: 'Sleep & Recovery',
     price: 54,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
 
   // --- RECONSTITUTION SOLVENTS ---

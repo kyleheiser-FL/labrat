@@ -6,6 +6,8 @@ export interface ShopProduct {
   price: number;
   inventory: number;
   imageUrl?: string;
+  chemicalName?: string;
+  sourceRestriction?: 'norway' | 'china';
 }
 
 export interface MemberProfile {
@@ -18,6 +20,8 @@ export interface MemberProfile {
   kitUpgradeRequestedAt?: string;
   shippingAddress: string;
   phone: string;
+  requestedSource?: 'norway' | 'china';
+  requestedProducts?: string[];
   createdAt: any;
   updatedAt: any;
 }

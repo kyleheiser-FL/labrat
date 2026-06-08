@@ -122,11 +122,27 @@ export default function ShopCatalogView({
   const isUnlimitedStockTier = isKitPricing || isChinaKitPricing || isChinaVialPricing;
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
+  const isChinaTier = isChinaKitPricing || isChinaVialPricing;
+
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     const q = searchQuery.toLowerCase();
     const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.chemicalName?.toLowerCase().includes(q);
-    return matchesCategory && matchesSearch;
+    if (!matchesCategory || !matchesSearch) return false;
+
+    // Source restriction: China members can't see Norway-only, Norway members can't see China-only
+    if (!isViewingAsAdmin) {
+      if (isChinaTier && p.sourceRestriction === 'norway') return false;
+      if (!isChinaTier && p.sourceRestriction === 'china') return false;
+    }
+
+    // Hide out-of-stock items from per-vial members (kit/admin tiers can always see all)
+    if (!isUnlimitedStockTier && !isViewingAsAdmin) {
+      const stock = getProductAvailableStock(p.id, p.inventory, allOrdersGlobal);
+      if (stock <= 0) return false;
+    }
+
+    return true;
   });
 
   return (
