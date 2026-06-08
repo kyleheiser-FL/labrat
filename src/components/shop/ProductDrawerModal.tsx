@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { ShopProduct, CartItem, OrderDetail } from '../../lib/shopTypes';
-import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, hasUsWarehouseShipping } from '../../lib/shopHelpers';
+import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaVialCost, getChineseKitWholesaleCost, hasUsWarehouseShipping } from '../../lib/shopHelpers';
 import ProductVialVisual from './ProductVialVisual';
 
 function getProductAvailableStock(prodId: string, baseInventory: number, allOrdersGlobal: OrderDetail[]): number {
@@ -269,7 +269,7 @@ export default function ProductDrawerModal({
 
               // Show all relevant source sections based on product's sourceRestriction field
               const hasNorwaySource = !activeOpt.sourceRestriction || activeOpt.sourceRestriction === 'norway';
-              const chinaKitCost = getChinaKitCost(activeOpt.name);
+              const chinaKitCost = getChineseKitWholesaleCost(activeOpt.name);
               const hasChinaSource = (!activeOpt.sourceRestriction || activeOpt.sourceRestriction === 'china') && chinaKitCost > 0;
 
               const chinaKitSell = getChinaKitSellPrice(activeOpt.name);

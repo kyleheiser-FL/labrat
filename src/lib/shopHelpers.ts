@@ -440,6 +440,14 @@ export function hasUsWarehouseShipping(name: string): boolean {
   return resolveChineseUsWarehouseCost(name.toLowerCase()) > 0;
 }
 
+export function getChinaVialCost(name: string): number {
+  const norm = name.toLowerCase();
+  const usCost = resolveChineseUsWarehouseCost(norm);
+  if (usCost) return usCost / 10;
+  const kitCost = resolveChineseKitCost(norm);
+  return kitCost ? kitCost / 10 : 0;
+}
+
 function resolveChineseKitCost(norm: string): number {
   let kitCost = 0;
   if (norm.includes('bacteriostatic water') || norm.includes('bac water')) {
