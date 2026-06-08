@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ShoppingBag,
   Plus,
@@ -26,7 +26,6 @@ import {
   getKitSellPrice,
   getChinaKitSellPrice,
   getChinaVialSellPrice,
-  isChinaVialAvailable,
   getCleanDescription,
 } from '../../lib/shopHelpers';
 import ProductVialVisual from './ProductVialVisual';
@@ -120,74 +119,79 @@ export default function ShopCatalogView({
   isChinaKitPricing = false,
   isChinaVialPricing = false,
 }: ShopCatalogViewProps) {
-  const customerView = !isViewingAsAdmin;
-  const isChineseSource = isChinaKitPricing || isChinaVialPricing;
+  const isUnlimitedStockTier = isKitPricing || isChinaKitPricing || isChinaVialPricing;
+  const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
-  const [usaShipFilter, setUsaShipFilter] = useState(false);
+  const isChinaTier = isChinaKitPricing || isChinaVialPricing;
 
-  const sourceVisibleProducts = products.filter(p => {
-    if (p.sourceRestriction === 'china') return isChineseSource;
-    if (p.sourceRestriction === 'norway') return !isChineseSource;
-    return true;
-  });
-
-  const categories = ['All', ...Array.from(new Set(sourceVisibleProducts.map(p => p.category)))];
-
-  const filteredProducts = sourceVisibleProducts.filter(p => {
-    if (usaShipFilter && isChineseSource && !isChinaVialAvailable(p.name)) return false;
+  const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     const q = searchQuery.toLowerCase();
-    const matchesSearch = !q || p.name.toLowerCase().includes(q) || (p as any).chemicalName?.toLowerCase().includes(q);
-    return matchesCategory && matchesSearch;
+    const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.chemicalName?.toLowerCase().includes(q);
+    if (!matchesCategory || !matchesSearch) return false;
+
+    // Source restriction: China members can't see Norway-only, Norway members can't see China-only
+    if (!isViewingAsAdmin) {
+      if (isChinaTier && p.sourceRestriction === 'norway') return false;
+      if (!isChinaTier && p.sourceRestriction === 'china') return false;
+    }
+
+    // Hide out-of-stock items from per-vial members (kit/admin tiers can always see all)
+    if (!isUnlimitedStockTier && !isViewingAsAdmin) {
+      const stock = getProductAvailableStock(p.id, p.inventory, allOrdersGlobal);
+      if (stock <= 0) return false;
+    }
+
+    return true;
   });
 
   return (
     <div className="flex flex-col gap-6">
 
-      {/* Pricing / source banner */}
+      {/* Pricing notice banner — different for kit vs china vs standard members */}
       {isKitPricing ? (
         <div className="bg-gradient-to-r from-cyan-950/30 via-[#0a0f1d] to-cyan-950/30 border border-cyan-500/30 rounded-xl p-3 sm:p-4 text-left">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Package className="w-4 h-4 text-cyan-400" />
-              🇳🇴 Norway Kit · <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">10 Vials per Kit</span>
+              Kit Pricing Member: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">10 Vials per Kit</span>
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-cyan-300 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
-              Wholesale Rate · $25 Flat Ship
+              Wholesale Rate
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            You are enrolled in <strong className="text-cyan-300 font-bold">Norway kit pricing</strong>. Every listed price is for a <strong className="text-cyan-300 font-bold">full kit of 10 vials</strong> shipped from Oslo. Flat <strong className="text-cyan-300 font-bold">$25 shipping</strong> on all orders.
+            You are enrolled in <strong className="text-cyan-300 font-bold">kit pricing</strong>. Every listed price is for a <strong className="text-cyan-300 font-bold">full kit of 10 vials</strong>. Standard per-vial pricing and the 15% launch sale do not apply to your account.
           </p>
         </div>
       ) : isChinaKitPricing ? (
-        <div className="bg-gradient-to-r from-red-950/20 via-[#0a0f1d] to-red-950/20 border border-red-500/30 rounded-xl p-3 sm:p-4 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-red-900/40 pb-2 mb-2">
+        <div className="bg-gradient-to-r from-red-950/30 via-[#0a0f1d] to-red-950/30 border border-red-500/30 rounded-xl p-3 sm:p-4 text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-red-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Package className="w-4 h-4 text-red-400" />
-              🇨🇳 China Kit · <span className="text-red-400 bg-red-950/65 px-2 py-0.5 rounded border border-red-500/20 text-xs font-black">10 Vials per Kit</span>
+              🇨🇳 China Kit Member: <span className="text-red-300 bg-red-950/65 px-2 py-0.5 rounded border border-red-500/20 text-xs font-black">10 Vials per Kit</span>
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-red-300 bg-red-950/45 px-2.5 py-0.5 rounded border border-red-500/20 self-start sm:self-center">
-              China Source · $50 Flat Ship
+              Wholesale Rate
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            {isViewingAsAdmin ? 'China kit pricing preview. ' : 'You are enrolled in China kit pricing. '}Every price is for a <strong className="text-red-300 font-bold">full kit of 10 vials</strong> shipped directly from China. Flat <strong className="text-red-300 font-bold">$50 international shipping</strong>.
+            You are enrolled in <strong className="text-red-300 font-bold">China kit pricing</strong>. Every listed price is for a <strong className="text-red-300 font-bold">full kit of 10 vials</strong> sourced directly from our China lab partners and shipped internationally for a flat rate.
           </p>
         </div>
       ) : isChinaVialPricing ? (
-        <div className="bg-gradient-to-r from-orange-950/20 via-[#0a0f1d] to-orange-950/20 border border-orange-500/30 rounded-xl p-3 sm:p-4 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-orange-900/40 pb-2 mb-2">
+        <div className="bg-gradient-to-r from-orange-950/30 via-[#0a0f1d] to-orange-950/30 border border-orange-500/30 rounded-xl p-3 sm:p-4 text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-orange-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-orange-400 animate-pulse" />
-              🇨🇳 China Vials · <span className="text-orange-400 bg-orange-950/65 px-2 py-0.5 rounded border border-orange-500/20 text-xs font-black">Free Shipping</span>
+              <Sparkles className="w-4 h-4 text-orange-400" />
+              🇨🇳 China Vial Member: <span className="text-orange-300 bg-orange-950/65 px-2 py-0.5 rounded border border-orange-500/20 text-xs font-black">Free USA Shipping</span>
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-orange-300 bg-orange-950/45 px-2.5 py-0.5 rounded border border-orange-500/20 self-start sm:self-center">
-              China Source · US Warehouse
+              Per-Vial Rate
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            {isViewingAsAdmin ? 'China vial pricing preview. ' : 'You are enrolled in China vial pricing. '}Retatrutide ships free from our <strong className="text-orange-300 font-bold">🇺🇸 US Warehouse</strong>. All other compounds ship free directly from <strong className="text-orange-300 font-bold">🇨🇳 China</strong>.
+            You are enrolled in <strong className="text-orange-300 font-bold">China vial pricing</strong>. Every listed price represents exactly one (1) individual research vial, ships from our USA warehouse, and qualifies for free shipping on every order.
           </p>
         </div>
       ) : (
@@ -207,8 +211,9 @@ export default function ShopCatalogView({
         </div>
       )}
 
-      {/* Norway & Switzerland Heritage Banner — hidden for China-sourced tiers */}
-      {!isChinaKitPricing && !isChinaVialPricing && <div
+      {/* Norway & Switzerland Heritage Banner — hidden for China-sourced pricing tiers */}
+      {!isChinaKitPricing && !isChinaVialPricing && (
+      <div
         onClick={() => { triggerHaptic('medium'); onSetShowNorwayModal(true); }}
         className="bg-gradient-to-r from-cyan-950/20 via-slate-900 to-indigo-950/20 border border-cyan-800/20 hover:border-cyan-400/40 rounded-xl p-3 sm:p-4 text-left cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.06)] group/norway-banner relative overflow-hidden focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-400"
         tabIndex={0}
@@ -239,7 +244,8 @@ export default function ShopCatalogView({
             </p>
           </div>
         </div>
-      </div>}
+      </div>
+      )}
 
       {/* Product Filtering and Search actions */}
       <div className="space-y-4">
@@ -272,7 +278,7 @@ export default function ShopCatalogView({
               const q = searchQuery.toLowerCase();
               const shopSuggestions = products.filter(p =>
                 p.name.toLowerCase().includes(q) ||
-                p.description?.toLowerCase().includes(q)
+                p.chemicalName?.toLowerCase().includes(q)
               ).slice(0, 5);
 
               return (
@@ -350,32 +356,18 @@ export default function ShopCatalogView({
 
         {/* Advanced Category Visual Tabs Deck */}
         <div className="bg-[#0b1329]/40 border border-slate-850 p-3 sm:p-4 rounded-xl space-y-2.5">
-          <div className="flex items-center justify-between px-1 select-none gap-2">
-            <span className="text-[9px] font-black tracking-widest text-[#22d3ee] uppercase flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center justify-between px-1 select-none">
+            <span className="text-[9px] font-black tracking-widest text-[#22d3ee] uppercase flex items-center gap-1.5">
               <Sparkles className="w-3 h-3 text-cyan-400 animate-pulse" /> Sourcing Categories
             </span>
-            <div className="flex items-center gap-2">
-              {isChineseSource && (
-                <button
-                  onClick={() => { triggerHaptic('light'); setUsaShipFilter(v => !v); }}
-                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border transition-all cursor-pointer ${
-                    usaShipFilter
-                      ? 'bg-blue-500 text-white border-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.4)]'
-                      : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-blue-500/50 hover:text-blue-300'
-                  }`}
-                >
-                  ⚡ Fast Shipping · 🇺🇸 USA
-                </button>
-              )}
-              {selectedCategory !== 'All' && (
-                <button
-                  onClick={() => { triggerHaptic('light'); onSetSelectedCategory('All'); }}
-                  className="text-[9px] font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer hover:underline transition shrink-0"
-                >
-                  Clear ({selectedCategory})
-                </button>
-              )}
-            </div>
+            {selectedCategory !== 'All' && (
+              <button
+                onClick={() => { triggerHaptic('light'); onSetSelectedCategory('All'); }}
+                className="text-[9px] font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer hover:underline transition"
+              >
+                Clear Filter ({selectedCategory})
+              </button>
+            )}
           </div>
 
           <div className="relative w-full overflow-hidden select-none">
@@ -528,39 +520,28 @@ export default function ShopCatalogView({
             });
           });
 
-          // Sort: customers see everything alphabetically (all in stock); admin sees real stock first
-          const groupIsAvailable = (group: typeof groupedDisplayItems[0]) => {
-            if (customerView) return true; // all products available for customers
-            return group.options.reduce((sum, o) => sum + getProductAvailableStock(o.id, o.inventory, allOrdersGlobal), 0) > 0;
-          };
-          // China price lists only cover specific compounds/strengths — drop entire groups
-          // with no China-priced option, and within remaining groups show only the
-          // strengths actually on the China list (rather than falling back to Norway prices).
-          const chinaFilterFn = isChinaKitPricing
-            ? (o: ShopProduct) => getChinaKitSellPrice(o.name) > 0
-            : (o: ShopProduct) => getChinaVialSellPrice(o.name) > 0;
-          const visibleGroups = isChineseSource
-            ? groupedDisplayItems.filter(g => g.options.some(chinaFilterFn))
-            : groupedDisplayItems;
-
-          visibleGroups.sort((a, b) => {
-            const hasStockA = groupIsAvailable(a) ? 1 : 0;
-            const hasStockB = groupIsAvailable(b) ? 1 : 0;
-            if (hasStockA !== hasStockB) return hasStockB - hasStockA;
+          // Sort groups to put in-stock products at the top always, with alphabetical sub-sort
+          groupedDisplayItems.sort((a, b) => {
+            const stockA = a.options.reduce((sum, o) => sum + getProductAvailableStock(o.id, o.inventory, allOrdersGlobal), 0);
+            const stockB = b.options.reduce((sum, o) => sum + getProductAvailableStock(o.id, o.inventory, allOrdersGlobal), 0);
+            const hasStockA = stockA > 0 ? 1 : 0;
+            const hasStockB = stockB > 0 ? 1 : 0;
+            if (hasStockA !== hasStockB) {
+              return hasStockB - hasStockA; // In-stock comes first
+            }
             return a.baseName.localeCompare(b.baseName);
           });
 
           return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {visibleGroups.map(group => {
-                const availableOptions = isChineseSource ? group.options.filter(chinaFilterFn) : group.options;
-                const prices = availableOptions.map(o => o.price);
+              {groupedDisplayItems.map(group => {
+                const prices = group.options.map(o => o.price);
                 const minPrice = Math.min(...prices);
                 const maxPrice = Math.max(...prices);
-                const totalStock = availableOptions.reduce((sum, o) => sum + getProductAvailableStock(o.id, o.inventory, allOrdersGlobal), 0);
+                const totalStock = group.options.reduce((sum, o) => sum + getProductAvailableStock(o.id, o.inventory, allOrdersGlobal), 0);
                 const hasStock = totalStock > 0;
-                const firstOption = availableOptions[0];
-                const inStockOption = availableOptions.find(o => getProductAvailableStock(o.id, o.inventory, allOrdersGlobal) > 0);
+                const firstOption = group.options[0];
+                const inStockOption = group.options.find(o => getProductAvailableStock(o.id, o.inventory, allOrdersGlobal) > 0);
                 const preferredDefault = inStockOption || firstOption;
                 const activeProdId = selectedProductIds[group.baseName] || preferredDefault?.id;
 
@@ -577,7 +558,7 @@ export default function ShopCatalogView({
                           baseName: group.baseName,
                           category: group.category,
                           description: firstOption?.description || '',
-                          options: availableOptions
+                          options: group.options
                         });
                         onSetSelectedOptionIdInDrawer(activeProdId || firstOption?.id || '');
                         onSetDrawerQuantity(1);
@@ -596,7 +577,7 @@ export default function ShopCatalogView({
                             baseName: group.baseName,
                             category: group.category,
                             description: firstOption?.description || '',
-                            options: availableOptions
+                            options: group.options
                           });
                           onSetSelectedOptionIdInDrawer(activeProdId || firstOption?.id || '');
                           onSetDrawerQuantity(1);
@@ -615,27 +596,17 @@ export default function ShopCatalogView({
                               </span>
                             );
                           })()}
-                          {isChineseSource && availableOptions.some(o => isChinaVialAvailable(o.name)) && (
-                            <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 text-[10px] font-black tracking-wider uppercase">
-                              ⚡ Fast Ship
-                            </span>
-                          )}
                           <span className="text-[11px] ml-auto">
                             {(() => {
-                              const activeOpt = availableOptions.find(o => o.id === activeProdId) || firstOption;
-                                  // Determine shipping origin label for customer view
-                              const shipOrigin = customerView
-                                ? isChinaKitPricing
-                                  ? '🇨🇳 China'
-                                  : isChinaVialPricing
-                                  ? (isChinaVialAvailable(activeOpt?.name || '') ? '🇺🇸 USA' : '🇨🇳 China')
-                                  : '🇳🇴 Norway'
-                                : null;
-                              return (
-                                <span className="text-emerald-400 font-semibold flex items-center gap-1 flex-wrap">
-                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                                  <span>In Stock</span>
-                                  {shipOrigin && <span className="text-[10px] text-slate-500 font-normal">· {shipOrigin}</span>}
+                              const activeOpt = group.options.find(o => o.id === activeProdId) || firstOption;
+                              const activeOptStock = isUnlimitedStockTier ? 999 : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
+                              return activeOptStock > 0 ? (
+                                <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> {isUnlimitedStockTier ? 'In Stock' : `${activeOptStock} vials in stock`}
+                                </span>
+                              ) : (
+                                <span className="text-amber-400 font-semibold flex items-center gap-1">
+                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Manufacturing Phase
                                 </span>
                               );
                             })()}
@@ -654,9 +625,10 @@ export default function ShopCatalogView({
                       <div className="border-t border-slate-800/50 pt-3 mt-1">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Available Strengths:</span>
                         <div className="flex flex-wrap gap-1.5">
-                          {availableOptions.map(opt => {
+                          {group.options.map(opt => {
                             const isSelected = activeProdId === opt.id;
-                            const isInStock = true;
+                            const optStock = getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal);
+                            const isInStock = isUnlimitedStockTier || optStock > 0;
                             return (
                               <button
                                 key={opt.id}
@@ -688,17 +660,15 @@ export default function ShopCatalogView({
                     </div>
 
                     {(() => {
-                      const activeProduct = availableOptions.find(o => o.id === activeProdId) || firstOption;
+                      const activeProduct = group.options.find(o => o.id === activeProdId) || firstOption;
                       if (!activeProduct) return null;
-                      const isOutOfStock = false;
+                      const isOutOfStock = !isUnlimitedStockTier && getProductAvailableStock(activeProduct.id, activeProduct.inventory, allOrdersGlobal) <= 0;
 
                       return (
                         <div className="bg-slate-950 border-t border-[#1e293b]/70 p-4 flex items-center justify-between gap-4">
                           <div className="flex flex-col text-left flex-1 min-w-0 pr-1">
                             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider truncate block">
-                              {(isKitPricing || isChinaKitPricing)
-                                ? `Kit Price · 10 vials (${getProductBaseAndSize(activeProduct.name).size || 'each'})`
-                                : `Research Price (${getProductBaseAndSize(activeProduct.name).size || 'each'})`}
+                              {(isKitPricing || isChinaKitPricing) ? `Kit Price · 10 vials (${getProductBaseAndSize(activeProduct.name).size || 'each'})` : `Research Price (${getProductBaseAndSize(activeProduct.name).size || 'each'})`}
                             </span>
                             <div className="flex items-center gap-1.5 flex-wrap">
                               {isKitPricing ? (
@@ -706,11 +676,11 @@ export default function ShopCatalogView({
                                   ${getKitSellPrice(activeProduct.name) || activeProduct.price}.00
                                 </span>
                               ) : isChinaKitPricing ? (
-                                <span className="text-sm font-black text-red-400">
+                                <span className="text-sm font-black text-cyan-400">
                                   ${getChinaKitSellPrice(activeProduct.name) || activeProduct.price}.00
                                 </span>
                               ) : isChinaVialPricing ? (
-                                <span className="text-sm font-black text-orange-400">
+                                <span className="text-sm font-black text-cyan-400">
                                   ${getChinaVialSellPrice(activeProduct.name) || activeProduct.price}.00
                                 </span>
                               ) : (

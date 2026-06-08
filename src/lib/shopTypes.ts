@@ -6,7 +6,8 @@ export interface ShopProduct {
   price: number;
   inventory: number;
   imageUrl?: string;
-  sourceRestriction?: 'china' | 'norway'; // 'china' = China customers only; 'norway' = Norway customers only
+  chemicalName?: string;
+  sourceRestriction?: 'china' | 'norway';
 }
 
 export interface MemberProfile {

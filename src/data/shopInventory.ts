@@ -32,8 +32,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Tetrasubstituted peptide GHRH analog designed for rapid somatotrope signaling pathways.',
     category: 'Muscle Growth',
     price: 92,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_ipam_10mg',
@@ -49,17 +48,23 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Selective GH secretagogue pentapeptide evaluated under clinical modeling.',
     category: 'Muscle Growth',
     price: 102,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
-    id: 'prod_mots_c_5mg',
-    name: 'MOTS-C (5mg)',
-    description: 'Mitochondrial-derived peptide researched for metabolic optimization, muscle growth energy pathways, cellular vitality, and premium exercise modeling.',
+    id: 'prod_tesa_10mg',
+    name: 'Tesamorelin (10mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Potent GHRH analog researched for somatic growth factors, visceral mass, and peptide signaling.',
     category: 'Muscle Growth',
-    price: 55,
-    inventory: 0,
-    sourceRestriction: 'china'
+    price: 77,
+    inventory: 0
+  },
+  {
+    id: 'prod_tesa_20mg',
+    name: 'Tesamorelin (20mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Potent GHRH analog researched for somatic growth factors, visceral mass, and peptide signaling.',
+    category: 'Muscle Growth',
+    price: 117,
+    inventory: 0
   },
   {
     id: 'prod_mots_c_10mg',
@@ -69,33 +74,6 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     price: 84,
     inventory: 20
   },
-  {
-    id: 'prod_tesa_5mg',
-    name: 'Tesamorelin (5mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Potent GHRH analog researched for somatic growth factors, visceral mass, and peptide signaling.',
-    category: 'Muscle Growth',
-    price: 52,
-    inventory: 0,
-    sourceRestriction: 'china'
-  },
-  {
-    id: 'prod_tesa_10mg',
-    name: 'Tesamorelin (10mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Potent GHRH analog researched for somatic growth factors, visceral mass, and peptide signaling.',
-    category: 'Muscle Growth',
-    price: 77,
-    inventory: 0,
-    sourceRestriction: 'norway'
-  },
-  {
-    id: 'prod_tesa_20mg',
-    name: 'Tesamorelin (20mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Potent GHRH analog researched for somatic growth factors, visceral mass, and peptide signaling.',
-    category: 'Muscle Growth',
-    price: 117,
-    inventory: 0,
-    sourceRestriction: 'norway'
-  },
 
   // --- WEIGHT LOSS ---
   {
@@ -104,25 +82,15 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
     price: 77,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_retat_10mg',
     name: 'Retatrutide (10mg)',
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
-    price: 77,
-    inventory: 0
-  },
-  {
-    id: 'prod_retat_15mg',
-    name: 'Retatrutide (15mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
-    category: 'Weight Loss',
-    price: 139,
-    inventory: 0,
-    sourceRestriction: 'china'
+    price: 117,
+    inventory: 10
   },
   {
     id: 'prod_retat_20mg',
@@ -146,8 +114,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
     price: 270,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_retat_60mg',
@@ -204,8 +171,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Co-agonist targeting GIP and GLP-1 receptors investigated for metabolic homeostatic signaling pathways.',
     category: 'Weight Loss',
     price: 196,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_tirz_60mg',
@@ -221,8 +187,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Co-agonist targeting GIP and GLP-1 receptors investigated for metabolic homeostatic signaling pathways.',
     category: 'Weight Loss',
     price: 337,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_sema_5mg',
@@ -331,8 +296,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Pentadecapeptide investigated for tissue remodeling, gastric protection, tendon, and vascular recovery pathways.',
     category: 'Healing & Repair',
     price: 50,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_bpc_10mg',
@@ -348,8 +312,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Pentadecapeptide investigated for tissue remodeling, gastric protection, tendon, and vascular recovery pathways.',
     category: 'Healing & Repair',
     price: 104,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_tb_5mg',
@@ -365,8 +328,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Thymosin Beta-4 synthetic active sequence researched for cellular migration, actin regulation, and wound resolution.',
     category: 'Healing & Repair',
     price: 75,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_tb_20mg',
@@ -374,8 +336,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Thymosin Beta-4 synthetic active sequence researched for cellular migration, actin regulation, and wound resolution.',
     category: 'Healing & Repair',
     price: 112,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_bpc_tb_blend_10mg',
@@ -384,15 +345,6 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     category: 'Healing & Repair',
     price: 73,
     inventory: 0
-  },
-  {
-    id: 'prod_bpc_tb_blend_20mg',
-    name: 'BPC-157 / TB-500 Blend (20mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Pre-formulated synergy vial containing 10mg BPC-157 and 10mg TB-500 for cellular and tendon research models.',
-    category: 'Healing & Repair',
-    price: 115,
-    inventory: 0,
-    sourceRestriction: 'china'
   },
 
   // --- BEAUTY & RADIANCE ---
@@ -411,8 +363,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Pure copper tripeptide studied for collagen stimulation, hair follicle integrity, and extracellular matrix remodeling.',
     category: 'Beauty & Radiance',
     price: 61,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_ghk_50mg',
@@ -467,24 +418,6 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     sourceRestriction: 'norway'
   },
   {
-    id: 'prod_snap8_10mg',
-    name: 'SNAP-8 (10mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Octapeptide analog of Argireline researched for expression line modulation and dermal contraction pathway reduction.',
-    category: 'Beauty & Radiance',
-    price: 75,
-    inventory: 0,
-    sourceRestriction: 'china'
-  },
-  {
-    id: 'prod_glow_50mg',
-    name: 'Glow (50mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Premium beauty peptide blend researched for skin luminosity, collagen matrix support, and dermal radiance pathway signaling.',
-    category: 'Beauty & Radiance',
-    price: 75,
-    inventory: 0,
-    sourceRestriction: 'china'
-  },
-  {
     id: 'prod_nad_500mg',
     name: 'NAD+ (500mg)',
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Pure Nicotinamide Adenine Dinucleotide studied for sirtuin path signaling, cell energy charging, and biochemical integrity.',
@@ -508,17 +441,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Synergy duo blend pairing Semax with Selank. Studied for memory executive speeds and anxiety resistance pathways.',
     category: 'Cognitive & Focus',
     price: 95,
-    inventory: 0,
-    sourceRestriction: 'norway'
-  },
-  {
-    id: 'prod_semax_5mg',
-    name: 'Semax (5mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Upregulates Brain-Derived Neurotrophic Factor (BDNF) and NGF. Studied for executive cognitive signaling.',
-    category: 'Cognitive & Focus',
-    price: 42,
-    inventory: 0,
-    sourceRestriction: 'china'
+    inventory: 0
   },
   {
     id: 'prod_semax_10mg',
@@ -539,15 +462,6 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
 
   // --- LONGEVITY & CELLULAR ---
   {
-    id: 'prod_5amino_50mg',
-    name: '5-Amino 1MQ (50mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Nicotinamide N-methyltransferase (NNMT) inhibitor researched for metabolic regulation, cellular NAD+ elevation, and fat cell reduction pathways.',
-    category: 'Longevity & Cellular',
-    price: 65,
-    inventory: 0,
-    sourceRestriction: 'china'
-  },
-  {
     id: 'prod_epitalon_10mg',
     name: 'Epitalon (10mg)',
     description: 'Purity: 99%+. Sourced from certified laboratories. Pineal gland hormone secretagogue regulator tetrapeptide researched for telomerase enzyme signaling pathways.',
@@ -561,8 +475,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Pineal gland secretagogue regulator tetrapeptide studied in higher-concentration telomere lengthening research models.',
     category: 'Longevity & Cellular',
     price: 120,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   },
   {
     id: 'prod_ss31_10mg',
@@ -592,15 +505,6 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     inventory: 0,
     sourceRestriction: 'norway'
   },
-  {
-    id: 'prod_glutathione_600mg',
-    name: 'Glutathione (600mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Master antioxidant tripeptide researched for intracellular oxidative stress reduction, immune modulation, and cellular detoxification pathways.',
-    category: 'Immune & Health',
-    price: 65,
-    inventory: 0,
-    sourceRestriction: 'china'
-  },
 
   // --- SLEEP & RECOVERY ---
   {
@@ -615,30 +519,11 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
 
   // --- RECONSTITUTION SOLVENTS ---
   {
-    id: 'prod_bac_water_3ml',
-    name: 'BAC Water (3ml)',
-    description: 'Reconstitution Solvent grade. Benzyl alcohol preserved sterile water for scientific reconstitution of peptide research compounds.',
-    category: 'Reconstitution Solvents',
-    price: 12,
-    inventory: 0,
-    sourceRestriction: 'china'
-  },
-  {
-    id: 'prod_bac_water_10ml',
-    name: 'BAC Water (10ml)',
-    description: 'Reconstitution Solvent grade. Benzyl alcohol preserved sterile water for scientific reconstitution of peptide research compounds.',
-    category: 'Reconstitution Solvents',
-    price: 15,
-    inventory: 0,
-    sourceRestriction: 'china'
-  },
-  {
     id: 'prod_bac_water_30ml',
     name: 'BAC Water (30ml)',
     description: 'Reconstitution Solvent grade. Benzyl alcohol preserved. Engineered sterile solvent standard required for scientific reconstitution of delicate peptide research compounds.',
     category: 'Reconstitution Solvents',
     price: 18,
-    inventory: 0,
-    sourceRestriction: 'norway'
+    inventory: 0
   }
 ];
