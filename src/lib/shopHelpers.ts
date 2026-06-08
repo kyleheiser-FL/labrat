@@ -463,13 +463,15 @@ function resolveChineseKitCost(norm: string): number {
     else if (norm.includes('20mg')) kitCost = 150;  // sell ~$248, Norway $332
     else if (norm.includes('10mg')) kitCost = 110;  // sell ~$182, Norway $242
   } else if (norm.includes('tirzepatide')) {
-    if (norm.includes('60mg')) kitCost = 195;
+    if (norm.includes('100mg')) kitCost = 275;  // sell $454 vs Norway $542
+    else if (norm.includes('60mg')) kitCost = 195;
+    else if (norm.includes('50mg')) kitCost = 165;  // sell $272 vs Norway $338
     else if (norm.includes('30mg')) kitCost = 135;
     else if (norm.includes('20mg')) kitCost = 110;
     else if (norm.includes('15mg')) kitCost = 95;
     else kitCost = 75;
   } else if (norm.includes('cjc-1295') && norm.includes('ipamorelin')) {
-    if (norm.includes('20mg')) kitCost = 200;
+    if (norm.includes('20mg')) kitCost = 115;  // was 200 — sell $190 vs Norway $226
     else kitCost = 100;
   } else if (norm.includes('cjc-1295') || (norm.includes('cjc') && norm.includes('no dac'))) {
     kitCost = 149;
@@ -478,9 +480,13 @@ function resolveChineseKitCost(norm: string): number {
   } else if (norm.includes('tesamorelin')) {
     kitCost = 99;
   } else if (norm.includes('bpc-157')) {
-    kitCost = 70;
+    if (norm.includes('20mg')) kitCost = 90;   // sell $149 vs Norway $169
+    else if (norm.includes('10mg')) kitCost = 70;
+    else kitCost = 30;                          // 5mg: sell $50 vs Norway $62
   } else if (norm.includes('tb-500') || norm.includes('tb500')) {
-    kitCost = 69;
+    if (norm.includes('20mg')) kitCost = 95;   // sell $157 vs Norway $180
+    else if (norm.includes('10mg')) kitCost = 69;
+    else kitCost = 30;                          // 5mg: sell $50 vs Norway $68
   } else if (norm.includes('mots-c') || norm.includes('mots c')) {
     if (norm.includes('10mg')) kitCost = 70;
     else kitCost = 59;
@@ -489,9 +495,13 @@ function resolveChineseKitCost(norm: string): number {
     else kitCost = 75;
   } else if (norm.includes('ghk-cu') || norm.includes('copper peptide')) {
     if (norm.includes('100mg')) kitCost = 60;
+    else if (norm.includes('50mg')) kitCost = 55;  // was same as 20mg — sell $91 vs Norway $209
     else kitCost = 39;
   } else if (norm.includes('epitalon')) {
-    kitCost = 65;
+    if (norm.includes('50mg')) kitCost = 45;   // was 65 — sell $74 vs Norway $135
+    else kitCost = 65;
+  } else if (norm.includes('semax') && norm.includes('selank')) {
+    kitCost = 110;                              // blend: sell $182 vs Norway $237
   } else if (norm.includes('semax')) {
     if (norm.includes('10mg')) kitCost = 75;
     else kitCost = 55;
@@ -502,7 +512,7 @@ function resolveChineseKitCost(norm: string): number {
   } else if (norm.includes('snap-8')) {
     kitCost = 60;
   } else if (norm.includes('5-amino') || norm.includes('1mq')) {
-    kitCost = 125;
+    kitCost = 85;                               // was 125 — sell $140 vs Norway $192
   } else if (norm.includes('glow') && (norm.includes('ghk') || norm.includes('bpc') || norm.includes('tb500') || norm.includes('tb-500'))) {
     kitCost = 135;
   } else if (norm.includes('glutathione')) {
