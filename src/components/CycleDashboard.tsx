@@ -8,6 +8,7 @@ import CycleProgressCard from './CycleProgressCard';
 import { triggerHaptic } from '../lib/haptics';
 import { safeLocalStorage } from '../lib/storage';
 import { db, auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface CycleDashboardProps {
@@ -52,20 +53,27 @@ export default function CycleDashboard({
     } catch { return new Set(); }
   });
 
-  // On mount, merge Firestore-persisted dismissals so they survive localStorage clears
+  // On mount, merge Firestore-persisted dismissals so they survive localStorage clears and cross-device sessions.
+  // Uses onAuthStateChanged instead of auth.currentUser to avoid a race condition where Firebase hasn't
+  // finished restoring the auth session yet (auth.currentUser is null during async initialization).
   React.useEffect(() => {
-    const user = auth.currentUser;
-    if (!user) return;
-    getDoc(doc(db, 'users', user.uid)).then(snap => {
-      if (!snap.exists()) return;
-      const remote: string[] = snap.data().dismissedMissedDoses || [];
-      if (remote.length === 0) return;
-      setDismissedMissedKeys(prev => {
-        const next = new Set([...prev, ...remote]);
-        safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify([...next]));
-        return next;
-      });
-    }).catch(() => {});
+    let done = false;
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (done || !user) return;
+      done = true;
+      unsub();
+      getDoc(doc(db, 'users', user.uid)).then(snap => {
+        if (!snap.exists()) return;
+        const remote: string[] = snap.data().dismissedMissedDoses || [];
+        if (remote.length === 0) return;
+        setDismissedMissedKeys(prev => {
+          const next = new Set([...prev, ...remote]);
+          safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify([...next]));
+          return next;
+        });
+      }).catch(() => {});
+    });
+    return () => { done = true; unsub(); };
   }, []);
 
   const dismissMissedKey = (key: string) => {
