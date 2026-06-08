@@ -396,10 +396,11 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           setMemberProfile(profileData);
           if (!formInitialized) {
             formInitialized = true;
-            setJoinForm({
+            setJoinForm(prev => ({
+              ...prev,
               shippingAddress: profileData.shippingAddress || '',
               phone: profileData.phone || ''
-            });
+            }));
             const parsed = parseShippingAddress(profileData.shippingAddress || '');
             setShippingForm(prev => ({
               ...prev,
@@ -572,8 +573,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   };
 
   useEffect(() => {
-    // Only load catalog if the user is verified/approved/kit or an Admin
-    if (isAdminUser || (memberProfile && (memberProfile.status === 'approved' || memberProfile.status === 'kit'))) {
+    const isAccessGranted = memberProfile?.status === 'approved' || memberProfile?.status === 'kit' || memberProfile?.status === 'chinakit' || memberProfile?.status === 'chinavial';
+    if (isAdminUser || (memberProfile && isAccessGranted)) {
       fetchProducts();
     }
   }, [memberProfile, isAdminUser]);
