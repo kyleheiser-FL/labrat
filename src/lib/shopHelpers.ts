@@ -458,11 +458,10 @@ function resolveChineseKitCost(norm: string): number {
     if (norm.includes('20mg')) kitCost = 165;
     else kitCost = 100;
   } else if (norm.includes('retatrutide')) {
-    if (norm.includes('60mg')) kitCost = 325;
-    else if (norm.includes('30mg')) kitCost = 230;
-    else if (norm.includes('20mg')) kitCost = 200;
-    else if (norm.includes('15mg')) kitCost = 155;
-    else kitCost = 110;
+    if (norm.includes('60mg')) kitCost = 285;      // sell ~$470, Norway $625
+    else if (norm.includes('30mg')) kitCost = 160;  // sell ~$264, Norway $355
+    else if (norm.includes('20mg')) kitCost = 150;  // sell ~$248, Norway $332
+    else if (norm.includes('10mg')) kitCost = 110;  // sell ~$182, Norway $242
   } else if (norm.includes('tirzepatide')) {
     if (norm.includes('60mg')) kitCost = 195;
     else if (norm.includes('30mg')) kitCost = 135;
@@ -517,7 +516,8 @@ function resolveChineseUsWarehouseCost(norm: string): number {
   if (norm.includes('retatrutide')) {
     if (norm.includes('30mg')) return 210;
     if (norm.includes('20mg')) return 170;
-    return 110;
+    if (norm.includes('10mg')) return 110;
+    return 0; // 60mg is China-direct only, no US warehouse stock
   }
   return 0;
 }
@@ -525,6 +525,11 @@ function resolveChineseUsWarehouseCost(norm: string): number {
 // Raw China kit sourcing cost (10 vials, XTP-Bella price sheet). 0 = unrecognised product.
 export function getChinaKitCost(name: string): number {
   return resolveChineseKitCost(name.toLowerCase());
+}
+
+// True when the product has US warehouse stock (ships domestically for China tier).
+export function hasUsWarehouseShipping(name: string): boolean {
+  return resolveChineseUsWarehouseCost(name.toLowerCase()) > 0;
 }
 
 // Raw China per-vial sourcing cost (US warehouse override takes priority for Retatrutide). 0 = unrecognised product.

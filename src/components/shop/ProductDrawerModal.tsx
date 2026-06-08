@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { ShopProduct, CartItem, OrderDetail } from '../../lib/shopTypes';
-import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaKitCost, getChinaVialCost } from '../../lib/shopHelpers';
+import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaKitCost, getChinaVialCost, hasUsWarehouseShipping } from '../../lib/shopHelpers';
 import ProductVialVisual from './ProductVialVisual';
 
 function getProductAvailableStock(prodId: string, baseInventory: number, allOrdersGlobal: OrderDetail[]): number {
@@ -206,11 +206,13 @@ export default function ProductDrawerModal({
                           <>
                             <span className="text-[8px] text-red-400 font-bold uppercase">kit · 10 vials</span>
                             <span className="text-xs text-cyan-400 font-bold">${getChinaKitSellPrice(opt.name) || opt.price}</span>
+                            <span className="text-[7px] mt-0.5 font-semibold">{hasUsWarehouseShipping(opt.name) ? '🇺🇸 USA Stock' : '🇨🇳 China Direct'}</span>
                           </>
                         ) : isChinaVialPricing ? (
                           <>
                             <span className="text-[8px] text-orange-400 font-bold uppercase">per vial</span>
                             <span className="text-xs text-cyan-400 font-bold">${getChinaVialSellPrice(opt.name) || opt.price}</span>
+                            {hasUsWarehouseShipping(opt.name) && <span className="text-[7px] mt-0.5 font-semibold">🇺🇸 USA Stock</span>}
                           </>
                         ) : (
                           <>

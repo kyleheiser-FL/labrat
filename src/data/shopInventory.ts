@@ -118,7 +118,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
     price: 77,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_retat_10mg',
@@ -150,7 +151,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
     price: 270,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_retat_60mg',
