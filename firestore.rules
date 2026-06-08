@@ -61,7 +61,9 @@ service cloud.firestore {
                       exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
                       (
                         get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved" ||
-                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit"
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit" ||
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "chinakit" ||
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "chinavial"
                       )
                     )
                   );
@@ -87,7 +89,7 @@ service cloud.firestore {
 
     // Orders checkout data
     match /orders/{orderId} {
-      // Allow read to own orders, admin, or any approved member to compute dynamic inventory stock
+      // Allow read to own orders, admin, or any approved/kit/china member to compute dynamic inventory stock
       allow read: if request.auth != null && (
                     resource.data.userId == request.auth.uid ||
                     isAdmin() ||
@@ -95,11 +97,13 @@ service cloud.firestore {
                       exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
                       (
                         get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved" ||
-                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit"
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit" ||
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "chinakit" ||
+                        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "chinavial"
                       )
                     )
                   );
-      
+
       // Members must be approved to place orders
       allow create: if request.auth != null && (
                       isAdmin() ||
@@ -108,7 +112,9 @@ service cloud.firestore {
                         exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
                         (
                           get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved" ||
-                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit"
+                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit" ||
+                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "chinakit" ||
+                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "chinavial"
                         )
                       )
                     );

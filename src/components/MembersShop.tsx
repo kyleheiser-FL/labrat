@@ -497,68 +497,56 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         console.warn('Firestore shopItems read failed, using local inventory as fallback', firestoreErr);
       }
 
-      const syncPromises: Promise<void>[] = [];
+      // Self-healing sync: only admins can write shopItems — skip entirely for regular members
+      if (isAdminUser) {
+        const syncPromises: Promise<void>[] = [];
 
-      // Self-healing synchronization upgrade: insert or UPDATE items to match updated clean certified titles & sizes, prices, and stock
-      for (const sample of SAMPLE_INVENTORY) {
-        const existingIndex = firestoreItems.findIndex(p => p.id === sample.id);
-        if (existingIndex === -1) {
-          syncPromises.push(
-            setDoc(doc(db, 'shopItems', sample.id), sample)
-              .then(() => {
-                firestoreItems.push(sample);
-              })
-              .catch(err => {
-                console.error(`Failed to auto-provision item: ${sample.id}`, err);
-              })
-          );
-        } else {
-          const existing = firestoreItems[existingIndex];
-          if (
-            existing.name !== sample.name ||
-            existing.description !== sample.description ||
-            existing.category !== sample.category ||
-            existing.price !== sample.price ||
-            existing.inventory !== sample.inventory
-          ) {
+        for (const sample of SAMPLE_INVENTORY) {
+          const existingIndex = firestoreItems.findIndex(p => p.id === sample.id);
+          if (existingIndex === -1) {
             syncPromises.push(
-              setDoc(doc(db, 'shopItems', sample.id), {
-                ...existing,
-                name: sample.name,
-                description: sample.description,
-                category: sample.category,
-                price: sample.price,
-                inventory: sample.inventory
-              })
-                .then(() => {
-                  firestoreItems[existingIndex] = {
-                    ...existing,
-                    name: sample.name,
-                    description: sample.description,
-                    category: sample.category,
-                    price: sample.price,
-                    inventory: sample.inventory
-                  };
-                })
-                .catch(err => {
-                  console.error(`Failed to auto-update item: ${sample.id}`, err);
-                })
+              setDoc(doc(db, 'shopItems', sample.id), sample)
+                .then(() => { firestoreItems.push(sample); })
+                .catch(err => { console.error(`Failed to auto-provision item: ${sample.id}`, err); })
             );
+          } else {
+            const existing = firestoreItems[existingIndex];
+            if (
+              existing.name !== sample.name ||
+              existing.description !== sample.description ||
+              existing.category !== sample.category ||
+              existing.price !== sample.price ||
+              existing.inventory !== sample.inventory
+            ) {
+              syncPromises.push(
+                setDoc(doc(db, 'shopItems', sample.id), {
+                  ...existing,
+                  name: sample.name,
+                  description: sample.description,
+                  category: sample.category,
+                  price: sample.price,
+                  inventory: sample.inventory
+                })
+                  .then(() => {
+                    firestoreItems[existingIndex] = { ...existing, name: sample.name, description: sample.description, category: sample.category, price: sample.price, inventory: sample.inventory };
+                  })
+                  .catch(err => { console.error(`Failed to auto-update item: ${sample.id}`, err); })
+              );
+            }
           }
         }
-      }
 
-      // Proactively prune outdated/removed inventory sizes/products from Firestore
-      const activeSampleIdsSet = new Set(SAMPLE_INVENTORY.map(s => s.id));
-      const obsoleteItems = firestoreItems.filter(item => !activeSampleIdsSet.has(item.id));
-      await Promise.all([
-        ...syncPromises,
-        ...obsoleteItems.map(item =>
-          deleteDoc(doc(db, 'shopItems', item.id)).catch(err =>
-            console.error(`Failed to auto-delete obsolete database item: ${item.id}`, err)
+        const activeSampleIdsSet = new Set(SAMPLE_INVENTORY.map(s => s.id));
+        const obsoleteItems = firestoreItems.filter(item => !activeSampleIdsSet.has(item.id));
+        await Promise.all([
+          ...syncPromises,
+          ...obsoleteItems.map(item =>
+            deleteDoc(doc(db, 'shopItems', item.id)).catch(err =>
+              console.error(`Failed to auto-delete obsolete database item: ${item.id}`, err)
+            )
           )
-        )
-      ]);
+        ]);
+      }
 
       // Display list is already filtered to SAMPLE_INVENTORY ids (seeded above)
       setProducts(displayList);
@@ -1802,6 +1790,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           }}
           onClose={() => setSelectedParentProductGroup(null)}
           isViewingAsAdmin={isViewingAsAdmin}
+          isAdminUser={isAdminUser}
+          isKitPricing={isKitPricing}
           isChinaKitPricing={isChinaKitPricing}
           isChinaVialPricing={isChinaVialPricing}
           onSetEditingProduct={setEditingProduct}
@@ -1811,10 +1801,6 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           confirmDeleteProductId={confirmDeleteProductId}
           onSetConfirmDeleteProductId={setConfirmDeleteProductId}
           onDeleteProduct={handleDeleteProduct}
-          isKitPricing={isKitPricing}
-          isChinaKitPricing={isChinaKitPricing}
-          isChinaVialPricing={isChinaVialPricing}
-          isAdminUser={isAdminUser}
         />
       )}
 
