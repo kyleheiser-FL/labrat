@@ -69,6 +69,7 @@ import ShopCheckoutView from './shop/ShopCheckoutView';
 import ShopOrdersView from './shop/ShopOrdersView';
 import AdminMembersPanel from './shop/AdminMembersPanel';
 import AdminOrdersPanel from './shop/AdminOrdersPanel';
+import AdminPricingPanel from './shop/AdminPricingPanel';
 import ShopCatalogView from './shop/ShopCatalogView';
 import ProductDrawerModal from './shop/ProductDrawerModal';
 import OrderSuccessModal from './shop/OrderSuccessModal';
@@ -179,7 +180,7 @@ export default function MembersShop() {
 
   useEffect(() => {
     if (isAdminUser && !isAdminPreviewCustomer) {
-      setView(v => ['admin_members', 'admin_orders', 'catalog'].includes(v) ? v : 'admin_members');
+      setView(v => ['admin_members', 'admin_orders', 'admin_pricing', 'catalog'].includes(v) ? v : 'admin_members');
     } else {
       setView(v => ['catalog', 'cart', 'orders'].includes(v) ? v : 'catalog');
     }
@@ -1264,6 +1265,12 @@ export default function MembersShop() {
             >
               Products
             </button>
+            <button
+              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); navigateView('admin_pricing'); }}
+              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer shrink-0 ${view === 'admin_pricing' && !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300 border border-red-500/30' : 'text-red-400/70 hover:text-red-300 hover:bg-red-500/10'}`}
+            >
+              💰 Pricing
+            </button>
           </div>
           {/* Row 2: view toggle pill — always fully visible */}
           <div className="flex flex-wrap items-center gap-1 bg-slate-900/60 border border-slate-800 rounded-xl p-0.5 self-start">
@@ -1648,6 +1655,10 @@ export default function MembersShop() {
               onDeleteOrder={handleDeleteOrder}
               onSetConfirmDeleteOrderId={setConfirmDeleteOrderId}
             />
+          )}
+
+          {isAdminUser && view === 'admin_pricing' && (
+            <AdminPricingPanel />
           )}
 
         </div>

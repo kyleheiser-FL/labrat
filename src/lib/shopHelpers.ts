@@ -411,6 +411,18 @@ export function getKitSellPrice(name: string): number {
   return Math.round(raw * (355 / 315));
 }
 
+export function getKitWholesaleCost(name: string): number {
+  return resolveKitCost(name.toLowerCase());
+}
+
+export function getChineseKitWholesaleCost(name: string): number {
+  return resolveChineseKitCost(name.toLowerCase());
+}
+
+export function getChineseUsWarehouseCost(name: string): number {
+  return resolveChineseUsWarehouseCost(name.toLowerCase());
+}
+
 // China US Warehouse cost (Retatrutide only)
 function resolveChineseUsWarehouseCost(norm: string): number {
   if (norm.includes('retatrutide')) {
