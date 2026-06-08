@@ -333,8 +333,8 @@ function resolveKitCost(norm: string): number {
     if (norm.includes('10mg')) kitCost = 320;
     else kitCost = 295;
   } else if (norm.includes('ipamorelin')) {
-    if (norm.includes('10mg')) kitCost = 270;
-    else kitCost = 195;
+    if (norm.includes('10mg')) kitCost = 190;
+    else kitCost = 190;
   } else if (norm.includes('tesamorelin')) {
     if (norm.includes('10mg')) kitCost = 290;
     else kitCost = 230;
@@ -350,15 +350,15 @@ function resolveKitCost(norm: string): number {
     else kitCost = 70;
   } else if (norm.includes('klow')) {
     kitCost = 310;
-  } else if (norm.includes('glow') && (norm.includes('ghk') || norm.includes('bpc') || norm.includes('tb500') || norm.includes('tb-500'))) {
-    kitCost = 295;
+  } else if (norm.includes('glow')) {
+    if (norm.includes('70mg')) kitCost = 330;
+    else kitCost = 295;
   } else if (norm.includes('ghk-cu') || norm.includes('copper peptide')) {
-    if (norm.includes('100mg')) kitCost = 280;
+    if (norm.includes('100mg')) kitCost = 225;
     else if (norm.includes('50mg')) kitCost = 185;
     else kitCost = 80;
   } else if (norm.includes('melanotan ii') || norm.includes('melanotan 2')) {
-    if (norm.includes('20mg')) kitCost = 310;
-    else kitCost = 195;
+    kitCost = 230;
   } else if (norm.includes('melanotan')) {
     kitCost = 200;
   } else if (norm.includes('mazdutide')) {
@@ -366,14 +366,14 @@ function resolveKitCost(norm: string): number {
   } else if (norm.includes('igf-1') || norm.includes('igf1')) {
     kitCost = 315;
   } else if (norm.includes('pt-141') || norm.includes('bremelanotide')) {
-    if (norm.includes('20mg')) kitCost = 310;
-    else kitCost = 195;
+    kitCost = 190;
   } else if (norm.includes('nad+')) {
     if (norm.includes('2000mg')) kitCost = 430;
     else if (norm.includes('1000mg')) kitCost = 275;
     else kitCost = 185;
   } else if (norm.includes('mots-c')) {
-    kitCost = 255;
+    if (norm.includes('40mg')) kitCost = 330;
+    else kitCost = 210;
   } else if (norm.includes('ss-31') || norm.includes('elamipretide')) {
     if (norm.includes('50mg')) kitCost = 415;
     else kitCost = 210;
@@ -384,8 +384,7 @@ function resolveKitCost(norm: string): number {
   } else if (norm.includes('semax')) {
     kitCost = 180;
   } else if (norm.includes('epitalon')) {
-    if (norm.includes('50mg')) kitCost = 120;
-    else kitCost = 210;
+    kitCost = 210;
   } else if (norm.includes('dsip')) {
     if (norm.includes('10mg')) kitCost = 235;
     else kitCost = 165;
@@ -398,7 +397,7 @@ function resolveKitCost(norm: string): number {
   } else if (norm.includes('arachidonic') || norm.includes('ara ')) {
     kitCost = 170;
   } else if (norm.includes('lemon bottle')) {
-    kitCost = 185;
+    kitCost = 200;
   } else if (norm.includes('kpv')) {
     kitCost = 205;
   }
@@ -410,6 +409,108 @@ export function getKitSellPrice(name: string): number {
   const raw = resolveKitCost(name.toLowerCase());
   if (!raw) return 0;
   return Math.round(raw * (355 / 315));
+}
+
+// China US Warehouse cost (Retatrutide only)
+function resolveChineseUsWarehouseCost(norm: string): number {
+  if (norm.includes('retatrutide')) {
+    if (norm.includes('30mg')) return 210;
+    if (norm.includes('20mg')) return 170;
+    if (norm.includes('10mg')) return 110;
+    return 0;
+  }
+  return 0;
+}
+
+export function hasUsWarehouseShipping(name: string): boolean {
+  return resolveChineseUsWarehouseCost(name.toLowerCase()) > 0;
+}
+
+function resolveChineseKitCost(norm: string): number {
+  let kitCost = 0;
+  if (norm.includes('bacteriostatic water') || norm.includes('bac water')) {
+    if (norm.includes('10ml')) kitCost = 15;
+    else kitCost = 10;
+  } else if (norm.includes('bpc-157') && norm.includes('tb-500') && norm.includes('blend')) {
+    if (norm.includes('20mg')) kitCost = 165;
+    else kitCost = 100;
+  } else if (norm.includes('bpc-157')) {
+    if (norm.includes('10mg')) kitCost = 70;
+    else kitCost = 70;
+  } else if (norm.includes('tb-500')) {
+    if (norm.includes('5mg')) kitCost = 69;
+    else kitCost = 69;
+  } else if (norm.includes('retatrutide')) {
+    const usCost = resolveChineseUsWarehouseCost(norm);
+    if (usCost) return usCost;
+    if (norm.includes('60mg')) kitCost = 325;
+    else if (norm.includes('30mg')) kitCost = 230;
+    else if (norm.includes('20mg')) kitCost = 200;
+    else if (norm.includes('15mg')) kitCost = 155;
+    else if (norm.includes('10mg')) kitCost = 110;
+    else kitCost = 110;
+  } else if (norm.includes('tirzepatide')) {
+    if (norm.includes('60mg')) kitCost = 195;
+    else if (norm.includes('30mg')) kitCost = 135;
+    else if (norm.includes('20mg')) kitCost = 110;
+    else if (norm.includes('15mg')) kitCost = 95;
+    else kitCost = 75;
+  } else if (norm.includes('cjc-1295') && norm.includes('ipamorelin')) {
+    if (norm.includes('20mg')) kitCost = 200;
+    else kitCost = 100;
+  } else if (norm.includes('cjc-1295')) {
+    kitCost = 149;
+  } else if (norm.includes('ipamorelin')) {
+    kitCost = 80;
+  } else if (norm.includes('tesamorelin')) {
+    kitCost = 99;
+  } else if (norm.includes('ghk-cu') || norm.includes('copper peptide')) {
+    if (norm.includes('100mg')) kitCost = 60;
+    else kitCost = 39;
+  } else if (norm.includes('mots-c')) {
+    if (norm.includes('10mg')) kitCost = 70;
+    else kitCost = 59;
+  } else if (norm.includes('ss-31') || norm.includes('elamipretide')) {
+    kitCost = 90;
+  } else if (norm.includes('semax') && norm.includes('selank')) {
+    kitCost = 115;
+  } else if (norm.includes('semax')) {
+    if (norm.includes('10mg')) kitCost = 75;
+    else kitCost = 55;
+  } else if (norm.includes('selank')) {
+    kitCost = 75;
+  } else if (norm.includes('epitalon')) {
+    kitCost = 65;
+  } else if (norm.includes('snap-8')) {
+    kitCost = 60;
+  } else if (norm.includes('glow')) {
+    kitCost = 135;
+  } else if (norm.includes('nad+') || norm.includes('nicotinamide adenine')) {
+    if (norm.includes('1000mg')) kitCost = 140;
+    else kitCost = 75;
+  } else if (norm.includes('5-amino') || norm.includes('1mq')) {
+    kitCost = 125;
+  }
+  return kitCost;
+}
+
+// China kit sell price: raw cost × 1.65 (65% markup)
+export function getChinaKitSellPrice(name: string): number {
+  const raw = resolveChineseKitCost(name.toLowerCase());
+  if (!raw) return 0;
+  return Math.round(raw * 1.65);
+}
+
+// China vial sell price: (raw kit cost / 10) × 2.0 (100% markup for US warehouse, else 165%)
+export function getChinaVialSellPrice(name: string): number {
+  const norm = name.toLowerCase();
+  const usCost = resolveChineseUsWarehouseCost(norm);
+  if (usCost) {
+    return Math.round((usCost / 10) * 2.0);
+  }
+  const kitCost = resolveChineseKitCost(norm);
+  if (!kitCost) return 0;
+  return Math.round((kitCost / 10) * 1.65);
 }
 
 export function getProductCostPerVial(name: string, basePrice: number): number {
