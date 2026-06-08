@@ -69,13 +69,13 @@ export default function AdminMembersPanel({
                   <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide ${
                     member.status === 'approved'   ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' :
                     member.status === 'kit'        ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20' :
-                    member.status === 'chinakit'   ? 'bg-red-500/10 text-red-300 border border-red-500/20' :
-                    member.status === 'chinavial'  ? 'bg-orange-500/10 text-orange-300 border border-orange-500/20' :
-                    member.status === 'blocked'    ? 'bg-slate-500/10 text-slate-400 border border-slate-500/20' :
+                    member.status === 'chinakit'   ? 'bg-orange-500/10 text-orange-300 border border-orange-500/20' :
+                    member.status === 'chinavial'  ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20' :
+                    member.status === 'blocked'    ? 'bg-red-500/10 text-red-300 border border-red-500/20' :
                                                      'bg-amber-500/10 text-amber-300 border border-amber-500/20'
                   }`}>
-                    {member.status === 'kit' ? '📦 Norway Kit' :
-                     member.status === 'chinakit' ? '🇨🇳 China Kit' :
+                    {member.status === 'kit'       ? '🇳🇴 Kit Pricing' :
+                     member.status === 'chinakit'  ? '🇨🇳 China Kit' :
                      member.status === 'chinavial' ? '🇨🇳 China Vial' :
                      member.status}
                   </span>
@@ -111,28 +111,28 @@ export default function AdminMembersPanel({
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <UserCheck className="w-3.5 h-3.5" /> Approve (Per Vial)
+                      <UserCheck className="w-3.5 h-3.5" /> 🇳🇴 Per Vial
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'kit')}
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-cyan-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Package className="w-3.5 h-3.5" /> Approve (Norway Kit)
-                    </button>
-                    <button
-                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
-                      disabled={actionLoading !== null}
-                      className="px-3 py-1.5 bg-red-500/80 text-white text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      🇨🇳 China Kit
+                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Kit
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinavial')}
                       disabled={actionLoading !== null}
-                      className="px-3 py-1.5 bg-orange-500/80 text-white text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 bg-orange-500/80 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       🇨🇳 China Vial
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-orange-400/80 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Kit
                     </button>
                   </>
                 ) : member.status === 'approved' ? (
@@ -147,14 +147,7 @@ export default function AdminMembersPanel({
                       }`}
                     >
                       <Package className="w-3.5 h-3.5" />
-                      {member.kitUpgradeRequested ? 'Upgrade to Kit ✓' : '🇳🇴 Norway Kit'}
-                    </button>
-                    <button
-                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
-                      disabled={actionLoading !== null}
-                      className="px-3 py-1.5 bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-bold rounded-lg cursor-pointer border border-red-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      🇨🇳 China Kit
+                      {member.kitUpgradeRequested ? '🇳🇴 Kit ✓' : '🇳🇴 Kit'}
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinavial')}
@@ -162,6 +155,13 @@ export default function AdminMembersPanel({
                       className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       🇨🇳 China Vial
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Kit
                     </button>
                   </>
                 ) : member.status === 'kit' ? (
@@ -171,14 +171,7 @@ export default function AdminMembersPanel({
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-bold rounded-lg cursor-pointer border border-emerald-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <UserCheck className="w-3.5 h-3.5" /> Per Vial
-                    </button>
-                    <button
-                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
-                      disabled={actionLoading !== null}
-                      className="px-3 py-1.5 bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-bold rounded-lg cursor-pointer border border-red-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      🇨🇳 China Kit
+                      <UserCheck className="w-3.5 h-3.5" /> 🇳🇴 Per Vial
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinavial')}
@@ -186,6 +179,13 @@ export default function AdminMembersPanel({
                       className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       🇨🇳 China Vial
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Kit
                     </button>
                   </>
                 ) : member.status === 'chinakit' ? (
@@ -195,14 +195,14 @@ export default function AdminMembersPanel({
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-bold rounded-lg cursor-pointer border border-emerald-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <UserCheck className="w-3.5 h-3.5" /> Per Vial
+                      <UserCheck className="w-3.5 h-3.5" /> 🇳🇴 Per Vial
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'kit')}
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Norway Kit
+                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Kit
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinavial')}
@@ -219,19 +219,19 @@ export default function AdminMembersPanel({
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-bold rounded-lg cursor-pointer border border-emerald-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <UserCheck className="w-3.5 h-3.5" /> Per Vial
+                      <UserCheck className="w-3.5 h-3.5" /> 🇳🇴 Per Vial
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'kit')}
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Norway Kit
+                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Kit
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinakit')}
                       disabled={actionLoading !== null}
-                      className="px-3 py-1.5 bg-red-500/15 hover:bg-red-500/25 text-red-300 text-xs font-bold rounded-lg cursor-pointer border border-red-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       🇨🇳 China Kit
                     </button>
@@ -244,14 +244,28 @@ export default function AdminMembersPanel({
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <UserCheck className="w-3.5 h-3.5" /> Restore (Per Vial)
+                      <UserCheck className="w-3.5 h-3.5" /> Restore (🇳🇴 Per Vial)
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'kit')}
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Package className="w-3.5 h-3.5" /> Restore (Kit)
+                      <Package className="w-3.5 h-3.5" /> Restore (🇳🇴 Kit)
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinavial')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Vial
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
+                      disabled={actionLoading !== null}
+                      className="px-3 py-1.5 bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 text-xs font-bold rounded-lg cursor-pointer border border-orange-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🇨🇳 China Kit
                     </button>
                   </>
                 )}

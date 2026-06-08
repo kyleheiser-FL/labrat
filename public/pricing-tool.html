@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LabRat Pricing Tool</title>
+<style>
+  :root {
+    --bg: #0a0f1a; --bg2: #0f1624; --bg3: #151e2e; --card: #1a2235;
+    --border: #1e2d42; --cyan: #00e5ff; --cyan2: #0ff; --green: #00e676;
+    --amber: #ffb300; --red: #ff5252; --purple: #ce93d8; --text: #e2e8f0;
+    --muted: #7a8a9e; --norway: #4a9eff; --china: #ff6b6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; min-height: 100vh; }
+
+  header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  .logo { color: var(--cyan); font-size: 18px; font-weight: 700; letter-spacing: 2px; }
+  .logo span { color: var(--text); }
+  .subtitle { color: var(--muted); font-size: 11px; }
+
+  .controls { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+  .ctrl-group { display: flex; flex-direction: column; gap: 3px; }
+  .ctrl-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .ctrl-row { display: flex; align-items: center; gap: 6px; }
+  .ctrl-flag { font-size: 14px; }
+  input[type="number"].markup {
+    background: var(--bg3); border: 1px solid var(--border); color: var(--cyan);
+    border-radius: 4px; padding: 3px 6px; width: 60px; font-family: inherit; font-size: 12px;
+  }
+  input[type="number"].markup:focus { outline: none; border-color: var(--cyan); }
+  .ctrl-unit { color: var(--muted); font-size: 11px; }
+
+  .filter-bar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .filter-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 12px; cursor: pointer; font-size: 11px; font-family: inherit; transition: all 0.15s; }
+  .filter-btn.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0,229,255,0.08); }
+  .filter-btn:hover { border-color: var(--muted); color: var(--text); }
+  input.search { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 4px 10px; border-radius: 4px; font-family: inherit; font-size: 11px; width: 200px; }
+  input.search:focus { outline: none; border-color: var(--cyan); }
+
+  .table-wrap { overflow-x: auto; padding: 0 0 40px; }
+  table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+  thead tr { background: var(--bg3); position: sticky; top: 89px; z-index: 50; }
+  th { padding: 8px 10px; text-align: right; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th:first-child, th:nth-child(2), th:nth-child(3) { text-align: left; }
+  th.nor-col { color: var(--norway); }
+  th.chn-col { color: var(--china); }
+
+  tr.product-row { border-bottom: 1px solid rgba(30,45,66,0.5); transition: background 0.1s; }
+  tr.product-row:hover { background: rgba(255,255,255,0.02); }
+  tr.cat-header td { background: var(--bg3); color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  td { padding: 6px 10px; text-align: right; vertical-align: middle; }
+  td.name-col { text-align: left; color: var(--text); font-size: 11px; min-width: 220px; }
+  td.src-col { text-align: left; font-size: 13px; }
+  td.mg-col { text-align: left; color: var(--muted); font-size: 11px; }
+  td.cost { color: var(--amber); }
+  td.sell { color: var(--green); }
+  td.sell.china { color: var(--china); }
+  td.profit { color: var(--muted); font-size: 10px; }
+  td.na { color: #2a3a52; }
+  td.editable { cursor: pointer; }
+  td.editable:hover { background: rgba(0,229,255,0.05); }
+  td.modified { color: var(--cyan) !important; }
+  td.modified::after { content: '✎'; font-size: 9px; color: var(--cyan); margin-left: 3px; }
+
+  .price-cell { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+  .price-val { font-size: 12px; }
+  .price-profit { font-size: 9px; color: var(--muted); }
+  .price-profit.good { color: var(--green); }
+  .price-profit.ok { color: var(--amber); }
+
+  .badge { font-size: 9px; padding: 1px 5px; border-radius: 3px; }
+  .badge.nor { background: rgba(74,158,255,0.15); color: var(--norway); }
+  .badge.chn { background: rgba(255,107,107,0.15); color: var(--china); }
+  .badge.both { background: rgba(0,229,255,0.1); color: var(--cyan); }
+  .badge.us { background: rgba(0,230,118,0.12); color: var(--green); }
+
+  .btn-export { margin-left: auto; background: var(--cyan); color: #000; border: none; padding: 6px 14px; border-radius: 4px; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; }
+  .btn-export:hover { background: var(--cyan2); }
+  .btn-reset { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 4px; font-family: inherit; font-size: 11px; cursor: pointer; }
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
+  .modal.open { display: flex; }
+  .modal-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; width: 90%; max-width: 700px; max-height: 80vh; display: flex; flex-direction: column; }
+  .modal-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .modal-header h2 { color: var(--cyan); font-size: 14px; }
+  .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; }
+  .modal-body { padding: 14px 16px; overflow-y: auto; flex: 1; }
+  .modal-body pre { color: var(--green); font-size: 10px; white-space: pre-wrap; word-break: break-all; }
+  .modal-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+  .btn-copy { background: var(--green); color: #000; border: none; padding: 7px 14px; border-radius: 4px; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer; }
+  .btn-close { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 7px 12px; border-radius: 4px; font-family: inherit; font-size: 11px; cursor: pointer; }
+
+  .summary-bar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 6px 16px; display: flex; gap: 16px; font-size: 10px; color: var(--muted); }
+  .summary-bar span { color: var(--text); }
+  .summary-bar .mod { color: var(--cyan); }
+
+  input.inline-edit {
+    background: var(--bg); border: 1px solid var(--cyan); color: var(--cyan);
+    width: 65px; text-align: right; font-family: inherit; font-size: 12px;
+    border-radius: 3px; padding: 1px 4px;
+  }
+  input.inline-edit:focus { outline: none; }
+
+  .vial-pill { display: inline-block; background: rgba(74,158,255,0.1); color: var(--norway); border-radius: 2px; padding: 0 3px; font-size: 9px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">LAB<span>RAT</span></div>
+  <div>
+    <div style="color:var(--cyan);font-weight:600;font-size:13px;">Pricing Manager</div>
+    <div class="subtitle">Adjust markups · All tiers · Export changes</div>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:8px;">
+    <button class="btn-reset" onclick="resetAll()">Reset All</button>
+    <button class="btn-export" onclick="openExport()">Export Changes →</button>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <div class="ctrl-label">🇳🇴 Norway Kit Markup</div>
+    <div class="ctrl-row">
+      <input type="number" class="markup" id="norKitMarkup" value="12.7" step="0.1" min="0" max="100" onchange="recalc()">
+      <span class="ctrl-unit">% over wholesale</span>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <div class="ctrl-label">🇨🇳 China Kit Markup</div>
+    <div class="ctrl-row">
+      <input type="number" class="markup" id="chinaKitMarkup" value="65" step="1" min="0" max="300" onchange="recalc()">
+      <span class="ctrl-unit">% over wholesale</span>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <div class="ctrl-label">🇺🇸 China Vial (USA Stock) Markup</div>
+    <div class="ctrl-row">
+      <input type="number" class="markup" id="chinaVialUSMarkup" value="100" step="1" min="0" max="500" onchange="recalc()">
+      <span class="ctrl-unit">% over per-vial cost</span>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <div class="ctrl-label">🇨🇳 China Vial (Direct) Markup</div>
+    <div class="ctrl-row">
+      <input type="number" class="markup" id="chinaVialDirectMarkup" value="65" step="1" min="0" max="500" onchange="recalc()">
+      <span class="ctrl-unit">% over per-vial cost</span>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <div class="ctrl-label">🇳🇴 Vial Sale Discount</div>
+    <div class="ctrl-row">
+      <input type="number" class="markup" id="norVialDiscount" value="15" step="1" min="0" max="50" onchange="recalc()">
+      <span class="ctrl-unit">% off list price</span>
+    </div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+  <button class="filter-btn" onclick="setFilter('norway',this)">🇳🇴 Norway Only</button>
+  <button class="filter-btn" onclick="setFilter('china',this)">🇨🇳 China Only</button>
+  <button class="filter-btn" onclick="setFilter('both',this)">Both Sources</button>
+  <input class="search" type="text" placeholder="Search product..." oninput="filterSearch(this.value)">
+  <div id="modCount" style="margin-left:auto;color:var(--muted);font-size:10px;"></div>
+</div>
+
+<div id="summaryBar" class="summary-bar" style="display:none"></div>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Mg</th>
+      <th>Source</th>
+      <th class="nor-col">🇳🇴 Wholesale<br><small>(10 vials)</small></th>
+      <th class="chn-col">🇨🇳 Wholesale<br><small>(10 vials)</small></th>
+      <th class="nor-col">🇳🇴 Kit Sell<br><small>(10 vials)</small></th>
+      <th class="nor-col">🇳🇴 Vial Sell<br><small>(sale price)</small></th>
+      <th class="chn-col">🇨🇳 Kit Sell<br><small>(10 vials)</small></th>
+      <th class="chn-col">🇨🇳 Vial Sell<br><small>(per vial)</small></th>
+    </tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
+</div>
+
+<div class="modal" id="exportModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>Export Pricing Changes</h2>
+      <button class="modal-close" onclick="closeExport()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="color:var(--muted);font-size:10px;margin-bottom:10px;">Copy this JSON and paste it into the chat for me to apply to the codebase.</div>
+      <pre id="exportText"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-copy" onclick="copyExport()">Copy to Clipboard</button>
+      <button class="btn-close" onclick="closeExport()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const PRODUCTS = [
+  // --- WEIGHT LOSS ---
+  { cat:'Weight Loss', name:'Retatrutide', mg:'5mg',   nor:190,  chn:null,  usWh:null,   norVial:77,   norOnly:true  },
+  { cat:'Weight Loss', name:'Retatrutide', mg:'10mg',  nor:215,  chn:null,  usWh:110,    norVial:117  },
+  { cat:'Weight Loss', name:'Retatrutide', mg:'15mg',  nor:null, chn:155,   usWh:null,   norVial:null, chnOnly:true  },
+  { cat:'Weight Loss', name:'Retatrutide', mg:'20mg',  nor:295,  chn:null,  usWh:170,    norVial:156  },
+  { cat:'Weight Loss', name:'Retatrutide', mg:'30mg',  nor:315,  chn:null,  usWh:210,    norVial:197  },
+  { cat:'Weight Loss', name:'Retatrutide', mg:'50mg',  nor:475,  chn:null,  usWh:null,   norVial:270,  norOnly:true  },
+  { cat:'Weight Loss', name:'Retatrutide', mg:'60mg',  nor:555,  chn:325,   usWh:null,   norVial:309  },
+  { cat:'Weight Loss', name:'Retatrutide', mg:'100mg', nor:995,  chn:null,  usWh:null,   norVial:392,  norOnly:true  },
+  { cat:'Weight Loss', name:'Tirzepatide', mg:'10mg',  nor:185,  chn:75,    usWh:null,   norVial:73   },
+  { cat:'Weight Loss', name:'Tirzepatide', mg:'15mg',  nor:215,  chn:95,    usWh:null,   norVial:97   },
+  { cat:'Weight Loss', name:'Tirzepatide', mg:'20mg',  nor:255,  chn:110,   usWh:null,   norVial:117  },
+  { cat:'Weight Loss', name:'Tirzepatide', mg:'30mg',  nor:300,  chn:135,   usWh:null,   norVial:156  },
+  { cat:'Weight Loss', name:'Tirzepatide', mg:'40mg',  nor:329,  chn:null,  usWh:null,   norVial:null, norOnly:true  },
+  { cat:'Weight Loss', name:'Tirzepatide', mg:'60mg',  nor:380,  chn:195,   usWh:null,   norVial:235  },
+  { cat:'Weight Loss', name:'Tirzepatide', mg:'70mg',  nor:415,  chn:null,  usWh:null,   norVial:null, norOnly:true  },
+  { cat:'Weight Loss', name:'Tirzepatide', mg:'120mg', nor:525,  chn:null,  usWh:null,   norVial:null, norOnly:true  },
+  { cat:'Weight Loss', name:'Semaglutide', mg:'10mg',  nor:160,  chn:null,  usWh:null,   norVial:73   },
+  { cat:'Weight Loss', name:'Semaglutide', mg:'15mg',  nor:185,  chn:null,  usWh:null,   norVial:null, norOnly:true  },
+  { cat:'Weight Loss', name:'Semaglutide', mg:'20mg',  nor:210,  chn:null,  usWh:null,   norVial:109  },
+  { cat:'Weight Loss', name:'Semaglutide', mg:'30mg',  nor:240,  chn:null,  usWh:null,   norVial:144  },
+  { cat:'Weight Loss', name:'Cagrilintide', mg:'5mg',  nor:205,  chn:null,  usWh:null,   norVial:58,   norOnly:true  },
+  { cat:'Weight Loss', name:'Cagrilintide', mg:'10mg', nor:285,  chn:null,  usWh:null,   norVial:77,   norOnly:true  },
+  { cat:'Weight Loss', name:'Mazdutide',   mg:'10mg',  nor:295,  chn:null,  usWh:null,   norVial:null, norOnly:true  },
+
+  // --- MUSCLE GROWTH ---
+  { cat:'Muscle Growth', name:'CJC-1295 No DAC + Ipamorelin', mg:'10mg', nor:255, chn:100,  usWh:null, norVial:104 },
+  { cat:'Muscle Growth', name:'CJC-1295 No DAC + Ipamorelin', mg:'20mg', nor:null, chn:200, usWh:null, norVial:null, chnOnly:true },
+  { cat:'Muscle Growth', name:'CJC-1295 Without DAC', mg:'5mg',  nor:295, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Muscle Growth', name:'CJC-1295 Without DAC', mg:'10mg', nor:320, chn:149,  usWh:null, norVial:60   },
+  { cat:'Muscle Growth', name:'Ipamorelin',  mg:'10mg', nor:190, chn:80,  usWh:null, norVial:66  },
+  { cat:'Muscle Growth', name:'Tesamorelin', mg:'5mg',  nor:230, chn:99,  usWh:null, norVial:null },
+  { cat:'Muscle Growth', name:'Tesamorelin', mg:'10mg', nor:290, chn:null, usWh:null, norVial:77  },
+  { cat:'Muscle Growth', name:'Sermorelin',  mg:'5mg',  nor:210, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Muscle Growth', name:'Sermorelin',  mg:'10mg', nor:280, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Muscle Growth', name:'MOTS-C',      mg:'10mg', nor:210, chn:70,  usWh:null, norVial:84  },
+  { cat:'Muscle Growth', name:'MOTS-C',      mg:'40mg', nor:330, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Muscle Growth', name:'IGF-1 LR3',   mg:'1mg',  nor:315, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Muscle Growth', name:'SLU-PP-332',  mg:'5mg',  nor:220, chn:null, usWh:null, norVial:null, norOnly:true },
+
+  // --- HEALING & REPAIR ---
+  { cat:'Healing & Repair', name:'BPC-157', mg:'10mg', nor:185, chn:70, usWh:null, norVial:69 },
+  { cat:'Healing & Repair', name:'TB-500',  mg:'5mg',  nor:null, chn:69, usWh:null, norVial:53, chnOnly:true },
+  { cat:'Healing & Repair', name:'TB-500',  mg:'10mg', nor:255, chn:null, usWh:null, norVial:75 },
+  { cat:'Healing & Repair', name:'BPC-157 / TB-500 Blend', mg:'10mg', nor:225, chn:100, usWh:null, norVial:73 },
+  { cat:'Healing & Repair', name:'BPC-157 / TB-500 Blend', mg:'20mg', nor:325, chn:165, usWh:null, norVial:null },
+
+  // --- BEAUTY & RADIANCE ---
+  { cat:'Beauty & Radiance', name:'Klow',       mg:'80mg',  nor:310, chn:null, usWh:null, norVial:124, norOnly:true },
+  { cat:'Beauty & Radiance', name:'Glow',       mg:'50mg',  nor:295, chn:135,  usWh:null, norVial:null },
+  { cat:'Beauty & Radiance', name:'Glow',       mg:'70mg',  nor:330, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Beauty & Radiance', name:'GHK-Cu',     mg:'50mg',  nor:185, chn:39,   usWh:null, norVial:101 },
+  { cat:'Beauty & Radiance', name:'GHK-Cu',     mg:'100mg', nor:225, chn:60,   usWh:null, norVial:152 },
+  { cat:'Beauty & Radiance', name:'Melanotan II', mg:'10mg', nor:230, chn:null, usWh:null, norVial:45, norOnly:true },
+  { cat:'Beauty & Radiance', name:'Melanotan I',  mg:'10mg', nor:200, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Beauty & Radiance', name:'PT-141',     mg:'10mg',  nor:190, chn:null, usWh:null, norVial:50, norOnly:true },
+  { cat:'Beauty & Radiance', name:'Lemon Bottle', mg:'10ml', nor:200, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Beauty & Radiance', name:'SNAP-8',     mg:'10mg',  nor:185, chn:60,   usWh:null, norVial:null },
+  { cat:'Beauty & Radiance', name:'KPV Peptide', mg:'10mg', nor:205, chn:null, usWh:null, norVial:48, norOnly:true },
+
+  // --- COGNITIVE & FOCUS ---
+  { cat:'Cognitive & Focus', name:'Neuro-Focus Semax + Selank', mg:'20mg', nor:null, chn:null, usWh:null, norVial:95 },
+  { cat:'Cognitive & Focus', name:'Semax',  mg:'5mg',  nor:null, chn:55, usWh:null, norVial:null, chnOnly:true },
+  { cat:'Cognitive & Focus', name:'Semax',  mg:'10mg', nor:180, chn:75,  usWh:null, norVial:62 },
+  { cat:'Cognitive & Focus', name:'Selank', mg:'10mg', nor:210, chn:75,  usWh:null, norVial:59 },
+
+  // --- LONGEVITY & CELLULAR ---
+  { cat:'Longevity & Cellular', name:'Epitalon', mg:'10mg', nor:210, chn:65, usWh:null, norVial:58 },
+  { cat:'Longevity & Cellular', name:'SS-31 (Elamipretide)', mg:'10mg', nor:210, chn:90, usWh:null, norVial:89 },
+  { cat:'Longevity & Cellular', name:'SS-31 (Elamipretide)', mg:'50mg', nor:415, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Longevity & Cellular', name:'NAD+', mg:'500mg',  nor:185, chn:75,  usWh:null, norVial:79 },
+  { cat:'Longevity & Cellular', name:'NAD+', mg:'1000mg', nor:null, chn:140, usWh:null, norVial:128, chnOnly:true },
+
+  // --- IMMUNE & HEALTH ---
+  { cat:'Immune & Health', name:'Thymosin Alpha-1', mg:'5mg',  nor:230, chn:null, usWh:null, norVial:65, norOnly:true },
+  { cat:'Immune & Health', name:'ARA (Arachidonic Acid)', mg:'10mg', nor:170, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Immune & Health', name:'5-amino-1MQ', mg:'10mg', nor:170, chn:null, usWh:null, norVial:null, norOnly:true },
+
+  // --- SLEEP & RECOVERY ---
+  { cat:'Sleep & Recovery', name:'DSIP', mg:'5mg',  nor:165, chn:null, usWh:null, norVial:null, norOnly:true },
+  { cat:'Sleep & Recovery', name:'DSIP', mg:'10mg', nor:235, chn:null, usWh:null, norVial:54, norOnly:true },
+
+  // --- RECONSTITUTION ---
+  { cat:'Reconstitution', name:'BAC Water', mg:'3ml',  nor:125, chn:10, usWh:null, norVial:null },
+  { cat:'Reconstitution', name:'BAC Water', mg:'10ml', nor:150, chn:15, usWh:null, norVial:null },
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let overrides = {}; // key: productKey(p) → { norKit, norVial, chnKit, chnVial }
+let activeFilter = 'all';
+let searchQuery = '';
+
+function productKey(p) { return `${p.name}|${p.mg}`; }
+
+function getMarkups() {
+  return {
+    norKit:  1 + parseFloat(document.getElementById('norKitMarkup').value) / 100,
+    chnKit:  1 + parseFloat(document.getElementById('chinaKitMarkup').value) / 100,
+    vialUS:  1 + parseFloat(document.getElementById('chinaVialUSMarkup').value) / 100,
+    vialDir: 1 + parseFloat(document.getElementById('chinaVialDirectMarkup').value) / 100,
+    norSale: 1 - parseFloat(document.getElementById('norVialDiscount').value) / 100,
+  };
+}
+
+function computePrices(p, m) {
+  // Norway Kit
+  const norKit  = p.nor ? Math.round(p.nor * m.norKit) : null;
+  // Norway Vial (list price × sale discount; list price is in p.norVial)
+  const norVialSale = p.norVial ? Math.round(p.norVial * m.norSale) : null;
+  // China Kit
+  const chinaCost = p.usWh || p.chn;
+  const chnKit  = chinaCost ? Math.round(chinaCost * m.chnKit) : null;
+  // China Vial
+  let chnVial = null;
+  if (p.usWh) {
+    chnVial = Math.round((p.usWh / 10) * m.vialUS);
+  } else if (p.chn) {
+    chnVial = Math.round((p.chn / 10) * m.vialDir);
+  }
+  return { norKit, norVialSale, chnKit, chnVial };
+}
+
+function getEffective(p, m) {
+  const comp = computePrices(p, m);
+  const ov = overrides[productKey(p)] || {};
+  return {
+    norKit:     ov.norKit     !== undefined ? ov.norKit     : comp.norKit,
+    norVialSale:ov.norVialSale!== undefined ? ov.norVialSale: comp.norVialSale,
+    chnKit:     ov.chnKit     !== undefined ? ov.chnKit     : comp.chnKit,
+    chnVial:    ov.chnVial    !== undefined ? ov.chnVial    : comp.chnVial,
+    // track what was computed for override detection
+    _comp: comp,
+  };
+}
+
+function profit(sell, cost10, perVial) {
+  if (!sell || !cost10) return null;
+  const cost = perVial ? (cost10 / 10) : cost10;
+  return Math.round(((sell - cost) / cost) * 100);
+}
+
+// ─── RENDER ─────────────────────────────────────────────────────────────────
+function render() {
+  const m = getMarkups();
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  let lastCat = null;
+  let visCount = 0;
+  let modCount = 0;
+
+  for (const p of PRODUCTS) {
+    // Source determination
+    const src = p.norOnly ? 'norway' : p.chnOnly ? 'china' : (p.nor && p.chn != null) || (p.nor && p.usWh) ? 'both' : p.nor ? 'norway' : 'china';
+
+    // Filter
+    if (activeFilter === 'norway' && src === 'china') continue;
+    if (activeFilter === 'china'  && src === 'norway') continue;
+    if (activeFilter === 'both'   && src !== 'both') continue;
+    if (searchQuery && !p.name.toLowerCase().includes(searchQuery) && !p.mg.toLowerCase().includes(searchQuery)) continue;
+
+    visCount++;
+
+    // Category header
+    if (p.cat !== lastCat) {
+      const cr = document.createElement('tr');
+      cr.className = 'cat-header';
+      cr.innerHTML = `<td colspan="9">— ${p.cat}</td>`;
+      tbody.appendChild(cr);
+      lastCat = p.cat;
+    }
+
+    const eff = getEffective(p, m);
+    const ov = overrides[productKey(p)] || {};
+    const key = productKey(p);
+
+    const hasUsWh = !!p.usWh;
+    const chinaCost = p.usWh || p.chn;
+
+    const norKitProfit  = profit(eff.norKit, p.nor, false);
+    const norVialProfit = eff.norVialSale && p.norVial ? Math.round(((eff.norVialSale - (p.nor ? p.nor/10 : 0)) / (p.nor ? p.nor/10 : 1)) * 100) : null;
+    const chnKitProfit  = profit(eff.chnKit, chinaCost, false);
+    const chnVialProfit = eff.chnVial && chinaCost ? profit(eff.chnVial, chinaCost, true) : null;
+
+    function profClass(pct) { return pct >= 50 ? 'good' : pct >= 20 ? 'ok' : ''; }
+
+    function cellHtml(val, cost, isVialPct, key2, field, mod) {
+      if (val === null) return '<td class="na">—</td>';
+      const pct = field === 'norKit' ? norKitProfit : field === 'norVialSale' ? norVialProfit : field === 'chnKit' ? chnKitProfit : chnVialProfit;
+      const pc = pct !== null ? `<div class="price-profit ${profClass(pct)}">+${pct}%</div>` : '';
+      const modClass = mod ? ' modified' : '';
+      return `<td class="sell editable${modClass}" onclick="startEdit('${key2}','${field}',this)" data-val="${val}">
+        <div class="price-cell">
+          <div class="price-val">$${val}</div>
+          ${pc}
+        </div>
+      </td>`;
+    }
+
+    function srcBadge(s) {
+      if (s === 'norway') return `<span class="badge nor">🇳🇴</span>`;
+      if (s === 'china')  return `<span class="badge chn">🇨🇳</span>`;
+      return `<span class="badge both">🇧🇴+🇨🇳</span>`;
+    }
+    function wsBadge() {
+      if (p.usWh) return `<span class="badge us">🇺🇸US</span>`;
+      if (p.chn)  return `<span class="badge chn">🇨🇳</span>`;
+      return '';
+    }
+
+    const isModNorKit   = ov.norKit      !== undefined;
+    const isModNorVial  = ov.norVialSale !== undefined;
+    const isModChnKit   = ov.chnKit      !== undefined;
+    const isModChnVial  = ov.chnVial     !== undefined;
+    if (isModNorKit || isModNorVial || isModChnKit || isModChnVial) modCount++;
+
+    const tr = document.createElement('tr');
+    tr.className = 'product-row';
+    tr.dataset.src = src;
+    tr.dataset.name = p.name.toLowerCase();
+    tr.innerHTML = `
+      <td class="name-col">${p.name}</td>
+      <td class="mg-col">${p.mg}</td>
+      <td class="src-col">${srcBadge(src)} ${wsBadge()}</td>
+      <td class="cost">${p.nor ? '$' + p.nor : '<span style="color:#2a3a52">—</span>'}</td>
+      <td class="cost">${chinaCost ? '$' + chinaCost + (p.usWh ? ' <span style="font-size:9px;color:var(--green)">(US)</span>' : '') : '<span style="color:#2a3a52">—</span>'}</td>
+      ${cellHtml(eff.norKit, p.nor, false, key, 'norKit', isModNorKit)}
+      ${cellHtml(eff.norVialSale, p.norVial, true, key, 'norVialSale', isModNorVial)}
+      ${cellHtml(eff.chnKit, chinaCost, false, key, 'chnKit', isModChnKit)}
+      ${cellHtml(eff.chnVial, chinaCost, true, key, 'chnVial', isModChnVial)}
+    `;
+    tbody.appendChild(tr);
+  }
+
+  // Update mod count
+  document.getElementById('modCount').textContent = modCount > 0 ? `${modCount} modified` : '';
+  document.getElementById('modCount').style.color = modCount > 0 ? 'var(--cyan)' : 'var(--muted)';
+}
+
+// ─── INLINE EDIT ────────────────────────────────────────────────────────────
+let activeEdit = null;
+
+function startEdit(key, field, cell) {
+  if (activeEdit) finishEdit();
+  const current = cell.querySelector('.price-val').textContent.replace('$', '');
+  activeEdit = { key, field, cell };
+
+  const priceDiv = cell.querySelector('.price-cell');
+  priceDiv.innerHTML = `<input class="inline-edit" type="number" value="${current}" min="0" step="1" autofocus
+    onblur="finishEdit()" onkeydown="handleEditKey(event)">`;
+  priceDiv.querySelector('input').focus();
+  priceDiv.querySelector('input').select();
+}
+
+function finishEdit() {
+  if (!activeEdit) return;
+  const { key, field, cell } = activeEdit;
+  activeEdit = null;
+  const input = cell.querySelector('input.inline-edit');
+  if (!input) return;
+  const val = parseInt(input.value);
+  if (!isNaN(val) && val > 0) {
+    if (!overrides[key]) overrides[key] = {};
+    overrides[key][field] = val;
+  }
+  render();
+}
+
+function handleEditKey(e) {
+  if (e.key === 'Enter') finishEdit();
+  if (e.key === 'Escape') { activeEdit = null; render(); }
+}
+
+// ─── FILTERS ────────────────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+function filterSearch(val) {
+  searchQuery = val.toLowerCase().trim();
+  render();
+}
+function recalc() { render(); }
+function resetAll() {
+  overrides = {};
+  document.getElementById('norKitMarkup').value = '12.7';
+  document.getElementById('chinaKitMarkup').value = '65';
+  document.getElementById('chinaVialUSMarkup').value = '100';
+  document.getElementById('chinaVialDirectMarkup').value = '65';
+  document.getElementById('norVialDiscount').value = '15';
+  render();
+}
+
+// ─── EXPORT ─────────────────────────────────────────────────────────────────
+function openExport() {
+  const m = getMarkups();
+  const productChanges = [];
+
+  for (const p of PRODUCTS) {
+    const eff = getEffective(p, m);
+    const ov = overrides[productKey(p)] || {};
+    const comp = eff._comp;
+
+    const changes = {};
+    if (ov.norKit      !== undefined) changes.norKitSell   = ov.norKit;
+    if (ov.norVialSale !== undefined) changes.norVialSell  = ov.norVialSale;
+    if (ov.chnKit      !== undefined) changes.chnKitSell   = ov.chnKit;
+    if (ov.chnVial     !== undefined) changes.chnVialSell  = ov.chnVial;
+
+    if (Object.keys(changes).length > 0) {
+      productChanges.push({
+        product: `${p.name} (${p.mg})`,
+        ...changes,
+      });
+    }
+  }
+
+  const out = {
+    markups: {
+      norwayKitMarkupPct:    parseFloat(document.getElementById('norKitMarkup').value),
+      chinaKitMarkupPct:     parseFloat(document.getElementById('chinaKitMarkup').value),
+      chinaVialUSMarkupPct:  parseFloat(document.getElementById('chinaVialUSMarkup').value),
+      chinaVialDirectMarkupPct: parseFloat(document.getElementById('chinaVialDirectMarkup').value),
+      norwayVialSaleDiscountPct: parseFloat(document.getElementById('norVialDiscount').value),
+    },
+    productOverrides: productChanges,
+    generatedAt: new Date().toISOString(),
+    note: 'Paste this JSON in chat — Norway markups currently 12.7%, China kit 65%, China vial 100% US / 65% direct',
+  };
+
+  const defaultMarkups = out.markups.norwayKitMarkupPct === 12.7 &&
+    out.markups.chinaKitMarkupPct === 65 &&
+    out.markups.chinaVialUSMarkupPct === 100 &&
+    out.markups.chinaVialDirectMarkupPct === 65;
+
+  if (defaultMarkups && productChanges.length === 0) {
+    document.getElementById('exportText').textContent = '// No changes from defaults.\n// Adjust markups or click a price cell to override individual products,\n// then export.';
+  } else {
+    document.getElementById('exportText').textContent = JSON.stringify(out, null, 2);
+  }
+
+  document.getElementById('exportModal').classList.add('open');
+}
+function closeExport() { document.getElementById('exportModal').classList.remove('open'); }
+function copyExport() {
+  const text = document.getElementById('exportText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = 'Copy to Clipboard'; }, 2000);
+  });
+}
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>

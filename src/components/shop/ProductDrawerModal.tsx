@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { ShopProduct, CartItem, OrderDetail } from '../../lib/shopTypes';
-import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaKitCost, getChinaVialCost } from '../../lib/shopHelpers';
+import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, hasUsWarehouseShipping } from '../../lib/shopHelpers';
 import ProductVialVisual from './ProductVialVisual';
 
 function getProductAvailableStock(prodId: string, baseInventory: number, allOrdersGlobal: OrderDetail[]): number {
@@ -201,13 +201,19 @@ export default function ProductDrawerModal({
                           </>
                         ) : isChinaKitPricing ? (
                           <>
-                            <span className="text-[8px] text-red-400 font-bold uppercase">kit · 10 vials</span>
+                            <span className="text-[8px] text-orange-400 font-bold uppercase">kit · 10 vials</span>
                             <span className="text-xs text-cyan-400 font-bold">${getChinaKitSellPrice(opt.name) || opt.price}</span>
+                            <span className="text-[7px] font-bold mt-0.5 leading-none">
+                              {hasUsWarehouseShipping(opt.name) ? '🇺🇸 USA Stock' : '🇨🇳 China Direct'}
+                            </span>
                           </>
                         ) : isChinaVialPricing ? (
                           <>
                             <span className="text-[8px] text-orange-400 font-bold uppercase">per vial</span>
                             <span className="text-xs text-cyan-400 font-bold">${getChinaVialSellPrice(opt.name) || opt.price}</span>
+                            {hasUsWarehouseShipping(opt.name) && (
+                              <span className="text-[7px] font-bold mt-0.5 leading-none">🇺🇸 USA Stock</span>
+                            )}
                           </>
                         ) : (
                           <>
@@ -380,7 +386,7 @@ export default function ProductDrawerModal({
                   onClick={() => {
                     triggerHaptic('light');
                     const activeOpt = selectedParentProductGroup?.options.find(o => o.id === selectedOptionIdInDrawer) || selectedParentProductGroup?.options[0];
-                    const available = isKitPricing ? 999 : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
+                    const available = isUnlimitedStockTier ? 999 : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
                     setDrawerQuantity((prev: number) => Math.min(available, prev + 1));
                   }}
                   className="p-1 px-1.5 rounded-lg hover:bg-slate-900 text-slate-400 hover:text-white transition-all cursor-pointer"
@@ -405,7 +411,7 @@ export default function ProductDrawerModal({
                 ? (getChinaVialSellPrice(activeOpt.name) || activeOpt.price)
                 : getSalePrice(activeOpt.price);
               const totalSum = activePrice * drawerQuantity;
-              const available = getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
+              const available = isUnlimitedStockTier ? 999 : getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
               const canAdd = available > 0;
               const totalLabel = isKitPricing
                 ? 'Estimated Total (Norway Kit Rate)'

@@ -466,11 +466,12 @@ export default function MembersShop() {
         } else {
           const existing = list[existingIndex];
           if (
-            existing.name !== sample.name || 
-            existing.description !== sample.description || 
+            existing.name !== sample.name ||
+            existing.description !== sample.description ||
             existing.category !== sample.category ||
             existing.price !== sample.price ||
-            existing.inventory !== sample.inventory
+            existing.inventory !== sample.inventory ||
+            existing.sourceRestriction !== sample.sourceRestriction
           ) {
             syncPromises.push(
               setDoc(doc(db, 'shopItems', sample.id), {
@@ -479,7 +480,8 @@ export default function MembersShop() {
                 description: sample.description,
                 category: sample.category,
                 price: sample.price,
-                inventory: sample.inventory
+                inventory: sample.inventory,
+                ...(sample.sourceRestriction ? { sourceRestriction: sample.sourceRestriction } : { sourceRestriction: null })
               })
                 .then(() => {
                   list[existingIndex] = {
@@ -488,7 +490,8 @@ export default function MembersShop() {
                     description: sample.description,
                     category: sample.category,
                     price: sample.price,
-                    inventory: sample.inventory
+                    inventory: sample.inventory,
+                    sourceRestriction: sample.sourceRestriction
                   };
                 })
                 .catch(err => {
@@ -526,8 +529,8 @@ export default function MembersShop() {
   };
 
   useEffect(() => {
-    // Only load catalog if the user is verified/approved/kit or an Admin
-    if (isAdminUser || (memberProfile && (memberProfile.status === 'approved' || memberProfile.status === 'kit'))) {
+    // Only load catalog if the user is verified/approved/kit/chinakit/chinavial or an Admin
+    if (isAdminUser || (memberProfile && (memberProfile.status === 'approved' || memberProfile.status === 'kit' || memberProfile.status === 'chinakit' || memberProfile.status === 'chinavial'))) {
       fetchProducts();
     }
   }, [memberProfile, isAdminUser]);
@@ -1107,12 +1110,27 @@ export default function MembersShop() {
   // Get unique category list
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
-  // Filter products by category and query
+  // Determine whether current viewer is a China customer (real or admin preview)
+  const isAnyChinaPricing = isChinaKitPricing || isChinaVialPricing;
+  const isAnyNorwayPricing = isKitPricing || (
+    memberProfile?.status === 'approved' ||
+    (isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial)
+  );
+
+  // Filter products by category, query, and source restriction
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    // Source restriction: China customers should not see Norway-only products
+    // Norway customers should not see China-only products
+    // Admins see everything (unless in a preview mode)
+    let matchesSource = true;
+    if (!isViewingAsAdmin) {
+      if (isAnyChinaPricing && p.sourceRestriction === 'norway') matchesSource = false;
+      if (!isAnyChinaPricing && p.sourceRestriction === 'china') matchesSource = false;
+    }
+    return matchesCategory && matchesSearch && matchesSource;
   });
 
   const { totalQty, subtotal } = getCartTotals();
@@ -1460,6 +1478,23 @@ export default function MembersShop() {
         /* FULL SHOPPING MODULE - VISIBLE TO APPROVED MEMBERS OR ADMINS */
         <div className="flex flex-col gap-6" id="active-shop-interface">
           
+          {/* CHINA CUSTOMER BANNER */}
+          {(isChinaKitPricing || isChinaVialPricing) && view === 'catalog' && (
+            <div className="bg-orange-950/20 border border-orange-500/20 rounded-xl px-4 py-3 flex items-center gap-3">
+              <span className="text-2xl shrink-0">🇨🇳</span>
+              <div>
+                <p className="text-xs font-bold text-orange-300">
+                  {isChinaKitPricing ? 'China Kit Pricing — XTP-Bella Direct (10-Vial Kits)' : 'China Per-Vial Pricing — XTP-Bella Direct'}
+                </p>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  {isChinaKitPricing
+                    ? 'Products priced per 10-vial kit. Flat rate $50 shipping from China. Select products ship from US warehouse.'
+                    : 'Per-vial pricing from XTP-Bella China supplier. US warehouse stock ships faster.'}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* KIT PRICING INTEREST BANNER — approved (per-vial) members only */}
           {((memberProfile?.status === 'approved' && !isAdminPreviewCustomer) || (isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial)) && view === 'catalog' && (
             <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
