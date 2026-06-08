@@ -67,6 +67,42 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     inventory: 0
   },
   {
+    id: 'prod_sermorelin_5mg',
+    name: 'Sermorelin (5mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Synthetic GHRH analogue studied for natural GH secretion stimulation and somatotrope axis support.',
+    category: 'Muscle Growth',
+    price: 55,
+    inventory: 0,
+    sourceRestriction: 'norway'
+  },
+  {
+    id: 'prod_sermorelin_10mg',
+    name: 'Sermorelin (10mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Synthetic GHRH analogue studied for natural GH secretion stimulation and somatotrope axis support.',
+    category: 'Muscle Growth',
+    price: 77,
+    inventory: 0,
+    sourceRestriction: 'norway'
+  },
+  {
+    id: 'prod_igf1_lr3_1mg',
+    name: 'IGF-1 LR3 (1mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Long-chain analogue of Insulin-like Growth Factor-1 researched for anabolic signaling, muscle hypertrophy, and satellite cell activation.',
+    category: 'Muscle Growth',
+    price: 85,
+    inventory: 0,
+    sourceRestriction: 'norway'
+  },
+  {
+    id: 'prod_arachidonic_100mg',
+    name: 'Arachidonic Acid (100mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Omega-6 polyunsaturated fatty acid researched for pro-inflammatory muscular signaling pathways and satellite cell hypertrophy response.',
+    category: 'Muscle Growth',
+    price: 48,
+    inventory: 0,
+    sourceRestriction: 'norway'
+  },
+  {
     id: 'prod_mots_c_10mg',
     name: 'MOTS-C (10mg)',
     description: 'Mitochondrial-derived peptide researched for metabolic optimization, muscle growth energy pathways, cellular vitality, and premium exercise modeling. Supplied in a professional 10 vials/kit box.',
@@ -289,6 +325,16 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     sourceRestriction: 'norway'
   },
 
+  {
+    id: 'prod_mazdutide_5mg',
+    name: 'Mazdutide (5mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Dual GLP-1/glucagon receptor co-agonist studied for metabolic homeostasis, energy expenditure, and adipose reduction pathways.',
+    category: 'Weight Loss',
+    price: 80,
+    inventory: 0,
+    sourceRestriction: 'norway'
+  },
+
   // --- HEALING & REPAIR ---
   {
     id: 'prod_bpc_5mg',
@@ -434,6 +480,24 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     inventory: 0
   },
 
+  {
+    id: 'prod_snap8_10mg',
+    name: 'SNAP-8 (10mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Acetyl octapeptide-3 studied for SNARE complex modulation and expression-line reduction via targeted neuromuscular junction research.',
+    category: 'Beauty & Radiance',
+    price: 50,
+    inventory: 0
+  },
+  {
+    id: 'prod_lemon_bottle_10ml',
+    name: 'Lemon Bottle (10ml)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Premium lipolysis solution containing riboflavin, bromelain, and L-carnitine studied for targeted adipocyte reduction and localized fat metabolism research.',
+    category: 'Beauty & Radiance',
+    price: 52,
+    inventory: 0,
+    sourceRestriction: 'norway'
+  },
+
   // --- COGNITIVE & FOCUS ---
   {
     id: 'prod_semax_selank_blend_20mg',
@@ -484,6 +548,24 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     category: 'Longevity & Cellular',
     price: 89,
     inventory: 0
+  },
+
+  {
+    id: 'prod_5amino1mq_50mg',
+    name: '5-Amino-1MQ (50mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Small-molecule NNMT inhibitor researched for metabolic reprogramming, NAD+ pathway upregulation, and adipocyte lipolysis.',
+    category: 'Longevity & Cellular',
+    price: 50,
+    inventory: 0
+  },
+  {
+    id: 'prod_slupp332_10mg',
+    name: 'SLU-PP-332 (10mg)',
+    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Potent ERRα/ERRγ agonist studied as an exercise mimetic for mitochondrial biogenesis, endurance capacity, and metabolic gene expression.',
+    category: 'Longevity & Cellular',
+    price: 65,
+    inventory: 0,
+    sourceRestriction: 'norway'
   },
 
   // --- IMMUNE & HEALTH ---
