@@ -1323,7 +1323,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                 isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              🇳🇴 Standard
+              🇳🇴 Vial
             </button>
             <button
               onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(true); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(false); navigateView('catalog'); }}
