@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { 
   ShoppingBag, 
   ShoppingCart, 
@@ -309,8 +309,32 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   const [joinForm, setJoinForm] = useState({
     shippingAddress: '',
     phone: '',
-    pricingPreference: 'vial' as 'vial' | 'kit'
+    pricingPreference: 'vial' as 'vial' | 'kit',
+    source: 'norway' as 'norway' | 'china',
+    selectedProducts: [] as string[]
   });
+
+  // Compute product groups for registration form — groups unique base compound names by category with source availability
+  const registrationProductGroups = useMemo(() => {
+    const CATEGORY_ORDER = ['Muscle Growth','Weight Loss','Healing & Repair','Cognitive & Focus','Longevity & Cellular','Immune & Health','Beauty & Radiance','Sleep & Recovery'];
+    const groups: Record<string, { category: string; availableNorway: boolean; availableChina: boolean }> = {};
+    for (const p of SAMPLE_INVENTORY) {
+      if (p.category === 'Reconstitution Solvents') continue;
+      const { baseName } = getProductBaseAndSize(p.name);
+      if (!groups[baseName]) groups[baseName] = { category: p.category, availableNorway: false, availableChina: false };
+      if (!p.sourceRestriction || p.sourceRestriction === 'norway') groups[baseName].availableNorway = true;
+      if (!p.sourceRestriction || p.sourceRestriction === 'china') groups[baseName].availableChina = true;
+    }
+    return CATEGORY_ORDER
+      .map(cat => ({
+        category: cat,
+        products: Object.entries(groups)
+          .filter(([, g]) => g.category === cat)
+          .map(([name, g]) => ({ name, ...g }))
+          .sort((a, b) => a.name.localeCompare(b.name))
+      }))
+      .filter(g => g.products.length > 0);
+  }, []);
 
   // Shipping details for checkout inputs
   const [shippingForm, setShippingForm] = useState({
@@ -687,6 +711,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         pricingPreference: joinForm.pricingPreference,
         shippingAddress: joinForm.shippingAddress,
         phone: joinForm.phone,
+        requestedSource: joinForm.source,
+        requestedProducts: joinForm.selectedProducts,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -1425,8 +1451,97 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                 />
               </div>
 
+              {/* Source Selection */}
+              <div className="border-t border-slate-800 pt-4 mt-2">
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Sourcing Preference</label>
+                <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">This affects pricing, compound availability, and documentation.</p>
+                <div className="flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setJoinForm(prev => ({ ...prev, source: 'norway' }))}
+                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.source === 'norway' ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`text-xs font-bold ${joinForm.source === 'norway' ? 'text-cyan-300' : 'text-slate-300'}`}>🇳🇴 Norway · Swiss Premium</span>
+                      <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">Recommended</span>
+                    </div>
+                    <ul className="space-y-0.5 text-[10px] text-slate-400">
+                      <li>✓ GMP-certified Scandinavian &amp; Swiss synthesis</li>
+                      <li>✓ HPLC purity certificate included per batch</li>
+                      <li>✓ Sub-1 EU/mg endotoxin levels</li>
+                      <li>✓ Full compound selection available</li>
+                    </ul>
+                    <p className="mt-2 text-[10px] text-slate-500 italic">Higher price point — premium QC documentation</p>
+                    {joinForm.source === 'norway' && <span className="mt-2 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Selected</span>}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setJoinForm(prev => ({ ...prev, source: 'china' }))}
+                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.source === 'china' ? 'border-orange-500 bg-orange-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
+                  >
+                    <span className={`text-xs font-bold mb-1.5 ${joinForm.source === 'china' ? 'text-orange-300' : 'text-slate-300'}`}>🇨🇳 China · Budget Tier</span>
+                    <ul className="space-y-0.5 text-[10px] text-slate-400">
+                      <li>✓ Industrial-scale synthesis</li>
+                      <li>✓ Competitive per-vial pricing</li>
+                      <li>✓ Standard QC</li>
+                      <li className="text-slate-500">⚠ Limited compound selection (not all peptides available)</li>
+                      <li className="text-slate-500">⚠ No HPLC certificate included</li>
+                    </ul>
+                    <p className="mt-2 text-[10px] text-slate-500 italic">Lower price — select compounds only</p>
+                    {joinForm.source === 'china' && <span className="mt-2 text-[9px] font-bold text-orange-400 uppercase tracking-wider">Selected</span>}
+                  </button>
+                </div>
+              </div>
+
+              {/* Product Interest (Wishlist) */}
+              <div className="border-t border-slate-800 pt-4 mt-2">
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Peptides of Interest</label>
+                <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">Select everything you're interested in. Kit pricing = 10 vials per compound.</p>
+                {joinForm.selectedProducts.length > 0 && (
+                  <p className="text-[11px] text-cyan-400 font-semibold mb-3">
+                    {joinForm.selectedProducts.length} compound{joinForm.selectedProducts.length !== 1 ? 's' : ''} selected · Kit: 10 vials each
+                  </p>
+                )}
+                <div className="space-y-4">
+                  {registrationProductGroups.map(group => (
+                    <div key={group.category}>
+                      <p className="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">{group.category}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {group.products.map(product => {
+                          const isSelected = joinForm.selectedProducts.includes(product.name);
+                          const isAvailable = joinForm.source === 'norway' ? product.availableNorway : product.availableChina;
+                          const unavailableLabel = !isAvailable ? (joinForm.source === 'norway' ? 'China only' : 'Norway only') : null;
+                          return (
+                            <button
+                              key={product.name}
+                              type="button"
+                              onClick={() => setJoinForm(prev => ({
+                                ...prev,
+                                selectedProducts: prev.selectedProducts.includes(product.name)
+                                  ? prev.selectedProducts.filter(p => p !== product.name)
+                                  : [...prev.selectedProducts, product.name]
+                              }))}
+                              className={`flex flex-col items-start px-2.5 py-1.5 rounded-lg border text-left transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 font-bold'
+                                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-600'
+                              } ${!isAvailable ? 'opacity-50' : ''}`}
+                            >
+                              <span className="text-[11px]">{product.name}</span>
+                              {unavailableLabel && (
+                                <span className="text-[9px] text-slate-500 mt-0.5">{unavailableLabel}</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Pricing Preference */}
-              <div>
+              <div className="border-t border-slate-800 pt-4 mt-2">
                 <label className="block text-xs font-semibold text-slate-400 mb-1.5">Preferred Pricing Model</label>
                 <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">How would you like to purchase? Per-vial lets you order any quantity; kit pricing is 10 vials at a time at a lower rate.</p>
                 <div className="grid grid-cols-2 gap-3">

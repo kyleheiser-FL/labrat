@@ -19,6 +19,8 @@ export interface MemberProfile {
   kitUpgradeRequestedAt?: string;
   shippingAddress: string;
   phone: string;
+  requestedSource?: 'norway' | 'china';
+  requestedProducts?: string[];
   createdAt: any;
   updatedAt: any;
 }

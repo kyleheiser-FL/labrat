@@ -69,16 +69,27 @@ export default function AdminMembersPanel({
                   <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide ${
                     member.status === 'approved'   ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' :
                     member.status === 'kit'        ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20' :
-                    member.status === 'chinakit'   ? 'bg-red-500/10 text-red-300 border border-red-500/20' :
+                    member.status === 'chinakit'   ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20' :
                     member.status === 'chinavial'  ? 'bg-orange-500/10 text-orange-300 border border-orange-500/20' :
                     member.status === 'blocked'    ? 'bg-slate-500/10 text-slate-400 border border-slate-500/20' :
                                                      'bg-amber-500/10 text-amber-300 border border-amber-500/20'
                   }`}>
-                    {member.status === 'kit' ? '📦 Norway Kit' :
-                     member.status === 'chinakit' ? '🇨🇳 China Kit' :
-                     member.status === 'chinavial' ? '🇨🇳 China Vial' :
-                     member.status}
+                    {member.status === 'approved'  ? '🇳🇴 Norway · Per Vial' :
+                     member.status === 'kit'       ? '📦 Norway · Kit' :
+                     member.status === 'chinakit'  ? '📦 🇨🇳 China · Kit' :
+                     member.status === 'chinavial' ? '🇨🇳 China · Per Vial' :
+                     member.status === 'blocked'   ? 'Blocked' :
+                                                     'Pending'}
                   </span>
+                  {(member as any).requestedSource && (
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded tracking-wide border ${
+                      (member as any).requestedSource === 'norway'
+                        ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20'
+                        : 'bg-orange-500/10 text-orange-300 border-orange-500/20'
+                    }`}>
+                      {(member as any).requestedSource === 'norway' ? '🇳🇴 Requested: Norway' : '🇨🇳 Requested: China'}
+                    </span>
+                  )}
                   {member.kitUpgradeRequested && member.status === 'approved' && (
                     <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide bg-amber-400/15 text-amber-300 border border-amber-400/30 animate-pulse">
                       🔔 Wants Kit Pricing
@@ -94,9 +105,19 @@ export default function AdminMembersPanel({
                 <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-slate-500" /> {member.phone}
                 </p>
+                {(member as any).requestedProducts && (member as any).requestedProducts.length > 0 && (
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <span className="text-[10px] text-slate-500 font-semibold">Requested:</span>
+                    {((member as any).requestedProducts as string[]).map((prod: string) => (
+                      <span key={prod} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-medium">
+                        {prod}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 {member.pricingPreference && (
                   <p className="text-[10px] text-slate-500 mt-1.5">
-                    Requested: <span className={`font-semibold ${member.pricingPreference === 'kit' ? 'text-cyan-400' : 'text-amber-400'}`}>
+                    Pricing pref: <span className={`font-semibold ${member.pricingPreference === 'kit' ? 'text-cyan-400' : 'text-amber-400'}`}>
                       {member.pricingPreference === 'kit' ? 'Kit Pricing (10 vials)' : 'Per Vial'}
                     </span>
                   </p>
@@ -109,30 +130,46 @@ export default function AdminMembersPanel({
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'approved')}
                       disabled={actionLoading !== null}
-                      className="px-3 py-1.5 bg-emerald-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`px-3 py-1.5 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all ${
+                        (member as any).requestedSource === 'norway'
+                          ? 'bg-emerald-500 text-slate-950 ring-2 ring-emerald-400 ring-offset-1 ring-offset-slate-950'
+                          : 'bg-emerald-500/70 text-slate-950'
+                      }`}
                     >
-                      <UserCheck className="w-3.5 h-3.5" /> Approve (Per Vial)
+                      <UserCheck className="w-3.5 h-3.5" /> 🇳🇴 Norway Vial
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'kit')}
                       disabled={actionLoading !== null}
-                      className="px-3 py-1.5 bg-cyan-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`px-3 py-1.5 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all ${
+                        (member as any).requestedSource === 'norway'
+                          ? 'bg-cyan-500 text-slate-950 ring-2 ring-cyan-400 ring-offset-1 ring-offset-slate-950'
+                          : 'bg-cyan-500/70 text-slate-950'
+                      }`}
                     >
-                      <Package className="w-3.5 h-3.5" /> Approve (Norway Kit)
-                    </button>
-                    <button
-                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
-                      disabled={actionLoading !== null}
-                      className="px-3 py-1.5 bg-red-500/80 text-white text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      🇨🇳 China Kit
+                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Norway Kit
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinavial')}
                       disabled={actionLoading !== null}
-                      className="px-3 py-1.5 bg-orange-500/80 text-white text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`px-3 py-1.5 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all ${
+                        (member as any).requestedSource === 'china'
+                          ? 'bg-orange-500 text-white ring-2 ring-orange-400 ring-offset-1 ring-offset-slate-950'
+                          : 'bg-orange-500/70 text-white'
+                      }`}
                     >
                       🇨🇳 China Vial
+                    </button>
+                    <button
+                      onClick={() => onSetMemberStatus(member.id, 'chinakit')}
+                      disabled={actionLoading !== null}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all ${
+                        (member as any).requestedSource === 'china'
+                          ? 'bg-amber-500 text-slate-950 ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-950'
+                          : 'bg-amber-500/70 text-slate-950'
+                      }`}
+                    >
+                      🇨🇳 China Kit
                     </button>
                   </>
                 ) : member.status === 'approved' ? (
