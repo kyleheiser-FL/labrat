@@ -169,8 +169,29 @@ const getInitialBranding = (): LabRatBranding => {
   return saved === 'mascot' || saved === 'wordmark' || saved === 'lr' ? saved : 'mascot';
 };
 
+// Feature flag: set to true to re-enable shop-first onboarding for new visitors.
+// While false, all tabs and tracking features are always visible (no shop-only gate).
+const SHOP_FIRST_ONBOARDING_ENABLED = false;
+
+const getInitialTrackingEnabled = (): boolean => {
+  if (!SHOP_FIRST_ONBOARDING_ENABLED) return true;
+  const saved = safeLocalStorage.getItem('labrat_tracking_enabled');
+  if (saved === 'true') return true;
+  if (saved === 'false') return false;
+  return safeLocalStorage.getItem('labrat_compounds_initialized') === 'true';
+};
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings'>(
+    () => (getInitialTrackingEnabled() ? 'dashboard' : 'shop')
+  );
+  const [trackingEnabled, setTrackingEnabled] = useState<boolean>(getInitialTrackingEnabled);
+
+  const handleToggleTracking = useCallback((enabled: boolean) => {
+    setTrackingEnabled(enabled);
+    safeLocalStorage.setItem('labrat_tracking_enabled', enabled ? 'true' : 'false');
+    triggerHaptic(enabled ? 'success' : 'medium');
+  }, []);
 
   // Push a history entry so the hardware/gesture back button navigates between tabs
   const navigateTab = useCallback((tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => {
@@ -316,12 +337,18 @@ export default function App() {
     return () => unsub();
   }, [isHardcompiledAppStore]);
 
-  // Fallback structural safety routing adjustments
+  // Fallback structural safety routing adjustments — redirect away from any tab
+  // that's currently hidden (shop disabled globally, or tracking features opted out)
   useEffect(() => {
-    if (hideShop && activeTab === 'shop') {
-      setActiveTab('dashboard');
+    const isTabVisible = (tab: typeof activeTab) => {
+      if (tab === 'shop') return !hideShop;
+      if (tab === 'settings') return true;
+      return trackingEnabled;
+    };
+    if (!isTabVisible(activeTab)) {
+      setActiveTab(trackingEnabled ? 'dashboard' : (!hideShop ? 'shop' : 'settings'));
     }
-  }, [hideShop, activeTab]);
+  }, [hideShop, trackingEnabled, activeTab]);
 
   const handleToggleHideShop = async (hide: boolean) => {
     if (isHardcompiledAppStore) return;
@@ -572,6 +599,11 @@ export default function App() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
+  const openAuthModal = useCallback((mode: 'signin' | 'signup' = 'signin') => {
+    setAuthModalMode(mode);
+    setShowAuthModal(true);
+  }, []);
 
   useEffect(() => {
     const checkStandalone = () => {
@@ -688,6 +720,11 @@ export default function App() {
       safeLocalStorage.removeItem('labrat_notifications');
       safeLocalStorage.removeItem('labrat_compounds_initialized');
       safeLocalStorage.removeItem('labrat_just_clicked_signin');
+
+      // Re-derive shop-only vs. full access now that the "returning user" signal
+      // (labrat_compounds_initialized) has been cleared — without this, signing
+      // out would leave the tracking tabs visible until a hard page reload.
+      setTrackingEnabled(getInitialTrackingEnabled());
 
       await signOut(auth);
       setNotificationsOpen(false);
@@ -1287,8 +1324,9 @@ export default function App() {
         isStandalone={isStandalone}
         onInstallApp={handleInstallApp}
         onSignOut={handleSignOut}
-        onSignInClick={() => setShowAuthModal(true)}
+        onSignInClick={() => openAuthModal('signin')}
         hideShop={hideShop}
+        trackingEnabled={trackingEnabled}
       />
 
       {/* Main Responsive Layout Wrapper */}
@@ -1357,7 +1395,7 @@ export default function App() {
               )}
 
               {activeTab === 'shop' && !hideShop && (
-                <MembersShop />
+                <MembersShop onRequestAuth={openAuthModal} />
               )}
 
               {activeTab === 'settings' && (
@@ -1367,6 +1405,8 @@ export default function App() {
                   user={user}
                   hideShop={hideShop}
                   onToggleHideShop={handleToggleHideShop}
+                  trackingEnabled={trackingEnabled}
+                  onToggleTracking={handleToggleTracking}
                   segmentVisibility={segmentVisibility}
                   onSegmentChange={handleSegmentChange}
                   notificationPermission={notificationPermission}
@@ -1416,7 +1456,7 @@ export default function App() {
       <LegalModal open={showLegalModal} onClose={() => setShowLegalModal(false)} />
       <FirstBootThemePicker open={showFirstBootThemePicker} onSelectTheme={applyThemeSelection} />
       <AppearanceModal open={showAppearanceModal} onClose={() => setShowAppearanceModal(false)} currentTheme={labratTheme} onSelectTheme={applyThemeSelection} />
-      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} onNotification={triggerNotification} onSignUpSuccess={(u) => setUser(u as any)} />
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} onNotification={triggerNotification} onSignUpSuccess={(u) => setUser(u as any)} initialMode={authModalMode} />
       {activeTab === 'shop' && <LiveChat />}
     </div>
   );

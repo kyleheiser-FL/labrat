@@ -77,7 +77,6 @@ export default function ShopCartView({
                   <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{item.product.category}</span>
                   <h4 className="text-sm font-bold text-white tracking-tight mt-0.5">{item.product.name}</h4>
                   <div className="flex items-center gap-1.5 mt-1 sm:mt-0.5 flex-wrap">
-                    {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && <span className="text-[10px] text-slate-500 line-through">${item.product.price}.00</span>}
                     <span className="text-xs text-cyan-400 font-semibold inline-block mt-0.5">
                       ${effectivePrice(item)}.00 {(isKitPricing || isChinaKitPricing) ? 'per kit · 10 vials' : 'per vial'}
                     </span>

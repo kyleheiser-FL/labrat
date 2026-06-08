@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Palette, Bell, BellRing, Layout, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X } from 'lucide-react';
+import { Palette, Bell, BellRing, Layout, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X, Unlock } from 'lucide-react';
 import { SegmentVisibility } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 
@@ -9,6 +9,8 @@ interface SettingsPageProps {
   user: any; // Firebase User
   hideShop: boolean;
   onToggleHideShop: (hide: boolean) => void;
+  trackingEnabled: boolean;
+  onToggleTracking: (enabled: boolean) => void;
   segmentVisibility: SegmentVisibility;
   onSegmentChange: (page: keyof SegmentVisibility, segment: string, value: boolean) => void;
   // Notifications (state/functions lifted from CycleDashboard, live in App.tsx)
@@ -79,6 +81,8 @@ export default function SettingsPage({
   user,
   hideShop,
   onToggleHideShop,
+  trackingEnabled,
+  onToggleTracking,
   segmentVisibility,
   onSegmentChange,
   notificationPermission,
@@ -179,6 +183,34 @@ export default function SettingsPage({
             <div className="text-xs text-slate-500 mt-0.5">Clean, professional, low-glow.</div>
           </button>
         </div>
+      </div>
+
+      {/* Section: Tracking Feature Access */}
+      <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+        <div className="flex items-center gap-2 mb-1">
+          <Unlock className="w-4 h-4 text-cyan-400" />
+          <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Feature Access</span>
+        </div>
+        <h3 className="text-base font-bold text-slate-100 mb-4">Tracking & Cycle Tools</h3>
+
+        <div className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-slate-800/30 transition">
+          <div className="text-left space-y-0.5 pr-4">
+            <span className="text-xs font-bold text-slate-200">Enable Tracking Features</span>
+            <span className="text-[10px] text-slate-500 block font-mono leading-relaxed">
+              Unlocks the Daily Checklist, Cycle Architect, Compound Encyclopedia, and Me dossier — plus their tabs in the navigation bar.
+            </span>
+          </div>
+          <ToggleSwitch
+            enabled={trackingEnabled}
+            onToggle={() => onToggleTracking(!trackingEnabled)}
+          />
+        </div>
+
+        {!trackingEnabled && (
+          <p className="text-[10.5px] text-slate-500 leading-relaxed mt-2 px-3">
+            New here? You're currently in shop-only mode. Flip this on whenever you're ready to start tracking cycles, doses, and biomarkers.
+          </p>
+        )}
       </div>
 
       {/* Section 2: Page Sections (Segment Visibility) */}

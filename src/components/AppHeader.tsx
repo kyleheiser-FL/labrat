@@ -28,6 +28,7 @@ interface AppHeaderProps {
   onSignOut: () => void;
   onSignInClick: () => void;
   hideShop: boolean;
+  trackingEnabled: boolean;
 }
 
 export default function AppHeader({
@@ -41,6 +42,7 @@ export default function AppHeader({
   onSignOut,
   onSignInClick,
   hideShop,
+  trackingEnabled,
 }: AppHeaderProps) {
   const tabBtn = (tab: Tab, icon: React.ReactNode, label: React.ReactNode) => (
     <button
@@ -90,19 +92,21 @@ export default function AppHeader({
           {/* Right side controls */}
           <div className="flex items-center gap-1.5 sm:gap-2" id="header-indicators-bar">
 
-            {/* Me + Settings icon buttons — always visible */}
-            <button
-              onClick={() => { triggerHaptic('light'); onSetActiveTab('blood'); }}
-              className={`flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
-                activeTab === 'blood'
-                  ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
-                  : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
-              }`}
-              aria-label="Me"
-              title="Me"
-            >
-              <UserProfileIcon className="w-4 h-4" />
-            </button>
+            {/* Me icon button — only meaningful once tracking features are unlocked */}
+            {trackingEnabled && (
+              <button
+                onClick={() => { triggerHaptic('light'); onSetActiveTab('blood'); }}
+                className={`flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
+                  activeTab === 'blood'
+                    ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
+                    : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
+                }`}
+                aria-label="Me"
+                title="Me"
+              >
+                <UserProfileIcon className="w-4 h-4" />
+              </button>
+            )}
             <button
               onClick={() => { triggerHaptic('light'); onSetActiveTab('settings'); }}
               className={`flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
@@ -165,7 +169,7 @@ export default function AppHeader({
                 id="google-sign-in"
               >
                 <LogIn className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden xs:inline">Sync / Login</span>
+                <span className="hidden xs:inline">Register / Login</span>
               </button>
             )}
 
@@ -179,13 +183,26 @@ export default function AppHeader({
           </div>
         </div>
 
-        {/* Navigation Tab Rail — core app tabs only */}
-        <nav className="bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid grid-cols-4 sm:flex sm:flex-row gap-1.5 w-full" id="navigation-tabs-rail">
-          {tabBtn('dashboard', <CalendarDays className="w-3.5 h-3.5 shrink-0" />, <>Daily <span className="hidden sm:inline">Checklist</span></>)}
-          {tabBtn('planner', <Layers className="w-3.5 h-3.5 shrink-0" />, <>Cycle <span className="hidden sm:inline">Architect</span></>)}
-          {tabBtn('library', <BookOpen className="w-3.5 h-3.5 shrink-0" />, <>Compound <span className="hidden sm:inline">Encyclopedia</span></>)}
-          {!hideShop && tabBtn('shop', <ShoppingBag className="w-3.5 h-3.5 shrink-0 text-cyan-300" />, 'Shop')}
-        </nav>
+        {/* Navigation Tab Rail — Shop-first for new visitors; tracking tabs unlock via Settings */}
+        {(() => {
+          const navTabs: { tab: Tab; icon: React.ReactNode; label: React.ReactNode }[] = [];
+          if (trackingEnabled) {
+            navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Checklist</span></> });
+            navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Cycle <span className="hidden sm:inline">Architect</span></> });
+            navTabs.push({ tab: 'library', icon: <BookOpen className="w-3.5 h-3.5 shrink-0" />, label: <>Compound <span className="hidden sm:inline">Encyclopedia</span></> });
+          }
+          if (!hideShop) {
+            navTabs.push({ tab: 'shop', icon: <ShoppingBag className="w-3.5 h-3.5 shrink-0 text-cyan-300" />, label: 'Shop' });
+          }
+          const gridColsClass = navTabs.length <= 1 ? 'grid-cols-1' : navTabs.length === 2 ? 'grid-cols-2' : navTabs.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
+          return (
+            <nav className={`bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid ${gridColsClass} sm:flex sm:flex-row gap-1.5 w-full`} id="navigation-tabs-rail">
+              {navTabs.map(({ tab, icon, label }) => (
+                <React.Fragment key={tab}>{tabBtn(tab, icon, label)}</React.Fragment>
+              ))}
+            </nav>
+          );
+        })()}
       </div>
     </header>
   );

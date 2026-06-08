@@ -7,7 +7,7 @@ export interface ShopProduct {
   inventory: number;
   imageUrl?: string;
   chemicalName?: string;
-  sourceRestriction?: 'norway' | 'china';
+  sourceRestriction?: 'china' | 'norway';
 }
 
 export interface MemberProfile {

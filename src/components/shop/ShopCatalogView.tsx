@@ -161,7 +161,7 @@ export default function ShopCatalogView({
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            You are enrolled in <strong className="text-cyan-300 font-bold">kit pricing</strong>. Every listed price is for a <strong className="text-cyan-300 font-bold">full kit of 10 vials</strong>. Standard per-vial pricing and the 15% launch sale do not apply to your account.
+            You are enrolled in <strong className="text-cyan-300 font-bold">kit pricing</strong>. Every listed price is for a <strong className="text-cyan-300 font-bold">full kit of 10 vials</strong>. Standard per-vial pricing does not apply to your account.
           </p>
         </div>
       ) : isChinaKitPricing ? (
@@ -198,15 +198,15 @@ export default function ShopCatalogView({
         <div className="bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 border border-cyan-500/20 rounded-xl p-3 sm:p-4 text-left shadow-[0_0_15px_rgba(6,182,212,0.03)] focus-within:ring-1 focus-within:ring-cyan-500/30">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
-              Grand Opening Sale: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">15% Off Site-Wide</span>
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              Research Vial Pricing
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-[#22d3ee] bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
-              Automatic Checkout Discount
+              Per-Vial Rate
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Prices are auto-discounted to celebrate our application launch! Please note: <strong className="text-cyan-300 font-bold">every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed.
+            <strong className="text-cyan-300 font-bold">Every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed.
           </p>
         </div>
       )}
