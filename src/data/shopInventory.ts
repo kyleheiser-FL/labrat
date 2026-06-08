@@ -121,7 +121,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     category: 'Muscle Growth',
     price: 48,
     inventory: 0,
-    sourceRestriction: 'norway'
+    sourceRestriction: 'china'
   },
   {
     id: 'prod_mots_c_10mg',
@@ -137,24 +137,6 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Mitochondrial-derived peptide researched for metabolic optimization, muscle growth energy pathways, cellular vitality, and premium exercise modeling.',
     category: 'Muscle Growth',
     price: 185,
-    inventory: 0,
-    sourceRestriction: 'norway'
-  },
-  {
-    id: 'prod_sermorelin_5mg',
-    name: 'Sermorelin (5mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Growth hormone releasing hormone (GHRH) analog researched for pituitary stimulation and endogenous GH secretion pathways.',
-    category: 'Muscle Growth',
-    price: 75,
-    inventory: 0,
-    sourceRestriction: 'norway'
-  },
-  {
-    id: 'prod_sermorelin_10mg',
-    name: 'Sermorelin (10mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Growth hormone releasing hormone (GHRH) analog researched for pituitary stimulation and endogenous GH secretion pathways.',
-    category: 'Muscle Growth',
-    price: 110,
     inventory: 0,
     sourceRestriction: 'norway'
   },
@@ -415,7 +397,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. High-quality synthetic C-terminal fragment of human growth hormone researched for selective lipid metabolism pathways.',
     category: 'Weight Loss',
     price: 55,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'china'
   },
   {
     id: 'prod_aod_10mg',
@@ -423,7 +406,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. High-quality synthetic C-terminal fragment of human growth hormone researched for selective lipid metabolism pathways.',
     category: 'Weight Loss',
     price: 75,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'china'
   },
 
   {
@@ -648,23 +632,6 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     sourceRestriction: 'china'
   },
 
-  {
-    id: 'prod_snap8_10mg',
-    name: 'SNAP-8 (10mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Acetyl octapeptide-3 studied for SNARE complex modulation and expression-line reduction via targeted neuromuscular junction research.',
-    category: 'Beauty & Radiance',
-    price: 50,
-    inventory: 0
-  },
-  {
-    id: 'prod_lemon_bottle_10ml',
-    name: 'Lemon Bottle (10ml)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Premium lipolysis solution containing riboflavin, bromelain, and L-carnitine studied for targeted adipocyte reduction and localized fat metabolism research.',
-    category: 'Beauty & Radiance',
-    price: 52,
-    inventory: 0,
-    sourceRestriction: 'norway'
-  },
 
   // --- COGNITIVE & FOCUS ---
   {
@@ -673,7 +640,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Synergy duo blend pairing Semax with Selank. Studied for memory executive speeds and anxiety resistance pathways.',
     category: 'Cognitive & Focus',
     price: 95,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'china'
   },
   {
     id: 'prod_semax_5mg',
@@ -742,15 +710,6 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. ERR (Estrogen-Related Receptor) agonist researched for mitochondrial biogenesis, metabolic endurance, and longevity pathway activation.',
     category: 'Longevity & Cellular',
     price: 87,
-    inventory: 0,
-    sourceRestriction: 'norway'
-  },
-  {
-    id: 'prod_igf1lr3_1mg',
-    name: 'IGF-1 LR3 (1mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Long-acting analog of insulin-like growth factor researched for muscle protein synthesis, cellular proliferation, and recovery pathway signaling.',
-    category: 'Longevity & Cellular',
-    price: 125,
     inventory: 0,
     sourceRestriction: 'norway'
   },

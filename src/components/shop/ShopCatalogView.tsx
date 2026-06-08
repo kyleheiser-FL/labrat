@@ -84,6 +84,7 @@ interface ShopCatalogViewProps {
   isKitPricing?: boolean;
   isChinaKitPricing?: boolean;
   isChinaVialPricing?: boolean;
+  isApprovedVialPricing?: boolean;
 }
 
 export default function ShopCatalogView({
@@ -118,8 +119,9 @@ export default function ShopCatalogView({
   isKitPricing = false,
   isChinaKitPricing = false,
   isChinaVialPricing = false,
+  isApprovedVialPricing = false,
 }: ShopCatalogViewProps) {
-  const isUnlimitedStockTier = isKitPricing || isChinaKitPricing || isChinaVialPricing;
+  const isUnlimitedStockTier = isKitPricing || isChinaKitPricing || isChinaVialPricing || isApprovedVialPricing;
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
   const isChinaTier = isChinaKitPricing || isChinaVialPricing;

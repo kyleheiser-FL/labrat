@@ -153,6 +153,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   const isKitPricing = (memberProfile?.status === 'kit' && !isAdminUser) || (isAdminUser && isAdminPreviewKit);
   const isChinaKitPricing = (memberProfile?.status === 'chinakit' && !isAdminUser) || (isAdminUser && isAdminPreviewChinaKit);
   const isChinaVialPricing = (memberProfile?.status === 'chinavial' && !isAdminUser) || (isAdminUser && isAdminPreviewChinaVial);
+  const isApprovedVialPricing = (memberProfile?.status === 'approved' && !isAdminUser) || (isAdminUser && isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial);
 
   // Application Layout Views
   // Users view: 'catalog' | 'cart' | 'checkout' | 'orders' | 'status_check'
@@ -1632,12 +1633,12 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
               <span className="text-2xl shrink-0">🇨🇳</span>
               <div>
                 <p className="text-xs font-bold text-orange-300">
-                  {isChinaKitPricing ? 'China Kit Pricing — XTP-Bella Direct (10-Vial Kits)' : 'China Per-Vial Pricing — XTP-Bella Direct'}
+                  {isChinaKitPricing ? 'China Kit Pricing — 10-Vial Kits' : 'China Per-Vial Pricing'}
                 </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   {isChinaKitPricing
                     ? 'Products priced per 10-vial kit. Flat rate $50 shipping from China. Select products ship from US warehouse.'
-                    : 'Per-vial pricing from XTP-Bella China supplier. US warehouse stock ships faster.'}
+                    : 'Per-vial pricing sourced from China. US warehouse stock ships faster.'}
                 </p>
               </div>
             </div>
@@ -1700,6 +1701,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
               isKitPricing={isKitPricing}
               isChinaKitPricing={isChinaKitPricing}
               isChinaVialPricing={isChinaVialPricing}
+              isApprovedVialPricing={isApprovedVialPricing}
             />
           )}
           {/* USER SHOPPING CART VIEW */}
