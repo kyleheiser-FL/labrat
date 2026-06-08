@@ -169,9 +169,12 @@ const getInitialBranding = (): LabRatBranding => {
   return saved === 'mascot' || saved === 'wordmark' || saved === 'lr' ? saved : 'mascot';
 };
 
-// New visitors land in shop-only mode until they opt in to tracking features.
-// Returning users who already set up compounds before this change keep full access.
+// Feature flag: set to true to re-enable shop-first onboarding for new visitors.
+// While false, all tabs and tracking features are always visible (no shop-only gate).
+const SHOP_FIRST_ONBOARDING_ENABLED = false;
+
 const getInitialTrackingEnabled = (): boolean => {
+  if (!SHOP_FIRST_ONBOARDING_ENABLED) return true;
   const saved = safeLocalStorage.getItem('labrat_tracking_enabled');
   if (saved === 'true') return true;
   if (saved === 'false') return false;

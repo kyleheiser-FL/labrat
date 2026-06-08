@@ -450,34 +450,48 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     setCatalogLoading(true);
     try {
       await fetchGlobalOrders();
-      
-      const colRef = collection(db, 'shopItems');
-      const snap = await getDocs(colRef);
-      const list: ShopProduct[] = [];
-      snap.forEach(docSnap => {
-        list.push({ id: docSnap.id, ...docSnap.data() } as ShopProduct);
-      });
+
+      // Start from SAMPLE_INVENTORY so the catalog is always visible even if
+      // Firestore read permissions are denied for regular members.
+      const displayList: ShopProduct[] = [...SAMPLE_INVENTORY];
+
+      // Attempt Firestore read — override display items with stored values if available.
+      // Also keep a separate list for sync comparison so self-healing still works for admins.
+      let firestoreItems: ShopProduct[] = [];
+      try {
+        const colRef = collection(db, 'shopItems');
+        const snap = await getDocs(colRef);
+        snap.forEach(docSnap => {
+          firestoreItems.push({ id: docSnap.id, ...docSnap.data() } as ShopProduct);
+        });
+        firestoreItems.forEach(item => {
+          const idx = displayList.findIndex(p => p.id === item.id);
+          if (idx !== -1) displayList[idx] = item;
+        });
+      } catch (firestoreErr) {
+        console.warn('Firestore shopItems read failed, using local inventory as fallback', firestoreErr);
+      }
 
       const syncPromises: Promise<void>[] = [];
 
       // Self-healing synchronization upgrade: insert or UPDATE items to match updated clean certified titles & sizes, prices, and stock
       for (const sample of SAMPLE_INVENTORY) {
-        const existingIndex = list.findIndex(p => p.id === sample.id);
+        const existingIndex = firestoreItems.findIndex(p => p.id === sample.id);
         if (existingIndex === -1) {
           syncPromises.push(
             setDoc(doc(db, 'shopItems', sample.id), sample)
               .then(() => {
-                list.push(sample);
+                firestoreItems.push(sample);
               })
               .catch(err => {
                 console.error(`Failed to auto-provision item: ${sample.id}`, err);
               })
           );
         } else {
-          const existing = list[existingIndex];
+          const existing = firestoreItems[existingIndex];
           if (
-            existing.name !== sample.name || 
-            existing.description !== sample.description || 
+            existing.name !== sample.name ||
+            existing.description !== sample.description ||
             existing.category !== sample.category ||
             existing.price !== sample.price ||
             existing.inventory !== sample.inventory
@@ -492,7 +506,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                 inventory: sample.inventory
               })
                 .then(() => {
-                  list[existingIndex] = {
+                  firestoreItems[existingIndex] = {
                     ...existing,
                     name: sample.name,
                     description: sample.description,
@@ -510,9 +524,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       }
 
       // Proactively prune outdated/removed inventory sizes/products from Firestore
-
       const activeSampleIdsSet = new Set(SAMPLE_INVENTORY.map(s => s.id));
-      const obsoleteItems = list.filter(item => !activeSampleIdsSet.has(item.id));
+      const obsoleteItems = firestoreItems.filter(item => !activeSampleIdsSet.has(item.id));
       await Promise.all([
         ...syncPromises,
         ...obsoleteItems.map(item =>
@@ -522,13 +535,12 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         )
       ]);
 
-      const activeSampleIds = Array.from(activeSampleIdsSet);
-
-      // Set state to strictly only contain active shop products
-      const filteredList = list.filter(p => activeSampleIds.includes(p.id));
-      setProducts(filteredList);
+      // Display list is already filtered to SAMPLE_INVENTORY ids (seeded above)
+      setProducts(displayList);
     } catch (e) {
       console.error('Failed fetching shop inventory', e);
+      // Fall back to local inventory so the catalog is never blank
+      setProducts([...SAMPLE_INVENTORY]);
       handleFirestoreError(e, OperationType.LIST, 'shopItems');
     } finally {
       setCatalogLoading(false);
