@@ -138,8 +138,8 @@ export default function ShopCatalogView({
       if (!isChinaTier && p.sourceRestriction === 'china') return false;
     }
 
-    // Hide out-of-stock items from per-vial members (kit/admin tiers can always see all)
-    if (!isUnlimitedStockTier && !isViewingAsAdmin) {
+    // Hide out-of-stock items only from non-approved tiers (kit/china/approved members see all)
+    if (!isUnlimitedStockTier && !isApprovedVialPricing && !isViewingAsAdmin) {
       const stock = getProductAvailableStock(p.id, p.inventory, allOrdersGlobal);
       if (stock <= 0) return false;
     }
