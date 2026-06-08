@@ -144,6 +144,14 @@ export default function ShopCartView({
           const salesTaxRate = 0.06;
           const salesTax = isFlorida ? Math.round(subtotal * salesTaxRate * 100) / 100 : 0;
 
+          const isChinaOrder = isChinaKitPricing || isChinaVialPricing;
+          const flatShipping = isKitPricing ? 25 : isChinaOrder ? 50 : 0;
+          const knownShipping = isKitPricing || isChinaOrder;
+          const shippingDisplay = knownShipping
+            ? `$${flatShipping}.00`
+            : isFreeShippingEligible ? 'Free' : 'Calculated at checkout';
+          const orderTotal = subtotal + salesTax + (knownShipping ? flatShipping : 0);
+
           return (
             <div className="space-y-4 sticky top-6 text-left">
               {/* Shipping info card */}
@@ -164,6 +172,16 @@ export default function ShopCartView({
                       ? <>China kit orders ship for a flat <span className="text-cyan-400 font-semibold">$50.00</span> international rate. Carrier selected at dispatch.</>
                       : <>Norway kit orders ship for a flat <span className="text-cyan-400 font-semibold">$25.00</span> regardless of order size. Carrier and method selected at dispatch.</>
                     }
+                  </p>
+                </div>
+              ) : isChinaOrder ? (
+                <div className="bg-[#0b1329] border border-red-500/20 p-5 rounded-2xl shadow-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold text-slate-300">Flat Rate Shipping</span>
+                    <span className="text-[10px] bg-red-500/10 text-red-400 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-red-500/20">Flat Rate</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-normal">
+                    China {isChinaKitPricing ? 'kit' : 'vial'} orders ship for a flat <span className="text-red-400 font-semibold">$50.00</span> international rate. Select products ship from US warehouse.
                   </p>
                 </div>
               ) : (
@@ -207,6 +225,12 @@ export default function ShopCartView({
                     <span>Physical Vials ({totalQty})</span>
                     <span className="font-semibold text-slate-200">${subtotal}.00</span>
                   </div>
+                  <div className="flex justify-between text-slate-400">
+                    <span>Shipping</span>
+                    <span className={`font-semibold ${isFreeShippingEligible && !knownShipping ? 'text-emerald-400' : knownShipping ? 'text-slate-200' : 'text-slate-500 italic'}`}>
+                      {shippingDisplay}
+                    </span>
+                  </div>
                   {isFlorida ? (
                     <div className="flex justify-between text-slate-400">
                       <span>Florida Sales Tax (6.0%)</span>
@@ -220,8 +244,8 @@ export default function ShopCartView({
                   )}
                   <div className="h-px bg-[#1e293b] my-4" />
                   <div className="flex justify-between text-sm">
-                    <span className="font-bold text-white">{isFlorida ? 'Estimated Total' : 'Estimated Subtotal'}</span>
-                    <span className="font-black text-cyan-400 text-lg">${(subtotal + salesTax).toFixed(2)}</span>
+                    <span className="font-bold text-white">Estimated Total</span>
+                    <span className="font-black text-cyan-400 text-lg">${orderTotal.toFixed(2)}</span>
                   </div>
                 </div>
 
