@@ -367,7 +367,6 @@ export default function ShopCheckoutView({
                   {item.product.name}
                 </div>
                 <div className="flex items-baseline gap-1">
-                  {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && <span className="text-[10px] text-slate-600 line-through">${item.product.price * item.quantity}</span>}
                   <span className="font-bold text-slate-200">
                     ${(isKitPricing
                       ? (getKitSellPrice(item.product.name) || item.product.price)

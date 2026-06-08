@@ -535,23 +535,25 @@ export function getChinaVialCost(name: string): number {
 }
 
 // China kit sell price: XTP-Bella kit cost × 12.7% markup
+// China kit sell price: 65% markup over XTP-Bella raw kit cost
 export function getChinaKitSellPrice(name: string): number {
   const raw = resolveChineseKitCost(name.toLowerCase());
   if (!raw) return 0;
-  return Math.round(raw * (355 / 315));
+  return Math.round(raw * 1.65);
 }
 
-// China vial sell price: per-vial cost × 12.7% markup (US warehouse cost takes priority for Retatrutide)
+// China vial sell price: 100% markup over per-vial cost (US warehouse cost takes priority for Retatrutide)
 export function getChinaVialSellPrice(name: string): number {
   const norm = name.toLowerCase();
   const usWarehouseCost = resolveChineseUsWarehouseCost(norm);
   const kitCost = usWarehouseCost || resolveChineseKitCost(norm);
   if (!kitCost) return 0;
-  return Math.round((kitCost / 10) * (355 / 315));
+  return Math.round((kitCost / 10) * 2.0);
 }
 
+// Sale price removed — returns full price
 export function getSalePrice(price: number): number {
-  return Math.round(price * 0.85);
+  return price;
 }
 
 export const getShippingOptions = (zip: string, totalVials: number, cart: CartItem[] = []): { options: ShippingOption[]; zoneName: string; weightLbs: number; isFreeShipping: boolean; nonBacVialsCount: number; nonBacSubtotal: number } => {

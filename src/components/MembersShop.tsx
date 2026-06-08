@@ -1917,8 +1917,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                       <span className="text-white font-semibold">${getProductCostPerVial(productForm.name, productForm.price || 0).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Grand Opening Sale Price (-15%):</span>
-                      <span className="text-emerald-400 font-semibold">${getSalePrice(productForm.price || 0)}.00</span>
+                      <span>Sell Price:</span>
+                      <span className="text-emerald-400 font-semibold">${productForm.price || 0}.00</span>
                     </div>
                     <div className="flex justify-between border-t border-slate-800/50 pt-1.5 mt-1 font-bold">
                       <span>Estimated Profit per Vial:</span>

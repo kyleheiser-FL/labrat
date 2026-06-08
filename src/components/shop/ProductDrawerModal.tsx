@@ -342,7 +342,7 @@ export default function ProductDrawerModal({
                         </div>
                       )}
                       <div className="flex justify-between border-t border-amber-500/10 pt-1.5 mt-0.5">
-                        <span>Vial Sale Price (-15%):</span>
+                        <span>Vial Sell Price:</span>
                         <span className="text-slate-300 font-bold">${salePrice}.00</span>
                       </div>
                       <div className="flex justify-between font-bold text-amber-300">
@@ -416,7 +416,7 @@ export default function ProductDrawerModal({
                 ? 'Estimated Total (China Kit Rate)'
                 : isChinaVialPricing
                 ? 'Estimated Total (China Vial Rate)'
-                : 'Estimated Total (15% Sale Applied)';
+                : 'Estimated Total';
 
               return (
                 <>
