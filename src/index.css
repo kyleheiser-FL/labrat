@@ -3293,6 +3293,16 @@ html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-b
   font-weight: 300 !important;
 }
 
+/* ── MONOCHROME PATCH: toast / notification banner ───────────────────── */
+html[data-labrat-theme="clinical-light"] #toasters-wrapper .bg-\[\#0b1220\]\/95 {
+  background-color: rgba(248, 250, 252, 0.97) !important;
+  border-color: rgba(100, 116, 139, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10) !important;
+}
+html[data-labrat-theme="clinical-light"] #toasters-wrapper .text-slate-100 {
+  color: #0f172a !important;
+}
+
 /* ── MONOCHROME PATCH: floating View Cart button ─────────────────────── */
 html[data-labrat-theme="clinical-light"] #floating-view-cart-btn {
   background-color: #1e293b !important;
