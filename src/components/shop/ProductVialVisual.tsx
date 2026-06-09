@@ -209,8 +209,16 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
             loading="lazy"
           />
           {/* Compact floating label card — mirrors clinical dark overlay card style */}
-          <div className="absolute left-3 right-3 bottom-3 px-3 pb-2.5 pt-11 rounded-2xl"
-            style={{ background: 'rgba(248,250,252,1.0)', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', border: '1px solid rgba(100,116,139,0.18)' }}>
+          <div
+            className="absolute left-3 right-3 bottom-3 px-3 pb-2.5 pt-11 rounded-2xl"
+            style={{ background: '#f8fafc', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', border: '1px solid rgba(100,116,139,0.18)' }}
+            ref={(el: HTMLDivElement | null) => {
+              if (el) {
+                el.style.setProperty('background-color', '#f8fafc', 'important');
+                el.style.setProperty('opacity', '1', 'important');
+              }
+            }}
+          >
             <div style={{ fontSize: '7px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#2563eb' }}>LABRAT</div>
             <div style={{ fontSize: '0.875rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.3 }}>{firstWord}</div>
             <div style={{ fontSize: '11px', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remainingWords || category}</div>
