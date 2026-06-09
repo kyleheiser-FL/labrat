@@ -172,8 +172,7 @@ export default function ProductDrawerModal({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {selectedParentProductGroup.options.map(opt => {
                   const isSelected = selectedOptionIdInDrawer === opt.id;
-                  const optStock = getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal);
-                  const isInStock = isUnlimitedStockTier || optStock > 0;
+                  const isInStock = true;
                   return (
                     <button
                       key={opt.id}
@@ -217,7 +216,6 @@ export default function ProductDrawerModal({
                           </>
                         ) : (
                           <>
-                            <span className="text-[9px] text-slate-600 line-through">${opt.price}</span>
                             <span className="text-xs text-cyan-400 font-bold">${getSalePrice(opt.price)}</span>
                           </>
                         )}
@@ -247,15 +245,9 @@ export default function ProductDrawerModal({
                     return (
                       <div className="flex items-center gap-1.5 text-xs">
                         <span className="text-slate-400">Inventory:</span>
-                        {available > 0 ? (
-                          <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
-                            {isUnlimitedStockTier ? 'In Stock' : `${available} vials in stock`}
-                          </span>
-                        ) : (
-                          <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
-                            Manufacturing Phase
-                          </span>
-                        )}
+                        <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-extrabold text-[10px]">
+                          In Stock
+                        </span>
                       </div>
                     );
                   })()}
@@ -411,24 +403,20 @@ export default function ProductDrawerModal({
                 ? (getChinaVialSellPrice(activeOpt.name) || activeOpt.price)
                 : getSalePrice(activeOpt.price);
               const totalSum = activePrice * drawerQuantity;
-              const available = isUnlimitedStockTier ? 999 : getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal);
-              const canAdd = available > 0;
+              const canAdd = true;
               const totalLabel = isKitPricing
                 ? 'Estimated Total (Norway Kit Rate)'
                 : isChinaKitPricing
                 ? 'Estimated Total (China Kit Rate)'
                 : isChinaVialPricing
                 ? 'Estimated Total (China Vial Rate)'
-                : 'Estimated Total (15% Sale Applied)';
+                : 'Estimated Total (Research Price)';
 
               return (
                 <>
                   <div className="text-left w-full sm:w-auto">
                     <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">{totalLabel}</span>
                     <div className="flex items-baseline gap-2">
-                      {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && (
-                        <span className="text-xs text-slate-500 line-through">${activeOpt.price * drawerQuantity}.00</span>
-                      )}
                       <div className="text-xl font-black text-cyan-400">${totalSum}.00</div>
                     </div>
                   </div>

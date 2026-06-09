@@ -602,15 +602,9 @@ export default function ShopCatalogView({
                           })()}
                           <span className="text-[11px] ml-auto">
                             {(() => {
-                              const activeOpt = group.options.find(o => o.id === activeProdId) || firstOption;
-                              const activeOptStock = isUnlimitedStockTier ? 999 : (activeOpt ? getProductAvailableStock(activeOpt.id, activeOpt.inventory, allOrdersGlobal) : 0);
-                              return activeOptStock > 0 ? (
+                              return (
                                 <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> {isUnlimitedStockTier ? 'In Stock' : `${activeOptStock} vials in stock`}
-                                </span>
-                              ) : (
-                                <span className="text-amber-400 font-semibold flex items-center gap-1">
-                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Manufacturing Phase
+                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> In Stock
                                 </span>
                               );
                             })()}
@@ -631,8 +625,7 @@ export default function ShopCatalogView({
                         <div className="flex flex-wrap gap-1.5">
                           {group.options.map(opt => {
                             const isSelected = activeProdId === opt.id;
-                            const optStock = getProductAvailableStock(opt.id, opt.inventory, allOrdersGlobal);
-                            const isInStock = isUnlimitedStockTier || optStock > 0;
+                            const isInStock = true;
                             return (
                               <button
                                 key={opt.id}
@@ -666,7 +659,7 @@ export default function ShopCatalogView({
                     {(() => {
                       const activeProduct = group.options.find(o => o.id === activeProdId) || firstOption;
                       if (!activeProduct) return null;
-                      const isOutOfStock = !isUnlimitedStockTier && getProductAvailableStock(activeProduct.id, activeProduct.inventory, allOrdersGlobal) <= 0;
+                      const isOutOfStock = false;
 
                       return (
                         <div className="bg-slate-950 border-t border-[#1e293b]/70 p-4 flex items-center justify-between gap-4">
@@ -688,14 +681,9 @@ export default function ShopCatalogView({
                                   ${getChinaVialSellPrice(activeProduct.name) || activeProduct.price}.00
                                 </span>
                               ) : (
-                                <>
-                                  <span className="text-xs text-slate-500 line-through">
-                                    ${activeProduct.price}.00
-                                  </span>
-                                  <span className="text-sm font-black text-cyan-400">
-                                    ${getSalePrice(activeProduct.price)}.00
-                                  </span>
-                                </>
+                                <span className="text-sm font-black text-cyan-400">
+                                  ${getSalePrice(activeProduct.price)}.00
+                                </span>
                               )}
                             </div>
                           </div>
