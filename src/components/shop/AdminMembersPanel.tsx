@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Loader2, Mail, MapPin, Phone, UserCheck, XCircle, Trash2, Package } from 'lucide-react';
+import { Users, Loader2, Mail, MapPin, Phone, UserCheck, XCircle, Trash2 } from 'lucide-react';
 import { MemberProfile } from '../../lib/shopTypes';
 
 interface AdminMembersPanelProps {
@@ -74,7 +74,7 @@ export default function AdminMembersPanel({
                     member.status === 'blocked'    ? 'bg-red-500/10 text-red-300 border border-red-500/20' :
                                                      'bg-amber-500/10 text-amber-300 border border-amber-500/20'
                   }`}>
-                    {member.status === 'kit'       ? '🇳🇴 Kit Pricing' :
+                    {member.status === 'kit'       ? '🇳🇴 Norway Kit' :
                      member.status === 'chinakit'  ? '🇨🇳 China Kit' :
                      member.status === 'chinavial' ? '🇨🇳 China Vial' :
                      member.status}
@@ -118,7 +118,7 @@ export default function AdminMembersPanel({
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-cyan-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Kit
+                      🇳🇴 Norway Kit
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinavial')}
@@ -146,8 +146,7 @@ export default function AdminMembersPanel({
                           : 'bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30'
                       }`}
                     >
-                      <Package className="w-3.5 h-3.5" />
-                      {member.kitUpgradeRequested ? '🇳🇴 Kit ✓' : '🇳🇴 Kit'}
+                      {member.kitUpgradeRequested ? '🇳🇴 Norway Kit ✓' : '🇳🇴 Norway Kit'}
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinavial')}
@@ -202,7 +201,7 @@ export default function AdminMembersPanel({
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Kit
+                      🇳🇴 Norway Kit
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinavial')}
@@ -226,7 +225,7 @@ export default function AdminMembersPanel({
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Package className="w-3.5 h-3.5" /> 🇳🇴 Kit
+                      🇳🇴 Norway Kit
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinakit')}
@@ -251,7 +250,7 @@ export default function AdminMembersPanel({
                       disabled={actionLoading !== null}
                       className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-bold rounded-lg cursor-pointer border border-cyan-500/30 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Package className="w-3.5 h-3.5" /> Restore (🇳🇴 Kit)
+                      Restore (🇳🇴 Norway Kit)
                     </button>
                     <button
                       onClick={() => onSetMemberStatus(member.id, 'chinavial')}
