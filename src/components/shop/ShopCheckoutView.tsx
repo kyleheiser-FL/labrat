@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Truck, Loader2, Send, BadgeCheck } from 'lucide-react';
+import { MapPin, Truck, Loader2, Send, BadgeCheck, Minus, Plus } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem, ShippingOption } from '../../lib/shopTypes';
 import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getShippingOptions } from '../../lib/shopHelpers';
@@ -24,6 +24,8 @@ interface ShopCheckoutViewProps {
   isKitPricing?: boolean;
   isChinaKitPricing?: boolean;
   isChinaVialPricing?: boolean;
+  bacWaterQty?: number;
+  onSetBacWaterQty?: (qty: number) => void;
   onSetShippingForm: (updater: (prev: ShippingFormState) => ShippingFormState) => void;
   onSetShippingCarrierFilter: (carrier: 'ALL' | 'USPS' | 'UPS') => void;
   onSetSelectedShippingOptionId: (id: string) => void;
@@ -41,6 +43,8 @@ export default function ShopCheckoutView({
   isKitPricing = false,
   isChinaKitPricing = false,
   isChinaVialPricing = false,
+  bacWaterQty = 0,
+  onSetBacWaterQty,
   onSetShippingForm,
   onSetShippingCarrierFilter,
   onSetSelectedShippingOptionId,
@@ -65,8 +69,10 @@ export default function ShopCheckoutView({
   const shippingCost = isKitPricing ? 25 : isChinaKitPricing ? 50 : isChinaVialPricing ? 0 : (selectedOption ? selectedOption.cost : 0);
   const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
   const salesTaxRate = 0.06;
-  const salesTax = isFlorida ? Math.round(subtotal * salesTaxRate * 100) / 100 : 0;
-  const finalInvoiceTotal = subtotal + shippingCost + salesTax;
+  const isNorwayOrChina = isKitPricing || isChinaKitPricing || isChinaVialPricing;
+  const bacWaterCost = bacWaterQty * 7;
+  const salesTax = isFlorida ? Math.round((subtotal + bacWaterCost) * salesTaxRate * 100) / 100 : 0;
+  const finalInvoiceTotal = subtotal + bacWaterCost + shippingCost + salesTax;
 
   return (
     <div id="shop-checkout-view" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -384,12 +390,48 @@ export default function ShopCheckoutView({
 
           <div className="h-px bg-slate-800 my-3" />
 
+          {/* BAC Water Add-On (China/Norway customers only) */}
+          {isNorwayOrChina && (
+            <div className="bg-slate-900/50 border border-slate-700/60 rounded-xl p-2.5 mb-3">
+              <div className="text-[9px] font-bold text-cyan-400/80 uppercase tracking-widest font-mono mb-1.5">Checkout Add-On</div>
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-left">
+                  <div className="text-xs font-bold text-slate-200 leading-tight">BAC Water (30ml)</div>
+                  <div className="text-[10px] text-slate-400">$7.00 per vial</div>
+                </div>
+                <div className="flex items-center gap-0.5 bg-slate-950 p-0.5 rounded-lg border border-slate-800 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => onSetBacWaterQty?.(Math.max(0, bacWaterQty - 1))}
+                    className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-md transition-all cursor-pointer"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span className="w-6 text-center text-xs font-extrabold text-slate-200">{bacWaterQty}</span>
+                  <button
+                    type="button"
+                    onClick={() => onSetBacWaterQty?.(bacWaterQty + 1)}
+                    className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-md transition-all cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Detailed Invoice Breakdown */}
           <div className="space-y-2 text-xs border-b border-slate-800/60 pb-3 mb-3">
             <div className="flex justify-between items-center text-slate-400 leading-none">
               <span>Research Subtotal:</span>
               <span className="font-semibold text-slate-300 font-mono">${subtotal}.00</span>
             </div>
+            {bacWaterQty > 0 && (
+              <div className="flex justify-between items-center text-slate-400 leading-none">
+                <span>BAC Water ({bacWaterQty}×$7):</span>
+                <span className="font-semibold text-slate-300 font-mono">+${bacWaterCost}.00</span>
+              </div>
+            )}
             <div className="flex justify-between items-start text-slate-400 leading-none">
               <div className="text-left">
                 <span>Postage Dispatch:</span>

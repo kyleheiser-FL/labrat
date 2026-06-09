@@ -362,6 +362,9 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  // BAC water add-on quantity at checkout (for China/Norway customers)
+  const [bacWaterQty, setBacWaterQty] = useState(0);
+
   // Active Order Success Feedback Modals
   const [lastPlacedOrder, setLastPlacedOrder] = useState<OrderDetail | null>(null);
   const [showOrderSuccessModal, setShowOrderSuccessModal] = useState(false);
@@ -1026,26 +1029,30 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     // Florida sales tax check (6.0%)
     const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
     const salesTaxRate = 0.06;
-    const salesTax = isFlorida ? Math.round(subtotal * salesTaxRate * 100) / 100 : 0;
+    const bacWaterCost = bacWaterQty * 7;
+    const salesTax = isFlorida ? Math.round((subtotal + bacWaterCost) * salesTaxRate * 100) / 100 : 0;
 
     const orderPayload: OrderDetail = {
       id: orderId,
       userId: currentUser.uid,
       email: currentUser.email || '',
       displayName: currentUser.displayName || 'Anonymous LabRat',
-      items: cart.map(item => ({
-        id: item.product.id,
-        name: item.product.name,
-        price: isKitPricing
-          ? (getKitSellPrice(item.product.name) || item.product.price)
-          : isChinaKitPricing
-          ? (getChinaKitSellPrice(item.product.name) || item.product.price)
-          : isChinaVialPricing
-          ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price))
-          : getSalePrice(item.product.price),
-        quantity: item.quantity
-      })),
-      total: subtotal + shippingCost + salesTax,
+      items: [
+        ...cart.map(item => ({
+          id: item.product.id,
+          name: item.product.name,
+          price: isKitPricing
+            ? (getKitSellPrice(item.product.name) || item.product.price)
+            : isChinaKitPricing
+            ? (getChinaKitSellPrice(item.product.name) || item.product.price)
+            : isChinaVialPricing
+            ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price))
+            : getSalePrice(item.product.price),
+          quantity: item.quantity
+        })),
+        ...(bacWaterQty > 0 ? [{ id: 'prod_bac_water_30ml', name: 'BAC Water (30ml)', price: 7, quantity: bacWaterQty }] : [])
+      ],
+      total: subtotal + bacWaterCost + shippingCost + salesTax,
       tax: salesTax,
       shippingInfo: {
         ...shippingForm,
@@ -1068,6 +1075,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       // Complete! Reset parameters
       setLastPlacedOrder(orderPayload);
       setCart([]);
+      setBacWaterQty(0);
       setShowOrderSuccessModal(true);
       setView('catalog');
       // Notify admin of new order (fire-and-forget)
@@ -1182,8 +1190,11 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       if (!isAnyChinaPricing && p.sourceRestriction === 'china') matchesSource = false;
       // Hide products from China customers that have no China price defined
       // (not in resolveChineseKitCost / resolveChineseVialCost) and aren't solvents
-      const isSolventProduct = p.category.toLowerCase().includes('reconstitution') || p.category.toLowerCase().includes('solvent') || p.name.toLowerCase().includes('bacteriostatic');
-      if (isAnyChinaPricing && !isSolventProduct && !getChinaKitSellPrice(p.name) && !getChinaVialSellPrice(p.name)) matchesSource = false;
+      // Hide BAC water from China and Norway customers (available as $7/vial checkout add-on)
+      const isBacWater = p.id.startsWith('prod_bac_water');
+      if ((isAnyChinaPricing || isKitPricing) && isBacWater) matchesSource = false;
+      // Hide products from China customers that have no China price defined
+      if (isAnyChinaPricing && !isBacWater && !getChinaKitSellPrice(p.name) && !getChinaVialSellPrice(p.name)) matchesSource = false;
     }
     return matchesCategory && matchesSearch && matchesSource;
   });
@@ -1751,6 +1762,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
               isKitPricing={isKitPricing}
               isChinaKitPricing={isChinaKitPricing}
               isChinaVialPricing={isChinaVialPricing}
+              bacWaterQty={bacWaterQty}
+              onSetBacWaterQty={setBacWaterQty}
               onSetShippingForm={setShippingForm}
               onSetShippingCarrierFilter={setShippingCarrierFilter}
               onSetSelectedShippingOptionId={setSelectedShippingOptionId}
