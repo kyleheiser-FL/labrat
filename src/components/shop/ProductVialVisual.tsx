@@ -8,6 +8,7 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   const isSolvent = lowerCat.includes('reconstitution') || lowerCat.includes('solvent') || lowerName.includes('water') || lowerName.includes('bacteriostatic');
   const isChina = !isSolvent && (lowerName.includes(' china') || lowerCat.includes('china'));
   const isUsaWarehouse = !isSolvent && (lowerName.includes('us warehouse') || lowerName.includes('warehouse') || lowerCat === 'usa fast ship');
+  const isNorway = !isSolvent && !isChina && !isUsaWarehouse;
 
   const cleanFullName = name.replace(/\(.*?\)/g, '').trim();
   const nameParts = cleanFullName.split(' ');
@@ -31,16 +32,31 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
       <div className="labrat-real-vial-orb" aria-hidden="true" />
 
       {/* Source badge — top-left corner */}
-      {(isChina || isUsaWarehouse) && (
+      {!isSolvent && (
         <div className="absolute top-3 left-3 z-10 flex items-center gap-1">
-          <span className="text-base leading-none">{isChina ? '🇨🇳' : '🇺🇸'}</span>
-          <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border ${
-            isChina
-              ? 'text-red-300 bg-red-950/60 border-red-500/30'
-              : 'text-amber-300 bg-amber-950/60 border-amber-500/30'
-          }`}>
-            {isChina ? 'China Source' : 'USA Warehouse'}
-          </span>
+          {isUsaWarehouse ? (
+            <>
+              <span className="text-base leading-none">🇨🇳</span>
+              <span className="text-base leading-none">🇺🇸</span>
+              <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border text-amber-300 bg-amber-950/60 border-amber-500/30">
+                USA Shipped
+              </span>
+            </>
+          ) : isChina ? (
+            <>
+              <span className="text-base leading-none">🇨🇳</span>
+              <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border text-red-300 bg-red-950/60 border-red-500/30">
+                China Source
+              </span>
+            </>
+          ) : isNorway ? (
+            <>
+              <span className="text-base leading-none">🇳🇴</span>
+              <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border text-blue-300 bg-blue-950/60 border-blue-500/30">
+                Norway Source
+              </span>
+            </>
+          ) : null}
         </div>
       )}
 
