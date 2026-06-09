@@ -208,12 +208,12 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
             className={`w-full object-cover${isChina ? ' hue-rotate-[330deg] saturate-[1.2]' : isUsaWarehouse ? ' sepia-[0.3] saturate-[1.3]' : ''}`}
             loading="lazy"
           />
-          {/* Gradient overlay from 35% down covers the Klow label area; inline styles prevent CSS theme overrides */}
+          {/* Light gradient covers Klow label; white background matches clinical-light theme */}
           <div className="absolute inset-0 px-3 pb-2.5 flex flex-col justify-end"
-            style={{ background: 'linear-gradient(to bottom, transparent 35%, rgba(8,12,28,0.88) 55%, rgba(8,12,28,0.98) 100%)' }}>
-            <div style={{ fontSize: '7px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#94a3b8' }}>LABRAT</div>
-            <div style={{ fontSize: '0.875rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.3 }}>{firstWord}</div>
-            <div style={{ fontSize: '11px', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remainingWords || category}</div>
+            style={{ background: 'linear-gradient(to bottom, transparent 38%, rgba(248,250,252,0.88) 54%, rgba(248,250,252,0.99) 100%)' }}>
+            <div style={{ fontSize: '7px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#2563eb' }}>LABRAT</div>
+            <div style={{ fontSize: '0.875rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.3 }}>{firstWord}</div>
+            <div style={{ fontSize: '11px', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remainingWords || category}</div>
           </div>
         </div>
       </div>
