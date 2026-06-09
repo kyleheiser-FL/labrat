@@ -3095,11 +3095,154 @@ html[data-labrat-theme="clinical-light"] #cart-order-summary-card .bg-cyan-500\/
   background-color: rgba(219, 234, 254, 0.6) !important;
   border-color: rgba(37, 99, 235, 0.3) !important;
 }
-/* Checkout button — force visible blue */
+/* Checkout button — near-black (monochrome) */
 html[data-labrat-theme="clinical-light"] #cart-checkout-btn {
-  background-color: #2563eb !important;
+  background-color: #1e293b !important;
   color: #ffffff !important;
 }
 html[data-labrat-theme="clinical-light"] #cart-checkout-btn:hover {
-  background-color: #1d4ed8 !important;
+  background-color: #111827 !important;
+}
+
+/* ==========================================================================
+   CLINICAL-LIGHT MONOCHROME
+   Strip all hue — black / white / gray only.
+   Order: tinted bgs first, then solid buttons, then text (so text wins last).
+   ========================================================================== */
+
+/* ── Tinted / transparent colored backgrounds → light slate ── */
+html[data-labrat-theme="clinical-light"] [class*="bg-cyan-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-blue-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-emerald-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-green-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-red-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-amber-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-orange-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-violet-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-purple-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-indigo-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-teal-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-pink-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-sky-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-fuchsia-9"],
+html[data-labrat-theme="clinical-light"] [class*="bg-cyan-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-blue-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-blue-600/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-emerald-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-emerald-400/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-green-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-red-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-amber-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-amber-400/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-orange-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-violet-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-purple-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-indigo-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-teal-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-pink-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-sky-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-rose-500/"],
+html[data-labrat-theme="clinical-light"] [class*="bg-fuchsia-500/"],
+html[data-labrat-theme="clinical-light"] .bg-amber-50,
+html[data-labrat-theme="clinical-light"] .bg-red-50,
+html[data-labrat-theme="clinical-light"] .bg-blue-50,
+html[data-labrat-theme="clinical-light"] .bg-green-50,
+html[data-labrat-theme="clinical-light"] .bg-emerald-50,
+html[data-labrat-theme="clinical-light"] .bg-cyan-50 {
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+}
+
+/* ── Solid action buttons / active indicators → near-black ── */
+html[data-labrat-theme="clinical-light"] .bg-cyan-500,
+html[data-labrat-theme="clinical-light"] .bg-cyan-400,
+html[data-labrat-theme="clinical-light"] .bg-blue-600,
+html[data-labrat-theme="clinical-light"] .bg-blue-500,
+html[data-labrat-theme="clinical-light"] .bg-blue-400,
+html[data-labrat-theme="clinical-light"] .bg-emerald-500,
+html[data-labrat-theme="clinical-light"] .bg-emerald-400,
+html[data-labrat-theme="clinical-light"] .bg-green-500,
+html[data-labrat-theme="clinical-light"] .bg-red-500,
+html[data-labrat-theme="clinical-light"] .bg-red-600,
+html[data-labrat-theme="clinical-light"] .bg-amber-400,
+html[data-labrat-theme="clinical-light"] .bg-amber-500,
+html[data-labrat-theme="clinical-light"] .bg-orange-500,
+html[data-labrat-theme="clinical-light"] .bg-violet-500,
+html[data-labrat-theme="clinical-light"] .bg-purple-500,
+html[data-labrat-theme="clinical-light"] .bg-indigo-500,
+html[data-labrat-theme="clinical-light"] .bg-teal-500,
+html[data-labrat-theme="clinical-light"] .bg-pink-500,
+html[data-labrat-theme="clinical-light"] .bg-sky-500,
+html[data-labrat-theme="clinical-light"] .bg-fuchsia-500 {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* ── All color text → near-black (placed last so it wins over bg rule's color) ── */
+html[data-labrat-theme="clinical-light"] [class*="text-cyan-"],
+html[data-labrat-theme="clinical-light"] [class*="text-blue-"],
+html[data-labrat-theme="clinical-light"] [class*="text-emerald-"],
+html[data-labrat-theme="clinical-light"] [class*="text-green-"],
+html[data-labrat-theme="clinical-light"] [class*="text-teal-"],
+html[data-labrat-theme="clinical-light"] [class*="text-sky-"],
+html[data-labrat-theme="clinical-light"] [class*="text-indigo-"],
+html[data-labrat-theme="clinical-light"] [class*="text-violet-"],
+html[data-labrat-theme="clinical-light"] [class*="text-purple-"],
+html[data-labrat-theme="clinical-light"] [class*="text-pink-"],
+html[data-labrat-theme="clinical-light"] [class*="text-rose-"],
+html[data-labrat-theme="clinical-light"] [class*="text-red-"],
+html[data-labrat-theme="clinical-light"] [class*="text-orange-"],
+html[data-labrat-theme="clinical-light"] [class*="text-amber-"],
+html[data-labrat-theme="clinical-light"] [class*="text-yellow-"],
+html[data-labrat-theme="clinical-light"] [class*="text-fuchsia-"],
+html[data-labrat-theme="clinical-light"] .text-\[\#22d3ee\] {
+  color: #1e293b !important;
+}
+
+/* ── Active elements with dark bg need white text restored ── */
+/* Active category pill (gradient) */
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br {
+  background: #1e293b !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br,
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br * {
+  color: #ffffff !important;
+}
+/* Active strength selector (emerald/amber fill) — text already white via solid-button rule */
+/* Active nav tab (bg-cyan-500) — text already white via solid-button rule */
+
+/* ── Colored borders → neutral gray ── */
+html[data-labrat-theme="clinical-light"] [class*="border-cyan-"],
+html[data-labrat-theme="clinical-light"] [class*="border-blue-"],
+html[data-labrat-theme="clinical-light"] [class*="border-emerald-"],
+html[data-labrat-theme="clinical-light"] [class*="border-green-"],
+html[data-labrat-theme="clinical-light"] [class*="border-teal-"],
+html[data-labrat-theme="clinical-light"] [class*="border-sky-"],
+html[data-labrat-theme="clinical-light"] [class*="border-indigo-"],
+html[data-labrat-theme="clinical-light"] [class*="border-violet-"],
+html[data-labrat-theme="clinical-light"] [class*="border-purple-"],
+html[data-labrat-theme="clinical-light"] [class*="border-pink-"],
+html[data-labrat-theme="clinical-light"] [class*="border-rose-"],
+html[data-labrat-theme="clinical-light"] [class*="border-red-"],
+html[data-labrat-theme="clinical-light"] [class*="border-orange-"],
+html[data-labrat-theme="clinical-light"] [class*="border-amber-"],
+html[data-labrat-theme="clinical-light"] [class*="border-yellow-"],
+html[data-labrat-theme="clinical-light"] [class*="border-fuchsia-"] {
+  border-color: rgba(100, 116, 139, 0.45) !important;
+}
+
+/* ── Colored glow shadows → remove ── */
+html[data-labrat-theme="clinical-light"] [class*="shadow-[0_0_"] {
+  box-shadow: none !important;
+}
+
+/* ── Checkout form overrides for monochrome ── */
+html[data-labrat-theme="clinical-light"] #shop-checkout-adjust-btn {
+  background-color: #e2e8f0 !important;
+  border-color: rgba(100, 116, 139, 0.5) !important;
+  color: #334155 !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-view button[type="submit"] {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
 }

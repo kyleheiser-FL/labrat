@@ -2205,11 +2205,11 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
             onClick={() => { triggerHaptic('light'); navigateView('cart'); }}
             className="fixed bottom-6 left-4 z-[999] flex items-center gap-2.5 px-4 py-3 active:scale-95 font-black text-sm rounded-2xl shadow-xl cursor-pointer"
             style={{
-              backgroundColor: (labratTheme === 'clinical' || labratTheme === 'clinical-light') ? '#2563eb' : '#06b6d4',
+              backgroundColor: labratTheme === 'neon' ? '#06b6d4' : '#111827',
               color: '#ffffff',
-              boxShadow: (labratTheme === 'clinical' || labratTheme === 'clinical-light')
-                ? '0 10px 25px -5px rgba(37,99,235,0.35)'
-                : '0 10px 25px -5px rgba(6,182,212,0.4)',
+              boxShadow: labratTheme === 'neon'
+                ? '0 10px 25px -5px rgba(6,182,212,0.4)'
+                : '0 8px 20px -4px rgba(0,0,0,0.30)',
             }}
           >
             <ShoppingCart className="w-4 h-4" style={{ color: '#ffffff' }} />

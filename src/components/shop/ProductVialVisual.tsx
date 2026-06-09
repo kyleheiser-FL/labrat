@@ -211,7 +211,7 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
           {/* Solid dark bar at bottom — inline styles prevent clinical-light CSS from flipping text dark */}
           <div className="absolute bottom-0 left-0 right-0 px-3 pb-2.5 pt-2.5"
             style={{ background: 'rgba(8,12,28,0.96)' }}>
-            <div style={{ fontSize: '7px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#60a5fa' }}>LABRAT</div>
+            <div style={{ fontSize: '7px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#94a3b8' }}>LABRAT</div>
             <div style={{ fontSize: '0.875rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.3 }}>{firstWord}</div>
             <div style={{ fontSize: '11px', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remainingWords || category}</div>
           </div>
