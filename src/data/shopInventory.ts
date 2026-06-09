@@ -167,16 +167,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
     price: 117,
-    inventory: 10
-  },
-  {
-    id: 'prod_retat_15mg',
-    name: 'Retatrutide (15mg)',
-    description: 'Purity: 99%+. Sourced from certified laboratories. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
-    category: 'Weight Loss',
-    price: 130,
-    inventory: 0,
-    sourceRestriction: 'china'
+    inventory: 10,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_retat_20mg',
@@ -184,7 +176,8 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
     price: 156,
-    inventory: 20
+    inventory: 20,
+    sourceRestriction: 'norway'
   },
   {
     id: 'prod_retat_30mg',
@@ -192,7 +185,45 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
     price: 197,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
+  },
+  // China-sourced Retatrutide — completely separate product group from Norway
+  {
+    id: 'prod_retat_china_10mg',
+    name: 'Retatrutide China (10mg)',
+    description: 'Triple GIP/GLP-1/glucagon receptor agonist. Sourced directly from our China lab partners. 10mg per vial. Ships internationally from China facility.',
+    category: 'Weight Loss',
+    price: 18,
+    inventory: 999,
+    sourceRestriction: 'china'
+  },
+  {
+    id: 'prod_retat_china_15mg',
+    name: 'Retatrutide China (15mg)',
+    description: 'Triple GIP/GLP-1/glucagon receptor agonist. Sourced directly from our China lab partners. 15mg per vial. Ships internationally from China facility.',
+    category: 'Weight Loss',
+    price: 26,
+    inventory: 999,
+    sourceRestriction: 'china'
+  },
+  {
+    id: 'prod_retat_china_20mg',
+    name: 'Retatrutide China (20mg)',
+    description: 'Triple GIP/GLP-1/glucagon receptor agonist. Sourced directly from our China lab partners. 20mg per vial. Ships internationally from China facility.',
+    category: 'Weight Loss',
+    price: 33,
+    inventory: 999,
+    sourceRestriction: 'china'
+  },
+  {
+    id: 'prod_retat_china_30mg',
+    name: 'Retatrutide China (30mg)',
+    description: 'Triple GIP/GLP-1/glucagon receptor agonist. Sourced directly from our China lab partners. 30mg per vial. Ships internationally from China facility.',
+    category: 'Weight Loss',
+    price: 38,
+    inventory: 999,
+    sourceRestriction: 'china'
   },
   {
     id: 'prod_retat_50mg',
@@ -209,7 +240,17 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',
     category: 'Weight Loss',
     price: 309,
-    inventory: 0
+    inventory: 0,
+    sourceRestriction: 'norway'
+  },
+  {
+    id: 'prod_retat_china_60mg',
+    name: 'Retatrutide China (60mg)',
+    description: 'Triple GIP/GLP-1/glucagon receptor agonist. Sourced directly from our China lab partners. 60mg per vial. Ships internationally from China facility.',
+    category: 'Weight Loss',
+    price: 54,
+    inventory: 999,
+    sourceRestriction: 'china'
   },
   {
     id: 'prod_retat_usa_10mg',
