@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
-type LabRatTheme = 'neon' | 'clinical';
+type LabRatTheme = 'neon' | 'clinical' | 'clinical-light';
 
 interface FirstBootThemePickerProps {
   open: boolean;
@@ -35,33 +35,46 @@ export default function FirstBootThemePicker({ open, onSelectTheme }: FirstBootT
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
                 onClick={() => onSelectTheme('neon')}
                 className="group text-left rounded-2xl border border-cyan-500/30 bg-[#030712]/70 p-4 hover:border-cyan-400/70 hover:bg-cyan-500/10 transition-all cursor-pointer"
               >
-                <div className="h-28 rounded-xl bg-[radial-gradient(circle_at_top_right,rgba(160,94,255,0.35),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(34,211,238,0.28),transparent_45%),#050816] border border-cyan-500/20 mb-4 flex items-center justify-center overflow-hidden">
+                <div className="h-24 rounded-xl bg-[radial-gradient(circle_at_top_right,rgba(160,94,255,0.35),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(34,211,238,0.28),transparent_45%),#050816] border border-cyan-500/20 mb-4 flex items-center justify-center overflow-hidden">
                   <img
                     src="/labrat_top_left_logo_transparent.png"
                     alt="Neon Lab"
-                    className="h-20 w-20 object-contain drop-shadow-[0_0_18px_rgba(34,211,238,0.45)]"
+                    className="h-16 w-16 object-contain drop-shadow-[0_0_18px_rgba(34,211,238,0.45)]"
                   />
                 </div>
                 <h3 className="text-cyan-300 font-black uppercase tracking-wider text-sm">Neon Lab</h3>
-                <p className="text-xs text-slate-400 mt-1">Cyberpunk, high-energy, immersive command center.</p>
+                <p className="text-xs text-slate-400 mt-1">Cyberpunk, high-energy, immersive.</p>
               </button>
 
               <button
                 onClick={() => onSelectTheme('clinical')}
                 className="group text-left rounded-2xl border border-slate-700/70 bg-[#111827]/80 p-4 hover:border-sky-400/60 hover:bg-sky-500/10 transition-all cursor-pointer"
               >
-                <div className="h-28 rounded-xl bg-[#111827] border border-slate-600/60 mb-4 flex items-center justify-center">
-                  <div className="h-16 w-16 rounded-2xl bg-[#0b1220] border border-slate-500/60 flex items-center justify-center shadow-lg">
-                    <span className="text-2xl font-black text-slate-100 tracking-tighter">LR</span>
+                <div className="h-24 rounded-xl bg-[#111827] border border-slate-600/60 mb-4 flex items-center justify-center">
+                  <div className="h-14 w-14 rounded-2xl bg-[#0b1220] border border-slate-500/60 flex items-center justify-center shadow-lg">
+                    <span className="text-xl font-black text-slate-100 tracking-tighter">LR</span>
                   </div>
                 </div>
                 <h3 className="text-slate-100 font-black uppercase tracking-wider text-sm">Clinical Dark</h3>
-                <p className="text-xs text-slate-400 mt-1">Clean, professional, low-glow clinical interface.</p>
+                <p className="text-xs text-slate-400 mt-1">OLED black, professional, low-glow.</p>
+              </button>
+
+              <button
+                onClick={() => onSelectTheme('clinical-light')}
+                className="group text-left rounded-2xl border border-slate-300/60 bg-white/10 p-4 hover:border-blue-400/60 hover:bg-blue-500/10 transition-all cursor-pointer"
+              >
+                <div className="h-24 rounded-xl bg-white border border-slate-200 mb-4 flex items-center justify-center">
+                  <div className="h-14 w-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center shadow-md">
+                    <span className="text-xl font-black text-blue-700 tracking-tighter">LR</span>
+                  </div>
+                </div>
+                <h3 className="text-blue-300 font-black uppercase tracking-wider text-sm">Clinical Light</h3>
+                <p className="text-xs text-slate-400 mt-1">White, clean, minimal interface.</p>
               </button>
             </div>
 

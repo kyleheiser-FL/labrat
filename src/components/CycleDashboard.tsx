@@ -279,7 +279,7 @@ export default function CycleDashboard({
     <div className="space-y-6 flex flex-col" id="dashboard-wrapper">
       <section className="labrat-command-hero" id="labrat-command-hero">
         <div className="labrat-command-hero-copy">
-          <span className="labrat-command-eyebrow">{labratTheme === 'clinical' ? 'Clinical Command Center' : 'Neon Lab Command Center'}</span>
+          <span className="labrat-command-eyebrow">{labratTheme === 'neon' ? 'Neon Lab Command Center' : 'Clinical Command Center'}</span>
           <h2>Daily Cockpit</h2>
           <p>Track today's active schedule, verify administrations, monitor cycle progress, and keep device reminders ready from one high-visibility command surface.</p>
           <div className="labrat-command-metrics">
@@ -292,7 +292,7 @@ export default function CycleDashboard({
           </div>
         </div>
         <div className="labrat-command-hero-art" aria-hidden="true">
-          <img src={labratTheme === 'clinical' ? '/labrat_hero_rat_dark.png' : '/labrat_top_left_logo_transparent.png'} alt="" />
+          <img src={labratTheme === 'neon' ? '/labrat_top_left_logo_transparent.png' : '/labrat_hero_rat_dark.png'} alt="" />
         </div>
       </section>
 

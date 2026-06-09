@@ -78,11 +78,14 @@ import OrderSuccessModal from './shop/OrderSuccessModal';
 import CertificationModal from './shop/CertificationModal';
 import ProductVialVisual from './shop/ProductVialVisual';
 
-type LabratThemeMode = 'neon' | 'clinical';
+type LabratThemeMode = 'neon' | 'clinical' | 'clinical-light';
 
 function resolveLabratTheme(): LabratThemeMode {
   if (typeof document === 'undefined') return 'neon';
-  return document.documentElement.getAttribute('data-labrat-theme') === 'clinical' ? 'clinical' : 'neon';
+  const t = document.documentElement.getAttribute('data-labrat-theme');
+  if (t === 'clinical') return 'clinical';
+  if (t === 'clinical-light') return 'clinical-light';
+  return 'neon';
 }
 
 
@@ -2192,10 +2195,10 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
             onClick={() => { triggerHaptic('light'); navigateView('cart'); }}
             className="fixed bottom-6 left-4 z-[999] flex items-center gap-2.5 px-4 py-3 active:scale-95 font-black text-sm rounded-2xl shadow-xl cursor-pointer"
             style={{
-              backgroundColor: labratTheme === 'clinical' ? '#3b82f6' : '#06b6d4',
+              backgroundColor: (labratTheme === 'clinical' || labratTheme === 'clinical-light') ? '#2563eb' : '#06b6d4',
               color: '#ffffff',
-              boxShadow: labratTheme === 'clinical'
-                ? '0 10px 25px -5px rgba(59,130,246,0.4)'
+              boxShadow: (labratTheme === 'clinical' || labratTheme === 'clinical-light')
+                ? '0 10px 25px -5px rgba(37,99,235,0.35)'
                 : '0 10px 25px -5px rgba(6,182,212,0.4)',
             }}
           >

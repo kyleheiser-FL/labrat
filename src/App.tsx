@@ -156,12 +156,13 @@ const migrateMetricsLegacyWeight = (metricsList: any[]): DailyMetric[] => {
   });
 };
 
-type LabRatTheme = 'neon' | 'clinical';
+type LabRatTheme = 'neon' | 'clinical' | 'clinical-light';
 type LabRatBranding = 'mascot' | 'wordmark' | 'lr';
 
 const getInitialTheme = (): LabRatTheme => {
   const saved = safeLocalStorage.getItem('labrat_ui_theme');
-  return saved === 'clinical' || saved === 'neon' ? saved : 'neon';
+  if (saved === 'clinical' || saved === 'neon' || saved === 'clinical-light') return saved;
+  return 'neon';
 };
 
 const getInitialBranding = (): LabRatBranding => {
@@ -258,12 +259,19 @@ export default function App() {
   // Theme support visual attributes syncing
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.add('dark');
-    root.style.colorScheme = 'dark';
+    if (labratTheme === 'clinical-light') {
+      root.classList.remove('dark');
+      root.classList.add('light');
+      root.style.colorScheme = 'light';
+    } else {
+      root.classList.remove('light');
+      root.classList.add('dark');
+      root.style.colorScheme = 'dark';
+    }
     root.setAttribute('data-labrat-theme', labratTheme);
     root.setAttribute('data-labrat-branding', labratBranding);
 
-    safeLocalStorage.setItem('labrat_theme_mode', 'dark');
+    safeLocalStorage.setItem('labrat_theme_mode', labratTheme === 'clinical-light' ? 'light' : 'dark');
     safeLocalStorage.setItem('labrat_ui_theme', labratTheme);
     safeLocalStorage.setItem('labrat_in_app_branding', labratBranding);
 
@@ -280,7 +288,7 @@ export default function App() {
 
     const themeMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
     if (themeMeta) {
-      themeMeta.setAttribute('content', labratTheme === 'neon' ? '#020b12' : '#000000');
+      themeMeta.setAttribute('content', labratTheme === 'neon' ? '#020b12' : labratTheme === 'clinical-light' ? '#f0f4f8' : '#000000');
     }
   }, [labratTheme, labratBranding]);
 

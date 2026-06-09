@@ -75,4 +75,4 @@ export interface ShippingOption {
   estimatedDeliveryDate: string;
 }
 
-export type LabratThemeMode = 'neon' | 'clinical';
+export type LabratThemeMode = 'neon' | 'clinical' | 'clinical-light';

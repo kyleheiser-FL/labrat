@@ -4,8 +4,8 @@ import { SegmentVisibility } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 
 interface SettingsPageProps {
-  labratTheme: 'neon' | 'clinical';
-  onThemeChange: (theme: 'neon' | 'clinical') => void;
+  labratTheme: 'neon' | 'clinical' | 'clinical-light';
+  onThemeChange: (theme: 'neon' | 'clinical' | 'clinical-light') => void;
   user: any; // Firebase User
   hideShop: boolean;
   onToggleHideShop: (hide: boolean) => void;
@@ -124,7 +124,7 @@ export default function SettingsPage({
         </div>
         <h3 className="text-base font-bold text-slate-100 mb-4">Theme Selection</h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Neon Lab Card */}
           <button
             type="button"
@@ -136,13 +136,10 @@ export default function SettingsPage({
             }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                {/* Color swatches */}
-                <div className="flex gap-1">
-                  <span className="w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.6)]"></span>
-                  <span className="w-3 h-3 rounded-full bg-[#39ff14] shadow-[0_0_6px_rgba(57,255,20,0.5)]"></span>
-                  <span className="w-3 h-3 rounded-full bg-indigo-400"></span>
-                </div>
+              <div className="flex gap-1">
+                <span className="w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.6)]"></span>
+                <span className="w-3 h-3 rounded-full bg-[#39ff14] shadow-[0_0_6px_rgba(57,255,20,0.5)]"></span>
+                <span className="w-3 h-3 rounded-full bg-indigo-400"></span>
               </div>
               {labratTheme === 'neon' && (
                 <span className="w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center shrink-0">
@@ -165,13 +162,10 @@ export default function SettingsPage({
             }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                {/* Color swatches */}
-                <div className="flex gap-1">
-                  <span className="w-3 h-3 rounded-full bg-sky-400"></span>
-                  <span className="w-3 h-3 rounded-full bg-slate-400"></span>
-                  <span className="w-3 h-3 rounded-full bg-slate-600"></span>
-                </div>
+              <div className="flex gap-1">
+                <span className="w-3 h-3 rounded-full bg-sky-400"></span>
+                <span className="w-3 h-3 rounded-full bg-slate-400"></span>
+                <span className="w-3 h-3 rounded-full bg-slate-600"></span>
               </div>
               {labratTheme === 'clinical' && (
                 <span className="w-5 h-5 rounded-full bg-sky-400 flex items-center justify-center shrink-0">
@@ -180,7 +174,33 @@ export default function SettingsPage({
               )}
             </div>
             <div className="text-sm font-bold text-slate-100">Clinical Dark</div>
-            <div className="text-xs text-slate-500 mt-0.5">Clean, professional, low-glow.</div>
+            <div className="text-xs text-slate-500 mt-0.5">OLED black, professional, low-glow.</div>
+          </button>
+
+          {/* Clinical Light Card */}
+          <button
+            type="button"
+            onClick={() => { triggerHaptic('light'); onThemeChange('clinical-light'); }}
+            className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
+              labratTheme === 'clinical-light'
+                ? 'border-blue-500/60 bg-blue-500/10 shadow-[0_0_16px_rgba(37,99,235,0.12)]'
+                : 'border-slate-700/50 bg-[#030712]/50 hover:border-slate-600'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex gap-1">
+                <span className="w-3 h-3 rounded-full bg-white border border-slate-300"></span>
+                <span className="w-3 h-3 rounded-full bg-blue-400"></span>
+                <span className="w-3 h-3 rounded-full bg-slate-300"></span>
+              </div>
+              {labratTheme === 'clinical-light' && (
+                <span className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
+                  <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                </span>
+              )}
+            </div>
+            <div className="text-sm font-bold text-slate-100">Clinical Light</div>
+            <div className="text-xs text-slate-500 mt-0.5">White, clean, easy to read.</div>
           </button>
         </div>
       </div>

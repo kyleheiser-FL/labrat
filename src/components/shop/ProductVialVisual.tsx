@@ -1,6 +1,6 @@
 import React from 'react';
 
-type LabratThemeMode = 'neon' | 'clinical';
+type LabratThemeMode = 'neon' | 'clinical' | 'clinical-light';
 
 export default function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; category: string; theme?: LabratThemeMode }) {
   const lowerCat = category.toLowerCase();
@@ -9,13 +9,14 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   const isChina = !isSolvent && (lowerName.includes(' china') || lowerCat.includes('china'));
   const isUsaWarehouse = !isSolvent && (lowerName.includes('us warehouse') || lowerName.includes('warehouse') || lowerCat === 'usa fast ship');
   const isNorway = !isSolvent && !isChina && !isUsaWarehouse;
+  const isLight = theme === 'clinical-light';
 
   const cleanFullName = name.replace(/\(.*?\)/g, '').trim();
   const nameParts = cleanFullName.split(' ');
   const firstWord = nameParts[0] || 'Peptide';
   const remainingWords = nameParts.slice(1).join(' ');
 
-  const imageSrc = theme === 'clinical'
+  const imageSrc = (theme === 'clinical' || theme === 'clinical-light')
     ? (isSolvent ? '/shop/labrat-professional-vial-solvent.png' : '/shop/labrat-professional-vial-peptide.png')
     : (isSolvent ? '/shop/labrat-real-vial-solvent.png' : '/shop/labrat-real-vial-peptide.png');
 
@@ -38,21 +39,27 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
             <>
               <span className="text-base leading-none">🇨🇳</span>
               <span className="text-base leading-none">🇺🇸</span>
-              <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border text-amber-300 bg-amber-950/60 border-amber-500/30">
+              <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border ${
+                isLight ? 'text-amber-700 bg-amber-50 border-amber-300' : 'text-amber-300 bg-amber-950/60 border-amber-500/30'
+              }`}>
                 USA Shipped
               </span>
             </>
           ) : isChina ? (
             <>
               <span className="text-base leading-none">🇨🇳</span>
-              <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border text-red-300 bg-red-950/60 border-red-500/30">
+              <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border ${
+                isLight ? 'text-red-700 bg-red-50 border-red-300' : 'text-red-300 bg-red-950/60 border-red-500/30'
+              }`}>
                 China Source
               </span>
             </>
           ) : isNorway ? (
             <>
               <span className="text-base leading-none">🇳🇴</span>
-              <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border text-blue-300 bg-blue-950/60 border-blue-500/30">
+              <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border ${
+                isLight ? 'text-blue-700 bg-blue-50 border-blue-300' : 'text-blue-300 bg-blue-950/60 border-blue-500/30'
+              }`}>
                 Norway Source
               </span>
             </>

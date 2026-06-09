@@ -2,7 +2,7 @@ import React from 'react';
 import { X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-type LabRatTheme = 'neon' | 'clinical';
+type LabRatTheme = 'neon' | 'clinical' | 'clinical-light';
 
 interface AppearanceModalProps {
   open: boolean;
@@ -79,15 +79,35 @@ export default function AppearanceModal({ open, onClose, currentTheme, onSelectT
                   </div>
                   <div>
                     <div className="text-sm font-bold text-slate-100">Clinical Dark</div>
-                    <div className="text-xs text-slate-500">Clean, professional, low-glow.</div>
+                    <div className="text-xs text-slate-500">OLED black, professional, low-glow.</div>
                   </div>
                 </div>
                 {currentTheme === 'clinical' && <Check className="w-4 h-4 text-sky-400" />}
               </button>
+
+              <button
+                onClick={() => onSelectTheme('clinical-light')}
+                className={`w-full rounded-xl border p-3 text-left transition flex items-center justify-between ${
+                  currentTheme === 'clinical-light'
+                    ? 'border-blue-500/60 bg-blue-500/10'
+                    : 'border-slate-800 bg-[#030712]/50 hover:border-slate-600'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-white border border-slate-300 flex items-center justify-center">
+                    <span className="text-sm font-black text-blue-700">LR</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-100">Clinical Light</div>
+                    <div className="text-xs text-slate-500">Clean white, minimal, easy to read.</div>
+                  </div>
+                </div>
+                {currentTheme === 'clinical-light' && <Check className="w-4 h-4 text-blue-400" />}
+              </button>
             </div>
 
             <div className="rounded-xl border border-slate-800 bg-[#030712]/50 p-3 text-[11px] text-slate-400 leading-relaxed">
-              Only two appearance modes are available: <strong>Neon Lab Command Center</strong> and <strong>Clinical Dark</strong>. Clinical Dark uses the clean LR presentation automatically.
+              Three modes: <strong>Neon Lab</strong> (cyberpunk), <strong>Clinical Dark</strong> (OLED black), and <strong>Clinical Light</strong> (white/minimal). Switching is instant and reversible.
             </div>
           </motion.div>
         </motion.div>

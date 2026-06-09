@@ -2191,3 +2191,367 @@ html[data-labrat-theme="clinical"] .labrat-real-vial-photo {
     color: black !important;
   }
 }
+
+/* ========================================================================
+   CLINICAL LIGHT THEME
+   Clean white/off-white professional interface with blue accents.
+   Visual-only layer — no data, auth, PWA, or service worker changes.
+   ======================================================================== */
+
+/* Custom properties */
+html[data-labrat-theme="clinical-light"] {
+  --labrat-bg: #f0f4f8;
+  --labrat-bg-soft: #e8eef4;
+  --labrat-panel: rgba(255, 255, 255, 0.96);
+  --labrat-panel-strong: rgba(255, 255, 255, 0.99);
+  --labrat-border: rgba(148, 163, 184, 0.45);
+  --labrat-border-strong: rgba(37, 99, 235, 0.30);
+  --labrat-text: #0f172a;
+  --labrat-muted: #64748b;
+  --labrat-primary: #2563eb;
+  --labrat-secondary: #0ea5e9;
+  --labrat-accent: #334155;
+  --labrat-success: #16a34a;
+  --labrat-warning: #d97706;
+  --labrat-danger: #dc2626;
+  --labrat-card-shadow: 0 2px 12px rgba(15, 23, 42, 0.06), 0 1px 4px rgba(15, 23, 42, 0.04);
+  --labrat-glow: none;
+  --labrat-radius: 1.25rem;
+}
+
+/* Base backgrounds */
+html[data-labrat-theme="clinical-light"],
+html[data-labrat-theme="clinical-light"] body,
+html[data-labrat-theme="clinical-light"] #root,
+html[data-labrat-theme="clinical-light"] #labrat-app-shell {
+  background: #f0f4f8 !important;
+  color: #0f172a !important;
+}
+
+html[data-labrat-theme="clinical-light"] #labrat-app-shell {
+  background:
+    radial-gradient(circle at 20% -5%, rgba(219, 234, 254, 0.55), transparent 40%),
+    radial-gradient(circle at 85% 10%, rgba(186, 230, 253, 0.30), transparent 35%),
+    linear-gradient(180deg, #f0f4f8 0%, #eaeff6 55%, #f0f4f8 100%) !important;
+}
+
+/* Fixed background blobs — keep subtle */
+html[data-labrat-theme="clinical-light"] .fixed.bg-cyan-500\/5,
+html[data-labrat-theme="clinical-light"] .fixed.bg-indigo-500\/5 {
+  opacity: 0.04 !important;
+}
+
+/* Header */
+html[data-labrat-theme="clinical-light"] #app-header {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-bottom-color: rgba(148, 163, 184, 0.28) !important;
+  box-shadow: 0 1px 14px rgba(15, 23, 42, 0.07) !important;
+}
+
+/* Brand wordmark */
+html[data-labrat-theme="clinical-light"] .labrat-brand-wordmark {
+  color: #0f172a !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: none !important;
+  letter-spacing: -0.05em !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-lr-brand-mark {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+/* Nav rail */
+html[data-labrat-theme="clinical-light"] #navigation-tabs-rail {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(148, 163, 184, 0.28) !important;
+  box-shadow: 0 2px 16px rgba(15, 23, 42, 0.07) !important;
+}
+
+/* Kill all neon glows */
+html[data-labrat-theme="clinical-light"] [class*="shadow-\[0_0"],
+html[data-labrat-theme="clinical-light"] [class*="drop-shadow-\[0_0"] {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+/* All major page cards */
+html[data-labrat-theme="clinical-light"] .labrat-card,
+html[data-labrat-theme="clinical-light"] .labrat-card-strong,
+html[data-labrat-theme="clinical-light"] #cycle-mitigations-panel,
+html[data-labrat-theme="clinical-light"] #supplement-categories-presets,
+html[data-labrat-theme="clinical-light"] #dashboard-header-navigator,
+html[data-labrat-theme="clinical-light"] #daily-checklist-card,
+html[data-labrat-theme="clinical-light"] #administration-ledger-card,
+html[data-labrat-theme="clinical-light"] #cycle-progress-card,
+html[data-labrat-theme="clinical-light"] #push-reminders-card,
+html[data-labrat-theme="clinical-light"] #wellness-biomarkers-card,
+html[data-labrat-theme="clinical-light"] #blood-analyzer-page [class*="rounded-2xl"],
+html[data-labrat-theme="clinical-light"] #members-shop-page [class*="rounded-2xl"],
+html[data-labrat-theme="clinical-light"] #library-page [class*="rounded-2xl"],
+html[data-labrat-theme="clinical-light"] #planner-page [class*="rounded-2xl"] {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(148, 163, 184, 0.26) !important;
+  box-shadow: 0 2px 16px rgba(15, 23, 42, 0.06), 0 1px 4px rgba(15, 23, 42, 0.03) !important;
+}
+
+/* Dark panel backgrounds → light */
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/60,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/70,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/75,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0b1329\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f1624\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#030712\]\/50,
+html[data-labrat-theme="clinical-light"] .bg-\[\#030712\]\/70,
+html[data-labrat-theme="clinical-light"] .bg-slate-950,
+html[data-labrat-theme="clinical-light"] .bg-slate-900,
+html[data-labrat-theme="clinical-light"] .bg-slate-900\/60,
+html[data-labrat-theme="clinical-light"] .bg-slate-900\/50,
+html[data-labrat-theme="clinical-light"] .bg-slate-800,
+html[data-labrat-theme="clinical-light"] .bg-slate-800\/30,
+html[data-labrat-theme="clinical-light"] .bg-slate-800\/70 {
+  background-color: rgba(241, 245, 249, 0.90) !important;
+}
+
+/* Text: light → dark */
+html[data-labrat-theme="clinical-light"] .text-white,
+html[data-labrat-theme="clinical-light"] .text-slate-100,
+html[data-labrat-theme="clinical-light"] .text-slate-200 {
+  color: #0f172a !important;
+}
+
+html[data-labrat-theme="clinical-light"] .text-slate-300 {
+  color: #1e293b !important;
+}
+
+html[data-labrat-theme="clinical-light"] .text-slate-400 {
+  color: #475569 !important;
+}
+
+html[data-labrat-theme="clinical-light"] .text-slate-500 {
+  color: #64748b !important;
+}
+
+html[data-labrat-theme="clinical-light"] .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+/* Borders → light gray */
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\],
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/40,
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/45,
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/50,
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/60,
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/70,
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/80,
+html[data-labrat-theme="clinical-light"] .border-slate-800,
+html[data-labrat-theme="clinical-light"] .border-slate-800\/80,
+html[data-labrat-theme="clinical-light"] .border-slate-700,
+html[data-labrat-theme="clinical-light"] .border-slate-700\/60 {
+  border-color: rgba(148, 163, 184, 0.38) !important;
+}
+
+/* Cyan/neon → clinical blue */
+html[data-labrat-theme="clinical-light"] .bg-cyan-500 {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+html[data-labrat-theme="clinical-light"] .text-cyan-400,
+html[data-labrat-theme="clinical-light"] .text-cyan-300,
+html[data-labrat-theme="clinical-light"] .text-cyan-500 {
+  color: #2563eb !important;
+}
+
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/20,
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/25,
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/30,
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/35,
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/40,
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/45,
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/60 {
+  border-color: rgba(37, 99, 235, 0.25) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .bg-cyan-500\/5,
+html[data-labrat-theme="clinical-light"] .bg-cyan-500\/10,
+html[data-labrat-theme="clinical-light"] .bg-cyan-500\/20,
+html[data-labrat-theme="clinical-light"] .bg-cyan-950\/40,
+html[data-labrat-theme="clinical-light"] .bg-cyan-950\/45 {
+  background-color: rgba(37, 99, 235, 0.07) !important;
+}
+
+/* Purple/violet → slate */
+html[data-labrat-theme="clinical-light"] .text-purple-300,
+html[data-labrat-theme="clinical-light"] .text-purple-400,
+html[data-labrat-theme="clinical-light"] .text-indigo-300,
+html[data-labrat-theme="clinical-light"] .text-indigo-400 {
+  color: #475569 !important;
+}
+
+html[data-labrat-theme="clinical-light"] .bg-purple-500\/10,
+html[data-labrat-theme="clinical-light"] .bg-indigo-950\/40,
+html[data-labrat-theme="clinical-light"] .bg-indigo-950\/45 {
+  background-color: rgba(71, 85, 105, 0.07) !important;
+}
+
+/* Command hero */
+html[data-labrat-theme="clinical-light"] .labrat-command-hero {
+  background: linear-gradient(135deg, #ffffff, #f0f7ff) !important;
+  border-color: rgba(37, 99, 235, 0.18) !important;
+  box-shadow: 0 2px 20px rgba(15, 23, 42, 0.05), inset 0 0 0 1px rgba(37, 99, 235, 0.05) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-command-eyebrow {
+  color: #2563eb !important;
+  background: rgba(37, 99, 235, 0.07) !important;
+  border-color: rgba(37, 99, 235, 0.20) !important;
+  text-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-command-hero h2 {
+  color: #0f172a !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-command-hero p,
+html[data-labrat-theme="clinical-light"] .text-slate-400 {
+  color: #475569 !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-command-metrics div {
+  background: rgba(255, 255, 255, 0.78) !important;
+  border-color: rgba(37, 99, 235, 0.15) !important;
+  box-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-command-metrics strong {
+  color: #2563eb !important;
+  text-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-command-hero-art {
+  opacity: 0.55 !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-command-hero-art::before {
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.08), transparent 68%) !important;
+  filter: blur(16px) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-command-hero-art img {
+  filter: drop-shadow(0 6px 16px rgba(15, 23, 42, 0.14)) !important;
+  border-radius: 2rem !important;
+}
+
+/* Preset cards */
+html[data-labrat-theme="clinical-light"] #preset-card-vitamins img,
+html[data-labrat-theme="clinical-light"] #preset-card-joint-health img,
+html[data-labrat-theme="clinical-light"] #preset-card-estrogen-control img,
+html[data-labrat-theme="clinical-light"] #preset-card-endocrine-shield img,
+html[data-labrat-theme="clinical-light"] #preset-card-liver-support img,
+html[data-labrat-theme="clinical-light"] #preset-card-jitter-rescue img {
+  background: rgba(241, 245, 249, 0.85) !important;
+  border-color: rgba(37, 99, 235, 0.15) !important;
+  box-shadow: none !important;
+}
+
+/* Vial visual — bright white/light-blue background */
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-visual {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(219, 234, 254, 0.65), transparent 38%),
+    radial-gradient(circle at 82% 18%, rgba(186, 230, 253, 0.45), transparent 36%),
+    linear-gradient(135deg, #f8fbff, #eff5ff 52%, #f4f8ff) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-visual--china {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(254, 202, 202, 0.5), transparent 36%),
+    radial-gradient(circle at 82% 18%, rgba(252, 165, 165, 0.3), transparent 34%),
+    linear-gradient(135deg, #fff5f5, #fef2f2 50%, #fff8f8) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-visual--usa {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(253, 230, 138, 0.5), transparent 36%),
+    radial-gradient(circle at 82% 18%, rgba(252, 211, 77, 0.3), transparent 34%),
+    linear-gradient(135deg, #fffbeb, #fef9c3 50%, #fffdf0) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-grid {
+  background-image:
+    linear-gradient(rgba(37, 99, 235, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.05) 1px, transparent 1px) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-visual--china .labrat-real-vial-grid {
+  background-image:
+    linear-gradient(rgba(239, 68, 68, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(239, 68, 68, 0.05) 1px, transparent 1px) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-visual--usa .labrat-real-vial-grid {
+  background-image:
+    linear-gradient(rgba(245, 158, 11, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 158, 11, 0.05) 1px, transparent 1px) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-orb {
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.10), rgba(37, 99, 235, 0.02) 50%, transparent 76%) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-visual--china .labrat-real-vial-orb {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.03) 50%, transparent 76%) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-visual--usa .labrat-real-vial-orb {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.14), rgba(245, 158, 11, 0.03) 50%, transparent 76%) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-photo {
+  filter: brightness(1.01) contrast(1.02) saturate(0.95) !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10), 0 0 16px rgba(37, 99, 235, 0.07) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-overlay-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.88)) !important;
+  border-color: rgba(37, 99, 235, 0.14) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-overlay-brand,
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-overlay-meta strong {
+  color: #2563eb !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-overlay-name {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-overlay-sub {
+  color: rgba(30, 41, 59, 0.82) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-bottom-strip {
+  color: rgba(30, 41, 59, 0.75) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-bottom-strip strong {
+  color: #2563eb !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-real-vial-chip-row span {
+  color: #2563eb !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-color: rgba(37, 99, 235, 0.20) !important;
+}
+
+@media (max-width: 480px) {
+  html[data-labrat-theme="clinical-light"] .labrat-command-hero-art img {
+    border-radius: 1.25rem !important;
+  }
+}

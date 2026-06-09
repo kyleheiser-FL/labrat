@@ -46,7 +46,7 @@ export default function CyclePlanner({
   labratTheme = 'neon',
   visibility = { pct: true, dataControls: true }
 }: CyclePlannerProps) {
-  const protocolIcon = (name: string) => `/protocol-icons/${name}-${labratTheme === 'clinical' ? 'clinical' : 'neon'}.svg`;
+  const protocolIcon = (name: string) => `/protocol-icons/${name}-${labratTheme === 'neon' ? 'neon' : 'clinical'}.svg`;
 
   const [showForm, setShowForm] = useState(false);
   const [editingCompound, setEditingCompound] = useState<Compound | null>(null);
