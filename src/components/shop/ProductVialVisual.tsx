@@ -173,12 +173,12 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
     : (isSolvent ? '/shop/labrat-real-vial-solvent.png' : '/shop/labrat-real-vial-peptide.png');
 
   if (isLight) {
-    const frameBorder = isChina ? 'border-red-200' : isUsaWarehouse ? 'border-amber-200' : 'border-blue-200';
+    const frameBorder = isChina ? '#fecaca' : isUsaWarehouse ? '#fde68a' : '#bfdbfe';
     return (
       <div className="w-full min-h-[300px] bg-white flex flex-col relative overflow-hidden select-none border-b border-slate-200">
         {/* Source badge */}
         {!isSolvent && (
-          <div className="absolute top-3 left-3 z-10 flex items-center gap-1">
+          <div className="absolute top-3 left-3 z-20 flex items-center gap-1">
             {isUsaWarehouse ? (
               <>
                 <span className="text-sm leading-none">🇨🇳</span>
@@ -198,20 +198,22 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
             )}
           </div>
         )}
-        {/* Photo in contained dark frame */}
-        <div className={`mx-4 mt-10 mb-3 rounded-2xl overflow-hidden border-2 ${frameBorder} shadow-md`} style={{ background: '#0a0e1a' }}>
+        {/* Photo in contained frame with product name overlay */}
+        <div className="mx-3 mt-10 mb-0 rounded-2xl overflow-hidden shadow-sm relative"
+          style={{ border: `2px solid ${frameBorder}`, background: '#0a0e1a' }}>
           <img
             src={imageSrc}
             alt={`${cleanFullName} LabRat branded research vial`}
             className={`w-full object-cover${isChina ? ' hue-rotate-[330deg] saturate-[1.2]' : isUsaWarehouse ? ' sepia-[0.3] saturate-[1.3]' : ''}`}
             loading="lazy"
           />
-        </div>
-        {/* Info strip */}
-        <div className="px-4 pb-3">
-          <div className="text-[8px] font-black uppercase tracking-widest text-blue-600">LABRAT</div>
-          <div className="text-sm font-black text-slate-900 leading-tight">{firstWord}</div>
-          <div className="text-[11px] text-slate-500 truncate">{remainingWords || category}</div>
+          {/* Overlay covers the "Klow" label area with actual product name */}
+          <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-8"
+            style={{ background: 'linear-gradient(to top, rgba(10,14,26,0.96) 60%, transparent)' }}>
+            <div className="text-[8px] font-black uppercase tracking-widest text-blue-400">LABRAT</div>
+            <div className="text-sm font-black text-white leading-tight">{firstWord}</div>
+            <div className="text-[11px] text-slate-300 truncate">{remainingWords || category}</div>
+          </div>
         </div>
       </div>
     );

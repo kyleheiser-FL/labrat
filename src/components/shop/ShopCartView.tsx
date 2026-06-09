@@ -216,7 +216,7 @@ export default function ShopCartView({
                 </div>
               )}
 
-              <div className="bg-[#0b1329] border border-[#1e293b] p-6 rounded-2xl">
+              <div id="cart-order-summary-card" className="bg-[#0b1329] border border-[#1e293b] p-6 rounded-2xl">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 pb-2 border-b border-[#1e293b]">
                   Order Summary
                 </h3>
@@ -254,6 +254,7 @@ export default function ShopCartView({
                 </div>
 
                 <button
+                  id="cart-checkout-btn"
                   onClick={() => { triggerHaptic('light'); onSetView('checkout'); }}
                   className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs uppercase mt-5 active:scale-[0.98] cursor-pointer transition-all flex items-center justify-center gap-1.5"
                 >

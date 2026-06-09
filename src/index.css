@@ -3009,3 +3009,37 @@ html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-yellow-500\/1
 html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-yellow-400 { color: #713f12 !important; }
 html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-slate-700\/50 { background-color: #e2e8f0 !important; }
 html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-slate-300 { color: #334155 !important; }
+
+/* ── clinical-light: cart order summary card + checkout button ──────── */
+html[data-labrat-theme="clinical-light"] #cart-order-summary-card {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+  border-color: rgba(148, 163, 184, 0.5) !important;
+}
+html[data-labrat-theme="clinical-light"] #cart-order-summary-card h3 {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #cart-order-summary-card .text-white {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #cart-order-summary-card .text-slate-400,
+html[data-labrat-theme="clinical-light"] #cart-order-summary-card .text-slate-200 {
+  color: #475569 !important;
+}
+html[data-labrat-theme="clinical-light"] #cart-order-summary-card .text-slate-500 {
+  color: #64748b !important;
+}
+html[data-labrat-theme="clinical-light"] #cart-order-summary-card .h-px {
+  background-color: rgba(148, 163, 184, 0.4) !important;
+}
+html[data-labrat-theme="clinical-light"] #cart-order-summary-card .bg-cyan-500\/5 {
+  background-color: rgba(219, 234, 254, 0.6) !important;
+  border-color: rgba(37, 99, 235, 0.3) !important;
+}
+/* Checkout button — force visible blue */
+html[data-labrat-theme="clinical-light"] #cart-checkout-btn {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+html[data-labrat-theme="clinical-light"] #cart-checkout-btn:hover {
+  background-color: #1d4ed8 !important;
+}
