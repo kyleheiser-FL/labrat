@@ -168,8 +168,8 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   const firstWord = nameParts[0] || 'Peptide';
   const remainingWords = nameParts.slice(1).join(' ');
 
-  // clinical-light uses generic real vials (no branded "Klow" label); clinical uses professional photo
-  const imageSrc = theme === 'clinical'
+  // both clinical themes use professional dark photos; neon uses generic real-vial style
+  const imageSrc = (theme === 'clinical' || theme === 'clinical-light')
     ? (isSolvent ? '/shop/labrat-professional-vial-solvent.png' : '/shop/labrat-professional-vial-peptide.png')
     : (isSolvent ? '/shop/labrat-real-vial-solvent.png' : '/shop/labrat-real-vial-peptide.png');
 
@@ -208,9 +208,9 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
             className={`w-full object-cover${isChina ? ' hue-rotate-[330deg] saturate-[1.2]' : isUsaWarehouse ? ' sepia-[0.3] saturate-[1.3]' : ''}`}
             loading="lazy"
           />
-          {/* Solid dark bar at bottom — inline styles prevent clinical-light CSS from flipping text dark */}
-          <div className="absolute bottom-0 left-0 right-0 px-3 pb-2.5 pt-2.5"
-            style={{ background: 'rgba(8,12,28,0.96)' }}>
+          {/* Gradient overlay from 35% down covers the Klow label area; inline styles prevent CSS theme overrides */}
+          <div className="absolute inset-0 px-3 pb-2.5 flex flex-col justify-end"
+            style={{ background: 'linear-gradient(to bottom, transparent 35%, rgba(8,12,28,0.88) 55%, rgba(8,12,28,0.98) 100%)' }}>
             <div style={{ fontSize: '7px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#94a3b8' }}>LABRAT</div>
             <div style={{ fontSize: '0.875rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.3 }}>{firstWord}</div>
             <div style={{ fontSize: '11px', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remainingWords || category}</div>

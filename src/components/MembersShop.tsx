@@ -2197,6 +2197,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       <AnimatePresence>
         {totalQty > 0 && !['cart', 'checkout'].includes(view) && !selectedParentProductGroup && (
           <motion.button
+            id="floating-view-cart-btn"
             key="floating-cart"
             initial={{ scale: 0, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}

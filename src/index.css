@@ -3246,3 +3246,46 @@ html[data-labrat-theme="clinical-light"] #shop-checkout-view button[type="submit
   background-color: #1e293b !important;
   color: #ffffff !important;
 }
+
+/* ── MONOCHROME PATCH: active category pill icon ring ─────────────────── */
+/* The broad bg-cyan-9xx rule turns the w-6 icon ring light; restore semi-transparent white inside dark pill */
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-cyan-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-emerald-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-amber-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-violet-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-rose-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-indigo-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-blue-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-pink-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-red-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-sky-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-teal-950"],
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-gradient-to-br [class*="bg-fuchsia-950"] {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ── MONOCHROME PATCH: Norway Heritage Banner badges ──────────────────── */
+/* SCANDINAVIAN HERITAGE: existing rule set it to blue; this equal-specificity rule placed last overrides to dark */
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner [class*="text-cyan-"] {
+  color: #1e293b !important;
+}
+/* SCANDINAVIAN HERITAGE badge background → light gray */
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner [class*="bg-cyan-"] {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(100, 116, 139, 0.45) !important;
+}
+/* SWISS GMP: hardcoded hex arbitrary-value Tailwind classes not caught by wildcard color rules */
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner span[class*="text-[#"] {
+  color: #334155 !important;
+}
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner span[class*="bg-[#"] {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(100, 116, 139, 0.45) !important;
+}
+
+/* ── MONOCHROME PATCH: floating View Cart button ─────────────────────── */
+html[data-labrat-theme="clinical-light"] #floating-view-cart-btn {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+}
