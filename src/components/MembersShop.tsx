@@ -1180,6 +1180,10 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     if (!isViewingAsAdmin) {
       if (isAnyChinaPricing && p.sourceRestriction === 'norway') matchesSource = false;
       if (!isAnyChinaPricing && p.sourceRestriction === 'china') matchesSource = false;
+      // Hide products from China customers that have no China price defined
+      // (not in resolveChineseKitCost / resolveChineseVialCost) and aren't solvents
+      const isSolventProduct = p.category.toLowerCase().includes('reconstitution') || p.category.toLowerCase().includes('solvent') || p.name.toLowerCase().includes('bacteriostatic');
+      if (isAnyChinaPricing && !isSolventProduct && !getChinaKitSellPrice(p.name) && !getChinaVialSellPrice(p.name)) matchesSource = false;
     }
     return matchesCategory && matchesSearch && matchesSource;
   });
