@@ -168,7 +168,8 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   const firstWord = nameParts[0] || 'Peptide';
   const remainingWords = nameParts.slice(1).join(' ');
 
-  const imageSrc = (theme === 'clinical' || theme === 'clinical-light')
+  // clinical-light uses generic real vials (no branded "Klow" label); clinical uses professional photo
+  const imageSrc = theme === 'clinical'
     ? (isSolvent ? '/shop/labrat-professional-vial-solvent.png' : '/shop/labrat-professional-vial-peptide.png')
     : (isSolvent ? '/shop/labrat-real-vial-solvent.png' : '/shop/labrat-real-vial-peptide.png');
 
@@ -207,12 +208,12 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
             className={`w-full object-cover${isChina ? ' hue-rotate-[330deg] saturate-[1.2]' : isUsaWarehouse ? ' sepia-[0.3] saturate-[1.3]' : ''}`}
             loading="lazy"
           />
-          {/* Overlay covers the "Klow" label area with actual product name */}
-          <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-8"
-            style={{ background: 'linear-gradient(to top, rgba(10,14,26,0.96) 60%, transparent)' }}>
-            <div className="text-[8px] font-black uppercase tracking-widest text-blue-400">LABRAT</div>
-            <div className="text-sm font-black text-white leading-tight">{firstWord}</div>
-            <div className="text-[11px] text-slate-300 truncate">{remainingWords || category}</div>
+          {/* Solid dark bar at bottom — inline styles prevent clinical-light CSS from flipping text dark */}
+          <div className="absolute bottom-0 left-0 right-0 px-3 pb-2.5 pt-2.5"
+            style={{ background: 'rgba(8,12,28,0.96)' }}>
+            <div style={{ fontSize: '7px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#60a5fa' }}>LABRAT</div>
+            <div style={{ fontSize: '0.875rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.3 }}>{firstWord}</div>
+            <div style={{ fontSize: '11px', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remainingWords || category}</div>
           </div>
         </div>
       </div>

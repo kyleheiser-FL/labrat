@@ -2927,10 +2927,10 @@ html[data-labrat-theme="clinical-light"] #shop-categories-deck .from-slate-950 {
   --tw-gradient-from: #ffffff !important;
   --tw-gradient-to: transparent !important;
 }
-/* Category pill — inactive */
+/* Category pill — inactive: use visible gray so pills stand out on white bg */
 html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-slate-950 {
-  background-color: #ffffff !important;
-  border-color: rgba(148, 163, 184, 0.55) !important;
+  background-color: #e2e8f0 !important;
+  border-color: rgba(100, 116, 139, 0.45) !important;
   color: #334155 !important;
 }
 html[data-labrat-theme="clinical-light"] #shop-categories-deck .text-slate-400 {
@@ -3009,6 +3009,66 @@ html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-yellow-500\/1
 html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-yellow-400 { color: #713f12 !important; }
 html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-slate-700\/50 { background-color: #e2e8f0 !important; }
 html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-slate-300 { color: #334155 !important; }
+
+/* ── clinical-light: checkout delivery form ──────────────────────────── */
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .bg-\[\#0b1329\]\/70,
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .bg-\[\#0b1329\] {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+  border-color: rgba(100, 116, 139, 0.4) !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-view h3,
+html[data-labrat-theme="clinical-light"] #shop-checkout-view h4,
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .text-white,
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .text-slate-200 {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .text-slate-300,
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .text-slate-400 {
+  color: #475569 !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .text-slate-500 {
+  color: #64748b !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-view input,
+html[data-labrat-theme="clinical-light"] #shop-checkout-view textarea {
+  background-color: #ffffff !important;
+  border-color: rgba(148, 163, 184, 0.5) !important;
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-view input::placeholder,
+html[data-labrat-theme="clinical-light"] #shop-checkout-view textarea::placeholder {
+  color: #94a3b8 !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .text-cyan-400 {
+  color: #2563eb !important;
+}
+/* Adjust Cart back button — give it clear visible styling */
+html[data-labrat-theme="clinical-light"] #shop-checkout-adjust-btn {
+  background-color: #e2e8f0 !important;
+  border-color: rgba(100, 116, 139, 0.5) !important;
+  color: #334155 !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-adjust-btn:hover {
+  background-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+/* Submit order button */
+html[data-labrat-theme="clinical-light"] #shop-checkout-view button[type="submit"] {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-view button[type="submit"]:hover {
+  background-color: #1d4ed8 !important;
+}
+/* Dispatch origin / shipping option cards */
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .bg-slate-950\/40 {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+  border-color: rgba(100, 116, 139, 0.4) !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-checkout-view .bg-slate-950 {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(148, 163, 184, 0.45) !important;
+}
 
 /* ── clinical-light: cart order summary card + checkout button ──────── */
 html[data-labrat-theme="clinical-light"] #cart-order-summary-card {

@@ -69,7 +69,7 @@ export default function ShopCheckoutView({
   const finalInvoiceTotal = subtotal + shippingCost + salesTax;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div id="shop-checkout-view" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
       {/* DELIVERY DATA INPUTS */}
       <div className="lg:col-span-2">
@@ -328,6 +328,7 @@ export default function ShopCheckoutView({
 
             <div className="flex gap-3 pt-4">
               <button
+                id="shop-checkout-adjust-btn"
                 type="button"
                 onClick={() => { triggerHaptic('light'); onSetView('cart'); }}
                 className="px-5 py-3 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-slate-100 font-bold text-xs rounded-xl cursor-pointer"
