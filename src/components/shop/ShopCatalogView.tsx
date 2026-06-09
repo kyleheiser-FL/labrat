@@ -152,7 +152,7 @@ export default function ShopCatalogView({
 
       {/* Pricing notice banner — different for kit vs china vs standard members */}
       {isKitPricing ? (
-        <div className="bg-gradient-to-r from-cyan-950/30 via-[#0a0f1d] to-cyan-950/30 border border-cyan-500/30 rounded-xl p-3 sm:p-4 text-left">
+        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-cyan-950/30 via-[#0a0f1d] to-cyan-950/30 border border-cyan-500/30 rounded-xl p-3 sm:p-4 text-left">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Package className="w-4 h-4 text-cyan-400" />
@@ -167,7 +167,7 @@ export default function ShopCatalogView({
           </p>
         </div>
       ) : isChinaKitPricing ? (
-        <div className="bg-gradient-to-r from-red-950/30 via-[#0a0f1d] to-red-950/30 border border-red-500/30 rounded-xl p-3 sm:p-4 text-left">
+        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-red-950/30 via-[#0a0f1d] to-red-950/30 border border-red-500/30 rounded-xl p-3 sm:p-4 text-left">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-red-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Package className="w-4 h-4 text-red-400" />
@@ -182,7 +182,7 @@ export default function ShopCatalogView({
           </p>
         </div>
       ) : isChinaVialPricing ? (
-        <div className="bg-gradient-to-r from-orange-950/30 via-[#0a0f1d] to-orange-950/30 border border-orange-500/30 rounded-xl p-3 sm:p-4 text-left">
+        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-orange-950/30 via-[#0a0f1d] to-orange-950/30 border border-orange-500/30 rounded-xl p-3 sm:p-4 text-left">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-orange-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-orange-400" />
@@ -197,7 +197,7 @@ export default function ShopCatalogView({
           </p>
         </div>
       ) : (
-        <div className="bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 border border-cyan-500/20 rounded-xl p-3 sm:p-4 text-left shadow-[0_0_15px_rgba(6,182,212,0.03)] focus-within:ring-1 focus-within:ring-cyan-500/30">
+        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 border border-cyan-500/20 rounded-xl p-3 sm:p-4 text-left shadow-[0_0_15px_rgba(6,182,212,0.03)] focus-within:ring-1 focus-within:ring-cyan-500/30">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-cyan-400" />
@@ -270,6 +270,7 @@ export default function ShopCatalogView({
       {/* Norway & Switzerland Heritage Banner — hidden for China-sourced pricing tiers */}
       {!isChinaKitPricing && !isChinaVialPricing && (
       <div
+        id="norway-heritage-banner"
         onClick={() => { triggerHaptic('medium'); onSetShowNorwayModal(true); }}
         className="bg-gradient-to-r from-cyan-950/20 via-slate-900 to-indigo-950/20 border border-cyan-800/20 hover:border-cyan-400/40 rounded-xl p-3 sm:p-4 text-left cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.06)] group/norway-banner relative overflow-hidden focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-400"
         tabIndex={0}
@@ -306,7 +307,7 @@ export default function ShopCatalogView({
       {/* Product Filtering and Search actions */}
       <div className="space-y-4">
         {/* Search Bar & Admin Actions */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/80 border border-slate-800/80 p-3 sm:px-4 rounded-xl">
+        <div id="shop-search-filter-bar" className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/80 border border-slate-800/80 p-3 sm:px-4 rounded-xl">
           <div className="relative w-full sm:max-w-md">
             <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input

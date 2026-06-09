@@ -2750,3 +2750,123 @@ html[data-labrat-theme="clinical-light"] [id$="-section"] {
     border-radius: 1.25rem !important;
   }
 }
+
+/* ── clinical-light: shop page dark cards ─────────────────────────── */
+html[data-labrat-theme="clinical-light"] #shop-welcome-hero {
+  background: linear-gradient(135deg, #f0f6ff, #eef4fc) !important;
+  border-color: rgba(37, 99, 235, 0.25) !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-welcome-hero h1,
+html[data-labrat-theme="clinical-light"] #shop-welcome-hero span {
+  color: #0f172a !important;
+}
+
+/* Shop nav pill (Catalog / Cart / Orders) */
+html[data-labrat-theme="clinical-light"] #shop-welcome-hero .bg-slate-950 {
+  background-color: rgba(226, 232, 240, 0.6) !important;
+  border-color: rgba(100, 116, 139, 0.35) !important;
+}
+
+/* Admin control bar */
+html[data-labrat-theme="clinical-light"] #admin-control-bar {
+  background: rgba(255, 241, 242, 0.75) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+html[data-labrat-theme="clinical-light"] #admin-control-bar .text-red-400 {
+  color: #b91c1c !important;
+}
+html[data-labrat-theme="clinical-light"] #admin-control-bar .text-slate-500 {
+  color: #475569 !important;
+}
+/* Admin view-toggle pill row */
+html[data-labrat-theme="clinical-light"] #admin-control-bar .bg-slate-900\/60 {
+  background-color: rgba(241, 245, 249, 0.8) !important;
+  border-color: rgba(148, 163, 184, 0.45) !important;
+}
+
+/* Pricing notice banner — Research Vial / Kit / China variants */
+html[data-labrat-theme="clinical-light"] #shop-pricing-notice-banner {
+  background: linear-gradient(135deg, #f0f9ff, #eff6ff) !important;
+  border-color: rgba(37, 99, 235, 0.28) !important;
+  box-shadow: none !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-pricing-notice-banner h3,
+html[data-labrat-theme="clinical-light"] #shop-pricing-notice-banner .text-white {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-pricing-notice-banner .text-cyan-300 {
+  color: #2563eb !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-pricing-notice-banner .text-slate-400 {
+  color: #475569 !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-pricing-notice-banner .bg-cyan-950\/45,
+html[data-labrat-theme="clinical-light"] #shop-pricing-notice-banner .bg-cyan-950\/65 {
+  background-color: rgba(219, 234, 254, 0.7) !important;
+  border-color: rgba(37, 99, 235, 0.3) !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-pricing-notice-banner .border-b {
+  border-color: rgba(148, 163, 184, 0.4) !important;
+}
+
+/* Norway Heritage Banner */
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner {
+  background: linear-gradient(135deg, rgba(239, 246, 255, 0.9), rgba(238, 242, 255, 0.85)) !important;
+  border-color: rgba(37, 99, 235, 0.25) !important;
+}
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner h4,
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner .text-white {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner .text-slate-400,
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner .text-slate-500 {
+  color: #475569 !important;
+}
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner .text-cyan-400 {
+  color: #2563eb !important;
+}
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner .bg-cyan-950\/60 {
+  background-color: rgba(219, 234, 254, 0.65) !important;
+  border-color: rgba(37, 99, 235, 0.25) !important;
+}
+html[data-labrat-theme="clinical-light"] #norway-heritage-banner .bg-gradient-to-br {
+  background: rgba(219, 234, 254, 0.4) !important;
+}
+
+/* Search + filter bar */
+html[data-labrat-theme="clinical-light"] #shop-search-filter-bar {
+  background: rgba(248, 250, 252, 0.9) !important;
+  border-color: rgba(100, 116, 139, 0.4) !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-search-filter-bar input {
+  background-color: #ffffff !important;
+  border-color: rgba(148, 163, 184, 0.5) !important;
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-search-filter-bar input::placeholder {
+  color: #94a3b8 !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-search-filter-bar .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Search suggestions dropdown */
+html[data-labrat-theme="clinical-light"] #shop-suggestions-dropdown {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-color: rgba(37, 99, 235, 0.3) !important;
+  box-shadow: 0 15px 30px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* USA Fast Ship strip */
+html[data-labrat-theme="clinical-light"] #active-shop-interface .border-amber-500\/25 {
+  background: linear-gradient(135deg, #fffbeb, #fef9c3 50%, #fffbeb) !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Compound card / checklist: text visibility fixes */
+html[data-labrat-theme="clinical-light"] .text-slate-500 {
+  color: #475569 !important;
+}
+html[data-labrat-theme="clinical-light"] .text-slate-600 {
+  color: #334155 !important;
+}
