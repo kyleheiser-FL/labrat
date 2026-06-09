@@ -1346,7 +1346,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                 isAdminPreviewKit ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              <Package className="w-3 h-3" /> 🇳🇴 Kit
+              🇳🇴 Kit
             </button>
             <button
               onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(true); navigateView('catalog'); }}
@@ -2199,6 +2199,12 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           <motion.button
             id="floating-view-cart-btn"
             key="floating-cart"
+            ref={(el: HTMLButtonElement | null) => {
+              if (el && labratTheme !== 'neon') {
+                el.style.setProperty('background-color', '#1e293b', 'important');
+                el.style.setProperty('color', '#ffffff', 'important');
+              }
+            }}
             initial={{ scale: 0, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0, opacity: 0, y: 20 }}
@@ -2206,7 +2212,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
             onClick={() => { triggerHaptic('light'); navigateView('cart'); }}
             className="fixed bottom-6 left-4 z-[999] flex items-center gap-2.5 px-4 py-3 active:scale-95 font-black text-sm rounded-2xl shadow-xl cursor-pointer"
             style={{
-              backgroundColor: labratTheme === 'neon' ? '#06b6d4' : '#111827',
+              backgroundColor: labratTheme === 'neon' ? '#06b6d4' : '#1e293b',
               color: '#ffffff',
               boxShadow: labratTheme === 'neon'
                 ? '0 10px 25px -5px rgba(6,182,212,0.4)'
