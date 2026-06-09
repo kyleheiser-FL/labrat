@@ -69,7 +69,6 @@ export default function ShopCheckoutView({
   const shippingCost = isKitPricing ? 25 : isChinaKitPricing ? 50 : isChinaVialPricing ? 0 : (selectedOption ? selectedOption.cost : 0);
   const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
   const salesTaxRate = 0.06;
-  const isNorwayOrChina = isKitPricing || isChinaKitPricing || isChinaVialPricing;
   const bacWaterCost = bacWaterQty * 7;
   const salesTax = isFlorida ? Math.round((subtotal + bacWaterCost) * salesTaxRate * 100) / 100 : 0;
   const finalInvoiceTotal = subtotal + bacWaterCost + shippingCost + salesTax;
@@ -390,9 +389,8 @@ export default function ShopCheckoutView({
 
           <div className="h-px bg-slate-800 my-3" />
 
-          {/* BAC Water Add-On (China/Norway customers only) */}
-          {isNorwayOrChina && (
-            <div className="bg-slate-900/50 border border-slate-700/60 rounded-xl p-2.5 mb-3">
+          {/* BAC Water Add-On */}
+          <div className="bg-slate-900/50 border border-slate-700/60 rounded-xl p-2.5 mb-3">
               <div className="text-[9px] font-bold text-cyan-400/80 uppercase tracking-widest font-mono mb-1.5">Checkout Add-On</div>
               <div className="flex items-center justify-between gap-2">
                 <div className="text-left">
@@ -417,8 +415,7 @@ export default function ShopCheckoutView({
                   </button>
                 </div>
               </div>
-            </div>
-          )}
+          </div>
 
           {/* Detailed Invoice Breakdown */}
           <div className="space-y-2 text-xs border-b border-slate-800/60 pb-3 mb-3">

@@ -1190,9 +1190,9 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       if (!isAnyChinaPricing && p.sourceRestriction === 'china') matchesSource = false;
       // Hide products from China customers that have no China price defined
       // (not in resolveChineseKitCost / resolveChineseVialCost) and aren't solvents
-      // Hide BAC water from China and Norway customers (available as $7/vial checkout add-on)
+      // Hide BAC water from all customers — available as a $7/vial checkout add-on
       const isBacWater = p.id.startsWith('prod_bac_water');
-      if ((isAnyChinaPricing || isKitPricing) && isBacWater) matchesSource = false;
+      if (isBacWater) matchesSource = false;
       // Hide products from China customers that have no China price defined
       if (isAnyChinaPricing && !isBacWater && !getChinaKitSellPrice(p.name) && !getChinaVialSellPrice(p.name)) matchesSource = false;
     }
