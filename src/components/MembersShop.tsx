@@ -1206,6 +1206,9 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
 
       {/* Scrolling credential pill ticker — auto-scrolls, swipeable */}
       {(() => {
+        const darkPill = labratTheme === 'clinical-light'
+          ? 'bg-slate-200 text-slate-600 border-slate-400/60'
+          : 'bg-slate-700/60 text-slate-200 border-slate-500/50';
         const pills = [
           { label: 'Authorized Lab Supply', cls: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/25', certKey: 'authorized_supply' },
           { label: '🔬 Research Use Only',  cls: 'bg-amber-500/20 text-amber-300 border-amber-500/25', certKey: 'research_only' },
@@ -1214,10 +1217,10 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           { label: 'COAs Available',         cls: 'bg-blue-500/10 text-blue-400 border-blue-500/20', certKey: 'coas_available' },
           { label: 'SOP Verified',           cls: 'bg-purple-500/10 text-purple-300 border-purple-500/20', certKey: 'sop_verified' },
           { label: '🇳🇴 Norway Sourced',    cls: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20' },
-          { label: 'ISO 17025',              cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'iso_17025' },
-          { label: 'ISO 9001',               cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'iso_9001' },
-          { label: 'EU GMP Annex 1',         cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'eu_gmp' },
-          { label: 'GDP Standard',           cls: 'bg-slate-700/60 text-slate-200 border-slate-500/50', certKey: 'gdp' },
+          { label: 'ISO 17025',              cls: darkPill, certKey: 'iso_17025' },
+          { label: 'ISO 9001',               cls: darkPill, certKey: 'iso_9001' },
+          { label: 'EU GMP Annex 1',         cls: darkPill, certKey: 'eu_gmp' },
+          { label: 'GDP Standard',           cls: darkPill, certKey: 'gdp' },
         ];
         const onGrab = () => {
           tickerPausedRef.current = true;
@@ -1229,7 +1232,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         return (
           <div
             ref={tickerRef}
-            className="overflow-x-auto scrollbar-hide flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-[#060d1a] py-2 px-3 cursor-grab active:cursor-grabbing select-none"
+            className={`overflow-x-auto scrollbar-hide flex items-center gap-2 rounded-xl border py-2 px-3 cursor-grab active:cursor-grabbing select-none ${labratTheme === 'clinical-light' ? 'border-slate-300/70 bg-slate-100/90' : 'border-cyan-500/20 bg-[#060d1a]'}`}
             onPointerDown={onGrab}
             onPointerUp={onRelease}
             onPointerLeave={onRelease}
