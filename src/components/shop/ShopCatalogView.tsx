@@ -213,6 +213,60 @@ export default function ShopCatalogView({
         </div>
       )}
 
+      {/* USA Fast Ship — featured strip for China tier members */}
+      {(isChinaVialPricing || isChinaKitPricing) && (() => {
+        const usaProducts = products.filter(p => p.category === 'USA Fast Ship');
+        if (usaProducts.length === 0) return null;
+        return (
+          <div className="bg-gradient-to-r from-slate-900 via-[#0d1220] to-slate-900 border border-amber-500/25 rounded-2xl p-4 text-left">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-base">🇺🇸</span>
+                <span className="text-xs font-black text-white uppercase tracking-wider">USA Fast Ship — Retatrutide</span>
+                <span className="text-[9px] font-black text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">Same-Week Dispatch</span>
+              </div>
+              <span className="text-[10px] text-slate-500">Ships from US warehouse</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {usaProducts.map(p => {
+                const displayPrice = isChinaVialPricing
+                  ? (getChinaVialSellPrice(p.name) || p.price)
+                  : isChinaKitPricing
+                  ? (getChinaKitSellPrice(p.name) || p.price)
+                  : p.price;
+                const { size } = getProductBaseAndSize(p.name);
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => {
+                      triggerHaptic('medium');
+                      const group = {
+                        baseName: 'Retatrutide US Warehouse',
+                        category: 'USA Fast Ship',
+                        description: p.description,
+                        options: usaProducts.map(u => ({ ...u, size: getProductBaseAndSize(u.name).size })),
+                      };
+                      onSetSelectedParentProductGroup(group);
+                      onSetSelectedOptionIdInDrawer(p.id);
+                      onSetDrawerQuantity(1);
+                      onSetShowProductModal(false);
+                    }}
+                    className="bg-slate-950 border border-slate-800 hover:border-amber-500/40 rounded-xl p-3 flex flex-col items-center gap-1 transition-all cursor-pointer hover:bg-slate-900 active:scale-[0.97]"
+                  >
+                    <span className="text-[9px] font-black text-amber-400 uppercase tracking-wider">{size}</span>
+                    <span className="text-sm font-black text-white">${displayPrice}</span>
+                    <span className="text-[8px] text-emerald-400 font-bold flex items-center gap-0.5">
+                      <span className="w-1 h-1 rounded-full bg-emerald-400 inline-block"></span> In Stock
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Norway & Switzerland Heritage Banner — hidden for China-sourced pricing tiers */}
       {!isChinaKitPricing && !isChinaVialPricing && (
       <div
