@@ -412,7 +412,7 @@ export default function ShopCatalogView({
         </div>
 
         {/* Advanced Category Visual Tabs Deck */}
-        <div className="bg-[#0b1329]/40 border border-slate-850 p-3 sm:p-4 rounded-xl space-y-2.5">
+        <div id="shop-categories-deck" className="bg-[#0b1329]/40 border border-slate-850 p-3 sm:p-4 rounded-xl space-y-2.5">
           <div className="flex items-center justify-between px-1 select-none">
             <span className="text-[9px] font-black tracking-widest text-[#22d3ee] uppercase flex items-center gap-1.5">
               <Sparkles className="w-3 h-3 text-cyan-400 animate-pulse" /> Sourcing Categories

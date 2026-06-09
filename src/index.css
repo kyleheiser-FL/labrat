@@ -2870,3 +2870,142 @@ html[data-labrat-theme="clinical-light"] .text-slate-500 {
 html[data-labrat-theme="clinical-light"] .text-slate-600 {
   color: #334155 !important;
 }
+
+/* ── clinical-light: shop cart ─────────────────────────────────────── */
+html[data-labrat-theme="clinical-light"] #shop-cart-view {
+  color: #0f172a;
+}
+html[data-labrat-theme="clinical-light"] #shop-cart-view .text-white,
+html[data-labrat-theme="clinical-light"] #shop-cart-view h2,
+html[data-labrat-theme="clinical-light"] #shop-cart-view h3,
+html[data-labrat-theme="clinical-light"] #shop-cart-view h4 {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-cart-view .text-slate-200,
+html[data-labrat-theme="clinical-light"] #shop-cart-view .text-slate-300,
+html[data-labrat-theme="clinical-light"] #shop-cart-view .text-slate-400 {
+  color: #475569 !important;
+}
+/* Cart items container + empty state */
+html[data-labrat-theme="clinical-light"] #shop-cart-view .bg-\[\#0b1329\],
+html[data-labrat-theme="clinical-light"] #shop-cart-view .bg-\[\#10172a\]\/40 {
+  background-color: rgba(248, 250, 252, 0.92) !important;
+  border-color: rgba(148, 163, 184, 0.55) !important;
+}
+/* Cart item row dividers */
+html[data-labrat-theme="clinical-light"] #shop-cart-view .divide-\[\#1e293b\]\/50 > * + * {
+  border-top-color: rgba(226, 232, 240, 0.8) !important;
+}
+/* Qty stepper */
+html[data-labrat-theme="clinical-light"] #shop-cart-view .bg-slate-950 {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(148, 163, 184, 0.5) !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-cart-view .hover\:bg-slate-800 {
+  background-color: #e2e8f0 !important;
+}
+/* Back-to-catalog link & cyan accents */
+html[data-labrat-theme="clinical-light"] #shop-cart-view .text-cyan-400 {
+  color: #2563eb !important;
+}
+/* Pricing summary sticky cards */
+html[data-labrat-theme="clinical-light"] #shop-cart-view .sticky > div > div {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+  border-color: rgba(100, 116, 139, 0.35) !important;
+}
+
+/* ── clinical-light: category deck & scroll fade overlays ────────── */
+html[data-labrat-theme="clinical-light"] #shop-categories-deck {
+  background-color: rgba(241, 245, 249, 0.75) !important;
+  border-color: rgba(148, 163, 184, 0.4) !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .text-\[\#22d3ee\] {
+  color: #2563eb !important;
+}
+/* Replace dark fade overlays with white fades */
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .from-slate-950 {
+  --tw-gradient-from: #ffffff !important;
+  --tw-gradient-to: transparent !important;
+}
+/* Category pill — inactive */
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-slate-950 {
+  background-color: #ffffff !important;
+  border-color: rgba(148, 163, 184, 0.55) !important;
+  color: #334155 !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .text-slate-400 {
+  color: #475569 !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .text-slate-500 {
+  color: #64748b !important;
+}
+/* Icon rings inside inactive pills */
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-slate-900\/40 {
+  background-color: rgba(241, 245, 249, 0.85) !important;
+  border-color: rgba(148, 163, 184, 0.4) !important;
+}
+/* Count badge inside pills */
+html[data-labrat-theme="clinical-light"] #shop-categories-deck .bg-slate-800\/60 {
+  background-color: rgba(226, 232, 240, 0.8) !important;
+  color: #334155 !important;
+}
+
+/* ── clinical-light: Reset Catalog purple button ─────────────────── */
+html[data-labrat-theme="clinical-light"] .text-purple-300 {
+  color: #6d28d9 !important;
+}
+html[data-labrat-theme="clinical-light"] .bg-purple-500\/10 {
+  background-color: rgba(237, 233, 254, 0.8) !important;
+}
+html[data-labrat-theme="clinical-light"] .border-purple-500\/20 {
+  border-color: rgba(139, 92, 246, 0.45) !important;
+}
+
+/* ── clinical-light: library category filter pills ───────────────── */
+html[data-labrat-theme="clinical-light"] #library-categories-list button {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+  border-color: rgba(100, 116, 139, 0.45) !important;
+  color: #334155 !important;
+}
+html[data-labrat-theme="clinical-light"] #library-categories-list button[class*="bg-cyan"] {
+  background-color: rgba(219, 234, 254, 0.85) !important;
+  border-color: rgba(37, 99, 235, 0.45) !important;
+  color: #1e40af !important;
+}
+
+/* ── clinical-light: library peptide cards ───────────────────────── */
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(100, 116, 139, 0.35) !important;
+}
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] h4 {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-slate-100,
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-slate-200,
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-slate-300 {
+  color: #1e293b !important;
+}
+/* Category colour badges inside library cards — bump contrast */
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-emerald-500\/10 { background-color: #d1fae5 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-emerald-400 { color: #065f46 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-amber-400\/10 { background-color: #fef3c7 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-amber-300 { color: #92400e !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-indigo-500\/10 { background-color: #e0e7ff !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-indigo-400 { color: #3730a3 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-pink-500\/10 { background-color: #fce7f3 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-pink-400 { color: #9d174d !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-rose-500\/10 { background-color: #ffe4e6 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-rose-400 { color: #9f1239 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-cyan-500\/10 { background-color: #cffafe !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-cyan-400 { color: #0e7490 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-purple-500\/10 { background-color: #ede9fe !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-purple-400 { color: #5b21b6 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-violet-500\/10 { background-color: #ede9fe !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-violet-400 { color: #4c1d95 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-teal-500\/10 { background-color: #ccfbf1 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-teal-400 { color: #134e4a !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-yellow-500\/10 { background-color: #fef9c3 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-yellow-400 { color: #713f12 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .bg-slate-700\/50 { background-color: #e2e8f0 !important; }
+html[data-labrat-theme="clinical-light"] [id^="peptide-card-"] .text-slate-300 { color: #334155 !important; }

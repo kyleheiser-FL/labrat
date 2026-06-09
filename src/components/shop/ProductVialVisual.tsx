@@ -163,24 +163,59 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   const isNorway = !isSolvent && !isChina && !isUsaWarehouse;
   const isLight = theme === 'clinical-light';
 
-  if (isLight) {
-    return (
-      <ClinicalLightVial
-        name={name} category={category}
-        isSolvent={isSolvent} isChina={isChina}
-        isUsaWarehouse={isUsaWarehouse} isNorway={isNorway}
-      />
-    );
-  }
-
   const cleanFullName = name.replace(/\(.*?\)/g, '').trim();
   const nameParts = cleanFullName.split(' ');
   const firstWord = nameParts[0] || 'Peptide';
   const remainingWords = nameParts.slice(1).join(' ');
 
-  const imageSrc = theme === 'clinical'
+  const imageSrc = (theme === 'clinical' || theme === 'clinical-light')
     ? (isSolvent ? '/shop/labrat-professional-vial-solvent.png' : '/shop/labrat-professional-vial-peptide.png')
     : (isSolvent ? '/shop/labrat-real-vial-solvent.png' : '/shop/labrat-real-vial-peptide.png');
+
+  if (isLight) {
+    const frameBorder = isChina ? 'border-red-200' : isUsaWarehouse ? 'border-amber-200' : 'border-blue-200';
+    return (
+      <div className="w-full min-h-[300px] bg-white flex flex-col relative overflow-hidden select-none border-b border-slate-200">
+        {/* Source badge */}
+        {!isSolvent && (
+          <div className="absolute top-3 left-3 z-10 flex items-center gap-1">
+            {isUsaWarehouse ? (
+              <>
+                <span className="text-sm leading-none">🇨🇳</span>
+                <span className="text-sm leading-none">🇺🇸</span>
+                <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border text-amber-800 bg-amber-50 border-amber-300">USA Shipped</span>
+              </>
+            ) : isChina ? (
+              <>
+                <span className="text-sm leading-none">🇨🇳</span>
+                <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border text-red-800 bg-red-50 border-red-300">China Source</span>
+              </>
+            ) : (
+              <>
+                <span className="text-sm leading-none">🇳🇴</span>
+                <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border text-blue-800 bg-blue-50 border-blue-300">Norway Source</span>
+              </>
+            )}
+          </div>
+        )}
+        {/* Photo in contained dark frame */}
+        <div className={`mx-4 mt-10 mb-3 rounded-2xl overflow-hidden border-2 ${frameBorder} shadow-md`} style={{ background: '#0a0e1a' }}>
+          <img
+            src={imageSrc}
+            alt={`${cleanFullName} LabRat branded research vial`}
+            className={`w-full object-cover${isChina ? ' hue-rotate-[330deg] saturate-[1.2]' : isUsaWarehouse ? ' sepia-[0.3] saturate-[1.3]' : ''}`}
+            loading="lazy"
+          />
+        </div>
+        {/* Info strip */}
+        <div className="px-4 pb-3">
+          <div className="text-[8px] font-black uppercase tracking-widest text-blue-600">LABRAT</div>
+          <div className="text-sm font-black text-slate-900 leading-tight">{firstWord}</div>
+          <div className="text-[11px] text-slate-500 truncate">{remainingWords || category}</div>
+        </div>
+      </div>
+    );
+  }
 
   let glowClass = 'labrat-real-vial-visual--peptide';
   if (isSolvent) glowClass = 'labrat-real-vial-visual--solvent';
