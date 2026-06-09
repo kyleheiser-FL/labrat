@@ -497,7 +497,14 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         });
         firestoreItems.forEach(item => {
           const idx = displayList.findIndex(p => p.id === item.id);
-          if (idx !== -1) displayList[idx] = item;
+          if (idx !== -1) {
+            const sample = displayList[idx];
+            // Preserve sourceRestriction from SAMPLE_INVENTORY when Firestore record predates it
+            displayList[idx] = {
+              ...item,
+              sourceRestriction: item.sourceRestriction ?? sample.sourceRestriction
+            };
+          }
         });
       } catch (firestoreErr) {
         console.warn('Firestore shopItems read failed, using local inventory as fallback', firestoreErr);
@@ -522,19 +529,22 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
               existing.description !== sample.description ||
               existing.category !== sample.category ||
               existing.price !== sample.price ||
-              existing.inventory !== sample.inventory
+              existing.inventory !== sample.inventory ||
+              existing.sourceRestriction !== sample.sourceRestriction
             ) {
+              const updated = {
+                ...existing,
+                name: sample.name,
+                description: sample.description,
+                category: sample.category,
+                price: sample.price,
+                inventory: sample.inventory,
+                ...(sample.sourceRestriction ? { sourceRestriction: sample.sourceRestriction } : {})
+              };
               syncPromises.push(
-                setDoc(doc(db, 'shopItems', sample.id), {
-                  ...existing,
-                  name: sample.name,
-                  description: sample.description,
-                  category: sample.category,
-                  price: sample.price,
-                  inventory: sample.inventory
-                })
+                setDoc(doc(db, 'shopItems', sample.id), updated)
                   .then(() => {
-                    firestoreItems[existingIndex] = { ...existing, name: sample.name, description: sample.description, category: sample.category, price: sample.price, inventory: sample.inventory };
+                    firestoreItems[existingIndex] = updated;
                   })
                   .catch(err => { console.error(`Failed to auto-update item: ${sample.id}`, err); })
               );
