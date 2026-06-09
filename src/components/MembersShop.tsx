@@ -1867,7 +1867,6 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           }}
           onClose={() => setSelectedParentProductGroup(null)}
           isViewingAsAdmin={isViewingAsAdmin}
-          isAdminUser={isAdminUser}
           isKitPricing={isKitPricing}
           isChinaKitPricing={isChinaKitPricing}
           isChinaVialPricing={isChinaVialPricing}

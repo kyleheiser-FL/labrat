@@ -434,7 +434,19 @@ export default function ProductDrawerModal({
                         >
                           <ArrowLeft className="w-3.5 h-3.5" /> Back to Shop
                         </button>
-                        <div className="flex gap-2 flex-1 order-1 sm:order-2">
+                        <button
+                          type="button"
+                          disabled={!canAdd}
+                          onClick={() => {
+                            triggerHaptic('medium');
+                            onAddToCartFromDrawer(activeOpt, drawerQuantity);
+                            onClose();
+                          }}
+                          className="w-full sm:w-auto px-5 py-2 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 rounded-xl text-xs font-bold cursor-pointer transition-all flex items-center justify-center gap-1.5 order-1 sm:order-2"
+                        >
+                          <ShoppingCart className="w-3.5 h-3.5" /> Add to Cart
+                        </button>
+                        <div className="flex gap-2 flex-1 order-0 sm:order-3">
                           <button
                             type="button"
                             onClick={() => {
