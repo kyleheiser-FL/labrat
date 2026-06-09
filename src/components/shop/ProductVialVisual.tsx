@@ -208,9 +208,9 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
             className={`w-full object-cover${isChina ? ' hue-rotate-[330deg] saturate-[1.2]' : isUsaWarehouse ? ' sepia-[0.3] saturate-[1.3]' : ''}`}
             loading="lazy"
           />
-          {/* Solid white bar starts just above Klow label (~58% down); photo fully visible above it */}
-          <div className="absolute left-0 right-0 bottom-0 px-3 pb-2.5 flex flex-col justify-end"
-            style={{ top: '58%', background: 'rgba(248,250,252,0.99)' }}>
+          {/* Compact floating label card — mirrors clinical dark overlay card style */}
+          <div className="absolute left-3 right-3 bottom-3 px-3 py-2.5 rounded-2xl"
+            style={{ background: 'rgba(248,250,252,0.97)', boxShadow: '0 4px 20px rgba(0,0,0,0.13)', border: '1px solid rgba(100,116,139,0.18)' }}>
             <div style={{ fontSize: '7px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#2563eb' }}>LABRAT</div>
             <div style={{ fontSize: '0.875rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.3 }}>{firstWord}</div>
             <div style={{ fontSize: '11px', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remainingWords || category}</div>
