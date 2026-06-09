@@ -212,6 +212,33 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
     inventory: 0
   },
   {
+    id: 'prod_retat_usa_10mg',
+    name: 'Retatrutide US Warehouse (10mg)',
+    description: 'Purity: 99%+. Triple GIP/GLP-1/glucagon receptor agonist. Ships from our USA fulfillment warehouse — same-week domestic dispatch with no international transit delays.',
+    category: 'USA Fast Ship',
+    price: 18,
+    inventory: 999,
+    sourceRestriction: 'china'
+  },
+  {
+    id: 'prod_retat_usa_20mg',
+    name: 'Retatrutide US Warehouse (20mg)',
+    description: 'Purity: 99%+. Triple GIP/GLP-1/glucagon receptor agonist. Ships from our USA fulfillment warehouse — same-week domestic dispatch with no international transit delays.',
+    category: 'USA Fast Ship',
+    price: 28,
+    inventory: 999,
+    sourceRestriction: 'china'
+  },
+  {
+    id: 'prod_retat_usa_30mg',
+    name: 'Retatrutide US Warehouse (30mg)',
+    description: 'Purity: 99%+. Triple GIP/GLP-1/glucagon receptor agonist. Ships from our USA fulfillment warehouse — same-week domestic dispatch with no international transit delays.',
+    category: 'USA Fast Ship',
+    price: 35,
+    inventory: 999,
+    sourceRestriction: 'china'
+  },
+  {
     id: 'prod_retat_100mg',
     name: 'Retatrutide (100mg)',
     description: 'Purity: 99%+. Sourced from certified laboratories. Supplied in a professional 10 vials/kit box. Triple GIP/GLP-1/glucagon receptor agonist studied for metabolic research, energy expenditure, and adipose reduction.',

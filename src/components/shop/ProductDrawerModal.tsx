@@ -337,7 +337,7 @@ export default function ProductDrawerModal({
                         </div>
                       )}
                       <div className="flex justify-between border-t border-amber-500/10 pt-1.5 mt-0.5">
-                        <span>Vial Sale Price (-15%):</span>
+                        <span>Vial List Price:</span>
                         <span className="text-slate-300 font-bold">${salePrice}.00</span>
                       </div>
                       <div className="flex justify-between font-bold text-amber-300">

@@ -1563,7 +1563,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                     className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.pricingPreference === 'vial' ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
                   >
                     <span className={`text-xs font-bold mb-1 ${joinForm.pricingPreference === 'vial' ? 'text-cyan-300' : 'text-slate-300'}`}>Per Vial</span>
-                    <span className="text-[10px] text-slate-500 leading-normal">Order any quantity, single-vial pricing with 15% member discount.</span>
+                    <span className="text-[10px] text-slate-500 leading-normal">Order any quantity at standard single-vial pricing.</span>
                     {joinForm.pricingPreference === 'vial' && <span className="mt-2 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Selected</span>}
                   </button>
                   <button

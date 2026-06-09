@@ -13,7 +13,7 @@ interface Markups {
   chnKit: number;      // multiplier, e.g. 1.65
   chnVialUS: number;   // multiplier on per-vial US cost
   chnVialDir: number;  // multiplier on per-vial China direct cost
-  norSale: number;     // sale multiplier applied to norVial list price
+  norSale: number;     // Norway vial list price multiplier (no discount)
 }
 
 interface PriceOverride {
@@ -45,11 +45,10 @@ function profitColor(p: number | null): string {
 
 // ─── component ────────────────────────────────────────────────────────────
 export default function AdminPricingPanel() {
-  const [norKitPct,      setNorKitPct]      = useState(12.7);
+  const [norKitPct,      setNorKitPct]      = useState(15);
   const [chnKitPct,      setChnKitPct]      = useState(65);
-  const [chnVialUSPct,   setChnVialUSPct]   = useState(100);
+  const [chnVialUSPct,   setChnVialUSPct]   = useState(65);
   const [chnVialDirPct,  setChnVialDirPct]  = useState(65);
-  const [norSalePct,     setNorSalePct]     = useState(15);
   const [overrides,      setOverrides]      = useState<Record<string, PriceOverride>>({});
   const [filter,         setFilter]         = useState<FilterMode>('all');
   const [search,         setSearch]         = useState('');
@@ -63,7 +62,7 @@ export default function AdminPricingPanel() {
     chnKit:    1 + chnKitPct / 100,
     chnVialUS: 1 + chnVialUSPct / 100,
     chnVialDir:1 + chnVialDirPct / 100,
-    norSale:   1 - norSalePct / 100,
+    norSale:   1,
   };
 
   // Compute derived prices for a product
@@ -119,11 +118,10 @@ export default function AdminPricingPanel() {
 
   function resetAll() {
     setOverrides({});
-    setNorKitPct(12.7);
+    setNorKitPct(15);
     setChnKitPct(65);
-    setChnVialUSPct(100);
+    setChnVialUSPct(65);
     setChnVialDirPct(65);
-    setNorSalePct(15);
   }
 
   const exportJson = useMemo(() => {
@@ -138,12 +136,12 @@ export default function AdminPricingPanel() {
         chinaKitMarkupPct: chnKitPct,
         chinaVialUSMarkupPct: chnVialUSPct,
         chinaVialDirectMarkupPct: chnVialDirPct,
-        norwayVialSaleDiscountPct: norSalePct,
+        norwayVialSaleDiscountPct: 0,
       },
     };
     if (productChanges.length > 0) out.productOverrides = productChanges;
     return JSON.stringify(out, null, 2);
-  }, [overrides, norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct, norSalePct]);
+  }, [overrides, norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct]);
 
   function copyExport() {
     navigator.clipboard.writeText(exportJson).then(() => {
@@ -275,15 +273,6 @@ export default function AdminPricingPanel() {
             <span className="text-[10px] text-slate-500">%</span>
           </div>
         </div>
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[9px] text-slate-500 uppercase tracking-widest">🇳🇴 Sale Disc.</span>
-          <div className="flex items-center gap-1">
-            <input type="number" value={norSalePct} step="1" min="0" max="50"
-              onChange={e => setNorSalePct(parseFloat(e.target.value) || 0)}
-              className="w-14 bg-slate-800 border border-slate-700 text-cyan-300 text-xs rounded px-1.5 py-0.5 text-right focus:outline-none focus:border-cyan-500" />
-            <span className="text-[10px] text-slate-500">%</span>
-          </div>
-        </div>
       </div>
 
       {/* Filter + search + actions */}
@@ -331,7 +320,7 @@ export default function AdminPricingPanel() {
               <th className="text-right px-2 py-2 text-[9px] text-blue-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇳🇴 Whsl<br/><span className="text-slate-600 normal-case font-normal">kit 10x</span></th>
               <th className="text-right px-2 py-2 text-[9px] text-orange-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇨🇳 Whsl<br/><span className="text-slate-600 normal-case font-normal">kit 10x</span></th>
               <th className="text-right px-2 py-2 text-[9px] text-blue-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇳🇴 Kit<br/><span className="text-slate-600 normal-case font-normal">sell 10x</span></th>
-              <th className="text-right px-2 py-2 text-[9px] text-blue-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇳🇴 Vial<br/><span className="text-slate-600 normal-case font-normal">sale px</span></th>
+              <th className="text-right px-2 py-2 text-[9px] text-blue-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇳🇴 Vial<br/><span className="text-slate-600 normal-case font-normal">list px</span></th>
               <th className="text-right px-2 py-2 text-[9px] text-orange-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇨🇳 Kit<br/><span className="text-slate-600 normal-case font-normal">sell 10x</span></th>
               <th className="text-right px-2 py-2 text-[9px] text-orange-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇨🇳 Vial<br/><span className="text-slate-600 normal-case font-normal">per vial</span></th>
             </tr>

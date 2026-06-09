@@ -425,13 +425,13 @@ export function getChineseUsWarehouseCost(name: string): number {
   return resolveChineseUsWarehouseCost(name.toLowerCase());
 }
 
-// China US Warehouse cost (Retatrutide only)
+// China US Warehouse cost — only matches explicit "us warehouse" products
 function resolveChineseUsWarehouseCost(norm: string): number {
+  if (!norm.includes('us warehouse')) return 0;
   if (norm.includes('retatrutide')) {
     if (norm.includes('30mg')) return 210;
     if (norm.includes('20mg')) return 170;
     if (norm.includes('10mg')) return 110;
-    return 0;
   }
   return 0;
 }
