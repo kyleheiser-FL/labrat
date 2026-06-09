@@ -375,7 +375,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     description: '',
     category: '',
     price: 0,
-    inventory: 50
+    inventory: 50,
+    sourceRestriction: '' as '' | 'china' | 'norway'
   });
 
   // Live-subscribe to member profile so status changes (e.g. approved → kit) take effect immediately
@@ -1116,7 +1117,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       description: productForm.description,
       category: productForm.category,
       price: formPrice,
-      inventory: Number(productForm.inventory)
+      inventory: Number(productForm.inventory),
+      ...(productForm.sourceRestriction ? { sourceRestriction: productForm.sourceRestriction } : {})
     };
 
     try {
@@ -1125,7 +1127,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       setShowProductModal(false);
       setEditingProduct(null);
       setProductValidationError(null);
-      setProductForm({ name: '', description: '', category: '', price: 0, inventory: 50 });
+      setProductForm({ name: '', description: '', category: '', price: 0, inventory: 50, sourceRestriction: '' });
     } catch (e) {
       console.error('Failed logging product catalog', e);
     } finally {
@@ -1926,18 +1928,33 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-inventory">Stock Inventory (Vials/Sets)</label>
-                  <input 
-                    type="number" 
-                    required
-                    id="prod-inventory"
-                    placeholder="30"
-                    min={0}
-                    value={productForm.inventory}
-                    onChange={(e) => setProductForm(prev => ({ ...prev, inventory: Number(e.target.value) }))}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-lg text-xs"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-inventory">Stock Inventory (Vials/Sets)</label>
+                    <input
+                      type="number"
+                      required
+                      id="prod-inventory"
+                      placeholder="30"
+                      min={0}
+                      value={productForm.inventory}
+                      onChange={(e) => setProductForm(prev => ({ ...prev, inventory: Number(e.target.value) }))}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-lg text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-source">Member Tier</label>
+                    <select
+                      id="prod-source"
+                      value={productForm.sourceRestriction}
+                      onChange={(e) => setProductForm(prev => ({ ...prev, sourceRestriction: e.target.value as '' | 'china' | 'norway' }))}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 rounded-lg text-xs"
+                    >
+                      <option value="">Unrestricted</option>
+                      <option value="norway">🇳🇴 Norway (approved / kit)</option>
+                      <option value="china">🇨🇳 China (chinavial / chinakit)</option>
+                    </select>
+                  </div>
                 </div>
 
                 {productForm.name && productForm.price > 0 && (

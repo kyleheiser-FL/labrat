@@ -156,12 +156,10 @@ export default function AdminPricingPanel() {
   const visibleProducts = useMemo(() => {
     const q = search.toLowerCase();
     return SAMPLE_INVENTORY.filter(p => {
-      const norW = getKitWholesaleCost(p.name);
-      const chnW = getChineseKitWholesaleCost(p.name) || getChineseUsWarehouseCost(p.name);
-      const src = norW && chnW ? 'both' : norW ? 'norway' : chnW ? 'china' : 'neither';
+      const src = p.sourceRestriction || 'neither';
       if (filter === 'norway' && src !== 'norway') return false;
       if (filter === 'china'  && src !== 'china')  return false;
-      if (filter === 'both'   && src !== 'both')   return false;
+      if (filter === 'both'   && src !== 'norway' && src !== 'china') return false;
       if (q && !p.name.toLowerCase().includes(q))  return false;
       return true;
     });
@@ -179,27 +177,29 @@ export default function AdminPricingPanel() {
 
   // ─── cell component ───────────────────────────────────────────────────
   function PriceCell({
-    productKey, field, computed, cost10, isVialCost,
+    productKey, field, computed, cost10, isVialCost, dimmed,
   }: {
     productKey: string;
     field: keyof PriceOverride;
     computed: number | null;
     cost10: number | null;
     isVialCost: boolean;
+    dimmed?: boolean;
   }) {
     const effective = eff(productKey, field, computed);
     const isOverridden = overrides[productKey]?.[field] !== undefined;
     const isActive = editing?.key === productKey && editing?.field === field;
     const costForPct = isVialCost ? (cost10 ? cost10 / 10 : null) : cost10;
     const p = pct(effective, costForPct);
+    const dimClass = dimmed ? 'opacity-20 pointer-events-none' : '';
 
     if (effective === null) {
-      return <td className="px-2 py-1.5 text-slate-700 text-center text-xs">—</td>;
+      return <td className={`px-2 py-1.5 text-slate-700 text-center text-xs ${dimClass}`}>—</td>;
     }
 
     if (isActive) {
       return (
-        <td className="px-1 py-1" onClick={e => e.stopPropagation()}>
+        <td className={`px-1 py-1 ${dimClass}`} onClick={e => e.stopPropagation()}>
           <input
             autoFocus
             type="number"
@@ -215,9 +215,9 @@ export default function AdminPricingPanel() {
 
     return (
       <td
-        className="px-2 py-1.5 text-right cursor-pointer group"
-        onClick={() => startEdit(productKey, field, effective)}
-        onContextMenu={e => { e.preventDefault(); if (isOverridden) clearOverride(productKey, field); }}
+        className={`px-2 py-1.5 text-right cursor-pointer group ${dimClass}`}
+        onClick={() => !dimmed && startEdit(productKey, field, effective)}
+        onContextMenu={e => { e.preventDefault(); if (isOverridden && !dimmed) clearOverride(productKey, field); }}
       >
         <div className="flex flex-col items-end gap-0">
           <span className={`text-xs font-mono ${isOverridden ? 'text-cyan-300' : 'text-emerald-300'}`}>
@@ -336,8 +336,12 @@ export default function AdminPricingPanel() {
                 {products.map(p => {
                   const { norW, usW, chnW, norKitComp, norVialComp, chnKitComp, chnVialComp } = prices(p.name, p.price);
                   const pk = p.name;
-                  const src = norW && chnW ? 'both' : norW ? 'nor' : chnW ? 'chn' : '?';
+                  const src = p.sourceRestriction || 'neither';
+                  const isNorway = src === 'norway';
+                  const isChina = src === 'china';
                   const isUS = !!usW;
+                  const dimNor = isChina;
+                  const dimChn = isNorway;
 
                   return (
                     <tr key={p.id} className="border-b border-slate-800/30 hover:bg-white/[0.02] transition-colors">
@@ -346,22 +350,20 @@ export default function AdminPricingPanel() {
                         <span className="text-slate-500 ml-1">{p.name.match(/\(([^)]+)\)$/)?.[1]}</span>
                       </td>
                       <td className="px-2 py-1.5 text-center">
-                        {src === 'both' ? (
-                          <span className="text-[9px] text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded">both</span>
-                        ) : src === 'nor' ? (
+                        {isNorway ? (
                           <span className="text-[9px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">🇳🇴</span>
-                        ) : src === 'chn' ? (
+                        ) : isChina ? (
                           <span className="text-[9px] text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded">🇨🇳</span>
                         ) : (
                           <span className="text-slate-700 text-[9px]">—</span>
                         )}
                       </td>
                       {/* Norway wholesale */}
-                      <td className="px-2 py-1.5 text-right text-amber-400/80 font-mono text-xs">
-                        {norW ? `$${norW}` : <span className="text-slate-700">—</span>}
+                      <td className={`px-2 py-1.5 text-right font-mono text-xs ${dimNor ? 'opacity-20' : ''}`}>
+                        {norW ? <span className="text-amber-400/80">${norW}</span> : <span className="text-slate-700">—</span>}
                       </td>
                       {/* China wholesale */}
-                      <td className="px-2 py-1.5 text-right font-mono text-xs">
+                      <td className={`px-2 py-1.5 text-right font-mono text-xs ${dimChn ? 'opacity-20' : ''}`}>
                         {chnW ? (
                           <div className="flex flex-col items-end gap-0">
                             <span className="text-amber-400/80">${chnW}</span>
@@ -370,13 +372,13 @@ export default function AdminPricingPanel() {
                         ) : <span className="text-slate-700">—</span>}
                       </td>
                       {/* Norway kit sell */}
-                      <PriceCell productKey={pk} field="norKit" computed={norKitComp} cost10={norW} isVialCost={false} />
+                      <PriceCell productKey={pk} field="norKit" computed={norKitComp} cost10={norW} isVialCost={false} dimmed={dimNor} />
                       {/* Norway vial sell */}
-                      <PriceCell productKey={pk} field="norVial" computed={norVialComp} cost10={norW} isVialCost={true} />
+                      <PriceCell productKey={pk} field="norVial" computed={norVialComp} cost10={norW} isVialCost={true} dimmed={dimNor} />
                       {/* China kit sell */}
-                      <PriceCell productKey={pk} field="chnKit" computed={chnKitComp} cost10={chnW} isVialCost={false} />
+                      <PriceCell productKey={pk} field="chnKit" computed={chnKitComp} cost10={chnW} isVialCost={false} dimmed={dimChn} />
                       {/* China vial sell */}
-                      <PriceCell productKey={pk} field="chnVial" computed={chnVialComp} cost10={chnW} isVialCost={true} />
+                      <PriceCell productKey={pk} field="chnVial" computed={chnVialComp} cost10={chnW} isVialCost={true} dimmed={dimChn} />
                     </tr>
                   );
                 })}

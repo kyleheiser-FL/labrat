@@ -447,7 +447,8 @@ export default function ProductDrawerModal({
                                 description: activeOpt.description,
                                 category: activeOpt.category,
                                 price: activeOpt.price,
-                                inventory: activeOpt.inventory
+                                inventory: activeOpt.inventory,
+                                sourceRestriction: activeOpt.sourceRestriction || ''
                               });
                               onSetShowProductModal(true);
                             }}

@@ -393,7 +393,7 @@ export default function ShopCatalogView({
           {isViewingAsAdmin && (
             <div className="flex gap-2 shrink-0 w-full sm:w-auto justify-end">
               <button
-                onClick={() => { triggerHaptic('light'); onSetEditingProduct(null); onSetProductValidationError(null); onSetProductForm({ name: '', description: '', category: '', price: 0, inventory: 50 }); onSetShowProductModal(true); }}
+                onClick={() => { triggerHaptic('light'); onSetEditingProduct(null); onSetProductValidationError(null); onSetProductForm({ name: '', description: '', category: '', price: 0, inventory: 50, sourceRestriction: '' }); onSetShowProductModal(true); }}
                 className="px-3.5 py-2 bg-cyan-500 text-slate-950 font-bold text-xs rounded-lg flex items-center gap-1.5 cursor-pointer"
               >
                 <PlusCircle className="w-4 h-4" /> Add Product
