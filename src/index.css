@@ -2186,7 +2186,7 @@ html[data-labrat-theme="clinical"] .labrat-real-vial-photo {
     background: white !important;
     color: black !important;
   }
-  .bg-\[\#0f172a\]\/70, .bg-\[#0f172a\] {
+  .bg-\[\#0f172a\]\/70, .bg-\[\#0f172a\] {
     background: white !important;
     color: black !important;
   }
@@ -2548,6 +2548,201 @@ html[data-labrat-theme="clinical-light"] .labrat-real-vial-chip-row span {
   color: #2563eb !important;
   background: rgba(255, 255, 255, 0.82) !important;
   border-color: rgba(37, 99, 235, 0.20) !important;
+}
+
+@media (max-width: 480px) {
+  html[data-labrat-theme="clinical-light"] .labrat-command-hero-art img {
+    border-radius: 1.25rem !important;
+  }
+}
+
+/* ── clinical-light: dark-bg class overrides ───────────────────────────── */
+/* bg-[#1e293b] variants */
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/20,
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/25,
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/45,
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/55,
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/70,
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/80,
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/90 {
+  background-color: rgba(226, 232, 240, 0.55) !important;
+}
+/* bg-[#101b2e] variants */
+html[data-labrat-theme="clinical-light"] .bg-\[\#101b2e\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#101b2e\]\/60 {
+  background-color: rgba(241, 245, 249, 0.85) !important;
+}
+/* bg-[#0f172a] opacity variants */
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/40,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/70,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/80 {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+}
+/* bg-[#111827] */
+html[data-labrat-theme="clinical-light"] .bg-\[\#111827\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#111827\]\/80 {
+  background-color: rgba(241, 245, 249, 0.85) !important;
+}
+/* bg-[#0b1329] */
+html[data-labrat-theme="clinical-light"] .bg-\[\#0b1329\] {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+}
+/* bg-slate-900 variants */
+html[data-labrat-theme="clinical-light"] .bg-slate-900\/40 {
+  background-color: rgba(241, 245, 249, 0.75) !important;
+}
+/* border overrides for dark arbitrary colors */
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\],
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/40,
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/45,
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/60,
+html[data-labrat-theme="clinical-light"] .border-\[\#1e293b\]\/80 {
+  border-color: rgba(148, 163, 184, 0.55) !important;
+}
+html[data-labrat-theme="clinical-light"] .border-slate-800,
+html[data-labrat-theme="clinical-light"] .border-slate-800\/40,
+html[data-labrat-theme="clinical-light"] .border-slate-800\/60,
+html[data-labrat-theme="clinical-light"] .border-slate-800\/80 {
+  border-color: rgba(148, 163, 184, 0.50) !important;
+}
+
+/* ── clinical-light: PCT section ───────────────────────────────────────── */
+html[data-labrat-theme="clinical-light"] #pct-suggestion-dashboard {
+  background: linear-gradient(135deg, #f0f6ff, #eff4ff) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+html[data-labrat-theme="clinical-light"] [id^="pct-row-container-"] {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(148, 163, 184, 0.7) !important;
+  border-width: 1px !important;
+}
+
+/* ── clinical-light: cycle mitigations panel ──────────────────────────── */
+html[data-labrat-theme="clinical-light"] #cycle-mitigations-panel {
+  background: rgba(248, 250, 252, 0.9) !important;
+  border-color: rgba(148, 163, 184, 0.6) !important;
+}
+html[data-labrat-theme="clinical-light"] #supplement-categories-presets {
+  background: rgba(241, 245, 249, 0.65) !important;
+  border-color: rgba(148, 163, 184, 0.55) !important;
+}
+
+/* ── clinical-light: preset inner cards ──────────────────────────────── */
+html[data-labrat-theme="clinical-light"] [id^="preset-card-"] {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(100, 116, 139, 0.45) !important;
+  border-width: 1px !important;
+}
+html[data-labrat-theme="clinical-light"] [id^="preset-card-"] img {
+  background: rgba(241, 245, 249, 0.9) !important;
+  border-color: rgba(148, 163, 184, 0.5) !important;
+}
+
+/* ── clinical-light: syringe SVG ──────────────────────────────────────── */
+html[data-labrat-theme="clinical-light"] svg[aria-label*="Syringe"] rect[fill="#0f172a"] {
+  fill: #dde6f0 !important;
+}
+html[data-labrat-theme="clinical-light"] svg[aria-label*="Syringe"] rect[stroke="#334155"] {
+  stroke: #94a3b8 !important;
+}
+html[data-labrat-theme="clinical-light"] svg[aria-label*="Syringe"] rect[fill="#334155"] {
+  fill: #94a3b8 !important;
+}
+html[data-labrat-theme="clinical-light"] svg[aria-label*="Syringe"] rect[fill="#475569"] {
+  fill: #94a3b8 !important;
+}
+html[data-labrat-theme="clinical-light"] svg[aria-label*="Syringe"] rect[fill="#64748b"] {
+  fill: #94a3b8 !important;
+}
+html[data-labrat-theme="clinical-light"] svg[aria-label*="Syringe"] polygon[fill="#94a3b8"] {
+  fill: #64748b !important;
+}
+html[data-labrat-theme="clinical-light"] svg[aria-label*="Syringe"] line[stroke="#374151"] {
+  stroke: #94a3b8 !important;
+}
+html[data-labrat-theme="clinical-light"] svg[aria-label*="Syringe"] text[fill="#4b5563"] {
+  fill: #334155 !important;
+}
+html[data-labrat-theme="clinical-light"] svg[aria-label*="Syringe"] text[fill="#374151"] {
+  fill: #334155 !important;
+}
+
+/* ── clinical-light: action buttons ──────────────────────────────────── */
+html[data-labrat-theme="clinical-light"] [id^="administer-btn-"] {
+  background-color: rgba(219, 234, 254, 0.75) !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+  color: #1d4ed8 !important;
+}
+html[data-labrat-theme="clinical-light"] [id^="administer-btn-"]:hover {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+html[data-labrat-theme="clinical-light"] [id^="sync-past-doses-btn-"] {
+  background-color: rgba(226, 232, 240, 0.7) !important;
+  border-color: rgba(100, 116, 139, 0.4) !important;
+  color: #334155 !important;
+}
+html[data-labrat-theme="clinical-light"] [id^="sync-past-doses-btn-"]:hover {
+  background-color: rgba(203, 213, 225, 0.85) !important;
+  color: #2563eb !important;
+  border-color: rgba(37, 99, 235, 0.35) !important;
+}
+
+/* ── clinical-light: checklist item unlogged state ───────────────────── */
+html[data-labrat-theme="clinical-light"] [id^="checklist-item-"] {
+  background-color: rgba(248, 250, 252, 0.85) !important;
+  border-color: rgba(148, 163, 184, 0.65) !important;
+}
+
+/* ── clinical-light: stronger borders on all top-level cards ─────────── */
+html[data-labrat-theme="clinical-light"] .rounded-2xl,
+html[data-labrat-theme="clinical-light"] .rounded-xl {
+  border-color: rgba(100, 116, 139, 0.30) !important;
+}
+/* But don't override specific colored borders that are intentional */
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/20,
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/30,
+html[data-labrat-theme="clinical-light"] .border-indigo-500\/20,
+html[data-labrat-theme="clinical-light"] .border-pink-500\/20,
+html[data-labrat-theme="clinical-light"] .border-purple-500\/20,
+html[data-labrat-theme="clinical-light"] .border-emerald-500\/15,
+html[data-labrat-theme="clinical-light"] .border-rose-500\/15,
+html[data-labrat-theme="clinical-light"] .border-amber-500\/20 {
+  /* keep their specific hue but bump opacity so they're visible */
+  filter: none;
+}
+
+/* ── clinical-light: scrollbar ───────────────────────────────────────── */
+html[data-labrat-theme="clinical-light"] {
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+html[data-labrat-theme="clinical-light"] ::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+html[data-labrat-theme="clinical-light"] ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html[data-labrat-theme="clinical-light"] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
+}
+html[data-labrat-theme="clinical-light"] ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ── clinical-light: stronger border contrast on major sections ─────── */
+html[data-labrat-theme="clinical-light"] #cycle-dashboard-panel,
+html[data-labrat-theme="clinical-light"] #cycle-planner-panel,
+html[data-labrat-theme="clinical-light"] #blood-panel,
+html[data-labrat-theme="clinical-light"] #shop-panel,
+html[data-labrat-theme="clinical-light"] #settings-panel,
+html[data-labrat-theme="clinical-light"] #me-panel,
+html[data-labrat-theme="clinical-light"] [id$="-panel"],
+html[data-labrat-theme="clinical-light"] [id$="-card"],
+html[data-labrat-theme="clinical-light"] [id$="-section"] {
+  border-color: rgba(71, 85, 105, 0.28) !important;
 }
 
 @media (max-width: 480px) {
