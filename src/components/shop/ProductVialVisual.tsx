@@ -208,9 +208,9 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
             className={`w-full object-cover${isChina ? ' hue-rotate-[330deg] saturate-[1.2]' : isUsaWarehouse ? ' sepia-[0.3] saturate-[1.3]' : ''}`}
             loading="lazy"
           />
-          {/* Light gradient covers Klow label; starts at 22% so it's opaque well before the label area */}
-          <div className="absolute inset-0 px-3 pb-2.5 flex flex-col justify-end"
-            style={{ background: 'linear-gradient(to bottom, transparent 22%, rgba(248,250,252,0.78) 40%, rgba(248,250,252,0.96) 54%, rgba(248,250,252,0.99) 100%)' }}>
+          {/* Solid white bar starts just above Klow label (~58% down); photo fully visible above it */}
+          <div className="absolute left-0 right-0 bottom-0 px-3 pb-2.5 flex flex-col justify-end"
+            style={{ top: '58%', background: 'rgba(248,250,252,0.99)' }}>
             <div style={{ fontSize: '7px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#2563eb' }}>LABRAT</div>
             <div style={{ fontSize: '0.875rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.3 }}>{firstWord}</div>
             <div style={{ fontSize: '11px', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remainingWords || category}</div>
