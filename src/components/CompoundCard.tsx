@@ -20,6 +20,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
   const [phaseExpanded, setPhaseExpanded] = useState(false);
+  const isLightTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-labrat-theme') === 'clinical-light';
 
   const start = new Date(comp.startDate + 'T00:00:00');
   const today = new Date();
@@ -290,8 +291,8 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
                         className="relative flex flex-col items-center justify-between rounded-lg border text-[9px] font-mono py-1.5 px-2 min-w-[36px] transition-all cursor-pointer hover:scale-105 select-none"
                         style={
                           isSelected
-                            ? { backgroundColor: `${comp.color}25`, borderColor: comp.color, color: '#f8fafc', boxShadow: `0 0 8px ${comp.color}30` }
-                            : { backgroundColor: `${comp.color}08`, borderColor: `${comp.color}20`, color: '#94a3b8' }
+                            ? { backgroundColor: isLightTheme ? `${comp.color}22` : `${comp.color}25`, borderColor: comp.color, color: isLightTheme ? '#0f172a' : '#f8fafc', boxShadow: isLightTheme ? `0 2px 8px ${comp.color}30` : `0 0 8px ${comp.color}30` }
+                            : { backgroundColor: isLightTheme ? `${comp.color}14` : `${comp.color}08`, borderColor: isLightTheme ? `${comp.color}60` : `${comp.color}20`, color: isLightTheme ? '#334155' : '#94a3b8' }
                         }
                       >
                         {isCurrent && (

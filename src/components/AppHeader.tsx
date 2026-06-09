@@ -192,7 +192,7 @@ export default function AppHeader({
             navTabs.push({ tab: 'library', icon: <BookOpen className="w-3.5 h-3.5 shrink-0" />, label: <>Compound <span className="hidden sm:inline">Encyclopedia</span></> });
           }
           if (!hideShop) {
-            navTabs.push({ tab: 'shop', icon: <ShoppingBag className="w-3.5 h-3.5 shrink-0 text-cyan-300" />, label: 'Shop' });
+            navTabs.push({ tab: 'shop', icon: <ShoppingBag className="w-3.5 h-3.5 shrink-0" />, label: 'Shop' });
           }
           const gridColsClass = navTabs.length <= 1 ? 'grid-cols-1' : navTabs.length === 2 ? 'grid-cols-2' : navTabs.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
           return (
