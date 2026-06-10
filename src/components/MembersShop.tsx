@@ -1747,6 +1747,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
               isKitPricing={isKitPricing}
               isChinaKitPricing={isChinaKitPricing}
               isChinaVialPricing={isChinaVialPricing}
+              bacWaterQty={bacWaterQty}
+              onSetBacWaterQty={setBacWaterQty}
               onAdjustQuantity={handleAdjustQuantity}
               onRemoveFromCart={handleRemoveFromCart}
               onSetView={setView}

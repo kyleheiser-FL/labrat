@@ -16,6 +16,8 @@ interface ShopCartViewProps {
   isKitPricing?: boolean;
   isChinaKitPricing?: boolean;
   isChinaVialPricing?: boolean;
+  bacWaterQty?: number;
+  onSetBacWaterQty?: (qty: number) => void;
   onAdjustQuantity: (productId: string, delta: number) => void;
   onRemoveFromCart: (productId: string) => void;
   onSetView: (v: string) => void;
@@ -29,6 +31,8 @@ export default function ShopCartView({
   isKitPricing = false,
   isChinaKitPricing = false,
   isChinaVialPricing = false,
+  bacWaterQty = 0,
+  onSetBacWaterQty,
   onAdjustQuantity,
   onRemoveFromCart,
   onSetView,
@@ -142,7 +146,8 @@ export default function ShopCartView({
           const isFreeShippingEligible = nonBacSubtotal >= 100;
           const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
           const salesTaxRate = 0.06;
-          const salesTax = isFlorida ? Math.round(subtotal * salesTaxRate * 100) / 100 : 0;
+          const bacWaterCost = bacWaterQty * 7;
+          const salesTax = isFlorida ? Math.round((subtotal + bacWaterCost) * salesTaxRate * 100) / 100 : 0;
 
           const isChinaOrder = isChinaKitPricing || isChinaVialPricing;
           const flatShipping = isKitPricing ? 25 : isChinaOrder ? 50 : 0;
@@ -150,7 +155,7 @@ export default function ShopCartView({
           const shippingDisplay = knownShipping
             ? `$${flatShipping}.00`
             : isFreeShippingEligible ? 'Free' : 'Calculated at checkout';
-          const orderTotal = subtotal + salesTax + (knownShipping ? flatShipping : 0);
+          const orderTotal = subtotal + bacWaterCost + salesTax + (knownShipping ? flatShipping : 0);
 
           return (
             <div className="space-y-4 sticky top-6 text-left">
@@ -216,6 +221,34 @@ export default function ShopCartView({
                 </div>
               )}
 
+              {/* BAC Water Add-On */}
+              <div className="bg-[#0b1329] border border-slate-700/60 rounded-2xl p-4">
+                <div className="text-[9px] font-bold text-cyan-400/80 uppercase tracking-widest font-mono mb-2">Checkout Add-On</div>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-left">
+                    <div className="text-xs font-bold text-slate-200 leading-tight">BAC Water (30ml)</div>
+                    <div className="text-[10px] text-slate-400">$7.00 per vial</div>
+                  </div>
+                  <div className="flex items-center gap-0.5 bg-slate-950 p-0.5 rounded-lg border border-slate-800 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => { triggerHaptic('light'); onSetBacWaterQty?.(Math.max(0, bacWaterQty - 1)); }}
+                      className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-md transition-all cursor-pointer"
+                    >
+                      <Minus className="w-3 h-3" />
+                    </button>
+                    <span className="w-6 text-center text-xs font-extrabold text-slate-200">{bacWaterQty}</span>
+                    <button
+                      type="button"
+                      onClick={() => { triggerHaptic('light'); onSetBacWaterQty?.(bacWaterQty + 1); }}
+                      className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-md transition-all cursor-pointer"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div id="cart-order-summary-card" className="bg-[#0b1329] border border-[#1e293b] p-6 rounded-2xl">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 pb-2 border-b border-[#1e293b]">
                   Order Summary
@@ -225,6 +258,12 @@ export default function ShopCartView({
                     <span>Physical Vials ({totalQty})</span>
                     <span className="font-semibold text-slate-200">${subtotal}.00</span>
                   </div>
+                  {bacWaterQty > 0 && (
+                    <div className="flex justify-between text-slate-400">
+                      <span>BAC Water ({bacWaterQty}×$7)</span>
+                      <span className="font-semibold text-slate-200">+${bacWaterCost}.00</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-slate-400">
                     <span>Shipping</span>
                     <span className={`font-semibold ${isFreeShippingEligible && !knownShipping ? 'text-emerald-400' : knownShipping ? 'text-slate-200' : 'text-slate-500 italic'}`}>
