@@ -3337,3 +3337,8 @@ html[data-labrat-theme="clinical-light"] #library-suggestions-dropdown .text-sla
 html[data-labrat-theme="clinical-light"] #library-suggestions-dropdown .text-slate-500 {
   color: #64748b !important;
 }
+
+/* ── Compound library detail: near-white hardcoded text → readable dark ── */
+html[data-labrat-theme="clinical-light"] .text-\[\#e2e8f0\]\/95 {
+  color: #334155 !important;
+}
