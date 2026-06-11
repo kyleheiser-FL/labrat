@@ -4,6 +4,7 @@ import { ShoppingCart, ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem } from '../../lib/shopTypes';
 import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice } from '../../lib/shopHelpers';
+import { usePricingConfig } from '../../lib/pricingConfig';
 
 interface ShopCartViewProps {
   cart: CartItem[];
@@ -37,11 +38,12 @@ export default function ShopCartView({
   onRemoveFromCart,
   onSetView,
 }: ShopCartViewProps) {
+  const pc = usePricingConfig();
   const effectivePrice = (item: CartItem) =>
-    isKitPricing ? (getKitSellPrice(item.product.name) || item.product.price) :
-    isChinaKitPricing ? (getChinaKitSellPrice(item.product.name) || item.product.price) :
-    isChinaVialPricing ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price)) :
-    getSalePrice(item.product.price);
+    isKitPricing ? (getKitSellPrice(item.product.name, pc) || item.product.price) :
+    isChinaKitPricing ? (getChinaKitSellPrice(item.product.name, pc) || item.product.price) :
+    isChinaVialPricing ? (getChinaVialSellPrice(item.product.name, pc) || getSalePrice(item.product.price, item.product.name, pc)) :
+    getSalePrice(item.product.price, item.product.name, pc);
   return (
     <div id="shop-cart-view" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

@@ -1,5 +1,6 @@
 import { ShopProduct, CartItem, ShippingOption } from './shopTypes';
 import { SAMPLE_INVENTORY } from '../data/shopInventory';
+import type { PricingConfig } from './pricingConfig';
 
 export function getProductBaseAndSize(name: string) {
   const match = name.match(/^(.*?)\s*\(([^)]+)\)$/);
@@ -406,11 +407,13 @@ function resolveKitCost(norm: string): number {
   return kitCost;
 }
 
-// Kit sell price: Kaos kit cost × 15% markup
-export function getKitSellPrice(name: string): number {
+// Kit sell price: Kaos kit cost × markup (default 15%)
+export function getKitSellPrice(name: string, config?: PricingConfig): number {
+  if (config?.overrides?.[name]?.norKit !== undefined) return config.overrides[name].norKit!;
   const raw = resolveKitCost(name.toLowerCase());
   if (!raw) return 0;
-  return Math.round(raw * 1.15);
+  const pct = config?.markups?.norKitPct ?? 15;
+  return Math.round(raw * (1 + pct / 100));
 }
 
 export function getKitWholesaleCost(name: string): number {
@@ -532,23 +535,28 @@ function resolveChineseKitCost(norm: string): number {
   return kitCost;
 }
 
-// China kit sell price: raw cost × 1.65 (65% markup)
-export function getChinaKitSellPrice(name: string): number {
+// China kit sell price: raw cost × markup (default 65%)
+export function getChinaKitSellPrice(name: string, config?: PricingConfig): number {
+  if (config?.overrides?.[name]?.chnKit !== undefined) return config.overrides[name].chnKit!;
   const raw = resolveChineseKitCost(name.toLowerCase());
   if (!raw) return 0;
-  return Math.round(raw * 1.65);
+  const pct = config?.markups?.chnKitPct ?? 65;
+  return Math.round(raw * (1 + pct / 100));
 }
 
-// China vial sell price: (raw kit cost / 10) × 1.65 (65% markup for all paths)
-export function getChinaVialSellPrice(name: string): number {
+// China vial sell price: (raw kit cost / 10) × markup (default 65%)
+export function getChinaVialSellPrice(name: string, config?: PricingConfig): number {
+  if (config?.overrides?.[name]?.chnVial !== undefined) return config.overrides[name].chnVial!;
   const norm = name.toLowerCase();
   const usCost = resolveChineseUsWarehouseCost(norm);
   if (usCost) {
-    return Math.round((usCost / 10) * 1.65);
+    const pct = config?.markups?.chnVialUSPct ?? 65;
+    return Math.round((usCost / 10) * (1 + pct / 100));
   }
   const kitCost = resolveChineseKitCost(norm);
   if (!kitCost) return 0;
-  return Math.round((kitCost / 10) * 1.65);
+  const pct = config?.markups?.chnVialDirPct ?? 65;
+  return Math.round((kitCost / 10) * (1 + pct / 100));
 }
 
 export function getProductCostPerVial(name: string, basePrice: number): number {
@@ -587,7 +595,8 @@ export const getEstimatedDeliveryDate = (minDays: number, maxDays: number) => {
   return `${getFormattedDate(minDays)} – ${getFormattedDate(maxDays)}`;
 };
 
-export function getSalePrice(price: number): number {
+export function getSalePrice(price: number, name?: string, config?: PricingConfig): number {
+  if (name && config?.overrides?.[name]?.norVial !== undefined) return config.overrides[name].norVial!;
   return price;
 }
 

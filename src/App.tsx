@@ -48,6 +48,7 @@ import CyclePlanner from './components/CyclePlanner';
 import PeptideLibrary from './components/PeptideLibrary';
 import BloodAnalyzer from './components/BloodAnalyzer';
 import MembersShop from './components/MembersShop';
+import { PricingProvider } from './lib/pricingConfig';
 import SettingsPage from './components/SettingsPage';
 
 // Firebase Setup
@@ -1403,7 +1404,9 @@ export default function App() {
               )}
 
               {activeTab === 'shop' && !hideShop && (
-                <MembersShop onRequestAuth={openAuthModal} />
+                <PricingProvider>
+                  <MembersShop onRequestAuth={openAuthModal} />
+                </PricingProvider>
               )}
 
               {activeTab === 'settings' && (

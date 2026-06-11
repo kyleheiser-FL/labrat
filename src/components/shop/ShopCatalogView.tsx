@@ -28,6 +28,7 @@ import {
   getChinaVialSellPrice,
   getCleanDescription,
 } from '../../lib/shopHelpers';
+import { usePricingConfig } from '../../lib/pricingConfig';
 import ProductVialVisual from './ProductVialVisual';
 import PeptideRequestForm from './PeptideRequestForm';
 
@@ -121,6 +122,7 @@ export default function ShopCatalogView({
   isChinaVialPricing = false,
   isApprovedVialPricing = false,
 }: ShopCatalogViewProps) {
+  const pc = usePricingConfig();
   const isUnlimitedStockTier = isKitPricing || isChinaKitPricing || isChinaVialPricing || isApprovedVialPricing;
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
@@ -230,9 +232,9 @@ export default function ShopCatalogView({
             <div className="grid grid-cols-3 gap-2">
               {usaProducts.map(p => {
                 const displayPrice = isChinaVialPricing
-                  ? (getChinaVialSellPrice(p.name) || p.price)
+                  ? (getChinaVialSellPrice(p.name, pc) || p.price)
                   : isChinaKitPricing
-                  ? (getChinaKitSellPrice(p.name) || p.price)
+                  ? (getChinaKitSellPrice(p.name, pc) || p.price)
                   : p.price;
                 const { size } = getProductBaseAndSize(p.name);
                 return (
@@ -725,19 +727,19 @@ export default function ShopCatalogView({
                             <div className="flex items-center gap-1.5 flex-wrap">
                               {isKitPricing ? (
                                 <span className="text-sm font-black text-cyan-400">
-                                  ${getKitSellPrice(activeProduct.name) || activeProduct.price}.00
+                                  ${getKitSellPrice(activeProduct.name, pc) || activeProduct.price}.00
                                 </span>
                               ) : isChinaKitPricing ? (
                                 <span className="text-sm font-black text-cyan-400">
-                                  ${getChinaKitSellPrice(activeProduct.name) || activeProduct.price}.00
+                                  ${getChinaKitSellPrice(activeProduct.name, pc) || activeProduct.price}.00
                                 </span>
                               ) : isChinaVialPricing ? (
                                 <span className="text-sm font-black text-cyan-400">
-                                  ${getChinaVialSellPrice(activeProduct.name) || activeProduct.price}.00
+                                  ${getChinaVialSellPrice(activeProduct.name, pc) || activeProduct.price}.00
                                 </span>
                               ) : (
                                 <span className="text-sm font-black text-cyan-400">
-                                  ${getSalePrice(activeProduct.price)}.00
+                                  ${getSalePrice(activeProduct.price, activeProduct.name, pc)}.00
                                 </span>
                               )}
                             </div>

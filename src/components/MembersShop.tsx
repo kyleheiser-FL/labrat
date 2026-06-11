@@ -66,6 +66,7 @@ import { SAMPLE_INVENTORY } from '../data/shopInventory';
 export type { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption };
 export { findShopProductMatch, getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice } from '../lib/shopHelpers';
 import { getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress, getProductBaseAndSize } from '../lib/shopHelpers';
+import { usePricingConfig } from '../lib/pricingConfig';
 import ShopCartView from './shop/ShopCartView';
 import ShopCheckoutView from './shop/ShopCheckoutView';
 import ShopOrdersView from './shop/ShopOrdersView';
@@ -94,6 +95,7 @@ interface MembersShopProps {
 }
 
 export default function MembersShop({ onRequestAuth }: MembersShopProps) {
+  const pricingConfig = usePricingConfig();
   const [currentUser, setCurrentUser] = useState<any>(auth.currentUser);
   const [labratTheme, setLabratTheme] = useState<LabratThemeMode>(() => resolveLabratTheme());
   
@@ -994,12 +996,12 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     const totalQty = cart.reduce((acc, item) => acc + item.quantity, 0);
     const subtotal = cart.reduce((acc, item) => {
       const price = isKitPricing
-        ? (getKitSellPrice(item.product.name) || item.product.price)
+        ? (getKitSellPrice(item.product.name, pricingConfig) || item.product.price)
         : isChinaKitPricing
-        ? (getChinaKitSellPrice(item.product.name) || item.product.price)
+        ? (getChinaKitSellPrice(item.product.name, pricingConfig) || item.product.price)
         : isChinaVialPricing
-        ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price))
-        : getSalePrice(item.product.price);
+        ? (getChinaVialSellPrice(item.product.name, pricingConfig) || getSalePrice(item.product.price, item.product.name, pricingConfig))
+        : getSalePrice(item.product.price, item.product.name, pricingConfig);
       return acc + price * item.quantity;
     }, 0);
     return { totalQty, subtotal };
@@ -1042,12 +1044,12 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           id: item.product.id,
           name: item.product.name,
           price: isKitPricing
-            ? (getKitSellPrice(item.product.name) || item.product.price)
+            ? (getKitSellPrice(item.product.name, pricingConfig) || item.product.price)
             : isChinaKitPricing
-            ? (getChinaKitSellPrice(item.product.name) || item.product.price)
+            ? (getChinaKitSellPrice(item.product.name, pricingConfig) || item.product.price)
             : isChinaVialPricing
-            ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price))
-            : getSalePrice(item.product.price),
+            ? (getChinaVialSellPrice(item.product.name, pricingConfig) || getSalePrice(item.product.price, item.product.name, pricingConfig))
+            : getSalePrice(item.product.price, item.product.name, pricingConfig),
           quantity: item.quantity
         })),
         ...(bacWaterQty > 0 ? [{ id: 'prod_bac_water_30ml', name: 'BAC Water (30ml)', price: 7, quantity: bacWaterQty }] : [])

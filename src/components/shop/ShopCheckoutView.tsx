@@ -3,6 +3,7 @@ import { MapPin, Truck, Loader2, Send, BadgeCheck, Minus, Plus } from 'lucide-re
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem, ShippingOption } from '../../lib/shopTypes';
 import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getShippingOptions } from '../../lib/shopHelpers';
+import { usePricingConfig } from '../../lib/pricingConfig';
 
 interface ShippingFormState {
   fullName: string;
@@ -51,6 +52,7 @@ export default function ShopCheckoutView({
   onSetView,
   onPlaceOrder,
 }: ShopCheckoutViewProps) {
+  const pc = usePricingConfig();
   const totalVials = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   // Check if shipping address details have been fully entered
@@ -375,12 +377,12 @@ export default function ShopCheckoutView({
                 <div className="flex items-baseline gap-1">
                   <span className="font-bold text-slate-200">
                     ${(isKitPricing
-                      ? (getKitSellPrice(item.product.name) || item.product.price)
+                      ? (getKitSellPrice(item.product.name, pc) || item.product.price)
                       : isChinaKitPricing
-                      ? (getChinaKitSellPrice(item.product.name) || item.product.price)
+                      ? (getChinaKitSellPrice(item.product.name, pc) || item.product.price)
                       : isChinaVialPricing
-                      ? (getChinaVialSellPrice(item.product.name) || getSalePrice(item.product.price))
-                      : getSalePrice(item.product.price)) * item.quantity}
+                      ? (getChinaVialSellPrice(item.product.name, pc) || getSalePrice(item.product.price, item.product.name, pc))
+                      : getSalePrice(item.product.price, item.product.name, pc)) * item.quantity}
                   </span>
                 </div>
               </div>

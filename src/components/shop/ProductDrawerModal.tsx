@@ -13,6 +13,7 @@ import {
 import { triggerHaptic } from '../../lib/haptics';
 import { ShopProduct, CartItem, OrderDetail } from '../../lib/shopTypes';
 import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaVialCost, getChineseKitWholesaleCost, hasUsWarehouseShipping } from '../../lib/shopHelpers';
+import { usePricingConfig } from '../../lib/pricingConfig';
 import ProductVialVisual from './ProductVialVisual';
 
 function getProductAvailableStock(prodId: string, baseInventory: number, allOrdersGlobal: OrderDetail[]): number {
@@ -90,6 +91,7 @@ export default function ProductDrawerModal({
   isChinaKitPricing = false,
   isChinaVialPricing = false,
 }: ProductDrawerModalProps) {
+  const pc = usePricingConfig();
   const selectedParentProductGroup = group;
   const selectedOptionIdInDrawer = selectedOptionId;
   const setSelectedOptionIdInDrawer = onSetSelectedOptionId;
@@ -196,12 +198,12 @@ export default function ProductDrawerModal({
                         {isKitPricing ? (
                           <>
                             <span className="text-[8px] text-cyan-500 font-bold uppercase">kit · 10 vials</span>
-                            <span className="text-xs text-cyan-400 font-bold">${getKitSellPrice(opt.name) || opt.price}</span>
+                            <span className="text-xs text-cyan-400 font-bold">${getKitSellPrice(opt.name, pc) || opt.price}</span>
                           </>
                         ) : isChinaKitPricing ? (
                           <>
                             <span className="text-[8px] text-orange-400 font-bold uppercase">kit · 10 vials</span>
-                            <span className="text-xs text-cyan-400 font-bold">${getChinaKitSellPrice(opt.name) || opt.price}</span>
+                            <span className="text-xs text-cyan-400 font-bold">${getChinaKitSellPrice(opt.name, pc) || opt.price}</span>
                             <span className="text-[7px] font-bold mt-0.5 leading-none">
                               {hasUsWarehouseShipping(opt.name) ? '🇺🇸 USA Stock' : '🇨🇳 China Direct'}
                             </span>
@@ -209,14 +211,14 @@ export default function ProductDrawerModal({
                         ) : isChinaVialPricing ? (
                           <>
                             <span className="text-[8px] text-orange-400 font-bold uppercase">per vial</span>
-                            <span className="text-xs text-cyan-400 font-bold">${getChinaVialSellPrice(opt.name) || opt.price}</span>
+                            <span className="text-xs text-cyan-400 font-bold">${getChinaVialSellPrice(opt.name, pc) || opt.price}</span>
                             {hasUsWarehouseShipping(opt.name) && (
                               <span className="text-[7px] font-bold mt-0.5 leading-none">🇺🇸 USA Stock</span>
                             )}
                           </>
                         ) : (
                           <>
-                            <span className="text-xs text-cyan-400 font-bold">${getSalePrice(opt.price)}</span>
+                            <span className="text-xs text-cyan-400 font-bold">${getSalePrice(opt.price, opt.name, pc)}</span>
                           </>
                         )}
                       </div>
@@ -264,21 +266,21 @@ export default function ProductDrawerModal({
               const chinaKitCost = getChineseKitWholesaleCost(activeOpt.name);
               const hasChinaSource = (!activeOpt.sourceRestriction || activeOpt.sourceRestriction === 'china') && chinaKitCost > 0;
 
-              const chinaKitSell = getChinaKitSellPrice(activeOpt.name);
+              const chinaKitSell = getChinaKitSellPrice(activeOpt.name, pc);
               const chinaKitProfit = chinaKitSell - chinaKitCost;
               const chinaKitMarkupPct = chinaKitCost > 0 ? Math.round((chinaKitProfit / chinaKitCost) * 100) : 0;
 
               const chinaVialCost = getChinaVialCost(activeOpt.name);
-              const chinaVialSell = getChinaVialSellPrice(activeOpt.name);
+              const chinaVialSell = getChinaVialSellPrice(activeOpt.name, pc);
               const chinaVialProfit = chinaVialSell - chinaVialCost;
               const chinaVialMarkupPct = chinaVialCost > 0 ? Math.round((chinaVialProfit / chinaVialCost) * 100) : 0;
 
               const estimatedCost = getProductCostPerVial(activeOpt.name, activeOpt.price);
               const kaosKitCost = Math.round((estimatedCost - 3.50) * 10);
-              const kitSellPrice = getKitSellPrice(activeOpt.name);
+              const kitSellPrice = getKitSellPrice(activeOpt.name, pc);
               const kitProfit = kitSellPrice - kaosKitCost;
               const kitMarkupPct = kaosKitCost > 0 ? Math.round((kitProfit / kaosKitCost) * 100) : 0;
-              const salePrice = getSalePrice(activeOpt.price);
+              const salePrice = getSalePrice(activeOpt.price, activeOpt.name, pc);
               const vialProfit = salePrice - estimatedCost;
               const vialMarkupPct = Math.round((vialProfit / estimatedCost) * 100);
 
@@ -396,12 +398,12 @@ export default function ProductDrawerModal({
               if (!activeOpt) return null;
 
               const activePrice = isKitPricing
-                ? (getKitSellPrice(activeOpt.name) || activeOpt.price)
+                ? (getKitSellPrice(activeOpt.name, pc) || activeOpt.price)
                 : isChinaKitPricing
-                ? (getChinaKitSellPrice(activeOpt.name) || activeOpt.price)
+                ? (getChinaKitSellPrice(activeOpt.name, pc) || activeOpt.price)
                 : isChinaVialPricing
-                ? (getChinaVialSellPrice(activeOpt.name) || activeOpt.price)
-                : getSalePrice(activeOpt.price);
+                ? (getChinaVialSellPrice(activeOpt.name, pc) || activeOpt.price)
+                : getSalePrice(activeOpt.price, activeOpt.name, pc);
               const totalSum = activePrice * drawerQuantity;
               const canAdd = true;
               const totalLabel = isKitPricing
