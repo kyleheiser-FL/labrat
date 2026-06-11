@@ -434,8 +434,11 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     safeLocalStorage.setItem('labrat_member_cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Fetch all orders globally to calculate dynamic inventory
+  // Fetch all orders globally to calculate dynamic inventory.
+  // Admin-only: order docs contain customer PII (names, addresses, phones),
+  // and member views treat every product as in-stock anyway.
   const fetchGlobalOrders = async () => {
+    if (!isAdminUser) return;
     try {
       const snap = await getDocs(collection(db, 'orders'));
       const list: OrderDetail[] = [];

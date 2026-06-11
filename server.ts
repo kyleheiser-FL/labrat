@@ -133,13 +133,14 @@ app.use(express.json());
   // Reads pushProfiles/{uid} from Firestore and sends FCM when time matches
   // ──────────────────────────────────────────────────────────────────────────
   app.get("/api/send-reminders", async (req, res) => {
-    // Verify Vercel cron secret to prevent public access
+    // Verify Vercel cron secret — fail closed if it isn't configured so this
+    // endpoint is never publicly triggerable.
     const cronSecret = process.env.CRON_SECRET;
-    if (cronSecret) {
-      const auth = req.headers.authorization || '';
-      if (auth !== `Bearer ${cronSecret}`) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
+    if (!cronSecret) {
+      return res.status(503).json({ error: 'CRON_SECRET not configured' });
+    }
+    if ((req.headers.authorization || '') !== `Bearer ${cronSecret}`) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     const adminApp = getAdminApp();
@@ -326,35 +327,6 @@ app.use(express.json());
     } catch (err: any) {
       console.error('[notify-order] Error:', err);
       res.status(500).json({ error: err?.message || 'Internal error' });
-    }
-  });
-
-  // ── Admin: save pricing config via Admin SDK (bypasses Firestore rules) ──────
-  app.post('/api/save-pricing', async (req, res) => {
-    const token = (req.headers.authorization || '').replace('Bearer ', '');
-    if (!token) return res.status(401).json({ error: 'Not authenticated' });
-
-    const adminApp = getAdminApp();
-    if (!adminApp) return res.status(503).json({ error: 'Firebase Admin not configured — set FIREBASE_SERVICE_ACCOUNT_BASE64' });
-
-    try {
-      const { getAuth: getAdminAuth } = await import('firebase-admin/auth');
-      const decoded = await getAdminAuth(adminApp).verifyIdToken(token);
-      const email = (decoded.email || '').toLowerCase();
-      if (email !== 'kyleheiser@gmail.com') return res.status(403).json({ error: 'Admin only' });
-    } catch (e: any) {
-      return res.status(401).json({ error: 'Invalid token: ' + e.message });
-    }
-
-    const { markups, overrides } = req.body || {};
-    if (!markups || overrides === undefined) return res.status(400).json({ error: 'Missing markups or overrides' });
-
-    try {
-      const fsdb = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
-      await fsdb.collection('systemConfig').doc('pricingConfig').set({ markups, overrides });
-      res.json({ ok: true });
-    } catch (e: any) {
-      res.status(500).json({ error: e.message });
     }
   });
 
@@ -546,118 +518,6 @@ app.use(express.json());
     } catch (err: any) {
       console.error('[create-order] Error:', err);
       res.status(500).json({ error: err?.message || 'Order creation failed' });
-    }
-  });
-
-  // Gemini Peptide Advisor API
-  app.post("/api/gemini/advisor", async (req, res) => {
-    const caller = await verifyFirebaseToken(req);
-    if (!caller) return res.status(401).json({ error: 'Sign in required' });
-    if (rateLimited(`gemini_${caller.uid}`, 10)) {
-      return res.status(429).json({ error: 'Too many requests — try again in a minute' });
-    }
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(500).json({ 
-        error: "GEMINI_API_KEY is not configured inside the server environment. Please define it in your Secrets settings." 
-      });
-    }
-
-    try {
-      const { prompt, compounds = [], logs = [], metrics = [] } = req.body;
-      
-      const client = getGeminiClient();
-
-      // Format contextual information about current user states
-      const compoundsCtx = compounds.length > 0
-        ? compounds.map((c: any) => `- Name: ${c.name}\n  Type: ${c.type}\n  Dose: ${c.doseAmount} ${c.doseUnit} (${c.frequency})\n  Weeks: ${c.durationWeeks}\n  Start: ${c.startDate}`).join("\n")
-        : "No compounds currently configured.";
-
-      const recentLogsCtx = logs.length > 0
-        ? logs.slice(-5).map((l: any) => `- Date: ${l.date} ${l.time} Administered ${l.compoundName} (${l.doseAmount} ${l.doseUnit})`).join("\n")
-        : "No injection logs recorded.";
-
-      const baseSystemPrompt = `You are the LabRat Peptide and Endocrine Science Copilot—an advanced AI research assistant dedicated to biological, peptide, chemical compounds, and hormonal chemistry tracking calculations.
-
-CRITICAL DISCLAIMER FOR USER SAFETY:
-1. All compound descriptions, reconstitution volumes, and half-life guides must be treated as textbook scientific theory and historical academic summaries.
-2. Under no circumstances should you provide clinical prescriptions, diagnostic evaluations, medical advice, or push the utilization of controlled or illegal substances.
-3. Keep your tone objective, clinical, mathematically precise, analytical, and scientifically detailed.
-
-Current User Active Roster Context:
----
-[Compounds Scheduled]:
-${compoundsCtx}
-
-[Recent logs]:
-${recentLogsCtx}
----
-
-Answer the user's technical research query comprehensively using your academic biochemical knowledge base. Discuss reconstitution formulations, physiological compound interactions, molecular structure contexts, or adverse risk mitigations (like TUDCA, NAC, or endocrine PCT cycles) where appropriate. Organize your response using clean, beautiful Markdown grids, lists, and headings for extreme legibility.`;
-
-      const response = await client.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: [
-          { role: "user", parts: [{ text: baseSystemPrompt + "\n\nUser Question:\n" + prompt }] }
-        ],
-        config: {
-          temperature: 0.7,
-        }
-      });
-
-      res.json({ text: response.text });
-    } catch (err: any) {
-      const { status, message } = handleGeminiError(err, "Gemini Advisor API");
-      res.status(status).json({ error: message });
-    }
-  });
-
-  // Cycle Optimizer suggestion generator
-  app.post("/api/gemini/optimize", async (req, res) => {
-    const caller = await verifyFirebaseToken(req);
-    if (!caller) return res.status(401).json({ error: 'Sign in required' });
-    if (rateLimited(`gemini_${caller.uid}`, 10)) {
-      return res.status(429).json({ error: 'Too many requests — try again in a minute' });
-    }
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(500).json({ 
-        error: "GEMINI_API_KEY is not configured inside the server environment." 
-      });
-    }
-
-    try {
-      const { compounds = [] } = req.body;
-      if (compounds.length === 0) {
-        return res.json({ suggestions: ["Add a compound to your Cycle Architect timeline first to unlock tailored AI optimization suggestions."] });
-      }
-
-      const client = getGeminiClient();
-
-      const compoundsList = compounds.map((c: any) => `- ${c.name} (${c.type}): ${c.doseAmount} ${c.doseUnit} (${c.frequency}), ${c.durationWeeks} weeks`).join("\n");
-
-      const prompt = `Review the following cycle scheduled parameters for theoretical chemical overlapping, timing conflicts, proper dosing intervals, or missing support elements (e.g., need for liver protection with oral alkylated steroids, need for prolactin mitigations with nandrolones, need for HCG/endocrine PCT loops, or reconstitution safety parameters for peptides):
-
-Current Scheduled Compounds:
-${compoundsList}
-
-Provide exactly 3 highly specific, clinical-grade scientific observations or precautionary optimization tips. Each tip must be short, action-oriented, and structured around biological safety. Output as a JSON array of 3 strings.`;
-
-      const response = await client.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
-          }
-        }
-      });
-
-      const suggestions = JSON.parse(response.text || "[]");
-      res.json({ suggestions });
-    } catch (err: any) {
-      const { status, message } = handleGeminiError(err, "Gemini Optimize API");
-      res.status(status).json({ error: message });
     }
   });
 

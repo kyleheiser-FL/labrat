@@ -18,5 +18,19 @@ export default defineConfig(() => {
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // Split heavyweight vendors into cacheable chunks so app-code
+          // changes don't re-download Firebase/animation/icon bundles.
+          manualChunks: {
+            firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/messaging'],
+            motion: ['motion/react'],
+            icons: ['lucide-react'],
+            peptides: ['./src/data/peptides.ts'],
+          },
+        },
+      },
+    },
   };
 });

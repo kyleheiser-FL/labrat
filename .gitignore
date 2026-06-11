@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Supplier wholesale price sheets — cost basis must never be committed
+*_prices.csv
