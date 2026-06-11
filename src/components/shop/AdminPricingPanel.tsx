@@ -192,6 +192,39 @@ export default function AdminPricingPanel() {
 
   const overrideCount = Object.keys(overrides).length;
 
+  function handleExport() {
+    const data = JSON.stringify({ markups: { norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct }, overrides }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'pricing-backup.json'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function handleImport() {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = '.json';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const parsed = JSON.parse(ev.target?.result as string);
+          if (parsed.overrides) { setOverrides(parsed.overrides); setDirty(true); setSaved(false); }
+          if (parsed.markups) {
+            if (parsed.markups.norKitPct    !== undefined) setNorKitPct(parsed.markups.norKitPct);
+            if (parsed.markups.chnKitPct    !== undefined) setChnKitPct(parsed.markups.chnKitPct);
+            if (parsed.markups.chnVialUSPct  !== undefined) setChnVialUSPct(parsed.markups.chnVialUSPct);
+            if (parsed.markups.chnVialDirPct !== undefined) setChnVialDirPct(parsed.markups.chnVialDirPct);
+          }
+        } catch { setSaveError('Import failed: invalid JSON'); }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+
   const visibleProducts = useMemo(() => {
     const q = search.toLowerCase();
     return SAMPLE_INVENTORY.filter(p => {
@@ -296,6 +329,20 @@ export default function AdminPricingPanel() {
           )}
           {dirty && !saved && (
             <span className="text-[10px] text-amber-400 font-semibold">● Unsaved changes</span>
+          )}
+          <button
+            onClick={handleImport}
+            className="px-3 py-1.5 text-[10px] font-bold border border-slate-700 text-slate-400 rounded-lg hover:text-cyan-400 hover:border-cyan-500/40 transition-all"
+          >
+            ↓ Import
+          </button>
+          {overrideCount > 0 && (
+            <button
+              onClick={handleExport}
+              className="px-3 py-1.5 text-[10px] font-bold border border-slate-700 text-slate-400 rounded-lg hover:text-emerald-400 hover:border-emerald-500/40 transition-all"
+            >
+              ↑ Export
+            </button>
           )}
           {overrideCount > 0 && (
             <button
