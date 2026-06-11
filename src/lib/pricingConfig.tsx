@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db, auth } from '../firebase';
 
 export interface PriceOverride {
   norKit?: number;
@@ -27,10 +27,17 @@ export const DEFAULT_PRICING: PricingConfig = {
 };
 
 export async function savePricingConfig(config: PricingConfig): Promise<void> {
-  await setDoc(doc(db, 'systemConfig', 'pricingConfig'), {
-    markups: config.markups,
-    overrides: config.overrides,
+  const token = await auth.currentUser?.getIdToken();
+  if (!token) throw new Error('Not signed in');
+  const res = await fetch('/api/save-pricing', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ markups: config.markups, overrides: config.overrides }),
   });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `Server error ${res.status}`);
+  }
 }
 
 const PricingContext = createContext<PricingConfig>(DEFAULT_PRICING);

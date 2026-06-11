@@ -92,7 +92,36 @@ export default function AdminPricingPanel() {
   const [saveError,     setSaveError]     = useState('');
   const [dirty,         setDirty]         = useState(false);
 
-  // Load saved config once
+  // Restore any unsaved draft from localStorage (runs before Firestore loads)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('labrat_pricing_draft');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed.overrides && Object.keys(parsed.overrides).length > 0) {
+        setOverrides(parsed.overrides);
+        if (parsed.markups) {
+          if (parsed.markups.norKitPct    !== undefined) setNorKitPct(parsed.markups.norKitPct);
+          if (parsed.markups.chnKitPct    !== undefined) setChnKitPct(parsed.markups.chnKitPct);
+          if (parsed.markups.chnVialUSPct  !== undefined) setChnVialUSPct(parsed.markups.chnVialUSPct);
+          if (parsed.markups.chnVialDirPct !== undefined) setChnVialDirPct(parsed.markups.chnVialDirPct);
+        }
+        initialized.current = true;
+        setDirty(true);
+      }
+    } catch {}
+  }, []);
+
+  // Auto-save draft to localStorage on every change
+  useEffect(() => {
+    if (!dirty) return;
+    localStorage.setItem('labrat_pricing_draft', JSON.stringify({
+      markups: { norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct },
+      overrides,
+    }));
+  }, [overrides, norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct, dirty]);
+
+  // Load saved config from Firestore (skipped if localStorage draft was found)
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
@@ -179,6 +208,7 @@ export default function AdminPricingPanel() {
     setSaveError('');
     try {
       await savePricingConfig({ markups: { norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct }, overrides });
+      localStorage.removeItem('labrat_pricing_draft');
       setSaved(true);
       setDirty(false);
       setTimeout(() => setSaved(false), 4000);

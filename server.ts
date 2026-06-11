@@ -276,6 +276,35 @@ app.use(express.json());
     }
   });
 
+  // ── Admin: save pricing config via Admin SDK (bypasses Firestore rules) ──────
+  app.post('/api/save-pricing', async (req, res) => {
+    const token = (req.headers.authorization || '').replace('Bearer ', '');
+    if (!token) return res.status(401).json({ error: 'Not authenticated' });
+
+    const adminApp = getAdminApp();
+    if (!adminApp) return res.status(503).json({ error: 'Firebase Admin not configured — set FIREBASE_SERVICE_ACCOUNT_BASE64' });
+
+    try {
+      const { getAuth: getAdminAuth } = await import('firebase-admin/auth');
+      const decoded = await getAdminAuth(adminApp).verifyIdToken(token);
+      const email = (decoded.email || '').toLowerCase();
+      if (email !== 'kyleheiser@gmail.com') return res.status(403).json({ error: 'Admin only' });
+    } catch (e: any) {
+      return res.status(401).json({ error: 'Invalid token: ' + e.message });
+    }
+
+    const { markups, overrides } = req.body || {};
+    if (!markups || overrides === undefined) return res.status(400).json({ error: 'Missing markups or overrides' });
+
+    try {
+      const fsdb = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
+      await fsdb.collection('systemConfig').doc('pricingConfig').set({ markups, overrides });
+      res.json({ ok: true });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   // Gemini Peptide Advisor API
   app.post("/api/gemini/advisor", async (req, res) => {
     if (!process.env.GEMINI_API_KEY) {
