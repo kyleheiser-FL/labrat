@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import { GoogleGenAI, Type } from "@google/genai";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import firebaseConfig from "./firebase-applet-config.json";
+import firebaseConfig from "./firebase-applet-config.json" with { type: "json" };
 import { initializeApp as initAdminApp, getApps as getAdminApps, cert } from "firebase-admin/app";
 import { getMessaging as getAdminMessaging } from "firebase-admin/messaging";
 import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
