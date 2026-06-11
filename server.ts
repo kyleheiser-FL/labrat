@@ -73,6 +73,43 @@ function getAdminApp() {
   }
 }
 
+const ADMIN_EMAIL = 'kyleheiser@gmail.com';
+
+// Verify the caller's Firebase ID token. Returns the decoded token, or null if
+// invalid/missing. When the Admin SDK has no credentials (local dev), returns
+// a stub so dev isn't blocked — production on Vercel always has credentials.
+async function verifyFirebaseToken(req: express.Request): Promise<{ uid: string; email: string } | null> {
+  const token = (req.headers.authorization || '').replace('Bearer ', '');
+  if (!token) return null;
+  const adminApp = getAdminApp();
+  if (!adminApp) return { uid: 'dev', email: '' };
+  try {
+    const { getAuth: getAdminAuth } = await import('firebase-admin/auth');
+    const decoded = await getAdminAuth(adminApp).verifyIdToken(token);
+    return { uid: decoded.uid, email: (decoded.email || '').toLowerCase() };
+  } catch {
+    return null;
+  }
+}
+
+// Simple in-memory sliding-window rate limiter (per key, e.g. IP or uid)
+const rateBuckets = new Map<string, number[]>();
+function rateLimited(key: string, maxPerMinute: number): boolean {
+  const now = Date.now();
+  const windowStart = now - 60_000;
+  const hits = (rateBuckets.get(key) || []).filter(t => t > windowStart);
+  if (hits.length >= maxPerMinute) { rateBuckets.set(key, hits); return true; }
+  hits.push(now);
+  rateBuckets.set(key, hits);
+  // Opportunistic cleanup so the map doesn't grow unbounded
+  if (rateBuckets.size > 5000) {
+    for (const [k, v] of rateBuckets) {
+      if (v.every(t => t <= windowStart)) rateBuckets.delete(k);
+    }
+  }
+  return false;
+}
+
 // Middleware
 app.use(express.json());
 
@@ -204,6 +241,16 @@ app.use(express.json());
     const { type, orderId, customerEmail, customerUserId, status } = req.body || {};
     if (!type || !orderId) return res.status(400).json({ error: 'Missing type or orderId' });
 
+    const caller = await verifyFirebaseToken(req);
+    if (!caller) return res.status(401).json({ error: 'Unauthorized' });
+    // Only the admin may push status-change notifications to customers
+    if (type === 'status_change' && caller.email !== ADMIN_EMAIL && caller.uid !== 'dev') {
+      return res.status(403).json({ error: 'Admin only' });
+    }
+    if (rateLimited(`notify_${caller.uid}`, 10)) {
+      return res.status(429).json({ error: 'Too many requests' });
+    }
+
     const adminApp = getAdminApp();
     if (!adminApp) return res.status(503).json({ error: 'Push service not configured' });
 
@@ -307,6 +354,11 @@ app.use(express.json());
 
   // Gemini Peptide Advisor API
   app.post("/api/gemini/advisor", async (req, res) => {
+    const caller = await verifyFirebaseToken(req);
+    if (!caller) return res.status(401).json({ error: 'Sign in required' });
+    if (rateLimited(`gemini_${caller.uid}`, 10)) {
+      return res.status(429).json({ error: 'Too many requests — try again in a minute' });
+    }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(500).json({ 
         error: "GEMINI_API_KEY is not configured inside the server environment. Please define it in your Secrets settings." 
@@ -364,6 +416,11 @@ Answer the user's technical research query comprehensively using your academic b
 
   // Cycle Optimizer suggestion generator
   app.post("/api/gemini/optimize", async (req, res) => {
+    const caller = await verifyFirebaseToken(req);
+    if (!caller) return res.status(401).json({ error: 'Sign in required' });
+    if (rateLimited(`gemini_${caller.uid}`, 10)) {
+      return res.status(429).json({ error: 'Too many requests — try again in a minute' });
+    }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(500).json({ 
         error: "GEMINI_API_KEY is not configured inside the server environment." 
@@ -409,6 +466,11 @@ Provide exactly 3 highly specific, clinical-grade scientific observations or pre
 
   // Gemini Blood Analyzer API
   app.post("/api/gemini/analyze-blood", async (req, res) => {
+    const caller = await verifyFirebaseToken(req);
+    if (!caller) return res.status(401).json({ error: 'Sign in required' });
+    if (rateLimited(`gemini_${caller.uid}`, 5)) {
+      return res.status(429).json({ error: 'Too many requests — try again in a minute' });
+    }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(500).json({ 
         error: "GEMINI_API_KEY is not configured inside the server environment. Please define it in your Secrets settings." 
@@ -417,7 +479,12 @@ Provide exactly 3 highly specific, clinical-grade scientific observations or pre
 
     try {
       const { text, fileData, mimeType, compounds = [], healthProfile } = req.body;
-      
+
+      const ALLOWED_UPLOAD_MIMES = ['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'application/pdf'];
+      if (fileData && mimeType && !ALLOWED_UPLOAD_MIMES.includes(mimeType)) {
+        return res.status(400).json({ error: 'Unsupported file type — upload a PNG, JPEG, WebP, HEIC, or PDF.' });
+      }
+
       const client = getGeminiClient();
 
       // Format user's health profile context to enrich the guidance

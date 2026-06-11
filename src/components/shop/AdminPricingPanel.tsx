@@ -109,7 +109,9 @@ export default function AdminPricingPanel() {
         initialized.current = true;
         setDirty(true);
       }
-    } catch {}
+    } catch (e) {
+      console.warn('[pricing] Could not restore unsaved pricing draft:', e);
+    }
   }, []);
 
   // Auto-save draft to localStorage on every change

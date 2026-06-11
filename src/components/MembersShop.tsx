@@ -812,11 +812,13 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       // Notify customer of status change (fire-and-forget)
       const order = allOrdersGlobal.find(o => o.id === orderId);
       if (order?.userId) {
-        fetch('/api/notify-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'status_change', orderId, customerUserId: order.userId, status }),
-        }).catch(() => {});
+        auth.currentUser?.getIdToken()
+          .then(token => fetch('/api/notify-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ type: 'status_change', orderId, customerUserId: order.userId, status }),
+          }))
+          .catch(e => console.error('[notify-order] status_change push failed', e));
       }
     } catch (e) {
       console.error('Failed changing order status flag', e);
@@ -1081,11 +1083,13 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       setShowOrderSuccessModal(true);
       setView('catalog');
       // Notify admin of new order (fire-and-forget)
-      fetch('/api/notify-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'order_placed', orderId, customerEmail: currentUser.email }),
-      }).catch(() => {});
+      auth.currentUser?.getIdToken()
+        .then(token => fetch('/api/notify-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ type: 'order_placed', orderId, customerEmail: currentUser.email }),
+        }))
+        .catch(e => console.error('[notify-order] order_placed push failed', e));
     } catch (e) {
       console.error('Error recording retail order', e);
     } finally {

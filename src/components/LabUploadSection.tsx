@@ -3,6 +3,7 @@ import { FileText, Upload, AlertTriangle, Activity, FileSpreadsheet, Loader2, Re
 import { Compound } from '../types';
 import { HealthProfile, AnalysisResult } from '../lib/bloodAnalyzerTypes';
 import { triggerHaptic } from '../lib/haptics';
+import { auth } from '../firebase';
 
 interface LabUploadSectionProps {
   compounds: Compound[];
@@ -55,9 +56,11 @@ export default function LabUploadSection({ compounds, profile, onResult }: LabUp
         fileData = await convertFileToBase64(selectedFile);
         mimeType = selectedFile.type;
       }
+      const idToken = await auth.currentUser?.getIdToken();
+      if (!idToken) throw new Error('Please sign in to analyze blood work.');
       const response = await fetch('/api/gemini/analyze-blood', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
         body: JSON.stringify({ text: pasteText, fileData, mimeType, compounds, healthProfile: profile })
       });
       if (!response.ok) {

@@ -42,7 +42,7 @@ export function PricingProvider({ children }: { children: ReactNode }) {
     const unsub = onSnapshot(
       doc(db, 'systemConfig', 'pricingConfig'),
       snap => { if (snap.exists()) setConfig(snap.data() as PricingConfig); },
-      () => {}
+      err => console.error('[pricing] Failed to load live pricing config — using defaults:', err)
     );
     return unsub;
   }, []);

@@ -71,7 +71,7 @@ export default function CycleDashboard({
           safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify([...next]));
           return next;
         });
-      }).catch(() => {});
+      }).catch(e => console.warn('[doses] Failed to load dismissed missed-dose list from cloud:', e));
     });
     return () => { done = true; unsub(); };
   }, []);
@@ -83,7 +83,7 @@ export default function CycleDashboard({
       safeLocalStorage.setItem('labrat_dismissed_missed_doses', JSON.stringify(arr));
       const user = auth.currentUser;
       if (user) {
-        setDoc(doc(db, 'users', user.uid), { dismissedMissedDoses: arr }, { merge: true }).catch(() => {});
+        setDoc(doc(db, 'users', user.uid), { dismissedMissedDoses: arr }, { merge: true }).catch(e => console.warn('[doses] Failed to sync dismissed missed-dose to cloud:', e));
       }
       return next;
     });

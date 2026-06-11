@@ -425,7 +425,7 @@ export default function App() {
           payload: { title, body, tag, icon: '/icon_192.png', badge: '/icon_96.png' },
         });
       }
-    }).catch(() => {});
+    }).catch(e => console.warn('[notifications] Service worker notification failed:', e));
   };
 
   const firePhysicalNotification = () => {
@@ -467,7 +467,7 @@ export default function App() {
       reminderTime,
       timezoneOffset: new Date().getTimezoneOffset(),
       compounds: compoundReminders,
-    }).catch(() => {});
+    }).catch(e => console.error('[push] Failed to sync push profile — reminders may not fire:', e));
   }, [user, reminderEnabled, reminderTime, compounds]);
 
   // Handle foreground FCM messages (app is open)
@@ -895,7 +895,7 @@ export default function App() {
           setNotifications(filterTransientNotifs(finalNotifs).sort((a,b) => b.timestamp.localeCompare(a.timestamp)));
 
           // Register FCM token for background push delivery (non-blocking)
-          registerFCMToken(currentUser.uid).catch(() => {});
+          registerFCMToken(currentUser.uid).catch(e => console.warn('[push] FCM token registration failed — push notifications disabled:', e));
 
           safeLocalStorage.setItem('labrat_compounds', JSON.stringify(finalCompounds));
           safeLocalStorage.setItem('labrat_logs', JSON.stringify(finalLogs));
