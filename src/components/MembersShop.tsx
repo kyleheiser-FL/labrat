@@ -1,43 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { 
-  ShoppingBag, 
-  ShoppingCart, 
-  Users, 
-  CheckCircle, 
+import {
+  ShoppingBag,
+  ShoppingCart,
+  Users,
+  CheckCircle,
   X,
-  XCircle, 
-  Clock, 
-  Plus, 
-  Minus,
-  Trash2, 
-  Edit, 
-  ClipboardList, 
-  Mail, 
-  UserCheck, 
-  MapPin, 
-  Phone, 
-  User, 
-  DollarSign, 
-  AlertTriangle, 
-  Loader2, 
-  PlusCircle, 
-  Package, 
-  ShieldAlert, 
+  Clock,
+  Edit,
+  ClipboardList,
+  User,
+  Loader2,
+  ShieldAlert,
   BadgeCheck,
-  Send,
-  ArrowLeft,
   Search,
-  Truck,
-  Sparkles,
-  Flame,
-  Brain,
-  Shield,
-  Heart,
-  Activity,
-  Droplet,
-  Moon,
-  Dna,
-  TrendingUp,
   UserPlus,
   LogIn
 } from 'lucide-react';
@@ -78,6 +53,9 @@ import ShopCatalogView from './shop/ShopCatalogView';
 import ProductDrawerModal from './shop/ProductDrawerModal';
 import OrderSuccessModal from './shop/OrderSuccessModal';
 import CertificationModal from './shop/CertificationModal';
+import AdminProductFormModal from './shop/AdminProductFormModal';
+import NorwayHeritageModal from './shop/NorwayHeritageModal';
+import ShopRegistrationView from './shop/ShopRegistrationView';
 import ProductVialVisual from './shop/ProductVialVisual';
 
 type LabratThemeMode = 'neon' | 'clinical' | 'clinical-light';
@@ -1417,210 +1395,14 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         </div>
       ) : !isAdminUser && !memberProfile ? (
         /* PROFILE NOT REQUESTED YET: SHOW REGISTER SHEET */
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6" id="shop-registration-lobby">
-          <div className="bg-[#0f172a]/50 border border-[#1e293b]/80 p-6 sm:p-8 rounded-2xl flex flex-col justify-between">
-            <div>
-              <div className="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl self-start mb-4 w-fit">
-                <ShoppingBag className="w-6 h-6" />
-              </div>
-              <h2 className="text-xl font-bold text-slate-100 tracking-tight">Request Member Shopping Access</h2>
-              <p className="text-slate-400 text-sm mt-3 leading-linear">
-                Our materials are formulated and reserved for registered biochemical researchers. 
-                Applying is free. The administrator will review your contact credentials and approve your account, granting access to premium items.
-              </p>
-              
-              <ul className="mt-5 space-y-2 text-xs text-slate-300">
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-cyan-400 shrink-0" />
-                  No direct credit card upfront. Payments handled afterwards via verified email invoices.
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-cyan-400 shrink-0" />
-                  Premium logistics tracking directly on your dashboard.
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-cyan-400 shrink-0" />
-                  Priority stock reservation matching active planned compounds.
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="bg-[#0b1329]/70 border border-[#1e293b] p-6 sm:p-8 rounded-2xl">
-            <h3 className="text-base font-bold text-white mb-4">Researcher Address Registry</h3>
-            <form onSubmit={handleJoinWaitlist} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1.5" htmlFor="reg-email">Verified Email</label>
-                <input 
-                  type="email" 
-                  disabled 
-                  value={currentUser.email || ''} 
-                  id="reg-email"
-                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 text-slate-500 rounded-xl text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1.5" htmlFor="reg-address">Full Shipping Address</label>
-                <textarea 
-                  required
-                  rows={2}
-                  id="reg-address"
-                  placeholder="Street Address, City, State, ZIP"
-                  value={joinForm.shippingAddress}
-                  onChange={(e) => setJoinForm(prev => ({ ...prev, shippingAddress: e.target.value }))}
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-xl text-sm focus:outline-none transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1.5" htmlFor="reg-phone">Contact Phone Number</label>
-                <input 
-                  type="tel" 
-                  required
-                  id="reg-phone"
-                  placeholder="(+1) 555-0199"
-                  value={joinForm.phone}
-                  onChange={(e) => setJoinForm(prev => ({ ...prev, phone: e.target.value }))}
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-xl text-sm focus:outline-none transition-all"
-                />
-              </div>
-
-              {/* Source Selection */}
-              <div className="border-t border-slate-800 pt-4 mt-2">
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Sourcing Preference</label>
-                <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">This affects pricing, compound availability, and documentation.</p>
-                <div className="flex flex-col gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setJoinForm(prev => ({ ...prev, source: 'norway' }))}
-                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.source === 'norway' ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
-                  >
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className={`text-xs font-bold ${joinForm.source === 'norway' ? 'text-cyan-300' : 'text-slate-300'}`}>🇳🇴 Norway · Swiss Premium</span>
-                      <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">Recommended</span>
-                    </div>
-                    <ul className="space-y-0.5 text-[10px] text-slate-400">
-                      <li>✓ GMP-certified Scandinavian &amp; Swiss synthesis</li>
-                      <li>✓ HPLC purity certificate included per batch</li>
-                      <li>✓ Sub-1 EU/mg endotoxin levels</li>
-                      <li>✓ Full compound selection available</li>
-                    </ul>
-                    <p className="mt-2 text-[10px] text-slate-500 italic">Higher price point — premium QC documentation</p>
-                    {joinForm.source === 'norway' && <span className="mt-2 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Selected</span>}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setJoinForm(prev => ({ ...prev, source: 'china' }))}
-                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.source === 'china' ? 'border-orange-500 bg-orange-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
-                  >
-                    <span className={`text-xs font-bold mb-1.5 ${joinForm.source === 'china' ? 'text-orange-300' : 'text-slate-300'}`}>🇨🇳 China · Budget Tier</span>
-                    <ul className="space-y-0.5 text-[10px] text-slate-400">
-                      <li>✓ Industrial-scale synthesis</li>
-                      <li>✓ Competitive per-vial pricing</li>
-                      <li>✓ Standard QC</li>
-                      <li className="text-slate-500">⚠ Limited compound selection (not all peptides available)</li>
-                      <li className="text-slate-500">⚠ No HPLC certificate included</li>
-                    </ul>
-                    <p className="mt-2 text-[10px] text-slate-500 italic">Lower price — select compounds only</p>
-                    {joinForm.source === 'china' && <span className="mt-2 text-[9px] font-bold text-orange-400 uppercase tracking-wider">Selected</span>}
-                  </button>
-                </div>
-              </div>
-
-              {/* Product Interest (Wishlist) */}
-              <div className="border-t border-slate-800 pt-4 mt-2">
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Peptides of Interest</label>
-                <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">Select everything you're interested in. Kit pricing = 10 vials per compound.</p>
-                {joinForm.selectedProducts.length > 0 && (
-                  <p className="text-[11px] text-cyan-400 font-semibold mb-3">
-                    {joinForm.selectedProducts.length} compound{joinForm.selectedProducts.length !== 1 ? 's' : ''} selected · Kit: 10 vials each
-                  </p>
-                )}
-                <div className="space-y-4">
-                  {registrationProductGroups.map(group => (
-                    <div key={group.category}>
-                      <p className="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1.5">{group.category}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {group.products.map(product => {
-                          const isSelected = joinForm.selectedProducts.includes(product.name);
-                          const isAvailable = joinForm.source === 'norway' ? product.availableNorway : product.availableChina;
-                          const unavailableLabel = !isAvailable ? (joinForm.source === 'norway' ? 'China only' : 'Norway only') : null;
-                          return (
-                            <button
-                              key={product.name}
-                              type="button"
-                              onClick={() => setJoinForm(prev => ({
-                                ...prev,
-                                selectedProducts: prev.selectedProducts.includes(product.name)
-                                  ? prev.selectedProducts.filter(p => p !== product.name)
-                                  : [...prev.selectedProducts, product.name]
-                              }))}
-                              className={`flex flex-col items-start px-2.5 py-1.5 rounded-lg border text-left transition-all cursor-pointer ${
-                                isSelected
-                                  ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 font-bold'
-                                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-600'
-                              } ${!isAvailable ? 'opacity-50' : ''}`}
-                            >
-                              <span className="text-[11px]">{product.name}</span>
-                              {unavailableLabel && (
-                                <span className="text-[9px] text-slate-500 mt-0.5">{unavailableLabel}</span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Pricing Preference */}
-              <div className="border-t border-slate-800 pt-4 mt-2">
-                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Preferred Pricing Model</label>
-                <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">How would you like to purchase? Per-vial lets you order any quantity; kit pricing is 10 vials at a time at a lower rate.</p>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setJoinForm(prev => ({ ...prev, pricingPreference: 'vial' }))}
-                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.pricingPreference === 'vial' ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
-                  >
-                    <span className={`text-xs font-bold mb-1 ${joinForm.pricingPreference === 'vial' ? 'text-cyan-300' : 'text-slate-300'}`}>Per Vial</span>
-                    <span className="text-[10px] text-slate-500 leading-normal">Order any quantity at standard single-vial pricing.</span>
-                    {joinForm.pricingPreference === 'vial' && <span className="mt-2 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Selected</span>}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setJoinForm(prev => ({ ...prev, pricingPreference: 'kit' }))}
-                    className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all cursor-pointer ${joinForm.pricingPreference === 'kit' ? 'border-cyan-500 bg-cyan-500/10' : 'border-slate-800 bg-slate-950 hover:border-slate-600'}`}
-                  >
-                    <span className={`text-xs font-bold mb-1 ${joinForm.pricingPreference === 'kit' ? 'text-cyan-300' : 'text-slate-300'}`}>Kit Pricing</span>
-                    <span className="text-[10px] text-slate-500 leading-normal">10 vials per order at a reduced kit rate. Best value for regular use.</span>
-                    {joinForm.pricingPreference === 'kit' && <span className="mt-2 text-[9px] font-bold text-cyan-400 uppercase tracking-wider">Selected</span>}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={actionLoading === 'join'}
-                className="w-full py-3 bg-cyan-500 disabled:bg-cyan-500/40 text-slate-950 font-bold text-sm rounded-xl cursor-pointer hover:bg-cyan-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-              >
-                {actionLoading === 'join' ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Submitting Application...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    Submit Retail Access Application
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
-        </div>
+        <ShopRegistrationView
+          email={currentUser.email || ''}
+          joinForm={joinForm}
+          onSetJoinForm={setJoinForm}
+          registrationProductGroups={registrationProductGroups}
+          actionLoading={actionLoading}
+          onSubmit={handleJoinWaitlist}
+        />
       ) : !isAdminUser && memberProfile && memberProfile.status === 'pending' ? (
         /* PENDING APPROVAL SCREEN */
         <div className="bg-[#0b1329] border border-cyan-500/25 rounded-2xl p-8 text-center flex flex-col items-center py-16" id="pending-waitlist-lobby">
@@ -1875,326 +1657,25 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         />
       )}
 
-
-      {/* ================================== */}
       {/* PRODUCT CREATION/EDITION MODAL (ADMIN ONLY) */}
-      {/* ================================== */}
-      <AnimatePresence>
-        {showProductModal && isAdminUser && (
-          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-[#0b1329] border border-slate-800 max-w-md w-full p-6 rounded-2xl text-left"
-            >
-              <h3 className="text-base font-bold text-white mb-4">
-                {editingProduct ? 'Modify Product Parameters' : 'Register New Compound / Supply'}
-              </h3>
-              
-              <form onSubmit={handleSaveProduct} className="space-y-4">
-                {productValidationError && (
-                  <div className="bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl p-3 text-[11px] font-medium leading-relaxed">
-                    ⚠️ {productValidationError}
-                  </div>
-                )}
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-name">Product Name</label>
-                  <input 
-                    type="text" 
-                    required
-                    id="prod-name"
-                    placeholder="E.g. TB-500 Pure Powder"
-                    value={productForm.name}
-                    onChange={(e) => setProductForm(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-lg text-xs"
-                  />
-                </div>
+      <AdminProductFormModal
+        open={showProductModal && isAdminUser}
+        editingProduct={editingProduct}
+        productForm={productForm}
+        onSetProductForm={setProductForm}
+        validationError={productValidationError}
+        actionLoading={actionLoading}
+        wholesaleBook={wholesaleBook}
+        onSubmit={handleSaveProduct}
+        onClose={() => setShowProductModal(false)}
+      />
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-desc">Description</label>
-                  <textarea 
-                    required
-                    rows={2}
-                    id="prod-desc"
-                    placeholder="Biochemical mechanisms, dosage volumes..."
-                    value={productForm.description}
-                    onChange={(e) => setProductForm(prev => ({ ...prev, description: e.target.value }))}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-lg text-xs"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-cat">Category</label>
-                    <input 
-                      type="text" 
-                      required
-                      id="prod-cat"
-                      placeholder="E.g. Healing"
-                      value={productForm.category}
-                      onChange={(e) => setProductForm(prev => ({ ...prev, category: e.target.value }))}
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-lg text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-price">Research Price ($)</label>
-                    <input 
-                      type="number" 
-                      required
-                      id="prod-price"
-                      min={0}
-                      placeholder="125"
-                      value={productForm.price || ''}
-                      onChange={(e) => setProductForm(prev => ({ ...prev, price: Number(e.target.value) }))}
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-lg text-xs"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-inventory">Stock Inventory (Vials/Sets)</label>
-                    <input
-                      type="number"
-                      required
-                      id="prod-inventory"
-                      placeholder="30"
-                      min={0}
-                      value={productForm.inventory}
-                      onChange={(e) => setProductForm(prev => ({ ...prev, inventory: Number(e.target.value) }))}
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-lg text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-source">Member Tier</label>
-                    <select
-                      id="prod-source"
-                      value={productForm.sourceRestriction}
-                      onChange={(e) => setProductForm(prev => ({ ...prev, sourceRestriction: e.target.value as '' | 'china' | 'norway' }))}
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 rounded-lg text-xs"
-                    >
-                      <option value="">Unrestricted</option>
-                      <option value="norway">🇳🇴 Norway (approved / kit)</option>
-                      <option value="china">🇨🇳 China (chinavial / chinakit)</option>
-                    </select>
-                  </div>
-                </div>
-
-                {productForm.name && productForm.price > 0 && (
-                  <div className="bg-slate-900 border border-slate-800/80 p-3 rounded-xl space-y-1 text-[11px] font-mono text-slate-300">
-                    <div className="text-cyan-400 font-bold uppercase tracking-wider text-[9px] mb-1">Financial Estimates (KaosLabs.eu)</div>
-                    <div className="flex justify-between">
-                      <span>Estimated Cost/Vial (incl. avg shipping):</span>
-                      <span className="text-white font-semibold">${getProductCostPerVial(productForm.name, productForm.price || 0, wholesaleBook).toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Sell Price:</span>
-                      <span className="text-emerald-400 font-semibold">${productForm.price || 0}.00</span>
-                    </div>
-                    <div className="flex justify-between border-t border-slate-800/50 pt-1.5 mt-1 font-bold">
-                      <span>Estimated Profit per Vial:</span>
-                      {(() => {
-                        const cost = getProductCostPerVial(productForm.name, productForm.price || 0, wholesaleBook);
-                        const sale = getSalePrice(productForm.price || 0);
-                        const profit = sale - cost;
-                        return <span className={profit >= 0 ? "text-amber-300" : "text-rose-400"}>${profit.toFixed(2)}</span>;
-                      })()}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex justify-end gap-2.5 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowProductModal(false)}
-                    className="px-3 py-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 text-xs rounded-lg cursor-pointer"
-                  >
-                    Discard
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={actionLoading !== null}
-                    className="px-4 py-2 bg-cyan-500 text-slate-950 font-bold text-xs rounded-lg flex items-center gap-1 cursor-pointer"
-                  >
-                    {actionLoading === 'save_product' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <BadgeCheck className="w-3.5 h-3.5" />} {editingProduct ? 'Apply Edit' : 'Add to Catalog'}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-
-      {/* ================================== */}
       {/* NORWAY & SWITZERLAND PEPTIDE HERITAGE MODAL */}
-      {/* ================================== */}
-      <AnimatePresence>
-        {showNorwayModal && (
-          <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[9999] flex items-center justify-center p-4 overflow-y-auto">
-            {/* Background click to close */}
-            <div className="absolute inset-0 cursor-pointer" onClick={() => { triggerHaptic('light'); setShowNorwayModal(false); }} />
-
-            <motion.div
-              initial={{ scale: 0.93, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.93, opacity: 0, y: 20 }}
-              className="bg-[#0b1329] border border-cyan-500/20 max-w-2xl w-full p-5 sm:p-8 rounded-2xl text-left shadow-2xl relative overflow-hidden z-10 my-8 max-h-[90vh] flex flex-col"
-            >
-              {/* Decorative premium header gradient lines */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-cyan-400 via-[#2176ff] to-[#a05eff]" />
-              <div className="absolute top-1.5 inset-x-0 h-px bg-white/10" />
-
-              {/* Header section with branding & Norway flag */}
-              <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-800 shrink-0">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 border border-cyan-400/30 flex items-center justify-center text-3xl shadow-inner select-none animate-pulse">
-                    🇳🇴
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-black uppercase tracking-wider bg-cyan-950/80 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded">Specialty Report</span>
-                      <span className="text-[9px] font-black uppercase tracking-wider bg-indigo-950/80 text-indigo-300 border border-indigo-500/10 px-2 py-0.5 rounded">Biotech History</span>
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-black text-white tracking-tight mt-1">
-                      The European Peptide Heritage
-                    </h3>
-                  </div>
-                </div>
-                
-                <button
-                  type="button"
-                  onClick={() => { triggerHaptic('light'); setShowNorwayModal(false); }}
-                  className="p-1.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl text-slate-400 hover:text-slate-100 transition cursor-pointer"
-                  aria-label="Close heritage details"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Scrollable factual body */}
-              <div className="flex-1 overflow-y-auto pr-1 py-5 space-y-6 text-slate-300 text-xs sm:text-sm leading-relaxed scrollbar-thin scrollbar-thumb-slate-800">
-                <p className="text-xs text-slate-400 border-l-2 border-cyan-500 pl-3 italic">
-                  "By prioritizing micro-batch crystalline purity over industrial scale bulk crystallization, Switzerland and Scandinavia's molecular baseline outperforms mass-market chemical manufacturers consistently." 
-                  <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">— European Biological Synthesis Review (EBSR)</span>
-                </p>
-
-                {/* Section 1: History timeline */}
-                <div>
-                  <h4 className="text-xs font-black tracking-wider text-cyan-400 uppercase flex items-center gap-1.5 mb-2.5">
-                    <span className="inline-block w-1.5 h-1.5 bg-cyan-400 rounded-full" />
-                    1. A Century of Peptide Chemistry (Longer than USA &amp; China)
-                  </h4>
-                  <p className="text-slate-300 mb-3 block">
-                    Many researchers mistakenly assume modern peptide synthesis is a recent byproduct of large-scale Chinese factories. In fact, Europe is the undisputed birthplace of peptide chemistry, holding an operational pedigree decades older than industrial export zones:
-                  </p>
-                  
-                  {/* Timeline cards */}
-                  <div className="space-y-3 pl-2 border-l border-slate-800">
-                    <div className="relative pl-4">
-                      <div className="absolute left-[-21px] top-1.5 w-2.5 h-2.5 bg-cyan-400 rounded-full border border-slate-950" />
-                      <div className="text-white font-bold text-xs">1902 — Emil Fischer Swiss-German Genesis</div>
-                      <p className="text-slate-400 text-xs mt-0.5">
-                        Nobel Laureate Emil Fischer synthesized the first true peptide chain (glycylglycine) in Switzerland / Germany, coining the scientific term "peptide" and defining the covalent amide bonds that bind amino acids.
-                      </p>
-                    </div>
-                    <div className="relative pl-4">
-                      <div className="absolute left-[-21px] top-1.5 w-2.5 h-2.5 bg-purple-400 rounded-full border border-slate-950" />
-                      <div className="text-white font-bold text-xs">Mid-1950s — Norwegian High-Latitude Bio-Extraction</div>
-                      <p className="text-slate-400 text-xs mt-0.5">
-                        Norwegian biochemistry initiatives in Oslo and Bergen pioneered the isolation of cold-active enzymes, bio-active micro-molecules, and metabolic defense peptide chains in arctic marine organisms. This established early European techniques for purifying crystalline organic compounds.
-                      </p>
-                    </div>
-                    <div className="relative pl-4">
-                      <div className="absolute left-[-21px] top-1.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border border-slate-950" />
-                      <div className="text-white font-bold text-xs">1971 — The Swiss Gold-Standard (Bachem)</div>
-                      <p className="text-slate-400 text-xs mt-0.5">
-                        Bachem AG was founded in Bubendorf, Switzerland, initiating the world's first dedicated industrial line of synthetic peptides. This established Swiss-standard Solid-Phase Peptide Synthesis (SPPS) decades before mass commercial synthesis appeared in China or North America.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 2: Glacial Water */}
-                <div>
-                  <h4 className="text-xs font-black tracking-wider text-cyan-400 uppercase flex items-center gap-1.5 mb-2.5">
-                    <span className="inline-block w-1.5 h-1.5 bg-cyan-400 rounded-full" />
-                    2. Glacier-Pure Aqueous Baselines
-                  </h4>
-                  <p className="text-slate-300">
-                    In high-fidelity synthesis, <strong>water is the universal solvent</strong>. During the acid cleavage stage of peptide synthesis, even sub-parts-per-million micro-contaminants can warp molecular strands or trigger cross-chain peptide bonding.
-                  </p>
-                  <p className="text-slate-300 mt-2">
-                    Norway's isolated sub-alpine geographic locations tap into highly pristine deep aquifers and mountain glacier waters. This provides a clean native solvent baseline that features zero industrial runoffs or heavy metals. As a result, the active substance undergoes synthesis without baseline contamination.
-                  </p>
-                </div>
-
-                {/* Section 3: Micro-Batch vs Bulk */}
-                <div>
-                  <h4 className="text-xs font-black tracking-wider text-cyan-400 uppercase flex items-center gap-1.5 mb-2.5">
-                    <span className="inline-block w-1.5 h-1.5 bg-cyan-400 rounded-full" />
-                    3. Swiss-Scandinavian Micro-Batching vs. Mass Sourcing
-                  </h4>
-                  
-                  {/* Factual comparison box */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mt-3">
-                    <div className="bg-slate-950/60 border border-slate-800/80 p-4 rounded-xl text-left">
-                      <div className="flex items-center gap-1.5 text-red-400 font-bold text-xs mb-2 uppercase">
-                        <span className="w-1.5 h-1.5 bg-red-400 rounded-full" /> Modern Bulk Factories (China/Bulk)
-                      </div>
-                      <ul className="space-y-2 text-xs text-slate-400">
-                        <li>• Focused on multi-ton industrial chemical synthesis volumes</li>
-                        <li>• Rapid high-temperature cleavage processes that compromise amino-acid integrity</li>
-                        <li>• Higher incidence of truncated chains (missing essential terminal groups)</li>
-                        <li>• Residual salts (TFA leftover content often exceeds standard thresholds)</li>
-                      </ul>
-                    </div>
-
-                    <div className="bg-cyan-950/20 border border-cyan-500/20 p-4 rounded-xl text-left">
-                      <div className="flex items-center gap-1.5 text-cyan-400 font-bold text-xs mb-2 uppercase">
-                        <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full" /> LabRat Sourcing (Norway &amp; Switzerland)
-                      </div>
-                      <ul className="space-y-2 text-xs text-slate-300">
-                        <li>• Exclusive low-temperature micro-batching</li>
-                        <li>• Sterile vacuum cryogenic freeze-drying (lyophilization) preserves shape</li>
-                        <li>• Guaranteed 99.2%+ purity levels under strict ISO 17025 audits</li>
-                        <li>• Certified zero heavy-metal profiling and flawless sequence length</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 4: GMP Sterile Protocols */}
-                <div>
-                  <h4 className="text-xs font-black tracking-wider text-cyan-400 uppercase flex items-center gap-1.5 mb-2">
-                    <span className="inline-block w-1.5 h-1.5 bg-cyan-400 rounded-full" />
-                    4. Rigid EU GMP Annex 1 Compliance
-                  </h4>
-                  <p className="text-slate-300">
-                    Norway and Switzerland hold the highest biological manufacturing criteria. Sourcing labs comply strictly with <strong>EU GMP Annex 1 guidelines for sterile compounds</strong> (ISO Class 5 environment, laminar horizontal airflow, and continuous automated optical sensors). Every step is recorded in unalterable digital audit systems, satisfying absolute research standards.
-                  </p>
-                </div>
-              </div>
-
-              {/* Action Close Footer */}
-              <div className="border-t border-slate-800 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-                <span className="text-[10px] text-slate-500 font-black tracking-widest uppercase flex items-center gap-1.5">
-                  {renderWithLabRatBranding("LabRat")} <span className="text-slate-400 font-medium">Certified Bioresearch Sourcing</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => { triggerHaptic('light'); setShowNorwayModal(false); }}
-                  className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs rounded-xl cursor-pointer transition active:scale-98"
-                >
-                  Return to Compound Shop
-                </button>
-              </div>
-
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      <NorwayHeritageModal
+        open={showNorwayModal}
+        onClose={() => setShowNorwayModal(false)}
+        brandLabel={renderWithLabRatBranding("LabRat")}
+      />
 
 
 
