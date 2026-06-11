@@ -27,7 +27,7 @@ export const DEFAULT_PRICING: PricingConfig = {
 };
 
 export async function savePricingConfig(config: PricingConfig): Promise<void> {
-  await setDoc(doc(db, 'settings', 'pricingConfig'), {
+  await setDoc(doc(db, 'systemConfig', 'pricingConfig'), {
     markups: config.markups,
     overrides: config.overrides,
   });
@@ -40,7 +40,7 @@ export function PricingProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsub = onSnapshot(
-      doc(db, 'settings', 'pricingConfig'),
+      doc(db, 'systemConfig', 'pricingConfig'),
       snap => { if (snap.exists()) setConfig(snap.data() as PricingConfig); },
       () => {}
     );
