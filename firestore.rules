@@ -115,21 +115,11 @@ service cloud.firestore {
                     )
                   );
 
-      // Members must be approved to place orders
-      allow create: if request.auth != null && (
-                      isAdmin() ||
-                      (
-                        request.resource.data.userId == request.auth.uid &&
-                        exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
-                        (
-                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "approved" ||
-                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "kit" ||
-                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "chinakit" ||
-                          get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == "chinavial"
-                        )
-                      )
-                    );
-                    
+      // Orders are created exclusively through /api/create-order (Admin SDK,
+      // bypasses these rules) so prices are always recomputed server-side.
+      // Direct client creation is admin-only.
+      allow create: if isAdmin();
+
       allow update, delete: if isAdmin();
     }
   }

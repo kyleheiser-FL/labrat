@@ -1024,7 +1024,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     return { totalQty, subtotal };
   };
 
-  // Checkout order placement!
+  // Checkout order placement — prices, shipping, tax, and total are computed
+  // server-side (/api/create-order) so a tampered client can't alter them.
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) return;
@@ -1032,65 +1033,32 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
 
     triggerHaptic('heavy');
     setActionLoading('checkout');
-    
-    // Generate order ID
-    const dateStr = new Date().toISOString().slice(0,10).replace(/-/g,'');
-    const randomHex = Math.floor(Math.random() * 16777215).toString(16).toUpperCase().padStart(6, '0');
-    const orderId = `LR-${dateStr}-${randomHex}`;
-
-    const { subtotal } = getCartTotals();
-    const totalVials = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const isFixedShipping = isKitPricing || isChinaKitPricing || isChinaVialPricing;
-    const shippingDetails = isFixedShipping ? null : getShippingOptions(shippingForm.zipCode, totalVials, cart);
-    const selectedOption = isFixedShipping ? null : (shippingDetails!.options.find(o => o.id === selectedShippingOptionId) || shippingDetails!.options[0]);
-    const shippingCost = isKitPricing ? 25 : isChinaKitPricing ? 50 : isChinaVialPricing ? 0 : (selectedOption ? selectedOption.cost : 0);
-
-    // Florida sales tax check (6.0%)
-    const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
-    const salesTaxRate = 0.06;
-    const bacWaterCost = bacWaterQty * 7;
-    const salesTax = isFlorida ? Math.round((subtotal + bacWaterCost) * salesTaxRate * 100) / 100 : 0;
-
-    const orderPayload: OrderDetail = {
-      id: orderId,
-      userId: currentUser.uid,
-      email: currentUser.email || '',
-      displayName: currentUser.displayName || 'Anonymous LabRat',
-      items: [
-        ...cart.map(item => ({
-          id: item.product.id,
-          name: item.product.name,
-          price: isKitPricing
-            ? (getKitSellPrice(item.product.name, pricingConfig) || item.product.price)
-            : isChinaKitPricing
-            ? (getChinaKitSellPrice(item.product.name, pricingConfig) || item.product.price)
-            : isChinaVialPricing
-            ? (getChinaVialSellPrice(item.product.name, pricingConfig) || getSalePrice(item.product.price, item.product.name, pricingConfig))
-            : getSalePrice(item.product.price, item.product.name, pricingConfig),
-          quantity: item.quantity
-        })),
-        ...(bacWaterQty > 0 ? [{ id: 'prod_bac_water_30ml', name: 'BAC Water (30ml)', price: 7, quantity: bacWaterQty }] : [])
-      ],
-      total: subtotal + bacWaterCost + shippingCost + salesTax,
-      tax: salesTax,
-      shippingInfo: {
-        ...shippingForm,
-        carrier: isFixedShipping ? undefined : selectedOption?.carrier,
-        method: isKitPricing ? 'Norway Kit Flat Rate' : isChinaKitPricing ? 'China Kit Flat Rate' : isChinaVialPricing ? 'China Vial Free Shipping' : selectedOption?.name,
-        cost: shippingCost,
-        deliveryEstimate: isFixedShipping ? undefined : selectedOption?.estimatedDeliveryDate,
-        weightLbs: isFixedShipping ? undefined : shippingDetails?.weightLbs
-      },
-      status: 'placed',
-      createdAt: new Date().toISOString()
-    };
 
     try {
-      await setDoc(doc(db, 'orders', orderId), orderPayload);
-      
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error('Please sign in again to place your order.');
+      const tier = isKitPricing ? 'kit' : isChinaKitPricing ? 'chinakit' : isChinaVialPricing ? 'chinavial' : 'retail';
+      const res = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          items: cart.map(item => ({ id: item.product.id, quantity: item.quantity })),
+          bacWaterQty,
+          shippingForm,
+          selectedShippingOptionId,
+          tier, // honored only for the admin; members are priced by their Firestore status
+          displayName: currentUser.displayName || 'Anonymous LabRat',
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Order failed (server error ${res.status})`);
+      }
+      const orderPayload: OrderDetail = (await res.json()).order;
+
       // Update global orders state to recalculate inventory instantly
       setAllOrdersGlobal(prev => [orderPayload, ...prev]);
-      
+
       // Complete! Reset parameters
       setLastPlacedOrder(orderPayload);
       setCart([]);
@@ -1099,14 +1067,15 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       setView('catalog');
       // Notify admin of new order (fire-and-forget)
       auth.currentUser?.getIdToken()
-        .then(token => fetch('/api/notify-order', {
+        .then(t => fetch('/api/notify-order', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ type: 'order_placed', orderId, customerEmail: currentUser.email }),
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${t}` },
+          body: JSON.stringify({ type: 'order_placed', orderId: orderPayload.id, customerEmail: currentUser.email }),
         }))
-        .catch(e => console.error('[notify-order] order_placed push failed', e));
-    } catch (e) {
+        .catch(err => console.error('[notify-order] order_placed push failed', err));
+    } catch (e: any) {
       console.error('Error recording retail order', e);
+      alert(e?.message || 'Order failed — please try again.');
     } finally {
       setActionLoading(null);
     }

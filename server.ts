@@ -10,6 +10,8 @@ import {
   computePriceBook, computeWholesaleBook, DEFAULT_MARKUPS,
   type PricingMarkups, type PriceOverride,
 } from "./server/pricingData";
+import { SAMPLE_INVENTORY } from "./src/data/shopInventory";
+import { getShippingOptions } from "./src/lib/shopHelpers";
 
 const app = express();
 const PORT = 3000;
@@ -406,6 +408,145 @@ app.use(express.json());
     }
     const names: string[] = Array.isArray(req.body?.names) ? req.body.names.slice(0, 500) : [];
     res.json({ wholesaleBook: computeWholesaleBook(names) });
+  });
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Order creation — prices, shipping, tax, and total are recomputed
+  // server-side from the trusted pricing config. Client-supplied prices are
+  // ignored, so a tampered request can't buy below the configured price.
+  // ──────────────────────────────────────────────────────────────────────────
+  app.post('/api/create-order', async (req, res) => {
+    const caller = await verifyFirebaseToken(req);
+    if (!caller) return res.status(401).json({ error: 'Sign in required' });
+    if (rateLimited(`order_${caller.uid}`, 5)) {
+      return res.status(429).json({ error: 'Too many order attempts — wait a minute' });
+    }
+
+    const adminApp = getAdminApp();
+    if (!adminApp) {
+      return res.status(503).json({ error: 'Order service not configured (FIREBASE_SERVICE_ACCOUNT_BASE64 missing)' });
+    }
+    const fsdb = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
+
+    // ── Validate input shape ──
+    const body = req.body || {};
+    const rawItems: any[] = Array.isArray(body.items) ? body.items : [];
+    if (rawItems.length === 0 || rawItems.length > 100) {
+      return res.status(400).json({ error: 'Order must contain 1–100 items' });
+    }
+    for (const it of rawItems) {
+      if (typeof it?.id !== 'string' || !Number.isInteger(it?.quantity) || it.quantity < 1 || it.quantity > 999) {
+        return res.status(400).json({ error: 'Invalid item entry' });
+      }
+    }
+    const bacWaterQty = Number.isInteger(body.bacWaterQty) && body.bacWaterQty >= 0 && body.bacWaterQty <= 999 ? body.bacWaterQty : 0;
+    const sf = typeof body.shippingForm === 'object' && body.shippingForm ? body.shippingForm : {};
+    const str = (v: any, max = 200) => (typeof v === 'string' ? v.slice(0, max) : '');
+
+    // ── Determine pricing tier from the member's Firestore status ──
+    const isAdminCaller = caller.email === ADMIN_EMAIL;
+    let tier: 'retail' | 'kit' | 'chinakit' | 'chinavial' = 'retail';
+    if (isAdminCaller) {
+      const requested = body.tier;
+      if (requested === 'kit' || requested === 'chinakit' || requested === 'chinavial' || requested === 'retail') tier = requested;
+    } else {
+      const memberSnap = await fsdb.collection('members').doc(caller.uid).get();
+      const status = memberSnap.exists ? memberSnap.data()?.status : null;
+      if (status === 'kit' || status === 'chinakit' || status === 'chinavial') tier = status;
+      else if (status === 'approved') tier = 'retail';
+      else return res.status(403).json({ error: 'Membership not approved for ordering' });
+    }
+
+    try {
+      // ── Resolve products: built-in catalog first, then Firestore shopItems ──
+      const resolved: { id: string; name: string; listPrice: number; quantity: number }[] = [];
+      for (const it of rawItems) {
+        const builtIn = SAMPLE_INVENTORY.find(p => p.id === it.id);
+        if (builtIn) {
+          resolved.push({ id: builtIn.id, name: builtIn.name, listPrice: builtIn.price, quantity: it.quantity });
+          continue;
+        }
+        const snap = await fsdb.collection('shopItems').doc(it.id).get();
+        if (!snap.exists) return res.status(400).json({ error: `Unknown product: ${it.id}` });
+        const d = snap.data()!;
+        resolved.push({ id: it.id, name: String(d.name || ''), listPrice: Number(d.price) || 0, quantity: it.quantity });
+      }
+
+      // ── Recompute prices server-side ──
+      const { markups, overrides } = await fetchTrustedPricingConfig();
+      const book = computePriceBook(resolved.map(r => r.name), markups, overrides);
+      const priceFor = (name: string, listPrice: number): number => {
+        const e = book[name] || {};
+        if (tier === 'kit') return e.norKit || listPrice;
+        if (tier === 'chinakit') return e.chnKit || listPrice;
+        if (tier === 'chinavial') return e.chnVial || e.norVial || listPrice;
+        return e.norVial ?? listPrice;
+      };
+
+      const items = [
+        ...resolved.map(r => ({ id: r.id, name: r.name, price: priceFor(r.name, r.listPrice), quantity: r.quantity })),
+        ...(bacWaterQty > 0 ? [{ id: 'prod_bac_water_30ml', name: 'BAC Water (30ml)', price: 7, quantity: bacWaterQty }] : []),
+      ];
+      const subtotal = resolved.reduce((sum, r) => sum + priceFor(r.name, r.listPrice) * r.quantity, 0);
+      const bacWaterCost = bacWaterQty * 7;
+
+      // ── Shipping ──
+      const isFixedShipping = tier !== 'retail';
+      let shippingCost = tier === 'kit' ? 25 : tier === 'chinakit' ? 50 : tier === 'chinavial' ? 0 : 0;
+      let selectedOption: any = null;
+      let shippingDetails: any = null;
+      if (!isFixedShipping) {
+        const totalVials = resolved.reduce((sum, r) => sum + r.quantity, 0);
+        const cartLike = resolved.map(r => ({ product: { id: r.id, name: r.name, price: r.listPrice } as any, quantity: r.quantity }));
+        shippingDetails = getShippingOptions(str(sf.zipCode, 10), totalVials, cartLike as any);
+        selectedOption = shippingDetails.options.find((o: any) => o.id === body.selectedShippingOptionId) || shippingDetails.options[0];
+        shippingCost = selectedOption ? selectedOption.cost : 0;
+      }
+
+      // ── Florida sales tax (6%) ──
+      const stateNorm = str(sf.state, 30).trim().toLowerCase();
+      const isFlorida = stateNorm === 'fl' || stateNorm === 'florida';
+      const salesTax = isFlorida ? Math.round((subtotal + bacWaterCost) * 0.06 * 100) / 100 : 0;
+
+      const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const randomHex = Math.floor(Math.random() * 16777215).toString(16).toUpperCase().padStart(6, '0');
+      const orderId = `LR-${dateStr}-${randomHex}`;
+
+      const orderPayload = {
+        id: orderId,
+        userId: caller.uid,
+        email: caller.email,
+        displayName: str(body.displayName, 100) || 'Anonymous LabRat',
+        items,
+        total: subtotal + bacWaterCost + shippingCost + salesTax,
+        tax: salesTax,
+        shippingInfo: {
+          fullName: str(sf.fullName, 120),
+          addressLine1: str(sf.addressLine1),
+          addressLine2: str(sf.addressLine2),
+          city: str(sf.city, 80),
+          state: str(sf.state, 30),
+          zipCode: str(sf.zipCode, 12),
+          phone: str(sf.phone, 30),
+          notes: str(sf.notes, 1000),
+          carrier: isFixedShipping ? undefined : selectedOption?.carrier,
+          method: tier === 'kit' ? 'Norway Kit Flat Rate' : tier === 'chinakit' ? 'China Kit Flat Rate' : tier === 'chinavial' ? 'China Vial Free Shipping' : selectedOption?.name,
+          cost: shippingCost,
+          deliveryEstimate: isFixedShipping ? undefined : selectedOption?.estimatedDeliveryDate,
+          weightLbs: isFixedShipping ? undefined : shippingDetails?.weightLbs,
+        },
+        status: 'placed',
+        createdAt: new Date().toISOString(),
+      };
+
+      // Strip undefined values (Firestore rejects them)
+      const cleaned = JSON.parse(JSON.stringify(orderPayload));
+      await fsdb.collection('orders').doc(orderId).set(cleaned);
+      res.json({ order: cleaned });
+    } catch (err: any) {
+      console.error('[create-order] Error:', err);
+      res.status(500).json({ error: err?.message || 'Order creation failed' });
+    }
   });
 
   // Gemini Peptide Advisor API
