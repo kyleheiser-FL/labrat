@@ -11,7 +11,7 @@ import {
   type PricingMarkups, type PriceOverride,
 } from "./server/pricingData";
 import { SAMPLE_INVENTORY } from "./src/data/shopInventory";
-import { getShippingOptions } from "./src/lib/shopHelpers";
+import { getShippingOptions, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING } from "./src/lib/shopHelpers";
 
 const app = express();
 const PORT = 3000;
@@ -527,8 +527,13 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
       const bacWaterCost = bacWaterQty * 7;
 
       // ── Shipping ──
+      // Norway kit: $30 flat. China (kit or vial): $25 flat, free only when
+      // every non-BAC-water item ships from the US warehouse. Retail: live rates.
       const isFixedShipping = tier !== 'retail';
-      let shippingCost = tier === 'kit' ? 25 : tier === 'chinakit' ? 50 : tier === 'chinavial' ? 0 : 0;
+      const isChinaTier = tier === 'chinakit' || tier === 'chinavial';
+      let shippingCost = tier === 'kit'
+        ? NORWAY_KIT_FLAT_SHIPPING
+        : isChinaTier ? getChinaFlatShipping(resolved) : 0;
       let selectedOption: any = null;
       let shippingDetails: any = null;
       if (!isFixedShipping) {
@@ -566,7 +571,11 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
           phone: str(sf.phone, 30),
           notes: str(sf.notes, 1000),
           carrier: isFixedShipping ? undefined : selectedOption?.carrier,
-          method: tier === 'kit' ? 'Norway Kit Flat Rate' : tier === 'chinakit' ? 'China Kit Flat Rate' : tier === 'chinavial' ? 'China Vial Free Shipping' : selectedOption?.name,
+          method: tier === 'kit'
+            ? 'Norway Kit Flat Rate'
+            : isChinaTier
+            ? (shippingCost === 0 ? 'USA Warehouse Free Shipping' : 'China Flat Rate')
+            : selectedOption?.name,
           cost: shippingCost,
           deliveryEstimate: isFixedShipping ? undefined : selectedOption?.estimatedDeliveryDate,
           weightLbs: isFixedShipping ? undefined : shippingDetails?.weightLbs,

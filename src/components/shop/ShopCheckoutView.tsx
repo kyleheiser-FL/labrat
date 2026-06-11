@@ -2,7 +2,7 @@ import React from 'react';
 import { MapPin, Truck, Loader2, Send, BadgeCheck, Minus, Plus } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem, ShippingOption } from '../../lib/shopTypes';
-import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getShippingOptions } from '../../lib/shopHelpers';
+import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getShippingOptions, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING } from '../../lib/shopHelpers';
 import { usePricingConfig } from '../../lib/pricingConfig';
 
 interface ShippingFormState {
@@ -68,7 +68,11 @@ export default function ShopCheckoutView({
   const selectedOption = isAddressProvided
     ? (shippingDetails.options.find(o => o.id === selectedShippingOptionId) || shippingDetails.options[0])
     : null;
-  const shippingCost = isKitPricing ? 25 : isChinaKitPricing ? 50 : isChinaVialPricing ? 0 : (selectedOption ? selectedOption.cost : 0);
+  const isChinaPricing = isChinaKitPricing || isChinaVialPricing;
+  const chinaFlatShipping = getChinaFlatShipping(cart.map(i => ({ name: i.product.name })));
+  const shippingCost = isKitPricing
+    ? NORWAY_KIT_FLAT_SHIPPING
+    : isChinaPricing ? chinaFlatShipping : (selectedOption ? selectedOption.cost : 0);
   const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
   const salesTaxRate = 0.06;
   const bacWaterCost = bacWaterQty * 7;
@@ -192,28 +196,28 @@ export default function ShopCheckoutView({
             {/* POSTAGE CARRIER & SHIPPING SERVICE SELECTOR */}
             {(isKitPricing || isChinaKitPricing || isChinaVialPricing) ? (
               <div className={`p-4 rounded-xl border my-4 text-left flex items-center gap-4 ${
-                isChinaVialPricing ? 'bg-emerald-950/20 border-emerald-500/20' : 'bg-cyan-950/20 border-cyan-500/20'
+                isChinaPricing && chinaFlatShipping === 0 ? 'bg-emerald-950/20 border-emerald-500/20' : 'bg-cyan-950/20 border-cyan-500/20'
               }`}>
                 <div className={`p-2 bg-slate-950 rounded-lg border shrink-0 ${
-                  isChinaVialPricing ? 'border-emerald-500/20' : 'border-cyan-500/20'
+                  isChinaPricing && chinaFlatShipping === 0 ? 'border-emerald-500/20' : 'border-cyan-500/20'
                 }`}>
-                  <Truck className={`w-5 h-5 ${isChinaVialPricing ? 'text-emerald-400' : 'text-cyan-400'}`} />
+                  <Truck className={`w-5 h-5 ${isChinaPricing && chinaFlatShipping === 0 ? 'text-emerald-400' : 'text-cyan-400'}`} />
                 </div>
                 <div>
-                  {isChinaVialPricing ? (
+                  {isChinaPricing && chinaFlatShipping === 0 ? (
                     <>
-                      <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest block font-mono">China Vial — Free USA Shipping</span>
-                      <p className="text-xs text-slate-300 mt-0.5">China-sourced compounds ship from our <span className="text-emerald-400 font-black">USA warehouse</span> with <span className="text-emerald-400 font-black">FREE shipping</span> on all orders.</p>
+                      <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest block font-mono">USA Warehouse — Free Shipping</span>
+                      <p className="text-xs text-slate-300 mt-0.5">Every item in this order ships from our <span className="text-emerald-400 font-black">USA warehouse</span> with <span className="text-emerald-400 font-black">FREE shipping</span>.</p>
                     </>
-                  ) : isChinaKitPricing ? (
+                  ) : isChinaPricing ? (
                     <>
-                      <span className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest block font-mono">China Kit — Flat Rate Shipping</span>
-                      <p className="text-xs text-slate-300 mt-0.5">A flat <span className="text-cyan-400 font-black">$50.00</span> international shipping fee applies. Ships directly from China warehouse.</p>
+                      <span className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest block font-mono">China — Flat Rate Shipping</span>
+                      <p className="text-xs text-slate-300 mt-0.5">A flat <span className="text-cyan-400 font-black">$25.00</span> international shipping fee applies. Orders containing only USA-warehouse items ship free.</p>
                     </>
                   ) : (
                     <>
                       <span className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest block font-mono">Norway Kit — Flat Rate Shipping</span>
-                      <p className="text-xs text-slate-300 mt-0.5">A flat <span className="text-cyan-400 font-black">$25.00</span> shipping fee applies to all kit orders. Carrier and method will be selected at time of dispatch.</p>
+                      <p className="text-xs text-slate-300 mt-0.5">A flat <span className="text-cyan-400 font-black">$30.00</span> shipping fee applies to all kit orders. Carrier and method will be selected at time of dispatch.</p>
                     </>
                   )}
                 </div>
@@ -435,11 +439,19 @@ export default function ShopCheckoutView({
               <div className="text-left">
                 <span>Postage Dispatch:</span>
                 <span className="block text-[9.5px] text-slate-500 font-mono">
-                  {isKitPricing ? 'Norway Kit Flat Rate' : isChinaKitPricing ? 'China Kit Flat Rate' : isChinaVialPricing ? 'China Vial — Free Shipping' : (selectedOption ? `${selectedOption.carrier} ${selectedOption.name.replace('USPS ', '').replace('UPS® ', '')}` : 'Pending Address')}
+                  {isKitPricing
+                    ? 'Norway Kit Flat Rate'
+                    : isChinaPricing
+                    ? (chinaFlatShipping === 0 ? 'USA Warehouse — Free Shipping' : 'China Flat Rate')
+                    : (selectedOption ? `${selectedOption.carrier} ${selectedOption.name.replace('USPS ', '').replace('UPS® ', '')}` : 'Pending Address')}
                 </span>
               </div>
               <span className="font-semibold text-slate-300 font-mono">
-                {isKitPricing ? '+$25.00' : isChinaKitPricing ? '+$50.00' : isChinaVialPricing ? 'FREE' : (selectedOption ? `+$${shippingCost.toFixed(2)}` : '--')}
+                {isKitPricing
+                  ? `+$${NORWAY_KIT_FLAT_SHIPPING}.00`
+                  : isChinaPricing
+                  ? (chinaFlatShipping === 0 ? 'FREE' : `+$${chinaFlatShipping}.00`)
+                  : (selectedOption ? `+$${shippingCost.toFixed(2)}` : '--')}
               </span>
             </div>
             {isFlorida && (

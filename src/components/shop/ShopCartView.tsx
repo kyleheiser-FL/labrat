@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem } from '../../lib/shopTypes';
-import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice } from '../../lib/shopHelpers';
+import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING } from '../../lib/shopHelpers';
 import { usePricingConfig } from '../../lib/pricingConfig';
 
 interface ShopCartViewProps {
@@ -152,43 +152,35 @@ export default function ShopCartView({
           const salesTax = isFlorida ? Math.round((subtotal + bacWaterCost) * salesTaxRate * 100) / 100 : 0;
 
           const isChinaOrder = isChinaKitPricing || isChinaVialPricing;
-          const flatShipping = isKitPricing ? 25 : isChinaOrder ? 50 : 0;
+          const flatShipping = isKitPricing
+            ? NORWAY_KIT_FLAT_SHIPPING
+            : isChinaOrder ? getChinaFlatShipping(cart.map(i => ({ name: i.product.name }))) : 0;
           const knownShipping = isKitPricing || isChinaOrder;
           const shippingDisplay = knownShipping
-            ? `$${flatShipping}.00`
+            ? (flatShipping === 0 ? 'Free' : `$${flatShipping}.00`)
             : isFreeShippingEligible ? 'Free' : 'Calculated at checkout';
           const orderTotal = subtotal + bacWaterCost + salesTax + (knownShipping ? flatShipping : 0);
 
           return (
             <div className="space-y-4 sticky top-6 text-left">
               {/* Shipping info card */}
-              {(isKitPricing || isChinaKitPricing || isChinaVialPricing) ? (
-                <div className={`bg-[#0b1329] p-5 rounded-2xl shadow-lg border ${isChinaVialPricing ? 'border-emerald-500/20' : 'border-cyan-500/20'}`}>
+              {(isKitPricing || isChinaOrder) ? (
+                <div className={`bg-[#0b1329] p-5 rounded-2xl shadow-lg border ${flatShipping === 0 ? 'border-emerald-500/20' : 'border-cyan-500/20'}`}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-bold text-slate-300">
-                      {isChinaVialPricing ? 'Free USA Shipping' : 'Flat Rate Shipping'}
+                      {flatShipping === 0 ? 'Free USA Shipping' : 'Flat Rate Shipping'}
                     </span>
-                    <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${isChinaVialPricing ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'}`}>
-                      {isChinaVialPricing ? 'Free' : 'Flat Rate'}
+                    <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${flatShipping === 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'}`}>
+                      {flatShipping === 0 ? 'Free' : 'Flat Rate'}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-400 leading-normal">
-                    {isChinaVialPricing
-                      ? 'China-sourced compounds ship from our USA warehouse with free shipping on every order.'
-                      : isChinaKitPricing
-                      ? <>China kit orders ship for a flat <span className="text-cyan-400 font-semibold">$50.00</span> international rate. Carrier selected at dispatch.</>
-                      : <>Norway kit orders ship for a flat <span className="text-cyan-400 font-semibold">$25.00</span> regardless of order size. Carrier and method selected at dispatch.</>
+                    {isChinaOrder
+                      ? (flatShipping === 0
+                        ? 'Every item in this order ships from our USA warehouse — free shipping.'
+                        : <>China orders ship for a flat <span className="text-cyan-400 font-semibold">$25.00</span> international rate. Orders containing only USA-warehouse items ship free.</>)
+                      : <>Norway kit orders ship for a flat <span className="text-cyan-400 font-semibold">$30.00</span> regardless of order size. Carrier and method selected at dispatch.</>
                     }
-                  </p>
-                </div>
-              ) : isChinaOrder ? (
-                <div className="bg-[#0b1329] border border-red-500/20 p-5 rounded-2xl shadow-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-slate-300">Flat Rate Shipping</span>
-                    <span className="text-[10px] bg-red-500/10 text-red-400 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-red-500/20">Flat Rate</span>
-                  </div>
-                  <p className="text-[11px] text-slate-400 leading-normal">
-                    China {isChinaKitPricing ? 'kit' : 'vial'} orders ship for a flat <span className="text-red-400 font-semibold">$50.00</span> international rate. Select products ship from US warehouse.
                   </p>
                 </div>
               ) : (

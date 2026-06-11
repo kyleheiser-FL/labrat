@@ -313,6 +313,28 @@ export function hasUsWarehouseShipping(name: string): boolean {
   return norm.includes('us warehouse') && norm.includes('retatrutide');
 }
 
+// ─── Flat-rate shipping rules (single source of truth for server + client) ──
+export const NORWAY_KIT_FLAT_SHIPPING = 30;
+export const CHINA_FLAT_SHIPPING = 25;
+
+export function isUsWarehouseProductName(name: string): boolean {
+  return name.toLowerCase().includes('us warehouse');
+}
+
+function isBacWaterProductName(name: string): boolean {
+  const n = name.toLowerCase();
+  return n.includes('bac water') || n.includes('bacteriostatic');
+}
+
+// China orders: $25 flat, free only when every non-BAC-water item ships from
+// the US warehouse. BAC water never affects the rate; an order of only BAC
+// water still ships from China and pays the flat rate.
+export function getChinaFlatShipping(items: { name: string }[]): number {
+  const shippable = items.filter(i => !isBacWaterProductName(i.name));
+  const allUsWarehouse = shippable.length > 0 && shippable.every(i => isUsWarehouseProductName(i.name));
+  return allUsWarehouse ? 0 : CHINA_FLAT_SHIPPING;
+}
+
 export function getCleanDescription(desc: string): string {
   if (!desc) return '';
   let clean = desc

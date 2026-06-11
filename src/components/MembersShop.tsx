@@ -1445,8 +1445,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                 </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   {isChinaKitPricing
-                    ? 'Products priced per 10-vial kit. Flat rate $50 shipping from China. Select products ship from US warehouse.'
-                    : 'Per-vial pricing sourced from China. US warehouse stock ships faster.'}
+                    ? 'Products priced per 10-vial kit. Flat rate $25 shipping from China — free when every item ships from the US warehouse.'
+                    : 'Per-vial pricing sourced from China. Flat rate $25 shipping — free when every item ships from the US warehouse.'}
                 </p>
               </div>
             </div>
