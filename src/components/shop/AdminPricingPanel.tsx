@@ -367,8 +367,8 @@ export default function AdminPricingPanel() {
         <span className="text-[10px] text-slate-600 font-mono">{visibleProducts.length} products</span>
       </div>
 
-      {/* ── Table — overflow-x only so sticky top works with page scroll ── */}
-      <div className="overflow-x-auto rounded-xl border border-slate-800/80">
+      {/* ── Table — explicit overflow-auto + max-height so sticky headers work ── */}
+      <div className="overflow-auto rounded-xl border border-slate-800/80" style={{ maxHeight: 'calc(100vh - 320px)' }}>
         <table
           className="w-full text-xs"
           style={{ minWidth: 840, borderCollapse: 'separate', borderSpacing: 0 }}
