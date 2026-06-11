@@ -132,14 +132,63 @@ app.use(express.json());
     // adminCredsPresent = env var exists; adminReady = key parsed and SDK initialized.
     // Present-but-not-ready means the value is malformed (truncated paste, wrong content).
     const adminCredsPresent = !!(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64 || process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
-    res.json({
-      status: "ok",
+    const checks = {
       apiReady: !!process.env.GEMINI_API_KEY,
       adminCredsPresent,
       adminReady: !!getAdminApp(),
       cronSecretSet: !!process.env.CRON_SECRET,
-      timestamp: new Date().toISOString()
-    });
+    };
+
+    // Browsers get a readable status page; API callers get JSON
+    if ((req.headers.accept || '').includes('text/html')) {
+      const row = (label: string, ok: boolean, okText: string, badText: string) => `
+        <div class="row ${ok ? 'ok' : 'bad'}">
+          <span class="icon">${ok ? '✅' : '❌'}</span>
+          <div>
+            <div class="label">${label}</div>
+            <div class="detail">${ok ? okText : badText}</div>
+          </div>
+        </div>`;
+      res.type('html').send(`<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LabRat System Status</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; background: #0b1120; color: #e2e8f0; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+  .row { display: flex; gap: 14px; align-items: flex-start; background: #131c31; border: 1px solid #1e293b; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+  .row.bad { border-color: #7f1d1d; background: #1c1017; }
+  .icon { font-size: 22px; line-height: 1.2; }
+  .label { font-weight: 700; font-size: 15px; }
+  .detail { color: #94a3b8; font-size: 13px; margin-top: 3px; line-height: 1.5; }
+  .bad .detail { color: #fca5a5; }
+  .ts { color: #475569; font-size: 11px; margin-top: 20px; }
+</style>
+</head>
+<body>
+<h1>🔬 LabRat System Status</h1>
+<div class="sub">www.labratapp.app server health</div>
+${row('Orders &amp; Pricing (Firebase Admin)', checks.adminReady,
+  'Service account key loaded — checkout, live pricing, and push notifications are operational.',
+  checks.adminCredsPresent
+    ? 'Key variable found but the value could not be parsed. Re-paste the full service account JSON (starts with {"type": "service_account").'
+    : 'No service account key found. Add FIREBASE_SERVICE_ACCOUNT_JSON in Vercel → Settings → Environment Variables (Production), then redeploy.')}
+${row('AI Features (Gemini)', checks.apiReady,
+  'API key configured — blood analyzer is operational.',
+  'GEMINI_API_KEY is not set. AI blood analysis will fail until it is added.')}
+${row('Dose Reminder Cron', checks.cronSecretSet,
+  'CRON_SECRET configured — scheduled reminders can run.',
+  'CRON_SECRET is not set. Scheduled dose reminders are disabled until it is added.')}
+<div class="ts">Checked ${new Date().toISOString()}</div>
+</body>
+</html>`);
+      return;
+    }
+
+    res.json({ status: "ok", ...checks, timestamp: new Date().toISOString() });
   });
 
   // ──────────────────────────────────────────────────────────────────────────
