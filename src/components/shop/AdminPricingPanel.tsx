@@ -4,29 +4,17 @@ import {
   getKitWholesaleCost,
   getChineseKitWholesaleCost,
   getChineseUsWarehouseCost,
-  hasUsWarehouseShipping,
 } from '../../lib/shopHelpers';
 import { usePricingConfig, savePricingConfig, DEFAULT_PRICING } from '../../lib/pricingConfig';
 import type { PriceOverride } from '../../lib/pricingConfig';
 
-// ─── types ────────────────────────────────────────────────────────────────
-interface Markups {
-  norKit: number;
-  chnKit: number;
-  chnVialUS: number;
-  chnVialDir: number;
-  norSale: number;
-}
-
 type FilterMode = 'all' | 'norway' | 'china' | 'both';
 
-// ─── helpers ──────────────────────────────────────────────────────────────
-function pct(sell: number | null, cost: number | null): number | null {
+function pctOf(sell: number | null, cost: number | null): number | null {
   if (!sell || !cost) return null;
   return Math.round(((sell - cost) / cost) * 100);
 }
-
-function profitColor(p: number | null): string {
+function marginColor(p: number | null) {
   if (p === null) return 'text-slate-600';
   if (p >= 60) return 'text-emerald-400';
   if (p >= 30) return 'text-amber-400';
@@ -34,7 +22,58 @@ function profitColor(p: number | null): string {
   return 'text-red-400';
 }
 
-// ─── component ────────────────────────────────────────────────────────────
+// ── Markup Slider Card ─────────────────────────────────────────────────────
+function MarkupCard({
+  flag, label, value, accent, max, step = 1,
+  onChange,
+}: {
+  flag: string; label: string; value: number; accent: string;
+  max: number; step?: number; onChange: (v: number) => void;
+}) {
+  const accentMap: Record<string, { text: string; border: string; track: string }> = {
+    blue:   { text: 'text-blue-300',    border: 'border-blue-500/25',   track: '#60a5fa' },
+    orange: { text: 'text-orange-300',  border: 'border-orange-500/25', track: '#fb923c' },
+    emerald:{ text: 'text-emerald-300', border: 'border-emerald-500/25',track: '#34d399' },
+  };
+  const c = accentMap[accent] ?? accentMap.blue;
+  return (
+    <div className={`flex-1 min-w-[140px] bg-slate-900/70 border ${c.border} rounded-xl p-3 flex flex-col gap-2.5`}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-tight">
+          {flag}<br/>{label}
+        </span>
+        <div className={`flex items-center gap-1 bg-slate-800/80 rounded-lg px-2 py-1 border ${c.border}`}>
+          <input
+            type="number"
+            value={value}
+            step={step}
+            min={0}
+            max={max}
+            onChange={e => onChange(parseFloat(e.target.value) || 0)}
+            className={`w-12 bg-transparent text-base font-black text-right focus:outline-none ${c.text}`}
+          />
+          <span className="text-[10px] text-slate-500 font-bold">%</span>
+        </div>
+      </div>
+      <input
+        type="range"
+        min={0}
+        max={max}
+        step={step}
+        value={value}
+        onChange={e => onChange(parseFloat(e.target.value))}
+        className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-slate-700/80"
+        style={{ accentColor: c.track }}
+      />
+      <div className="flex justify-between text-[9px] text-slate-600">
+        <span>×{(1 + value / 100).toFixed(3)}</span>
+        <span className="text-slate-700">max {max}%</span>
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ─────────────────────────────────────────────────────────
 export default function AdminPricingPanel() {
   const savedConfig = usePricingConfig();
   const initialized = useRef(false);
@@ -51,57 +90,49 @@ export default function AdminPricingPanel() {
   const [saving,        setSaving]        = useState(false);
   const [saved,         setSaved]         = useState(false);
   const [saveError,     setSaveError]     = useState('');
+  const [dirty,         setDirty]         = useState(false);
 
-  // Initialize local state from Firestore once on first load
+  // Load saved config once
   useEffect(() => {
     if (initialized.current) return;
-    const { markups, overrides: savedOverrides } = savedConfig;
-    // Only initialize if config has been loaded (differs from defaults or has overrides)
-    if (markups.norKitPct !== DEFAULT_PRICING.markups.norKitPct ||
-        markups.chnKitPct !== DEFAULT_PRICING.markups.chnKitPct ||
-        Object.keys(savedOverrides).length > 0) {
-      initialized.current = true;
-      setNorKitPct(markups.norKitPct);
-      setChnKitPct(markups.chnKitPct);
-      setChnVialUSPct(markups.chnVialUSPct);
-      setChnVialDirPct(markups.chnVialDirPct);
-      setOverrides(savedOverrides);
-    } else if (markups.norKitPct === DEFAULT_PRICING.markups.norKitPct) {
-      // Config loaded but all defaults — mark as initialized so we don't loop
-      initialized.current = true;
-    }
+    initialized.current = true;
+    const { markups, overrides: o } = savedConfig;
+    setNorKitPct(markups.norKitPct);
+    setChnKitPct(markups.chnKitPct);
+    setChnVialUSPct(markups.chnVialUSPct);
+    setChnVialDirPct(markups.chnVialDirPct);
+    setOverrides(o);
   }, [savedConfig]);
 
-  const markups: Markups = {
-    norKit:    1 + norKitPct / 100,
-    chnKit:    1 + chnKitPct / 100,
-    chnVialUS: 1 + chnVialUSPct / 100,
-    chnVialDir:1 + chnVialDirPct / 100,
-    norSale:   1,
-  };
-
-  function prices(name: string, listPrice: number) {
-    const norW  = getKitWholesaleCost(name) || null;
-    const usW   = getChineseUsWarehouseCost(name) || null;
-    const chnW  = usW || (getChineseKitWholesaleCost(name) || null);
-
-    const norKitComp  = norW  ? Math.round(norW  * markups.norKit)    : null;
-    const norVialComp = listPrice ? Math.round(listPrice * markups.norSale) : null;
-    const chnKitComp  = chnW  ? Math.round(chnW  * markups.chnKit)    : null;
-    const chnVialComp = usW
-      ? Math.round((usW  / 10) * markups.chnVialUS)
-      : chnW ? Math.round((chnW / 10) * markups.chnVialDir) : null;
-
-    return { norW, usW, chnW, norKitComp, norVialComp, chnKitComp, chnVialComp };
+  function change(setter: (v: number) => void, v: number) {
+    setter(v);
+    setDirty(true);
+    setSaved(false);
   }
 
-  function eff(key: string, field: keyof PriceOverride, computed: number | null): number | null {
-    return overrides[key]?.[field] ?? computed;
+  // Compute all prices for a product
+  function compute(name: string, listPrice: number) {
+    const norW = getKitWholesaleCost(name) || null;
+    const usW  = getChineseUsWarehouseCost(name) || null;
+    const chnW = usW || (getChineseKitWholesaleCost(name) || null);
+    return {
+      norW, usW, chnW,
+      norKit:  norW  ? Math.round(norW  * (1 + norKitPct  / 100)) : null,
+      norVial: listPrice || null,
+      chnKit:  chnW  ? Math.round(chnW  * (1 + chnKitPct  / 100)) : null,
+      chnVial: usW
+        ? Math.round((usW  / 10) * (1 + chnVialUSPct  / 100))
+        : chnW ? Math.round((chnW / 10) * (1 + chnVialDirPct / 100)) : null,
+    };
   }
 
-  function startEdit(key: string, field: keyof PriceOverride, current: number | null) {
+  function eff(key: string, field: keyof PriceOverride, comp: number | null) {
+    return overrides[key]?.[field] ?? comp;
+  }
+
+  function startEdit(key: string, field: keyof PriceOverride, val: number | null) {
     setEditing({ key, field });
-    setEditVal(current !== null ? String(current) : '');
+    setEditVal(val !== null ? String(val) : '');
   }
 
   function commitEdit() {
@@ -112,6 +143,8 @@ export default function AdminPricingPanel() {
         ...prev,
         [editing.key]: { ...(prev[editing.key] || {}), [editing.field]: n },
       }));
+      setDirty(true);
+      setSaved(false);
     }
     setEditing(null);
   }
@@ -122,11 +155,13 @@ export default function AdminPricingPanel() {
       if (copy[key]) {
         const o = { ...copy[key] };
         delete o[field];
-        if (Object.keys(o).length === 0) delete copy[key];
+        if (!Object.keys(o).length) delete copy[key];
         else copy[key] = o;
       }
       return copy;
     });
+    setDirty(true);
+    setSaved(false);
   }
 
   function resetAll() {
@@ -135,28 +170,26 @@ export default function AdminPricingPanel() {
     setChnKitPct(DEFAULT_PRICING.markups.chnKitPct);
     setChnVialUSPct(DEFAULT_PRICING.markups.chnVialUSPct);
     setChnVialDirPct(DEFAULT_PRICING.markups.chnVialDirPct);
+    setDirty(false);
     setSaved(false);
   }
 
   async function handleSave() {
     setSaving(true);
     setSaveError('');
-    setSaved(false);
     try {
-      await savePricingConfig({
-        markups: { norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct },
-        overrides,
-      });
+      await savePricingConfig({ markups: { norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct }, overrides });
       setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      setSaveError('Save failed — check permissions');
+      setDirty(false);
+      setTimeout(() => setSaved(false), 4000);
+    } catch {
+      setSaveError('Save failed — check Firestore permissions');
     } finally {
       setSaving(false);
     }
   }
 
-  const modCount = Object.keys(overrides).length;
+  const overrideCount = Object.keys(overrides).length;
 
   const visibleProducts = useMemo(() => {
     const q = search.toLowerCase();
@@ -165,14 +198,14 @@ export default function AdminPricingPanel() {
       if (filter === 'norway' && src !== 'norway') return false;
       if (filter === 'china'  && src !== 'china')  return false;
       if (filter === 'both'   && src !== 'norway' && src !== 'china') return false;
-      if (q && !p.name.toLowerCase().includes(q))  return false;
+      if (q && !p.name.toLowerCase().includes(q)) return false;
       return true;
     });
   }, [filter, search]);
 
-  type GroupedProducts = Record<string, typeof SAMPLE_INVENTORY>;
-  const grouped = useMemo<GroupedProducts>(() => {
-    const map: GroupedProducts = {};
+  type Groups = Record<string, typeof SAMPLE_INVENTORY>;
+  const grouped = useMemo<Groups>(() => {
+    const map: Groups = {};
     for (const p of visibleProducts) {
       if (!map[p.category]) map[p.category] = [];
       map[p.category].push(p);
@@ -180,214 +213,306 @@ export default function AdminPricingPanel() {
     return map;
   }, [visibleProducts]);
 
-  // ─── cell component ───────────────────────────────────────────────────
+  // ── Price cell ───────────────────────────────────────────────────────────
   function PriceCell({
-    productKey, field, computed, cost10, isVialCost, dimmed,
+    pk, field, comp, cost, isVial, dim,
   }: {
-    productKey: string;
-    field: keyof PriceOverride;
-    computed: number | null;
-    cost10: number | null;
-    isVialCost: boolean;
-    dimmed?: boolean;
+    pk: string; field: keyof PriceOverride; comp: number | null;
+    cost: number | null; isVial: boolean; dim?: boolean;
   }) {
-    const effective = eff(productKey, field, computed);
-    const isOverridden = overrides[productKey]?.[field] !== undefined;
-    const isActive = editing?.key === productKey && editing?.field === field;
-    const costForPct = isVialCost ? (cost10 ? cost10 / 10 : null) : cost10;
-    const p = pct(effective, costForPct);
-    const dimClass = dimmed ? 'opacity-20 pointer-events-none' : '';
+    const effective   = eff(pk, field, comp);
+    const isOverride  = overrides[pk]?.[field] !== undefined;
+    const isActive    = editing?.key === pk && editing?.field === field;
+    const costForPct  = isVial ? (cost ? cost / 10 : null) : cost;
+    const margin      = pctOf(effective, costForPct);
 
-    if (effective === null) {
-      return <td className={`px-2 py-1.5 text-slate-700 text-center text-xs ${dimClass}`}>—</td>;
-    }
+    if (dim) return <td className="px-3 py-3 bg-slate-950/20" />;
+    if (effective === null) return (
+      <td className="px-3 py-3 text-center text-slate-800 text-xs select-none">—</td>
+    );
 
-    if (isActive) {
-      return (
-        <td className={`px-1 py-1 ${dimClass}`} onClick={e => e.stopPropagation()}>
-          <input
-            autoFocus
-            type="number"
-            value={editVal}
-            onChange={e => setEditVal(e.target.value)}
-            onBlur={commitEdit}
-            onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') setEditing(null); }}
-            className="w-16 bg-slate-900 border border-cyan-400 text-cyan-300 text-xs rounded px-1.5 py-0.5 text-right focus:outline-none"
-          />
-        </td>
-      );
-    }
+    if (isActive) return (
+      <td className="px-2 py-1.5" onClick={e => e.stopPropagation()}>
+        <input
+          autoFocus
+          type="number"
+          value={editVal}
+          onChange={e => setEditVal(e.target.value)}
+          onBlur={commitEdit}
+          onKeyDown={e => {
+            if (e.key === 'Enter') commitEdit();
+            if (e.key === 'Escape') setEditing(null);
+          }}
+          className="w-20 bg-slate-900 border-2 border-cyan-400 text-cyan-200 text-sm font-mono rounded-lg px-2 py-1.5 text-right focus:outline-none shadow-[0_0_8px_rgba(6,182,212,0.3)]"
+        />
+      </td>
+    );
 
     return (
       <td
-        className={`px-2 py-1.5 text-right cursor-pointer group ${dimClass}`}
-        onClick={() => !dimmed && startEdit(productKey, field, effective)}
-        onContextMenu={e => { e.preventDefault(); if (isOverridden && !dimmed) clearOverride(productKey, field); }}
+        className="px-3 py-3 cursor-pointer transition-all hover:bg-slate-700/30 group/cell"
+        onClick={() => startEdit(pk, field, effective)}
+        onContextMenu={e => { e.preventDefault(); if (isOverride) clearOverride(pk, field); }}
+        title={isOverride ? 'Right-click to restore computed price' : 'Click to set custom price'}
       >
-        <div className="flex flex-col items-end gap-0">
-          <span className={`text-xs font-mono ${isOverridden ? 'text-cyan-300' : 'text-emerald-300'}`}>
-            ${effective}{isOverridden && <span className="text-[9px] text-cyan-400 ml-0.5">✎</span>}
-          </span>
-          {p !== null && (
-            <span className={`text-[9px] ${profitColor(p)}`}>+{p}%</span>
+        <div className="flex flex-col items-end gap-0.5">
+          <div className="flex items-center gap-1">
+            {isOverride
+              ? <span className="text-[8px] text-cyan-500/70 group-hover/cell:text-cyan-400 transition-colors">✎</span>
+              : <span className="text-[8px] text-slate-700 group-hover/cell:text-slate-500 transition-colors">✎</span>
+            }
+            <span className={`text-sm font-black font-mono tracking-tight leading-none ${
+              isOverride ? 'text-cyan-300' : 'text-slate-200 group-hover/cell:text-white'
+            }`}>
+              ${effective}
+            </span>
+          </div>
+          {margin !== null && (
+            <span className={`text-[9px] font-bold ${marginColor(margin)}`}>+{margin}%</span>
           )}
         </div>
       </td>
     );
   }
 
-  // ─── render ───────────────────────────────────────────────────────────
+  // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-full min-h-0">
+    <div className="flex flex-col gap-4">
 
-      {/* Markup controls */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3 mb-3 flex flex-wrap gap-x-4 gap-y-2">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[9px] text-slate-500 uppercase tracking-widest">🇳🇴 Kit Markup</span>
-          <div className="flex items-center gap-1">
-            <input type="number" value={norKitPct} step="0.1" min="0" max="100"
-              onChange={e => { setNorKitPct(parseFloat(e.target.value) || 0); setSaved(false); }}
-              className="w-14 bg-slate-800 border border-slate-700 text-cyan-300 text-xs rounded px-1.5 py-0.5 text-right focus:outline-none focus:border-cyan-500" />
-            <span className="text-[10px] text-slate-500">%</span>
+      {/* ── Top bar ─────────────────────────────────────────────────────── */}
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <div className="text-base font-black text-white tracking-tight">Pricing Manager</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">
+            Click any sell price cell to override · Right-click an overridden cell to restore · Changes go live on Save
           </div>
         </div>
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[9px] text-slate-500 uppercase tracking-widest">🇨🇳 Kit Markup</span>
-          <div className="flex items-center gap-1">
-            <input type="number" value={chnKitPct} step="1" min="0" max="300"
-              onChange={e => { setChnKitPct(parseFloat(e.target.value) || 0); setSaved(false); }}
-              className="w-14 bg-slate-800 border border-slate-700 text-orange-300 text-xs rounded px-1.5 py-0.5 text-right focus:outline-none focus:border-orange-400" />
-            <span className="text-[10px] text-slate-500">%</span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[9px] text-slate-500 uppercase tracking-widest">🇺🇸 Vial Markup</span>
-          <div className="flex items-center gap-1">
-            <input type="number" value={chnVialUSPct} step="1" min="0" max="500"
-              onChange={e => { setChnVialUSPct(parseFloat(e.target.value) || 0); setSaved(false); }}
-              className="w-14 bg-slate-800 border border-slate-700 text-emerald-300 text-xs rounded px-1.5 py-0.5 text-right focus:outline-none focus:border-emerald-400" />
-            <span className="text-[10px] text-slate-500">%</span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[9px] text-slate-500 uppercase tracking-widest">🇨🇳 Vial Markup</span>
-          <div className="flex items-center gap-1">
-            <input type="number" value={chnVialDirPct} step="1" min="0" max="500"
-              onChange={e => { setChnVialDirPct(parseFloat(e.target.value) || 0); setSaved(false); }}
-              className="w-14 bg-slate-800 border border-slate-700 text-orange-300 text-xs rounded px-1.5 py-0.5 text-right focus:outline-none focus:border-orange-400" />
-            <span className="text-[10px] text-slate-500">%</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Filter + search + actions */}
-      <div className="flex items-center gap-2 mb-2 flex-wrap">
-        {(['all','norway','china','both'] as FilterMode[]).map(f => (
-          <button key={f} onClick={() => setFilter(f)}
-            className={`px-2.5 py-1 text-[10px] font-bold rounded-full border transition-all ${
-              filter === f ? 'border-cyan-500/60 bg-cyan-500/10 text-cyan-300' : 'border-slate-700 text-slate-500 hover:text-slate-300'
-            }`}>
-            {f === 'all' ? 'All' : f === 'norway' ? '🇳🇴 Norway' : f === 'china' ? '🇨🇳 China' : '🌐 Both'}
-          </button>
-        ))}
-        <input
-          type="text" placeholder="Search…" value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="flex-1 min-w-[120px] bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-cyan-500 placeholder:text-slate-600"
-        />
-        <div className="ml-auto flex items-center gap-2">
-          {modCount > 0 && (
-            <>
-              <span className="text-[10px] text-cyan-400">{modCount} modified</span>
-              <button onClick={resetAll}
-                className="px-2.5 py-1 text-[10px] border border-slate-700 text-slate-400 rounded-lg hover:text-slate-200 hover:border-slate-500 transition-all">
-                Reset
-              </button>
-            </>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {overrideCount > 0 && (
+            <div className="text-[10px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1.5 rounded-full font-bold">
+              {overrideCount} override{overrideCount !== 1 ? 's' : ''}
+            </div>
           )}
-          {saveError && <span className="text-[10px] text-red-400">{saveError}</span>}
+          {dirty && !saved && (
+            <span className="text-[10px] text-amber-400 font-semibold">● Unsaved changes</span>
+          )}
+          {overrideCount > 0 && (
+            <button
+              onClick={resetAll}
+              className="px-3 py-1.5 text-[10px] font-bold border border-slate-700 text-slate-400 rounded-lg hover:text-red-400 hover:border-red-500/40 transition-all"
+            >
+              Reset All
+            </button>
+          )}
+          {saveError && <span className="text-[10px] text-red-400 font-semibold">{saveError}</span>}
           <button
             onClick={handleSave}
             disabled={saving}
-            className={`px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all ${
+            className={`px-4 py-2 text-xs font-black rounded-xl transition-all ${
               saved
-                ? 'bg-emerald-500 text-slate-950'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                 : saving
                 ? 'bg-slate-700 text-slate-400 cursor-wait'
-                : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950'
+                : dirty
+                ? 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-[0_0_16px_rgba(6,182,212,0.35)]'
+                : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
             }`}
           >
-            {saved ? '✓ Saved' : saving ? 'Saving…' : 'Save Pricing'}
+            {saved ? '✓ Saved to Database' : saving ? 'Saving…' : '↑ Save Pricing'}
           </button>
         </div>
       </div>
 
-      {/* Hint */}
-      <p className="text-[9px] text-slate-600 mb-2">Tap a price cell to override · Right-tap to clear override · Green = computed · Cyan = overridden · Changes take effect immediately for all members</p>
+      {/* ── Markup cards ────────────────────────────────────────────────── */}
+      <div className="flex gap-2.5 flex-wrap">
+        <MarkupCard flag="🇳🇴" label="Kit Markup" value={norKitPct} accent="blue"
+          max={150} step={0.5} onChange={v => change(setNorKitPct, v)} />
+        <MarkupCard flag="🇨🇳" label="Kit Markup" value={chnKitPct} accent="orange"
+          max={300} onChange={v => change(setChnKitPct, v)} />
+        <MarkupCard flag="🇺🇸" label="Vial Markup" value={chnVialUSPct} accent="emerald"
+          max={500} onChange={v => change(setChnVialUSPct, v)} />
+        <MarkupCard flag="🇨🇳" label="Vial Markup" value={chnVialDirPct} accent="orange"
+          max={500} onChange={v => change(setChnVialDirPct, v)} />
+      </div>
 
-      {/* Table */}
-      <div className="flex-1 overflow-auto rounded-xl border border-slate-800">
-        <table className="w-full text-xs border-collapse" style={{ minWidth: 760 }}>
-          <thead className="sticky top-0 z-10 bg-slate-900">
+      {/* ── Filter + search ─────────────────────────────────────────────── */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {(['all','norway','china','both'] as FilterMode[]).map(f => (
+          <button key={f} onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 text-[10px] font-bold rounded-full border transition-all ${
+              filter === f
+                ? 'border-cyan-500/60 bg-cyan-500/10 text-cyan-300'
+                : 'border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600'
+            }`}>
+            {f === 'all' ? 'All Products' : f === 'norway' ? '🇳🇴 Norway Only' : f === 'china' ? '🇨🇳 China Only' : '🌐 Both Sources'}
+          </button>
+        ))}
+        <div className="flex-1 relative min-w-[180px]">
+          <input
+            type="text"
+            placeholder="Search products…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full bg-slate-800/80 border border-slate-700 text-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-cyan-500/60 placeholder:text-slate-600"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-xs"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        <span className="text-[10px] text-slate-600 font-mono">{visibleProducts.length} products</span>
+      </div>
+
+      {/* ── Table — overflow-x only so sticky top works with page scroll ── */}
+      <div className="overflow-x-auto rounded-xl border border-slate-800/80">
+        <table
+          className="w-full text-xs"
+          style={{ minWidth: 840, borderCollapse: 'separate', borderSpacing: 0 }}
+        >
+          {/* Two-row sticky header */}
+          <thead>
+            {/* Row 1 — group labels */}
             <tr>
-              <th className="text-left px-3 py-2 text-[9px] text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-800 min-w-[180px]">Product</th>
-              <th className="text-center px-2 py-2 text-[9px] text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-800">Src</th>
-              <th className="text-right px-2 py-2 text-[9px] text-blue-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇳🇴 Whsl<br/><span className="text-slate-600 normal-case font-normal">kit 10x</span></th>
-              <th className="text-right px-2 py-2 text-[9px] text-orange-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇨🇳 Whsl<br/><span className="text-slate-600 normal-case font-normal">kit 10x</span></th>
-              <th className="text-right px-2 py-2 text-[9px] text-blue-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇳🇴 Kit<br/><span className="text-slate-600 normal-case font-normal">sell 10x</span></th>
-              <th className="text-right px-2 py-2 text-[9px] text-blue-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇳🇴 Vial<br/><span className="text-slate-600 normal-case font-normal">list px</span></th>
-              <th className="text-right px-2 py-2 text-[9px] text-orange-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇨🇳 Kit<br/><span className="text-slate-600 normal-case font-normal">sell 10x</span></th>
-              <th className="text-right px-2 py-2 text-[9px] text-orange-400 uppercase tracking-wider font-semibold border-b border-slate-800">🇨🇳 Vial<br/><span className="text-slate-600 normal-case font-normal">per vial</span></th>
+              <th
+                colSpan={2}
+                className="sticky top-0 left-0 z-30 bg-[#0c1322] border-b border-r border-slate-800 px-4 py-2.5 text-left"
+              >
+                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Product</span>
+              </th>
+              <th
+                colSpan={3}
+                className="sticky top-0 z-20 bg-[#071829] border-b border-r border-slate-700/50 px-4 py-2.5 text-center"
+              >
+                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">🇳🇴 Norway</span>
+              </th>
+              <th
+                colSpan={3}
+                className="sticky top-0 z-20 bg-[#1c0d00] border-b border-slate-700/50 px-4 py-2.5 text-center"
+              >
+                <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest">🇨🇳 China</span>
+              </th>
+            </tr>
+            {/* Row 2 — column labels */}
+            <tr>
+              {/* Product name — sticky left */}
+              <th
+                className="sticky top-[37px] left-0 z-30 bg-[#0c1322] border-b border-r border-slate-800 px-4 py-3 text-left text-[9px] text-slate-400 font-semibold uppercase tracking-wider whitespace-nowrap"
+                style={{ minWidth: 200 }}
+              >
+                Name
+              </th>
+              {/* Source — sticky */}
+              <th
+                className="sticky top-[37px] z-20 bg-[#0c1322] border-b border-r border-slate-800/70 px-3 py-3 text-center text-[9px] text-slate-500 font-semibold uppercase tracking-wider whitespace-nowrap"
+                style={{ left: 200 }}
+              >
+                Src
+              </th>
+              {/* Norway group */}
+              <th className="sticky top-[37px] z-10 bg-[#071829] border-b border-slate-700/40 px-4 py-3 text-right text-[9px] font-semibold uppercase tracking-wider whitespace-nowrap">
+                <span className="text-amber-500/60">Wholesale</span>
+                <div className="text-[8px] text-slate-600 font-normal normal-case mt-0.5">kit 10×</div>
+              </th>
+              <th className="sticky top-[37px] z-10 bg-[#071829] border-b border-slate-700/40 px-4 py-3 text-right whitespace-nowrap">
+                <span className="text-[9px] font-bold text-blue-300 uppercase tracking-wider">Kit Sell</span>
+                <div className="text-[8px] text-blue-400/50 font-normal normal-case mt-0.5">10 vials · editable</div>
+              </th>
+              <th className="sticky top-[37px] z-10 bg-[#071829] border-b border-r border-slate-700/40 px-4 py-3 text-right whitespace-nowrap">
+                <span className="text-[9px] font-bold text-blue-300 uppercase tracking-wider">Vial List</span>
+                <div className="text-[8px] text-blue-400/50 font-normal normal-case mt-0.5">per vial · editable</div>
+              </th>
+              {/* China group */}
+              <th className="sticky top-[37px] z-10 bg-[#1c0d00] border-b border-slate-700/40 px-4 py-3 text-right text-[9px] font-semibold uppercase tracking-wider whitespace-nowrap">
+                <span className="text-amber-500/60">Wholesale</span>
+                <div className="text-[8px] text-slate-600 font-normal normal-case mt-0.5">kit 10×</div>
+              </th>
+              <th className="sticky top-[37px] z-10 bg-[#1c0d00] border-b border-slate-700/40 px-4 py-3 text-right whitespace-nowrap">
+                <span className="text-[9px] font-bold text-orange-300 uppercase tracking-wider">Kit Sell</span>
+                <div className="text-[8px] text-orange-400/50 font-normal normal-case mt-0.5">10 vials · editable</div>
+              </th>
+              <th className="sticky top-[37px] z-10 bg-[#1c0d00] border-b border-slate-700/40 px-4 py-3 text-right whitespace-nowrap">
+                <span className="text-[9px] font-bold text-orange-300 uppercase tracking-wider">Vial Sell</span>
+                <div className="text-[8px] text-orange-400/50 font-normal normal-case mt-0.5">per vial · editable</div>
+              </th>
             </tr>
           </thead>
+
           <tbody>
             {(Object.entries(grouped) as [string, typeof SAMPLE_INVENTORY][]).map(([cat, products]) => (
               <>
+                {/* Category header row */}
                 <tr key={`cat-${cat}`}>
-                  <td colSpan={8} className="px-3 py-1.5 text-[9px] text-slate-500 uppercase tracking-widest bg-slate-900/50 border-b border-slate-800/50">
-                    {cat}
+                  <td colSpan={8} className="px-4 py-2 bg-slate-900/60 border-b border-slate-800/60">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{cat}</span>
                   </td>
                 </tr>
                 {products.map(p => {
-                  const { norW, usW, chnW, norKitComp, norVialComp, chnKitComp, chnVialComp } = prices(p.name, p.price);
+                  const c = compute(p.name, p.price);
                   const pk = p.name;
                   const src = p.sourceRestriction || 'neither';
                   const isNorway = src === 'norway';
-                  const isChina = src === 'china';
-                  const isUS = !!usW;
-                  const dimNor = isChina;
-                  const dimChn = isNorway;
+                  const isChina  = src === 'china';
 
                   return (
-                    <tr key={p.id} className="border-b border-slate-800/30 hover:bg-white/[0.02] transition-colors">
-                      <td className="px-3 py-1.5 text-slate-200 font-medium">
-                        {p.name.replace(/ \(.*?\)$/, '')}
-                        <span className="text-slate-500 ml-1">{p.name.match(/\(([^)]+)\)$/)?.[1]}</span>
+                    <tr
+                      key={p.id}
+                      className="border-b border-slate-800/20 hover:bg-slate-800/15 transition-colors group/row"
+                    >
+                      {/* Product name — sticky left */}
+                      <td
+                        className="sticky left-0 z-10 bg-[#070d1a] group-hover/row:bg-[#0c1628] transition-colors border-r border-slate-800/40 px-4 py-3"
+                        style={{ minWidth: 200 }}
+                      >
+                        <div className="text-slate-200 font-semibold text-xs leading-tight">
+                          {p.name.replace(/ \(.*?\)$/, '')}
+                        </div>
+                        {p.name.match(/\(([^)]+)\)$/) && (
+                          <div className="text-slate-500 text-[9px] font-mono mt-0.5">
+                            {p.name.match(/\(([^)]+)\)$/)?.[1]}
+                          </div>
+                        )}
                       </td>
-                      <td className="px-2 py-1.5 text-center">
+                      {/* Source badge — sticky */}
+                      <td
+                        className="sticky z-10 bg-[#070d1a] group-hover/row:bg-[#0c1628] transition-colors border-r border-slate-800/30 px-3 py-3 text-center"
+                        style={{ left: 200 }}
+                      >
                         {isNorway ? (
-                          <span className="text-[9px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">🇳🇴</span>
+                          <span className="text-[9px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded-md font-bold">🇳🇴</span>
                         ) : isChina ? (
-                          <span className="text-[9px] text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded">🇨🇳</span>
+                          <span className="text-[9px] text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded-md font-bold">🇨🇳</span>
                         ) : (
                           <span className="text-slate-700 text-[9px]">—</span>
                         )}
                       </td>
-                      <td className={`px-2 py-1.5 text-right font-mono text-xs ${dimNor ? 'opacity-20' : ''}`}>
-                        {norW ? <span className="text-amber-400/80">${norW}</span> : <span className="text-slate-700">—</span>}
+                      {/* Norway wholesale (readonly) */}
+                      <td className={`px-4 py-3 text-right ${isChina ? 'opacity-10' : ''}`}>
+                        {c.norW
+                          ? <span className="text-xs font-mono text-amber-400/70 font-semibold">${c.norW}</span>
+                          : <span className="text-slate-800 text-xs">—</span>
+                        }
                       </td>
-                      <td className={`px-2 py-1.5 text-right font-mono text-xs ${dimChn ? 'opacity-20' : ''}`}>
-                        {chnW ? (
-                          <div className="flex flex-col items-end gap-0">
-                            <span className="text-amber-400/80">${chnW}</span>
-                            {isUS && <span className="text-[8px] text-emerald-400">🇺🇸 US</span>}
+                      {/* Norway Kit Sell */}
+                      <PriceCell pk={pk} field="norKit"  comp={c.norKit}  cost={c.norW} isVial={false} dim={isChina}  />
+                      {/* Norway Vial List */}
+                      <PriceCell pk={pk} field="norVial" comp={c.norVial} cost={c.norW} isVial={true}  dim={isChina}  />
+                      {/* China wholesale (readonly) */}
+                      <td className={`px-4 py-3 text-right ${isNorway ? 'opacity-10' : ''}`}>
+                        {c.chnW ? (
+                          <div className="flex flex-col items-end gap-0.5">
+                            <span className="text-xs font-mono text-amber-400/70 font-semibold">${c.chnW}</span>
+                            {c.usW && <span className="text-[8px] text-emerald-400 font-bold">🇺🇸 US stock</span>}
                           </div>
-                        ) : <span className="text-slate-700">—</span>}
+                        ) : <span className="text-slate-800 text-xs">—</span>}
                       </td>
-                      <PriceCell productKey={pk} field="norKit" computed={norKitComp} cost10={norW} isVialCost={false} dimmed={dimNor} />
-                      <PriceCell productKey={pk} field="norVial" computed={norVialComp} cost10={norW} isVialCost={true} dimmed={dimNor} />
-                      <PriceCell productKey={pk} field="chnKit" computed={chnKitComp} cost10={chnW} isVialCost={false} dimmed={dimChn} />
-                      <PriceCell productKey={pk} field="chnVial" computed={chnVialComp} cost10={chnW} isVialCost={true} dimmed={dimChn} />
+                      {/* China Kit Sell */}
+                      <PriceCell pk={pk} field="chnKit"  comp={c.chnKit}  cost={c.chnW} isVial={false} dim={isNorway} />
+                      {/* China Vial Sell */}
+                      <PriceCell pk={pk} field="chnVial" comp={c.chnVial} cost={c.chnW} isVial={true}  dim={isNorway} />
                     </tr>
                   );
                 })}
@@ -397,7 +522,7 @@ export default function AdminPricingPanel() {
         </table>
 
         {visibleProducts.length === 0 && (
-          <div className="text-center text-slate-600 py-12 text-sm">No products match filter</div>
+          <div className="text-center text-slate-600 py-16 text-sm">No products match the current filter</div>
         )}
       </div>
     </div>
