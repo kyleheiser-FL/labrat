@@ -10,6 +10,15 @@ interface OrderSuccessModalProps {
   onDismiss: () => void;
 }
 
+const CONFETTI_COLORS = ['#22d3ee', '#34d399', '#a78bfa', '#fbbf24', '#f472b6'];
+const CONFETTI = Array.from({ length: 14 }, (_, i) => ({
+  color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+  x: (i / 13) * 100,                       // spread across the modal width
+  drift: ((i * 37) % 60) - 30,             // deterministic sideways drift
+  delay: (i % 5) * 0.07,
+  size: 5 + (i % 3) * 2,
+}));
+
 export default function OrderSuccessModal({ lastPlacedOrder, onClose, onDismiss }: OrderSuccessModalProps) {
   return (
     <AnimatePresence>
@@ -18,8 +27,29 @@ export default function OrderSuccessModal({ lastPlacedOrder, onClose, onDismiss 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-[#0b1329] border border-cyan-500/30 max-w-md w-full p-6 sm:p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] text-center relative"
+          className="bg-[#0b1329] border border-cyan-500/30 max-w-md w-full p-6 sm:p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] text-center relative overflow-hidden"
         >
+          {/* Confetti burst */}
+          <div className="absolute inset-x-0 top-0 h-48 pointer-events-none" aria-hidden="true">
+            {CONFETTI.map((c, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 1, y: -12, x: 0, rotate: 0 }}
+                animate={{ opacity: 0, y: 170, x: c.drift, rotate: 240 }}
+                transition={{ duration: 1.5, delay: 0.25 + c.delay, ease: 'easeIn' }}
+                style={{
+                  position: 'absolute',
+                  left: `${c.x}%`,
+                  top: 0,
+                  width: c.size,
+                  height: c.size,
+                  borderRadius: 2,
+                  backgroundColor: c.color,
+                }}
+              />
+            ))}
+          </div>
+
           <div className="absolute top-4 right-4">
             <button
               onClick={onDismiss}
@@ -29,9 +59,14 @@ export default function OrderSuccessModal({ lastPlacedOrder, onClose, onDismiss 
             </button>
           </div>
 
-          <div className="p-4 bg-emerald-500/10 text-emerald-400 rounded-full w-fit mx-auto mb-4">
+          <motion.div
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 16, delay: 0.1 }}
+            className="p-4 bg-emerald-500/10 text-emerald-400 rounded-full w-fit mx-auto mb-4"
+          >
             <BadgeCheck className="w-12 h-12" />
-          </div>
+          </motion.div>
 
           <h3 className="text-lg font-bold text-white">Compound Dispatch Successful</h3>
           <p className="text-xs text-slate-400 mt-2 font-mono">

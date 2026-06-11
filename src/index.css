@@ -3357,3 +3357,27 @@ html[data-labrat-theme="clinical-light"] #order-success-summary b {
 html[data-labrat-theme="clinical-light"] #order-success-summary .border-t {
   border-color: #cbd5e1 !important;
 }
+
+/* ── Skeleton shimmer for loading states ── */
+.lr-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #131c31;
+}
+.lr-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.08), transparent);
+  animation: lr-shimmer 1.4s infinite;
+}
+@keyframes lr-shimmer {
+  100% { transform: translateX(100%); }
+}
+html[data-labrat-theme="clinical-light"] .lr-skeleton {
+  background: #e2e8f0 !important;
+}
+html[data-labrat-theme="clinical-light"] .lr-skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+}

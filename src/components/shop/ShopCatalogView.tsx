@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import {
   ShoppingBag,
   Plus,
@@ -535,9 +536,22 @@ export default function ShopCatalogView({
 
       {/* PRODUCTS LISTING */}
       {catalogLoading ? (
-        <div className="flex flex-col items-center justify-center py-16 bg-[#0b1329] border border-[#1e293b]/70 rounded-2xl min-h-[40vh]">
-          <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mb-2" />
-          <p className="text-slate-400 text-xs text-center">Loading authorized substance inventory...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true" aria-label="Loading catalog">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bg-[#0b1329] border border-[#1e293b] rounded-2xl overflow-hidden">
+              <div className="lr-skeleton h-44 w-full" />
+              <div className="p-5 space-y-3">
+                <div className="lr-skeleton h-3 w-20 rounded-full" />
+                <div className="lr-skeleton h-4 w-3/4 rounded-md" />
+                <div className="lr-skeleton h-3 w-full rounded-md" />
+                <div className="lr-skeleton h-3 w-2/3 rounded-md" />
+                <div className="flex items-center justify-between pt-2">
+                  <div className="lr-skeleton h-6 w-16 rounded-md" />
+                  <div className="lr-skeleton h-9 w-24 rounded-xl" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : filteredProducts.length === 0 ? (
         <div className="bg-[#0b1329] border border-slate-800 rounded-2xl py-12 p-6 text-center">
@@ -593,7 +607,7 @@ export default function ShopCatalogView({
 
           return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {groupedDisplayItems.map(group => {
+              {groupedDisplayItems.map((group, cardIdx) => {
                 const prices = group.options.map(o => o.price);
                 const minPrice = Math.min(...prices);
                 const maxPrice = Math.max(...prices);
@@ -607,8 +621,11 @@ export default function ShopCatalogView({
                 const activeProdId = selectedProductIds[group.baseName] || preferredDefault?.id;
 
                 return (
-                  <div
+                  <motion.div
                     key={group.baseName}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: Math.min(cardIdx * 0.045, 0.45), ease: 'easeOut' }}
                     className="bg-[#0b1329] border border-[#1e293b] hover:border-cyan-500/30 rounded-2xl flex flex-col justify-between hover:shadow-[0_0_20px_rgba(6,182,212,0.04)] transition-all overflow-hidden group text-left"
                   >
                     {/* Tap image to open drawer */}
@@ -765,7 +782,7 @@ export default function ShopCatalogView({
                         </div>
                       );
                     })()}
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>

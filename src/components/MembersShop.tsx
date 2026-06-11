@@ -363,6 +363,13 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   // Active Order Success Feedback Modals
   const [lastPlacedOrder, setLastPlacedOrder] = useState<OrderDetail | null>(null);
   const [showOrderSuccessModal, setShowOrderSuccessModal] = useState(false);
+  const [errorToast, setErrorToast] = useState('');
+  const errorToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showErrorToast = (msg: string) => {
+    setErrorToast(msg);
+    if (errorToastTimer.current) clearTimeout(errorToastTimer.current);
+    errorToastTimer.current = setTimeout(() => setErrorToast(''), 6000);
+  };
 
   // Dynamic Product Creator inputs (Admin Only)
   const [showProductModal, setShowProductModal] = useState(false);
@@ -1056,7 +1063,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         .catch(err => console.error('[notify-order] order_placed push failed', err));
     } catch (e: any) {
       console.error('Error recording retail order', e);
-      alert(e?.message || 'Order failed — please try again.');
+      showErrorToast(e?.message || 'Order failed — please try again.');
     } finally {
       setActionLoading(null);
     }
@@ -1687,6 +1694,32 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         selectedCertKey={selectedCertKey}
         onClose={() => setSelectedCertKey(null)}
       />
+
+      {/* ERROR TOAST — slides up from the bottom, auto-dismisses */}
+      <AnimatePresence>
+        {errorToast && (
+          <motion.div
+            key="error-toast"
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+            className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[10000] w-[calc(100%-2rem)] max-w-md"
+          >
+            <div className="bg-[#1c1017] border border-red-500/40 rounded-2xl px-4 py-3 shadow-[0_12px_32px_rgba(0,0,0,0.5)] flex items-start gap-3">
+              <ShieldAlert className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-red-200 leading-relaxed flex-1 text-left">{errorToast}</div>
+              <button
+                onClick={() => setErrorToast('')}
+                className="text-red-400/60 hover:text-red-300 text-sm font-bold px-1 cursor-pointer"
+                aria-label="Dismiss"
+              >
+                ✕
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* FLOATING CART BUTTON — appears when cart has items and user isn't already on cart/checkout */}
       <AnimatePresence>
