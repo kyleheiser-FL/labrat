@@ -64,8 +64,9 @@ import { handleFirestoreError, OperationType } from '../lib/db';
 import { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption } from '../lib/shopTypes';
 import { SAMPLE_INVENTORY } from '../data/shopInventory';
 export type { ShopProduct, MemberProfile, CartItem, OrderDetail, ShippingOption };
-export { findShopProductMatch, getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice } from '../lib/shopHelpers';
-import { getProductCostPerVial, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress, getProductBaseAndSize } from '../lib/shopHelpers';
+export { findShopProductMatch, getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice } from '../lib/shopHelpers';
+import { getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress, getProductBaseAndSize } from '../lib/shopHelpers';
+import { fetchWholesaleBook, getProductCostPerVial, type WholesaleBook } from '../lib/wholesale';
 import { usePricingConfig } from '../lib/pricingConfig';
 import ShopCartView from './shop/ShopCartView';
 import ShopCheckoutView from './shop/ShopCheckoutView';
@@ -205,6 +206,20 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   const [products, setProducts] = useState<ShopProduct[]>([]);
   const [allOrdersGlobal, setAllOrdersGlobal] = useState<OrderDetail[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<Record<string, string>>({});
+
+  // Make sure the server price book covers custom (Firestore-added) products too
+  useEffect(() => {
+    if (products.length) pricingConfig.ensureNames?.(products.map(p => p.name));
+  }, [products, pricingConfig.ensureNames]);
+
+  // Wholesale costs for the admin product form (admin-only endpoint)
+  const [wholesaleBook, setWholesaleBook] = useState<WholesaleBook>({});
+  useEffect(() => {
+    if (!isAdminUser) return;
+    fetchWholesaleBook(products.map(p => p.name))
+      .then(setWholesaleBook)
+      .catch(e => console.error('[shop] Failed to load wholesale costs:', e));
+  }, [isAdminUser, products]);
 
   // Immersive Compound Dosages selector modal state
   const [selectedParentProductGroup, setSelectedParentProductGroup] = useState<{
@@ -1200,7 +1215,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       const isBacWater = p.id.startsWith('prod_bac_water');
       if (isBacWater) matchesSource = false;
       // Hide products from China customers that have no China price defined
-      if (isAnyChinaPricing && !isBacWater && !getChinaKitSellPrice(p.name) && !getChinaVialSellPrice(p.name)) matchesSource = false;
+      if (isAnyChinaPricing && !isBacWater && !getChinaKitSellPrice(p.name, pricingConfig) && !getChinaVialSellPrice(p.name, pricingConfig)) matchesSource = false;
     }
     return matchesCategory && matchesSearch && matchesSource;
   });
@@ -2002,7 +2017,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                     <div className="text-cyan-400 font-bold uppercase tracking-wider text-[9px] mb-1">Financial Estimates (KaosLabs.eu)</div>
                     <div className="flex justify-between">
                       <span>Estimated Cost/Vial (incl. avg shipping):</span>
-                      <span className="text-white font-semibold">${getProductCostPerVial(productForm.name, productForm.price || 0).toFixed(2)}</span>
+                      <span className="text-white font-semibold">${getProductCostPerVial(productForm.name, productForm.price || 0, wholesaleBook).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Sell Price:</span>
@@ -2011,7 +2026,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                     <div className="flex justify-between border-t border-slate-800/50 pt-1.5 mt-1 font-bold">
                       <span>Estimated Profit per Vial:</span>
                       {(() => {
-                        const cost = getProductCostPerVial(productForm.name, productForm.price || 0);
+                        const cost = getProductCostPerVial(productForm.name, productForm.price || 0, wholesaleBook);
                         const sale = getSalePrice(productForm.price || 0);
                         const profit = sale - cost;
                         return <span className={profit >= 0 ? "text-amber-300" : "text-rose-400"}>${profit.toFixed(2)}</span>;

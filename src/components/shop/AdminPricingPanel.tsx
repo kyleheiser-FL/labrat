@@ -1,10 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { SAMPLE_INVENTORY } from '../../data/shopInventory';
-import {
-  getKitWholesaleCost,
-  getChineseKitWholesaleCost,
-  getChineseUsWarehouseCost,
-} from '../../lib/shopHelpers';
+import { fetchWholesaleBook, type WholesaleBook } from '../../lib/wholesale';
 import { usePricingConfig, savePricingConfig, DEFAULT_PRICING } from '../../lib/pricingConfig';
 import type { PriceOverride } from '../../lib/pricingConfig';
 
@@ -91,6 +87,14 @@ export default function AdminPricingPanel() {
   const [saved,         setSaved]         = useState(false);
   const [saveError,     setSaveError]     = useState('');
   const [dirty,         setDirty]         = useState(false);
+  const [wholesale,     setWholesale]     = useState<WholesaleBook>({});
+
+  // Wholesale costs come from the admin-only server endpoint
+  useEffect(() => {
+    fetchWholesaleBook()
+      .then(setWholesale)
+      .catch(e => console.error('[pricing] Failed to load wholesale costs:', e));
+  }, []);
 
   // Restore any unsaved draft from localStorage (runs before Firestore loads)
   useEffect(() => {
@@ -143,9 +147,10 @@ export default function AdminPricingPanel() {
 
   // Compute all prices for a product
   function compute(name: string, listPrice: number) {
-    const norW = getKitWholesaleCost(name) || null;
-    const usW  = getChineseUsWarehouseCost(name) || null;
-    const chnW = usW || (getChineseKitWholesaleCost(name) || null);
+    const w = wholesale[name];
+    const norW = w?.norW || null;
+    const usW  = w?.usW  || null;
+    const chnW = usW || (w?.chnW || null);
     return {
       norW, usW, chnW,
       norKit:  norW  ? Math.round(norW  * (1 + norKitPct  / 100)) : null,

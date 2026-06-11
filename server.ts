@@ -6,6 +6,10 @@ import firebaseConfig from "./firebase-applet-config.json";
 import { initializeApp as initAdminApp, getApps as getAdminApps, cert } from "firebase-admin/app";
 import { getMessaging as getAdminMessaging } from "firebase-admin/messaging";
 import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
+import {
+  computePriceBook, computeWholesaleBook, DEFAULT_MARKUPS,
+  type PricingMarkups, type PriceOverride,
+} from "./server/pricingData";
 
 const app = express();
 const PORT = 3000;
@@ -350,6 +354,58 @@ app.use(express.json());
     } catch (e: any) {
       res.status(500).json({ error: e.message });
     }
+  });
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Pricing — wholesale costs live server-side only (server/pricingData.ts).
+  // Members get final sell prices; raw costs are admin-only.
+  // ──────────────────────────────────────────────────────────────────────────
+
+  // Read the trusted pricing config (markups + overrides) via the Admin SDK.
+  // Falls back to defaults when Admin credentials are absent (local dev).
+  async function fetchTrustedPricingConfig(): Promise<{ markups: PricingMarkups; overrides: Record<string, PriceOverride> }> {
+    const adminApp = getAdminApp();
+    if (adminApp) {
+      try {
+        const fsdb = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
+        const snap = await fsdb.collection('systemConfig').doc('pricingConfig').get();
+        if (snap.exists) {
+          const data = snap.data() || {};
+          return {
+            markups: { ...DEFAULT_MARKUPS, ...(data.markups || {}) },
+            overrides: data.overrides || {},
+          };
+        }
+      } catch (e) {
+        console.error('[prices] Failed to read pricingConfig via Admin SDK:', e);
+      }
+    } else {
+      console.warn('[prices] Admin SDK unavailable — serving default markups');
+    }
+    return { markups: DEFAULT_MARKUPS, overrides: {} };
+  }
+
+  // Final sell prices for the shop — any signed-in user
+  app.post('/api/prices', async (req, res) => {
+    const caller = await verifyFirebaseToken(req);
+    if (!caller) return res.status(401).json({ error: 'Sign in required' });
+    if (rateLimited(`prices_${caller.uid}`, 30)) {
+      return res.status(429).json({ error: 'Too many requests' });
+    }
+    const names: string[] = Array.isArray(req.body?.names) ? req.body.names.slice(0, 500) : [];
+    const { markups, overrides } = await fetchTrustedPricingConfig();
+    res.json({ priceBook: computePriceBook(names, markups, overrides) });
+  });
+
+  // Raw wholesale costs — admin only (feeds pricing panel & profit displays)
+  app.post('/api/wholesale', async (req, res) => {
+    const caller = await verifyFirebaseToken(req);
+    if (!caller) return res.status(401).json({ error: 'Sign in required' });
+    if (caller.email !== ADMIN_EMAIL && caller.uid !== 'dev') {
+      return res.status(403).json({ error: 'Admin only' });
+    }
+    const names: string[] = Array.isArray(req.body?.names) ? req.body.names.slice(0, 500) : [];
+    res.json({ wholesaleBook: computeWholesaleBook(names) });
   });
 
   // Gemini Peptide Advisor API

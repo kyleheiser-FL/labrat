@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ClipboardList, Loader2, Mail, Trash2 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { OrderDetail } from '../../lib/shopTypes';
-import { getProductCostPerVial } from '../../lib/shopHelpers';
+import { fetchWholesaleBook, getProductCostPerVial, type WholesaleBook } from '../../lib/wholesale';
 
 interface AdminOrdersPanelProps {
   adminOrdersList: OrderDetail[];
@@ -31,6 +31,15 @@ export default function AdminOrdersPanel({
   onDeleteOrder,
   onSetConfirmDeleteOrderId,
 }: AdminOrdersPanelProps) {
+  const [wholesale, setWholesale] = useState<WholesaleBook>({});
+
+  useEffect(() => {
+    const names = [...new Set(adminOrdersList.flatMap(o => o.items.map(i => i.name)))];
+    fetchWholesaleBook(names)
+      .then(setWholesale)
+      .catch(e => console.error('[orders] Failed to load wholesale costs for profit display:', e));
+  }, [adminOrdersList]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-900 pb-4 mb-2">
@@ -104,7 +113,7 @@ export default function AdminOrdersPanel({
                 <div className="mt-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-2 max-w-lg">
                   <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Ordered Compounds Detail</div>
                   {order.items.map((item, idx) => {
-                    const costPerVial = getProductCostPerVial(item.name, item.price / 0.85);
+                    const costPerVial = getProductCostPerVial(item.name, item.price / 0.85, wholesale);
                     const itemProfit = item.price - costPerVial;
                     const totalProfitForLine = itemProfit * item.quantity;
                     return (
@@ -175,7 +184,7 @@ export default function AdminOrdersPanel({
                   {(() => {
                     const shippingCost = order.shippingInfo?.cost || 0;
                     const taxAmount = order.tax || 0;
-                    const orderCost = order.items.reduce((sum, item) => sum + (getProductCostPerVial(item.name, item.price / 0.85) * item.quantity), 0);
+                    const orderCost = order.items.reduce((sum, item) => sum + (getProductCostPerVial(item.name, item.price / 0.85, wholesale) * item.quantity), 0);
                     const orderProfit = order.total - orderCost - shippingCost - taxAmount;
                     return (
                       <div className="mt-2 text-right font-mono text-[10px] space-y-0.5 border-t border-slate-900 pt-1.5">

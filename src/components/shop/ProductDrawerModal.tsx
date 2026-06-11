@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { ShopProduct, CartItem, OrderDetail } from '../../lib/shopTypes';
-import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getProductCostPerVial, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaVialCost, getChineseKitWholesaleCost, hasUsWarehouseShipping } from '../../lib/shopHelpers';
+import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, hasUsWarehouseShipping } from '../../lib/shopHelpers';
+import { fetchWholesaleBook, getProductCostPerVial, getChinaVialCost, getChineseKitWholesaleCost, type WholesaleBook } from '../../lib/wholesale';
 import { usePricingConfig } from '../../lib/pricingConfig';
 import ProductVialVisual from './ProductVialVisual';
 
@@ -92,6 +93,16 @@ export default function ProductDrawerModal({
   isChinaVialPricing = false,
 }: ProductDrawerModalProps) {
   const pc = usePricingConfig();
+  const [wholesale, setWholesale] = useState<WholesaleBook>({});
+
+  // Wholesale costs power the admin financial section only
+  useEffect(() => {
+    if (!isViewingAsAdmin) return;
+    fetchWholesaleBook(group.options.map(o => o.name))
+      .then(setWholesale)
+      .catch(e => console.error('[drawer] Failed to load wholesale costs:', e));
+  }, [isViewingAsAdmin, group]);
+
   const selectedParentProductGroup = group;
   const selectedOptionIdInDrawer = selectedOptionId;
   const setSelectedOptionIdInDrawer = onSetSelectedOptionId;
@@ -263,19 +274,19 @@ export default function ProductDrawerModal({
 
               // Show all relevant source sections based on product's sourceRestriction field
               const hasNorwaySource = !activeOpt.sourceRestriction || activeOpt.sourceRestriction === 'norway';
-              const chinaKitCost = getChineseKitWholesaleCost(activeOpt.name);
+              const chinaKitCost = getChineseKitWholesaleCost(activeOpt.name, wholesale);
               const hasChinaSource = (!activeOpt.sourceRestriction || activeOpt.sourceRestriction === 'china') && chinaKitCost > 0;
 
               const chinaKitSell = getChinaKitSellPrice(activeOpt.name, pc);
               const chinaKitProfit = chinaKitSell - chinaKitCost;
               const chinaKitMarkupPct = chinaKitCost > 0 ? Math.round((chinaKitProfit / chinaKitCost) * 100) : 0;
 
-              const chinaVialCost = getChinaVialCost(activeOpt.name);
+              const chinaVialCost = getChinaVialCost(activeOpt.name, wholesale);
               const chinaVialSell = getChinaVialSellPrice(activeOpt.name, pc);
               const chinaVialProfit = chinaVialSell - chinaVialCost;
               const chinaVialMarkupPct = chinaVialCost > 0 ? Math.round((chinaVialProfit / chinaVialCost) * 100) : 0;
 
-              const estimatedCost = getProductCostPerVial(activeOpt.name, activeOpt.price);
+              const estimatedCost = getProductCostPerVial(activeOpt.name, activeOpt.price, wholesale);
               const kaosKitCost = Math.round((estimatedCost - 3.50) * 10);
               const kitSellPrice = getKitSellPrice(activeOpt.name, pc);
               const kitProfit = kitSellPrice - kaosKitCost;

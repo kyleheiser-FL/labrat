@@ -72,10 +72,13 @@ service cloud.firestore {
 
     // Global system configuration settings
     // 'shop' holds only the global shop-visibility flag and must stay readable
-    // by guests at app startup; everything else (e.g. pricingConfig with markup
-    // strategy) requires sign-in.
+    // by guests at app startup. 'pricingConfig' holds the markup strategy and
+    // is admin-only — members get computed sell prices from /api/prices, so
+    // exposing markups here would let them reverse-engineer wholesale costs.
     match /systemConfig/{configId} {
-      allow read: if configId == "shop" || request.auth != null;
+      allow read: if configId == "shop"
+                  || isAdmin()
+                  || (request.auth != null && configId != "pricingConfig");
       allow write: if isAdmin();
     }
 
