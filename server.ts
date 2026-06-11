@@ -65,16 +65,24 @@ function handleGeminiError(err: any, endpointName: string): { status: number; me
   };
 }
 
-// Firebase Admin SDK — initialized lazily so missing credentials don't crash non-admin endpoints
+// Firebase Admin SDK — initialized lazily so missing credentials don't crash non-admin endpoints.
+// Accepts the service account as base64 (FIREBASE_SERVICE_ACCOUNT_BASE64) or
+// raw JSON (either var) so setup doesn't require an encoding step.
 function getAdminApp() {
   if (getAdminApps().length > 0) return getAdminApps()[0];
-  const b64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
-  if (!b64) return null;
+  const raw = (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64 || process.env.FIREBASE_SERVICE_ACCOUNT_JSON || '').trim();
+  if (!raw) return null;
+  let jsonStr = raw;
+  if (!jsonStr.startsWith('{')) {
+    try {
+      jsonStr = Buffer.from(jsonStr, 'base64').toString('utf-8');
+    } catch { /* fall through — JSON.parse below reports the failure */ }
+  }
   try {
-    const serviceAccount = JSON.parse(Buffer.from(b64, 'base64').toString('utf-8'));
+    const serviceAccount = JSON.parse(jsonStr);
     return initAdminApp({ credential: cert(serviceAccount) });
   } catch (e) {
-    console.error('[Admin] Failed to initialize Firebase Admin:', e);
+    console.error('[Admin] Failed to initialize Firebase Admin (set FIREBASE_SERVICE_ACCOUNT_BASE64 to the service account JSON, base64-encoded or raw):', e);
     return null;
   }
 }
@@ -396,7 +404,8 @@ app.use(express.json());
 
     const adminApp = getAdminApp();
     if (!adminApp) {
-      return res.status(503).json({ error: 'Order service not configured (FIREBASE_SERVICE_ACCOUNT_BASE64 missing)' });
+      console.error('[create-order] Rejected: Firebase Admin credentials missing (set FIREBASE_SERVICE_ACCOUNT_BASE64)');
+      return res.status(503).json({ error: 'Ordering is temporarily unavailable — please try again shortly.' });
     }
     const fsdb = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
 
