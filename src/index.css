@@ -3342,3 +3342,18 @@ html[data-labrat-theme="clinical-light"] #library-suggestions-dropdown .text-sla
 html[data-labrat-theme="clinical-light"] .text-\[\#e2e8f0\]\/95 {
   color: #334155 !important;
 }
+
+/* ── Order success modal: shipping summary box readable in clinical-light ── */
+html[data-labrat-theme="clinical-light"] #order-success-summary {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+html[data-labrat-theme="clinical-light"] #order-success-summary span {
+  color: #475569 !important;
+}
+html[data-labrat-theme="clinical-light"] #order-success-summary b {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #order-success-summary .border-t {
+  border-color: #cbd5e1 !important;
+}

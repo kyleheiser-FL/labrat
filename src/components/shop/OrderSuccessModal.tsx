@@ -44,7 +44,7 @@ export default function OrderSuccessModal({ lastPlacedOrder, onClose, onDismiss 
           </p>
 
           {lastPlacedOrder.shippingInfo?.carrier && (
-            <div className="mt-4 p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs text-left text-slate-300 font-mono space-y-1.5 mx-auto max-w-sm">
+            <div id="order-success-summary" className="mt-4 p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs text-left text-slate-300 font-mono space-y-1.5 mx-auto max-w-sm">
               <div className="flex justify-between text-[11px]">
                 <span className="text-slate-500">Selected Carrier:</span>
                 <b className="text-[#22d3ee]">{lastPlacedOrder.shippingInfo.carrier} {lastPlacedOrder.shippingInfo.method}</b>
