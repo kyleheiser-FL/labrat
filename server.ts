@@ -129,9 +129,15 @@ app.use(express.json());
 
   // API endpoints
   app.get("/api/health", (req, res) => {
-    res.json({ 
-      status: "ok", 
+    // adminCredsPresent = env var exists; adminReady = key parsed and SDK initialized.
+    // Present-but-not-ready means the value is malformed (truncated paste, wrong content).
+    const adminCredsPresent = !!(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64 || process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    res.json({
+      status: "ok",
       apiReady: !!process.env.GEMINI_API_KEY,
+      adminCredsPresent,
+      adminReady: !!getAdminApp(),
+      cronSecretSet: !!process.env.CRON_SECRET,
       timestamp: new Date().toISOString()
     });
   });
