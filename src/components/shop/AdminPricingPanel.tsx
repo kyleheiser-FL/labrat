@@ -182,8 +182,9 @@ export default function AdminPricingPanel() {
       setSaved(true);
       setDirty(false);
       setTimeout(() => setSaved(false), 4000);
-    } catch {
-      setSaveError('Save failed — check Firestore permissions');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setSaveError(`Save failed: ${msg}`);
     } finally {
       setSaving(false);
     }
