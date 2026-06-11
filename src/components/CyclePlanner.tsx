@@ -25,7 +25,7 @@ interface CyclePlannerProps {
   activeFromLibrary?: LibraryItem | null;
   clearActiveFromLibrary?: () => void;
   onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => void;
-  labratTheme?: 'neon' | 'clinical';
+  labratTheme?: 'neon' | 'clinical' | 'clinical-light';
   visibility?: { pct: boolean; dataControls: boolean; };
 }
 

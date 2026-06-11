@@ -736,7 +736,6 @@ export default function App() {
       setTrackingEnabled(getInitialTrackingEnabled());
 
       await signOut(auth);
-      setNotificationsOpen(false);
     } catch (err) {
       console.error('Failed to log out:', err);
     }

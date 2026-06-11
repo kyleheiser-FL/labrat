@@ -17,7 +17,7 @@ interface CycleDashboardProps {
   onLogDose: (log: DoseLog) => void;
   onUndoDose: (id: string) => void;
   onUpdateCompoundDose?: (compoundId: string, newDose: number) => void;
-  labratTheme?: 'neon' | 'clinical';
+  labratTheme?: 'neon' | 'clinical' | 'clinical-light';
   visibility?: {
     schedule: boolean;
     history: boolean;

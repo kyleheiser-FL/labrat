@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Palette, Bell, BellRing, Layout, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X, Unlock } from 'lucide-react';
-import { SegmentVisibility } from '../types';
+import { SegmentVisibility, AppNotification } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 
 interface SettingsPageProps {

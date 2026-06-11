@@ -20,7 +20,7 @@ type Tab = 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings';
 interface AppHeaderProps {
   activeTab: Tab;
   onSetActiveTab: (tab: Tab) => void;
-  labratTheme: 'neon' | 'clinical';
+  labratTheme: 'neon' | 'clinical' | 'clinical-light';
   user: User | null;
   authLoading: boolean;
   isStandalone: boolean;

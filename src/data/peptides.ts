@@ -3619,7 +3619,7 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
       'Minus (-): Same nandrolone progestenic and suppressive side effects as Deca, amplified by duration'
     ],
     suggestedCycleWeeks: '12 - 16 weeks (the long ester naturally controls minimum cycle length).',
-    deliveryForm: 'injection',
+    deliveryForm: 'oil',
     realisticGains: 'Same qualitative gains as Nandrolone Decanoate — deep joint lubrication, lean mass accrual, and collagen synthesis — with dramatically reduced injection burden. Steady 8-12 lb lean mass gain over a 12-16 week protocol.',
     dietaryInteraction: 'Same as Deca-Durabolin. High protein intake (1.5g/lb bodyweight), prolactin monitoring with cabergoline if needed, and full post-cycle recovery planning are essential given the very long ester duration extending 5-6 weeks beyond the last injection.'
   },
@@ -3644,7 +3644,7 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
       'Minus (-): Same cardiovascular (RBC/EPO) monitoring required as standard Equipoise'
     ],
     suggestedCycleWeeks: '6 - 10 weeks per cycle.',
-    deliveryForm: 'injection',
+    deliveryForm: 'oil',
     realisticGains: 'Lean, quality mass gains of 5-8 lbs with a vascular, dry physique over a 6-10 week cycle. Equivalent to Equipoise results on a condensed timeline with faster post-cycle clearance.',
     dietaryInteraction: 'Maintain adequate iron and B12 to support EPO-mediated red blood cell expansion. Monitor hematocrit and donate blood if it rises above 50% to prevent cardiovascular strain common to all boldenone compounds.'
   },
@@ -3669,7 +3669,7 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
       'Minus (-): Significant cardiovascular lipid impact (elevated LDL, reduced HDL) at sustained doses'
     ],
     suggestedCycleWeeks: '8 - 12 weeks injectable | Topical gel can be used under ongoing medical supervision.',
-    deliveryForm: 'injection',
+    deliveryForm: 'oil',
     realisticGains: 'An immediate, dramatic hardening and drying of the physique within 2-3 weeks. Extreme sexual drive and training motivation enhancement. Commonly used in the final 4-6 weeks of pre-competition prep to eliminate water and maximize muscular density.',
     dietaryInteraction: 'Topical absorption is maximized on clean, exfoliated skin. Pair with Citrus Bergamot and CoQ10 to protect lipid profiles. Regular blood panel monitoring every 6-8 weeks is essential for cardiovascular health maintenance.'
   },
@@ -3720,7 +3720,7 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
       'Minus (-): Extremely difficult to manage or clear if sides emerge — no quick exit from a 21-day ester'
     ],
     suggestedCycleWeeks: '12 - 16 weeks per cycle.',
-    deliveryForm: 'injection',
+    deliveryForm: 'oil',
     realisticGains: 'Same dramatic body recomposition as other trenbolone esters — lean mass gains of 12-18 lbs over 12 weeks with simultaneous significant fat loss. The convenience of monthly injections is the primary advantage over acetate and enanthate for experienced users.',
     dietaryInteraction: 'High dietary protein (1.8g/lb bodyweight) is essential to leverage trenbolone\'s extraordinary nitrogen retention. Cardiovascular monitoring (blood pressure, HRV) is critical throughout the cycle. Cabergoline for prolactin management. Avoid high-sodium foods to minimize androgenic fluid retention.'
   },
@@ -3781,20 +3781,17 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     clinicalStudies: [
       {
         studyTitle: 'Safety and Tolerability of NAD+ Administration in Healthy Adults',
-        journal: 'Nature Metabolism',
-        year: 2023,
+        citation: 'Nature Metabolism, 2023',
         keyFinding: 'Intravenous NAD+ at doses up to 1,000 mg infused over 2–4 hours was well-tolerated in healthy adults with transient, rate-dependent side effects. Blood NAD+ concentrations increased 3.5-fold above baseline within 2 hours and remained elevated for 24–48 hours post-infusion.'
       },
       {
         studyTitle: 'NAD+ Replenishment Improves Muscle Function in Aging and Metabolic Decline',
-        journal: 'Cell Metabolism',
-        year: 2022,
+        citation: 'Cell Metabolism, 2022',
         keyFinding: 'Restoring NAD+ levels in aged muscle tissue via direct supplementation recovered mitochondrial biogenesis markers, reversed fiber-type shifting, and improved grip strength metrics equivalent to a reversal of 10–15 years of muscle aging biology.'
       },
       {
         studyTitle: 'Intravenous NAD+ for Substance Use Disorder: Clinical Outcomes',
-        journal: 'Journal of Addiction Medicine',
-        year: 2021,
+        citation: 'Journal of Addiction Medicine, 2021',
         keyFinding: 'IV NAD+ infusion protocols (500–1,000 mg/day over 10 days) significantly reduced withdrawal symptom severity, cravings, and anxiety scores across alcohol, opioid, and stimulant use disorder patients compared to standard detox protocols — with a mechanistic role attributed to rapid neurochemical NAD+ restoration.'
       }
     ]
