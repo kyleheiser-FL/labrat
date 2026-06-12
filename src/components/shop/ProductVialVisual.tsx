@@ -26,18 +26,19 @@ export function productPhotoSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-// Category → label band hue (matches the catalog badge color system)
+// Category → accent hue used for the strength block + purity flash on the
+// dark gunmetal LABRAT label (mirrors the catalog badge color system)
 const CATEGORY_HUES: Record<string, { band: string; bandText: string }> = {
-  'Muscle Growth':           { band: '#9f1239', bandText: '#fecdd3' },
-  'Weight Loss':             { band: '#92400e', bandText: '#fde68a' },
-  'Healing & Repair':        { band: '#065f46', bandText: '#a7f3d0' },
-  'Beauty & Radiance':       { band: '#115e59', bandText: '#99f6e4' },
-  'Cognitive & Focus':       { band: '#075985', bandText: '#bae6fd' },
-  'Longevity & Cellular':    { band: '#3730a3', bandText: '#c7d2fe' },
-  'Immune & Health':         { band: '#86198f', bandText: '#f5d0fe' },
-  'Sleep & Recovery':        { band: '#5b21b6', bandText: '#ddd6fe' },
-  'Sexual Health':           { band: '#9d174d', bandText: '#fbcfe8' },
-  'Reconstitution Solvents': { band: '#1e3a8a', bandText: '#bfdbfe' },
+  'Muscle Growth':           { band: '#e11d48', bandText: '#fecdd3' },
+  'Weight Loss':             { band: '#d97706', bandText: '#fde68a' },
+  'Healing & Repair':        { band: '#059669', bandText: '#a7f3d0' },
+  'Beauty & Radiance':       { band: '#0d9488', bandText: '#99f6e4' },
+  'Cognitive & Focus':       { band: '#0284c7', bandText: '#bae6fd' },
+  'Longevity & Cellular':    { band: '#4f46e5', bandText: '#c7d2fe' },
+  'Immune & Health':         { band: '#c026d3', bandText: '#f5d0fe' },
+  'Sleep & Recovery':        { band: '#7c3aed', bandText: '#ddd6fe' },
+  'Sexual Health':           { band: '#db2777', bandText: '#fbcfe8' },
+  'Reconstitution Solvents': { band: '#2563eb', bandText: '#bfdbfe' },
 };
 
 interface VialFlags {
@@ -81,10 +82,14 @@ function RealisticVial({ name, category, flags, light }: {
     return est > LABEL_TEXT_MAX ? { textLength: LABEL_TEXT_MAX, lengthAdjust: 'spacingAndGlyphs' as const } : {};
   };
 
-  const hue = CATEGORY_HUES[category] || { band: '#0e7490', bandText: '#a5f3fc' };
+  const hue = CATEGORY_HUES[category] || { band: '#2563eb', bandText: '#bfdbfe' };
   const capColor  = isSolvent ? '#0ea5e9' : isChina ? '#dc2626' : isUsaWarehouse ? '#d97706' : '#2563eb';
   const capDark   = isSolvent ? '#0369a1' : isChina ? '#991b1b' : isUsaWarehouse ? '#92400e' : '#1e40af';
   const uid = (name + category).replace(/[^a-z0-9]/gi, '').slice(0, 12).toLowerCase() || 'vial';
+
+  // Label geometry — dark gunmetal stock wrapped around the squat 3ml body
+  const LABEL_TOP = 80, LABEL_BOTTOM = 210;
+  const nameBaseline = line2 ? 112 : 117;
 
   // True 3ml vial proportions: squat, wide body (~1.5:1 h/w) with rounded shoulders
   return (
@@ -111,12 +116,20 @@ function RealisticVial({ name, category, flags, light }: {
           <stop offset="75%" stopColor="#cbd5e1" />
           <stop offset="100%" stopColor="#64748b" />
         </linearGradient>
-        <linearGradient id={`p-${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#e8e6e0" />
-          <stop offset="12%" stopColor="#fdfcf9" />
-          <stop offset="55%" stopColor="#f6f4ee" />
-          <stop offset="90%" stopColor="#fbfaf6" />
-          <stop offset="100%" stopColor="#dcd9d0" />
+        {/* Dark gunmetal label stock */}
+        <linearGradient id={`p-${uid}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"  stopColor="#1e293b" />
+          <stop offset="48%" stopColor="#0f172a" />
+          <stop offset="100%" stopColor="#020617" />
+        </linearGradient>
+        {/* Iridescent holographic foil for the wordmark + accents */}
+        <linearGradient id={`holo-${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor="#22d3ee" />
+          <stop offset="22%"  stopColor="#a78bfa" />
+          <stop offset="44%"  stopColor="#f472b6" />
+          <stop offset="64%"  stopColor="#fbbf24" />
+          <stop offset="84%"  stopColor="#34d399" />
+          <stop offset="100%" stopColor="#22d3ee" />
         </linearGradient>
         <linearGradient id={`w-${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="#ffffff" />
@@ -145,75 +158,106 @@ function RealisticVial({ name, category, flags, light }: {
         fill={`url(#g-${uid})`} stroke={light ? '#cbd5e1' : '#1e293b'} strokeWidth="1"
       />
 
-      {/* Contents: powder cake for peptides, liquid for solvents */}
+      {/* Contents — visible above (neck) and below the wrapped label */}
       {isSolvent ? (
         <>
-          <rect x="67" y="94" width="86" height="134" rx="10" fill={`url(#l-${uid})`} />
-          <ellipse cx="110" cy="94" rx="43" ry="4" fill="#bae6fd" opacity="0.65" />
+          <rect x="67" y="52" width="86" height="176" rx="10" fill={`url(#l-${uid})`} />
+          <ellipse cx="110" cy="52" rx="43" ry="4" fill="#bae6fd" opacity="0.65" />
         </>
       ) : (
         <>
-          <rect x="67" y="196" width="86" height="32" rx="8" fill={`url(#w-${uid})`} opacity="0.95" />
-          <ellipse cx="110" cy="196" rx="43" ry="4.5" fill="#ffffff" opacity="0.95" />
-          <ellipse cx="94" cy="205" rx="12" ry="2.2" fill="#ffffff" opacity="0.7" />
+          <rect x="67" y="208" width="86" height="20" rx="8" fill={`url(#w-${uid})`} opacity="0.95" />
+          <ellipse cx="110" cy="208" rx="43" ry="4.5" fill="#ffffff" opacity="0.9" />
         </>
       )}
 
-      {/* ── Wrapped paper label (the product IS the label) ── */}
+      {/* ── Wrapped dark LABRAT label (the product IS the label) ── */}
       <g>
-        <rect x="65" y="84" width="90" height="110" fill={`url(#p-${uid})`} />
-        {/* Category color band */}
-        <rect x="65" y="84" width="90" height="20" fill={hue.band} />
-        <text x="110" y="93.5" textAnchor="middle" fontSize="8" fontWeight="900" letterSpacing="2.4"
-          fill="#ffffff" fontFamily="'Space Grotesk', system-ui, sans-serif">LABRAT</text>
-        <text x="110" y="101" textAnchor="middle" fontSize="4.8" fontWeight="700" letterSpacing="1.5"
-          fill={hue.bandText} fontFamily="system-ui, sans-serif">RESEARCH COMPOUND</text>
+        <rect x="65" y={LABEL_TOP} width="90" height={LABEL_BOTTOM - LABEL_TOP} fill={`url(#p-${uid})`} />
+        {/* Holographic sheen wash + top/bottom foil hairlines */}
+        <rect x="65" y={LABEL_TOP} width="90" height={LABEL_BOTTOM - LABEL_TOP} fill={`url(#holo-${uid})`} opacity="0.12" />
+        <rect x="65" y={LABEL_TOP} width="90" height="2" fill={`url(#holo-${uid})`} opacity="0.9" />
+
+        {/* Brand header */}
+        <text x="110" y="92" textAnchor="middle" fontSize="11" fontWeight="900" letterSpacing="2.2"
+          fill={`url(#holo-${uid})`} fontFamily="'Space Grotesk', system-ui, sans-serif">LABRAT</text>
+        <text x="110" y="98.5" textAnchor="middle" fontSize="3.6" fontWeight="700" letterSpacing="3"
+          fill="#94a3b8" fontFamily="system-ui, sans-serif">P E P T I D E S</text>
+        <rect x="80" y="101.5" width="60" height="0.8" fill={`url(#holo-${uid})`} opacity="0.7" />
 
         {/* Product name printed on the label */}
         {line2 ? (
           <>
-            <text x="110" y="119" textAnchor="middle" fontSize={nameSize} fontWeight="800"
-              fill="#111827" fontFamily="'Space Grotesk', system-ui, sans-serif" {...fit(line1)}>{line1}</text>
-            <text x="110" y={119 + nameSize + 2} textAnchor="middle" fontSize={nameSize} fontWeight="800"
-              fill="#111827" fontFamily="'Space Grotesk', system-ui, sans-serif" {...fit(line2)}>{line2}</text>
+            <text x="110" y={nameBaseline} textAnchor="middle" fontSize={nameSize} fontWeight="800"
+              fill="#f8fafc" fontFamily="'Space Grotesk', system-ui, sans-serif" {...fit(line1)}>{line1}</text>
+            <text x="110" y={nameBaseline + nameSize + 2} textAnchor="middle" fontSize={nameSize} fontWeight="800"
+              fill="#f8fafc" fontFamily="'Space Grotesk', system-ui, sans-serif" {...fit(line2)}>{line2}</text>
           </>
         ) : (
-          <text x="110" y="125" textAnchor="middle" fontSize={nameSize} fontWeight="800"
-            fill="#111827" fontFamily="'Space Grotesk', system-ui, sans-serif" {...fit(line1)}>{line1}</text>
+          <text x="110" y={nameBaseline} textAnchor="middle" fontSize={nameSize} fontWeight="800"
+            fill="#f8fafc" fontFamily="'Space Grotesk', system-ui, sans-serif" {...fit(line1)}>{line1}</text>
         )}
 
-        {/* Strength pill */}
+        {/* Strength block */}
         {strength && (
           <>
-            <rect x={110 - (strength.length * 4 + 12) / 2} y="138" width={strength.length * 4 + 12} height="14" rx="7"
-              fill={hue.band} opacity="0.92" />
-            <text x="110" y="148" textAnchor="middle" fontSize="8" fontWeight="900" letterSpacing="0.5"
+            <rect x={110 - (strength.length * 4.2 + 14) / 2} y="130" width={strength.length * 4.2 + 14} height="15" rx="4"
+              fill={hue.band} />
+            <text x="110" y="140.5" textAnchor="middle" fontSize="8.5" fontWeight="900" letterSpacing="0.5"
               fill="#ffffff" fontFamily="system-ui, sans-serif">{strength}</text>
           </>
         )}
 
-        {/* Fine print */}
-        <text x="110" y={strength ? 162 : 151} textAnchor="middle" fontSize="5" fontWeight="600"
-          fill="#6b7280" fontFamily="system-ui, sans-serif">
-          {isSolvent ? 'Sterile Reconstitution Solvent' : 'Lyophilized · 3ml Glass Vial'}
+        {/* Purity flash */}
+        <text x="110" y={strength ? 156 : 150} textAnchor="middle" fontSize="6" fontWeight="900" letterSpacing="0.6"
+          fill={hue.bandText} fontFamily="system-ui, sans-serif">
+          &gt;99% PURITY
         </text>
-        <text x="110" y={strength ? 169 : 158} textAnchor="middle" fontSize="5" fontWeight="600"
-          fill="#9ca3af" fontFamily="system-ui, sans-serif">For Laboratory Research Use Only</text>
 
-        {/* Barcode */}
-        <g opacity="0.8">
-          {[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19].map(i => (
-            <rect key={i} x={76 + i * 3.5} y="176" width={i % 3 === 0 ? 2.2 : 1.2} height="12" fill="#374151" />
-          ))}
+        {/* Research pictograms (recreated from the physical LABRAT labels) */}
+        <g transform="translate(0,168)" fill="none" stroke="#cbd5e1" strokeWidth="1.1">
+          {/* not for human consumption */}
+          <g transform="translate(86,0)">
+            <circle cx="0" cy="0" r="6.5" />
+            <line x1="-4.6" y1="-4.6" x2="4.6" y2="4.6" />
+            <circle cx="0" cy="-2.1" r="1.4" fill="#cbd5e1" stroke="none" />
+            <path d="M-2.4 3 Q0 -0.6 2.4 3" />
+          </g>
+          {/* research only (flask) */}
+          <g transform="translate(110,0)">
+            <path d="M-2.4 -6 L-2.4 -1.8 L-6 4.8 Q-6.6 6.6 -4.2 6.6 L4.2 6.6 Q6.6 6.6 6 4.8 L2.4 -1.8 L2.4 -6" />
+            <line x1="-3.6" y1="-6" x2="3.6" y2="-6" />
+            <line x1="-4.2" y1="2.4" x2="4.2" y2="2.4" />
+          </g>
+          {/* store cold 2-8°C (thermometer) */}
+          <g transform="translate(134,0)">
+            <path d="M0 -6 a1.8 1.8 0 0 1 1.8 1.8 L1.8 2.4 a2.7 2.7 0 1 1 -3.6 0 L-1.8 -4.2 a1.8 1.8 0 0 1 1.8 -1.8 Z" />
+            <circle cx="0" cy="4.2" r="1.5" fill="#cbd5e1" stroke="none" />
+          </g>
         </g>
+        <g fontFamily="system-ui, sans-serif" fontSize="2.9" fontWeight="700" fill="#94a3b8" textAnchor="middle" letterSpacing="0.15">
+          <text x="86"  y="182">NOT FOR</text>
+          <text x="86"  y="185.6">HUMAN USE</text>
+          <text x="110" y="182">RESEARCH</text>
+          <text x="110" y="185.6">USE ONLY</text>
+          <text x="134" y="182">STORE</text>
+          <text x="134" y="185.6">2–8°C</text>
+        </g>
+
+        {/* Red use banner */}
+        <rect x="65" y="192" width="90" height="13" fill="#b91c1c" />
+        <rect x="65" y="192" width="90" height="1" fill="#ef4444" opacity="0.6" />
+        <text x="110" y="200.5" textAnchor="middle" fontSize="5.4" fontWeight="900" letterSpacing="1.1"
+          fill="#ffffff" fontFamily="system-ui, sans-serif">FOR RESEARCH USE ONLY</text>
+
         {/* Label edge shadows for wrap illusion */}
-        <rect x="65" y="84" width="5" height="110" fill="#000" opacity="0.10" />
-        <rect x="150" y="84" width="5" height="110" fill="#000" opacity="0.12" />
+        <rect x="65" y={LABEL_TOP} width="5" height={LABEL_BOTTOM - LABEL_TOP} fill="#000" opacity="0.18" />
+        <rect x="150" y={LABEL_TOP} width="5" height={LABEL_BOTTOM - LABEL_TOP} fill="#000" opacity="0.22" />
       </g>
 
       {/* Glass highlights over everything */}
-      <rect x="70" y="60" width="6" height="160" rx="3" fill="#ffffff" opacity={light ? 0.65 : 0.5} />
-      <rect x="143" y="64" width="4" height="95" rx="2" fill="#ffffff" opacity="0.3" />
+      <rect x="70" y="60" width="6" height="160" rx="3" fill="#ffffff" opacity={light ? 0.4 : 0.32} />
+      <rect x="143" y="64" width="4" height="95" rx="2" fill="#ffffff" opacity="0.2" />
       <ellipse cx="110" cy="226" rx="40" ry="4" fill="#ffffff" opacity="0.12" />
     </svg>
   );
