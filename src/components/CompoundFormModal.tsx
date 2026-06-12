@@ -1,12 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Plus, Save, Sparkles, CheckCircle, History, ArrowLeftRight } from 'lucide-react';
+import { Plus, Save, Sparkles, CheckCircle, History, ArrowLeftRight, Zap } from 'lucide-react';
 import { Compound, LibraryItem } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
+import {
+  GoalPreset,
+  STEROID_GOAL_PRESETS, STEROID_CATEGORY_PRESETS,
+  PEPTIDE_GOAL_PRESETS, PEPTIDE_CATEGORY_PRESETS,
+} from '../data/goalPresets';
 import ReconstitutionCalculator from './ReconstitutionCalculator';
 
 const PRESET_COLORS = ['#06b6d4', '#10b981', '#6366f1', '#f59e0b', '#ec4899', '#f43f5e', '#a855f7', '#84cc16'];
+
+function freqLabel(freq: string) {
+  const map: Record<string, string> = { daily: 'daily', eod: 'EOD', twice_weekly: '2×/week', weekly: 'weekly', custom: 'as needed' };
+  return map[freq] ?? freq;
+}
+
+function goalTagStyle(color: string) {
+  const map: Record<string, string> = {
+    blue: 'bg-blue-500/10 text-blue-400 border-blue-500/25',
+    cyan: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/25',
+    amber: 'bg-amber-500/10 text-amber-400 border-amber-500/25',
+    rose: 'bg-rose-500/10 text-rose-400 border-rose-500/25',
+    green: 'bg-green-500/10 text-green-400 border-green-500/25',
+    violet: 'bg-violet-500/10 text-violet-400 border-violet-500/25',
+  };
+  return map[color] ?? map.cyan;
+}
 
 interface CompoundFormModalProps {
   open: boolean;
@@ -259,6 +281,25 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
     }
   };
 
+  const matchedLibraryItem = nameFromLibrary ? PEPTIDE_LIBRARY.find(it => it.name === name) : null;
+  const activePresets: GoalPreset[] = matchedLibraryItem
+    ? (type === 'steroid' && steroidForm === 'oil')
+      ? (STEROID_GOAL_PRESETS[matchedLibraryItem.id] ?? STEROID_CATEGORY_PRESETS)
+      : type === 'peptide'
+      ? (PEPTIDE_GOAL_PRESETS[matchedLibraryItem.id] ?? PEPTIDE_CATEGORY_PRESETS[matchedLibraryItem.category] ?? [])
+      : []
+    : [];
+
+  function applyGoalPreset(preset: GoalPreset) {
+    triggerHaptic('success');
+    setDoseAmount(preset.doseAmount);
+    setDoseUnit(preset.doseUnit as any);
+    setFrequency(preset.frequency as any);
+    setDurationWeeks(preset.durationWeeks);
+    if (preset.vialSizeMg) setVialSizeMg(preset.vialSizeMg);
+    if (preset.bacWaterMl) setBacWaterMl(preset.bacWaterMl);
+  }
+
   const handleApplyCalcConfig = (config: { vialSizeMg: number; bacWaterMl: number; doseUnit: string; doseAmount: number }) => {
     setVialSizeMg(config.vialSizeMg.toString()); setBacWaterMl(config.bacWaterMl.toString());
     setDoseAmount(config.doseAmount.toString()); setDoseUnit(config.doseUnit as any);
@@ -387,6 +428,46 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                       </div>
                     </div>
                   </div>
+
+                  {activePresets.length > 0 && (
+                    <div className="border border-[#1e293b] rounded-xl overflow-hidden" id="goal-preset-panel">
+                      <div className="px-3.5 py-2.5 bg-[#0d1422]/80 border-b border-[#1e293b]/70 flex items-center justify-between">
+                        <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
+                          <Zap className="w-3 h-3 text-cyan-400" />
+                          {type === 'peptide' ? 'Reconstitution + Dosing Protocols' : 'Recommended Research Protocols'}
+                        </span>
+                        <span className="text-[9px] text-slate-600 font-mono tracking-wide">tap to auto-fill</span>
+                      </div>
+                      <div className="divide-y divide-[#1e293b]/50">
+                        {activePresets.map((preset) => (
+                          <div key={preset.id} className="px-3.5 py-2.5 flex items-center gap-3 hover:bg-slate-900/30 transition-colors">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                                <span className="text-[11px] font-bold text-slate-200">{preset.label}</span>
+                                <span className={`px-1.5 py-px rounded text-[9px] font-bold border ${goalTagStyle(preset.goalColor)}`}>{preset.goalTag}</span>
+                              </div>
+                              <p className="text-[10px] text-slate-500 leading-tight">{preset.tagline}</p>
+                              <p className="text-[10px] font-mono mt-1">
+                                <span className="text-cyan-600">{preset.doseAmount} {preset.doseUnit}</span>
+                                <span className="text-slate-600"> · {freqLabel(preset.frequency)} · {preset.durationWeeks} wks</span>
+                                {preset.vialSizeMg && preset.bacWaterMl && (
+                                  <span className="text-slate-600"> · {preset.vialSizeMg}mg vial + {preset.bacWaterMl}ml BAC</span>
+                                )}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => applyGoalPreset(preset)}
+                              className="shrink-0 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-[#0f2137] hover:bg-cyan-500/15 text-cyan-500 hover:text-cyan-300 border border-cyan-500/20 hover:border-cyan-500/50 transition-all cursor-pointer"
+                              id={`apply-goal-${preset.id}`}
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {type === 'peptide' && (
                     <div className="bg-cyan-500/5 border border-cyan-500/15 p-4 rounded-xl space-y-3.5">
