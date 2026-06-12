@@ -13,6 +13,9 @@ import ReconstitutionCalculator from './ReconstitutionCalculator';
 
 const PRESET_COLORS = ['#06b6d4', '#10b981', '#6366f1', '#f59e0b', '#ec4899', '#f43f5e', '#a855f7', '#84cc16'];
 
+// Common freeze-dried peptide vial sizes (mg) offered when applying a dosing protocol.
+const COMMON_VIAL_MG = ['2', '5', '10', '15', '20', '30'];
+
 function freqLabel(freq: string) {
   const map: Record<string, string> = { daily: 'daily', eod: 'EOD', twice_weekly: '2×/week', weekly: 'weekly', custom: 'as needed' };
   return map[freq] ?? freq;
@@ -127,6 +130,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
   const [showAddSuccessPrompt, setShowAddSuccessPrompt] = useState(false);
   const [addedCompoundId, setAddedCompoundId] = useState<string | null>(null);
   const [addedCompoundName, setAddedCompoundName] = useState<string | null>(null);
+  const [presetVialOverride, setPresetVialOverride] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) { setShowAddSuccessPrompt(false); setAddedCompoundName(null); }
@@ -299,13 +303,36 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       : []
     : [];
 
+  // Vial-size selector for peptide protocols: let the user pick the mg vial they
+  // actually have so the protocol's reconstitution/syringe mapping stays correct.
+  const presetVialSizes = activePresets
+    .map(p => p.vialSizeMg)
+    .filter((v): v is string => !!v);
+  const defaultPresetVialMg = presetVialSizes.length
+    ? [...presetVialSizes].sort((a, b) =>
+        presetVialSizes.filter(v => v === a).length - presetVialSizes.filter(v => v === b).length
+      ).pop()!
+    : '';
+  const vialOptions = Array.from(new Set([...COMMON_VIAL_MG, ...presetVialSizes]))
+    .sort((a, b) => parseFloat(a) - parseFloat(b));
+  const selectedPresetVialMg = presetVialOverride ?? defaultPresetVialMg;
+  const showVialSelector = type === 'peptide' && activePresets.length > 0 && vialOptions.length > 1;
+
+  // Reset the user's vial override when switching to a different compound.
+  useEffect(() => { setPresetVialOverride(null); }, [matchedLibraryItem?.id]);
+
   function applyGoalPreset(preset: GoalPreset) {
     triggerHaptic('success');
     setDoseAmount(preset.doseAmount);
     setDoseUnit(preset.doseUnit as any);
     setFrequency(preset.frequency as any);
     setDurationWeeks(preset.durationWeeks);
-    if (preset.vialSizeMg) setVialSizeMg(preset.vialSizeMg);
+    // For peptides, honor the user-selected vial size so the syringe mapping
+    // matches their physical vial rather than the protocol's default size.
+    const effectiveVialMg = type === 'peptide' && selectedPresetVialMg
+      ? selectedPresetVialMg
+      : preset.vialSizeMg;
+    if (effectiveVialMg) setVialSizeMg(effectiveVialMg);
     if (preset.bacWaterMl) setBacWaterMl(preset.bacWaterMl);
   }
 
@@ -447,6 +474,25 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                         </span>
                         <span className="text-[9px] text-slate-600 font-mono tracking-wide">tap to auto-fill</span>
                       </div>
+                      {showVialSelector && (
+                        <div className="px-3.5 py-2.5 bg-[#0d1422]/40 border-b border-[#1e293b]/70 flex items-center gap-2 flex-wrap" id="preset-vial-selector">
+                          <span className="text-[9px] uppercase font-mono tracking-wider text-slate-500 font-bold shrink-0">Your vial size</span>
+                          <div className="flex gap-1 flex-wrap">
+                            {vialOptions.map(mg => (
+                              <button
+                                key={mg}
+                                type="button"
+                                onClick={() => { triggerHaptic('light'); setPresetVialOverride(mg); }}
+                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border transition cursor-pointer ${selectedPresetVialMg === mg ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/50' : 'bg-[#1e293b]/50 text-slate-400 border-slate-700/50 hover:text-slate-200 hover:border-slate-600'}`}
+                                id={`preset-vial-${mg}`}
+                              >
+                                {mg}mg
+                              </button>
+                            ))}
+                          </div>
+                          <span className="text-[9px] text-slate-600 font-mono tracking-wide w-full sm:w-auto">protocols map to this vial</span>
+                        </div>
+                      )}
                       <div className="divide-y divide-[#1e293b]/50">
                         {activePresets.map((preset) => (
                           <div key={preset.id} className="px-3.5 py-2.5 flex items-center gap-3 hover:bg-slate-900/30 transition-colors">
@@ -460,7 +506,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                                 <span className="text-cyan-600">{preset.doseAmount} {preset.doseUnit}</span>
                                 <span className="text-slate-600"> · {freqLabel(preset.frequency)} · {preset.durationWeeks} wks</span>
                                 {preset.vialSizeMg && preset.bacWaterMl && (
-                                  <span className="text-slate-600"> · {preset.vialSizeMg}mg vial + {preset.bacWaterMl}ml {matchedSolvent === 'acetic_acid' ? 'Acetic Acid' : matchedSolvent === 'sterile_water' ? 'Sterile H₂O' : matchedSolvent === 'sterile_saline' ? 'Saline' : 'BAC'}</span>
+                                  <span className="text-slate-600"> · {(type === 'peptide' && selectedPresetVialMg) || preset.vialSizeMg}mg vial + {preset.bacWaterMl}ml {matchedSolvent === 'acetic_acid' ? 'Acetic Acid' : matchedSolvent === 'sterile_water' ? 'Sterile H₂O' : matchedSolvent === 'sterile_saline' ? 'Saline' : 'BAC'}</span>
                                 )}
                               </p>
                             </div>
