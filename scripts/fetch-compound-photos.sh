@@ -52,10 +52,7 @@ _compound-dsip.png	hf_20260612_194055_7470eb64-4d45-4f25-b60a-dafbd5e1abc4.png
 _compound-ghk-cu.png	hf_20260612_194117_d609ffa5-b8df-44f0-bfc3-04792ce2837a.png
 _compound-bac-water.png	hf_20260612_194120_d070ad26-c20b-4b1a-933e-c2c7e6c3fde9.png
 _compound-lemon-bottle.png	hf_20260612_194136_379451ad-2bc0-40c2-88ab-424a54fb41c4.png
+_compound-ara-290.png	hf_20260612_194539_7f8a223c-d540-406f-b613-6bc95dca1c2b.png
 EOF
 
-# ARA-290 (job e8f66059-71cd-44f5-922c-770ca54cfd8c) was still rendering when this
-# script was written. Resolve its final URL via the Higgsfield job and save it as
-# _compound-ara-290.png, or regenerate from _compound-klow.png if missing.
-echo "NOTE: fetch _compound-ara-290.png separately (job e8f66059-71cd-44f5-922c-770ca54cfd8c)."
-echo "Done. $(ls "$DEST"/_compound-*.png | wc -l) compound photos present."
+echo "Done. $(ls "$DEST"/_compound-*.png | wc -l) compound photos present (expect 39)."
