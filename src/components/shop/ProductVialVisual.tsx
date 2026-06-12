@@ -85,6 +85,7 @@ function RealisticVial({ name, category, flags, light }: {
   const hue = CATEGORY_HUES[category] || { band: '#2563eb', bandText: '#bfdbfe' };
   const capColor  = isSolvent ? '#0ea5e9' : isChina ? '#dc2626' : isUsaWarehouse ? '#d97706' : '#2563eb';
   const capDark   = isSolvent ? '#0369a1' : isChina ? '#991b1b' : isUsaWarehouse ? '#92400e' : '#1e40af';
+  const capLite   = isSolvent ? '#7dd3fc' : isChina ? '#f87171' : isUsaWarehouse ? '#fbbf24' : '#60a5fa';
   const uid = (name + category).replace(/[^a-z0-9]/gi, '').slice(0, 12).toLowerCase() || 'vial';
 
   // Reconstituted/lyophilized contents color. Research: nearly every peptide is
@@ -106,26 +107,31 @@ function RealisticVial({ name, category, flags, light }: {
   return (
     <svg viewBox="0 0 220 250" className="w-[150px] drop-shadow-xl" aria-hidden="true">
       <defs>
-        {/* Borosilicate glass */}
+        {/* Borosilicate glass — bright vertical core with darker refracting edges */}
         <linearGradient id={`g-${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"  stopColor={light ? '#e2e8f0' : '#64748b'} stopOpacity="0.55" />
-          <stop offset="10%" stopColor="#ffffff" stopOpacity="0.85" />
-          <stop offset="30%" stopColor={light ? '#f1f5f9' : '#94a3b8'} stopOpacity="0.25" />
-          <stop offset="75%" stopColor={light ? '#e2e8f0' : '#64748b'} stopOpacity="0.30" />
-          <stop offset="92%" stopColor="#ffffff" stopOpacity="0.55" />
-          <stop offset="100%" stopColor={light ? '#cbd5e1' : '#475569'} stopOpacity="0.6" />
+          <stop offset="0%"  stopColor={light ? '#cbd5e1' : '#475569'} stopOpacity="0.7" />
+          <stop offset="7%"  stopColor="#ffffff" stopOpacity="0.9" />
+          <stop offset="22%" stopColor={light ? '#eef2f7' : '#94a3b8'} stopOpacity="0.25" />
+          <stop offset="50%" stopColor="#ffffff" stopOpacity="0.42" />
+          <stop offset="78%" stopColor={light ? '#e2e8f0' : '#64748b'} stopOpacity="0.28" />
+          <stop offset="93%" stopColor="#ffffff" stopOpacity="0.6" />
+          <stop offset="100%" stopColor={light ? '#cbd5e1' : '#334155'} stopOpacity="0.72" />
         </linearGradient>
-        <linearGradient id={`c-${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={capColor} />
+        {/* Plastic flip-cap dome — radial so it reads as a glossy moulded button */}
+        <radialGradient id={`cd-${uid}`} cx="42%" cy="28%" r="85%">
+          <stop offset="0%"  stopColor={capLite} />
           <stop offset="55%" stopColor={capColor} />
           <stop offset="100%" stopColor={capDark} />
-        </linearGradient>
+        </radialGradient>
+        {/* Brushed aluminum crimp collar */}
         <linearGradient id={`a-${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#94a3b8" />
-          <stop offset="25%" stopColor="#e2e8f0" />
-          <stop offset="50%" stopColor="#94a3b8" />
-          <stop offset="75%" stopColor="#cbd5e1" />
-          <stop offset="100%" stopColor="#64748b" />
+          <stop offset="0%" stopColor="#64748b" />
+          <stop offset="14%" stopColor="#f1f5f9" />
+          <stop offset="30%" stopColor="#94a3b8" />
+          <stop offset="50%" stopColor="#e2e8f0" />
+          <stop offset="70%" stopColor="#94a3b8" />
+          <stop offset="86%" stopColor="#cbd5e1" />
+          <stop offset="100%" stopColor="#475569" />
         </linearGradient>
         {/* Dark gunmetal label stock */}
         <linearGradient id={`p-${uid}`} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -150,38 +156,76 @@ function RealisticVial({ name, category, flags, light }: {
           <stop offset="0%" stopColor={liquidFill} stopOpacity={isCopper ? 0.6 : 0.5} />
           <stop offset="100%" stopColor={isCopper ? '#1d4ed8' : '#7dd3fc'} stopOpacity={isCopper ? 0.5 : 0.35} />
         </linearGradient>
+        {/* Cylinder roundness — dark refracting edges, transparent core (wraps glass + label as one) */}
+        <linearGradient id={`cyl-${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor="#000000" stopOpacity="0.5" />
+          <stop offset="7%"   stopColor="#000000" stopOpacity="0.14" />
+          <stop offset="16%"  stopColor="#ffffff" stopOpacity="0.12" />
+          <stop offset="34%"  stopColor="#000000" stopOpacity="0" />
+          <stop offset="66%"  stopColor="#000000" stopOpacity="0" />
+          <stop offset="85%"  stopColor="#000000" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.55" />
+        </linearGradient>
+        {/* Soft contact shadow + powder grain */}
+        <filter id={`sh-${uid}`} x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="3.6" />
+        </filter>
+        <filter id={`tex-${uid}`} x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="n" />
+          <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.4 0" result="a" />
+          <feComposite operator="in" in2="SourceAlpha" />
+        </filter>
+        <clipPath id={`body-${uid}`}>
+          <path d="M78 43 L78 47 Q68 50 66 55 Q65 58 65 66 L65 218 Q65 230 77 230 L143 230 Q155 230 155 218 L155 66 Q155 58 154 55 Q152 50 142 47 L142 43 Z" />
+        </clipPath>
       </defs>
 
-      {/* Floor shadow */}
-      <ellipse cx="110" cy="240" rx="52" ry="5" fill="#000" opacity={light ? 0.12 : 0.45} />
+      {/* Soft, blurred contact shadow on the surface */}
+      <ellipse cx="111" cy="241" rx="47" ry="7.5" fill="#000" opacity={light ? 0.16 : 0.5} filter={`url(#sh-${uid})`} />
 
-      {/* Flip-top cap */}
-      <rect x="75" y="14" width="70" height="15" rx="4.5" fill={`url(#c-${uid})`} />
-      <ellipse cx="110" cy="15.5" rx="35" ry="4.5" fill={capColor} />
-      <ellipse cx="110" cy="15.5" rx="23" ry="2.6" fill="#ffffff" opacity="0.28" />
-      {/* Aluminum crimp collar */}
-      <rect x="72" y="28" width="76" height="15" rx="3" fill={`url(#a-${uid})`} />
-      <rect x="72" y="40" width="76" height="2.2" fill="#475569" opacity="0.5" />
+      {/* ── Aluminum crimp collar ── */}
+      <rect x="72" y="29" width="76" height="15" rx="2.5" fill={`url(#a-${uid})`} />
+      {[0,1,2,3,4,5,6,7,8].map(i => (
+        <rect key={`r${i}`} x={75 + i * 8} y="30" width="0.9" height="13" fill="#1e293b" opacity="0.13" />
+      ))}
+      <rect x="72" y="29.4" width="76" height="1" fill="#ffffff" opacity="0.45" />
+      <rect x="72" y="41.4" width="76" height="2.4" rx="1" fill="#334155" opacity="0.55" />
 
-      {/* Neck + shoulder + squat body as one silhouette */}
+      {/* ── Blue plastic flip-off cap dome ── */}
+      <rect x="76" y="13" width="68" height="19" rx="6" fill={`url(#cd-${uid})`} />
+      <ellipse cx="110" cy="13.5" rx="34" ry="6" fill={`url(#cd-${uid})`} />
+      <ellipse cx="110" cy="13.5" rx="16" ry="3.4" fill={capDark} opacity="0.5" />
+      <ellipse cx="110" cy="13" rx="13" ry="2.4" fill={capLite} opacity="0.7" />
+      <ellipse cx="101" cy="11.4" rx="11" ry="2.6" fill="#ffffff" opacity="0.4" />
+      <rect x="79" y="16" width="4" height="13" rx="2" fill="#ffffff" opacity="0.22" />
+
+      {/* ── Glass body silhouette ── */}
       <path
         d="M78 43 L78 47 Q68 50 66 55 Q65 58 65 66 L65 218 Q65 230 77 230 L143 230 Q155 230 155 218 L155 66 Q155 58 154 55 Q152 50 142 47 L142 43 Z"
-        fill={`url(#g-${uid})`} stroke={light ? '#cbd5e1' : '#1e293b'} strokeWidth="1"
+        fill={`url(#g-${uid})`} stroke={light ? '#cbd5e1' : '#0f172a'} strokeWidth="1.1"
       />
+      {/* Glass thickness at the base + headspace tint */}
+      <path d="M65 214 L155 214 L155 218 Q155 230 143 230 L77 230 Q65 230 65 218 Z" fill="#000" opacity="0.10" />
+      <ellipse cx="110" cy="49" rx="32" ry="5" fill={light ? '#f8fafc' : '#cbd5e1'} opacity="0.35" />
 
       {/* Contents — visible above (neck) and below the wrapped label.
           Powder color is data-driven: copper peptides (GHK-Cu / KLOW) read blue. */}
-      {isSolvent ? (
-        <>
-          <rect x="67" y="52" width="86" height="176" rx="10" fill={`url(#l-${uid})`} />
-          <ellipse cx="110" cy="52" rx="43" ry="4" fill={liquidSurface} opacity="0.65" />
-        </>
-      ) : (
-        <>
-          <rect x="67" y="204" width="86" height="24" rx="8" fill={`url(#w-${uid})`} opacity="0.97" />
-          <ellipse cx="110" cy="204" rx="43" ry="4.5" fill={powderSurface} opacity="0.92" />
-        </>
-      )}
+      <g clipPath={`url(#body-${uid})`}>
+        {isSolvent ? (
+          <>
+            <rect x="65" y="54" width="90" height="176" fill={`url(#l-${uid})`} />
+            <ellipse cx="110" cy="54" rx="45" ry="4.5" fill={liquidSurface} opacity="0.7" />
+            <ellipse cx="110" cy="54" rx="45" ry="2.2" fill="#ffffff" opacity="0.4" />
+          </>
+        ) : (
+          <>
+            <rect x="65" y="200" width="90" height="30" fill={`url(#w-${uid})`} opacity="0.98" />
+            <ellipse cx="110" cy="201" rx="45" ry="5" fill={powderSurface} opacity="0.95" />
+            <ellipse cx="110" cy="201" rx="45" ry="5" fill="#000" opacity="0.12" filter={`url(#tex-${uid})`} />
+            <rect x="65" y="200" width="90" height="30" fill={isCopper ? '#1e3a8a' : '#475569'} opacity="0.18" filter={`url(#tex-${uid})`} />
+          </>
+        )}
+      </g>
 
       {/* ── Wrapped dark LABRAT label (the product IS the label) ── */}
       <g>
@@ -262,15 +306,21 @@ function RealisticVial({ name, category, flags, light }: {
         <text x="110" y="200.5" textAnchor="middle" fontSize="5.4" fontWeight="900" letterSpacing="1.1"
           fill="#ffffff" fontFamily="system-ui, sans-serif">FOR RESEARCH USE ONLY</text>
 
-        {/* Label edge shadows for wrap illusion */}
-        <rect x="65" y={LABEL_TOP} width="5" height={LABEL_BOTTOM - LABEL_TOP} fill="#000" opacity="0.18" />
-        <rect x="150" y={LABEL_TOP} width="5" height={LABEL_BOTTOM - LABEL_TOP} fill="#000" opacity="0.22" />
+        {/* Label edges curl into the glass */}
+        <rect x="65" y={LABEL_TOP - 0.6} width="90" height="0.7" fill="#ffffff" opacity="0.16" />
+        <rect x="65" y={LABEL_BOTTOM - 1.2} width="90" height="1.6" fill="#000" opacity="0.32" />
       </g>
 
-      {/* Glass highlights over everything */}
-      <rect x="70" y="60" width="6" height="160" rx="3" fill="#ffffff" opacity={light ? 0.4 : 0.32} />
-      <rect x="143" y="64" width="4" height="95" rx="2" fill="#ffffff" opacity="0.2" />
-      <ellipse cx="110" cy="226" rx="40" ry="4" fill="#ffffff" opacity="0.12" />
+      {/* Cylinder roundness wraps glass + label as one curved surface */}
+      <g clipPath={`url(#body-${uid})`}>
+        <rect x="65" y="43" width="90" height="190" fill={`url(#cyl-${uid})`} />
+        {/* crisp front specular streak + softer secondary reflections */}
+        <rect x="72" y="58" width="4.5" height="166" rx="2.25" fill="#ffffff" opacity={light ? 0.5 : 0.42} />
+        <rect x="80" y="60" width="1.8" height="150" rx="0.9" fill="#ffffff" opacity="0.18" />
+        <rect x="144" y="66" width="3.4" height="96" rx="1.7" fill="#ffffff" opacity="0.2" />
+      </g>
+      {/* Inner reflection pooled at the rounded base */}
+      <ellipse cx="110" cy="225" rx="37" ry="3.5" fill="#ffffff" opacity="0.12" />
     </svg>
   );
 }
