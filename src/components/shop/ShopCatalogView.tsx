@@ -160,14 +160,14 @@ export default function ShopCatalogView({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Package className="w-4 h-4 text-cyan-400" />
-              Kit Pricing Member: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">10 Vials per Kit</span>
+              🇳🇴 Norway Kit Member: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">$30 Flat Shipping</span>
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-cyan-300 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
               Wholesale Rate
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            You are enrolled in <strong className="text-cyan-300 font-bold">kit pricing</strong>. Every listed price is for a <strong className="text-cyan-300 font-bold">full kit of 10 vials</strong>. Standard per-vial pricing does not apply to your account.
+            You are enrolled in <strong className="text-cyan-300 font-bold">Norway kit pricing</strong>. Every listed price is for a <strong className="text-cyan-300 font-bold">full kit of 10 vials</strong> sourced from our Norway lab partners under Swiss GMP standards. All kit orders ship at a flat <strong className="text-cyan-300">$30.00</strong> international rate.
           </p>
         </div>
       ) : isChinaKitPricing ? (
@@ -212,7 +212,7 @@ export default function ShopCatalogView({
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            <strong className="text-cyan-300 font-bold">Every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed.
+            <strong className="text-cyan-300 font-bold">Every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed. Orders of <strong className="text-emerald-400">$100+</strong> qualify for free domestic shipping.
           </p>
         </div>
       )}
@@ -297,11 +297,11 @@ export default function ShopCatalogView({
               <span className="text-[8px] uppercase font-black tracking-widest text-[#a05eff] bg-[#1e0f35]/60 px-1.5 py-0.5 rounded border border-[#a05eff]/20 select-none">SWISS GMP</span>
             </div>
             <h4 className="text-xs sm:text-sm font-black text-white group-hover:text-cyan-400 transition-colors flex items-center gap-1.5">
-              Why are Norway-sourced peptides the best?
+              What sets Norway-sourced peptides apart?
               <span className="text-xs text-slate-500 group-hover:translate-x-1.5 transition-transform inline-block">→</span>
             </h4>
             <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed max-w-2xl">
-              Norwegian glacial meltwater registers below 1 ppm dissolved solids — near-pharmaceutical grade straight from the source. Combined with Scandinavia's century-long GMP manufacturing culture, every batch delivers lower endotoxin counts, tighter sequence accuracy, and batch-level HPLC accountability that bulk industrial suppliers don't match. <span className="text-cyan-400 font-bold group-hover:underline">View sourcing standards.</span>
+              Produced under Swiss GMP standards with Norwegian glacial meltwater (below 1 ppm dissolved solids), every batch is HPLC-verified for sequence accuracy and endotoxin counts — accountability that bulk industrial suppliers rarely match. <span className="text-cyan-400 font-bold group-hover:underline">View sourcing standards.</span>
             </p>
           </div>
         </div>
