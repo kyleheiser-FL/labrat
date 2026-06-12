@@ -3441,3 +3441,15 @@ html[data-labrat-theme="neon"] button.bg-cyan-500:active,
 html[data-labrat-theme="neon"] a.bg-cyan-500:active {
   filter: brightness(0.95);
 }
+
+/* ── Hero art: gentle idle float (parallax y-drift is applied by motion) ── */
+.labrat-command-hero-art img {
+  animation: lr-hero-float 7s ease-in-out infinite;
+}
+@keyframes lr-hero-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .labrat-command-hero-art img { animation: none; }
+}

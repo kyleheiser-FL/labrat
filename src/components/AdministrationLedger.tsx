@@ -18,9 +18,17 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
       </h4>
 
       {logs.length === 0 ? (
-        <p className="text-center py-10 text-slate-600 text-xs">
-          No administration logs recorded yet. Check off items in the daily list above to generate records.
-        </p>
+        <div className="text-center py-10 flex flex-col items-center gap-3">
+          <div className="p-4 bg-cyan-500/5 border border-cyan-500/15 rounded-full">
+            <History className="w-8 h-8 text-cyan-500/50" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-300">No administrations logged yet</p>
+            <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto leading-relaxed">
+              Check off items in the daily list above — every dose you log builds your verified research record here.
+            </p>
+          </div>
+        </div>
       ) : (
         <div className="overflow-x-auto" id="ledger-scrolling-container">
           <table className="w-full text-left border-collapse text-xs">

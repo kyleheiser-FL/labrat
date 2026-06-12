@@ -28,6 +28,7 @@ import {
   getChinaKitSellPrice,
   getChinaVialSellPrice,
   getCleanDescription,
+  getCategoryBadgeStyle,
 } from '../../lib/shopHelpers';
 import { usePricingConfig } from '../../lib/pricingConfig';
 import ProductVialVisual from './ProductVialVisual';
@@ -663,7 +664,7 @@ export default function ShopCatalogView({
                         className="cursor-pointer hover:opacity-95 transition-opacity"
                       >
                         <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                          <span className="px-2 py-0.5 rounded bg-[#1e293b] text-slate-300 text-[10px] font-bold tracking-wider uppercase">
+                          <span className={`px-2 py-0.5 rounded border text-[10px] font-bold tracking-wider uppercase ${getCategoryBadgeStyle(group.category)}`}>
                             {group.category}
                           </span>
                           {(() => {

@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { Search, Info, ShieldAlert, CheckCircle, ArrowUpRight, BookOpen, Clock, Layers, Apple, Dumbbell } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Search, Info, ShieldAlert, CheckCircle, ArrowUpRight, BookOpen, Clock, Layers, Apple, Dumbbell, ChevronDown } from 'lucide-react';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
 import { LibraryItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
+import { triggerHaptic } from '../lib/haptics';
 
 interface PeptideLibraryProps {
   onAddToCycle: (item: LibraryItem) => void;
@@ -76,6 +77,14 @@ export default function PeptideLibrary({ onAddToCycle, visibility = { filters: t
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  // Progressive rendering — the full library is 100+ rich cards; rendering
+  // them all at once makes a 100k-pixel page. Show batches instead.
+  const PAGE_SIZE = 16;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  useEffect(() => { setVisibleCount(PAGE_SIZE); }, [searchTerm, selectedCategory]);
+  const visibleItems = filteredItems.slice(0, visibleCount);
+  const remainingCount = filteredItems.length - visibleItems.length;
 
   return (
     <div className="space-y-6" id="peptide-library-container">
@@ -187,7 +196,7 @@ export default function PeptideLibrary({ onAddToCycle, visibility = { filters: t
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5" id="library-list-grid">
-          {filteredItems.map((item) => {
+          {visibleItems.map((item) => {
             const isExpanded = expandedId === item.id;
             const categoryBadge = CATEGORIES.find(c => c.value === item.category);
 
@@ -401,6 +410,20 @@ export default function PeptideLibrary({ onAddToCycle, visibility = { filters: t
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Load more — keeps the page light instead of rendering 100+ cards */}
+      {remainingCount > 0 && (
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={() => { triggerHaptic('light'); setVisibleCount(c => c + PAGE_SIZE); }}
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#0f172a]/70 hover:bg-[#1e293b]/70 border border-[#1e293b] hover:border-cyan-500/40 text-slate-300 hover:text-cyan-300 text-xs font-bold rounded-xl transition-all cursor-pointer"
+            id="library-load-more"
+          >
+            <ChevronDown className="w-4 h-4" />
+            Show more compounds ({remainingCount} remaining)
+          </button>
         </div>
       )}
     </div>

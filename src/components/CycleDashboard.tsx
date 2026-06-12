@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { Activity, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
 import SyringeVisual from './SyringeVisual';
@@ -275,12 +276,17 @@ export default function CycleDashboard({
     triggerHaptic('success');
   };
 
+  // Scroll parallax — the hero art and copy drift at different rates for depth
+  const { scrollY } = useScroll();
+  const heroArtY = useTransform(scrollY, [0, 600], [0, 70]);
+  const heroCopyY = useTransform(scrollY, [0, 600], [0, 26]);
+
   return (
     <div className="space-y-6 flex flex-col" id="dashboard-wrapper">
       <section className="labrat-command-hero" id="labrat-command-hero">
-        <div className="labrat-command-hero-copy">
-          <span className="labrat-command-eyebrow">{labratTheme === 'neon' ? 'Neon Lab Command Center' : 'Clinical Command Center'}</span>
-          <h2>Daily Cockpit</h2>
+        <motion.div className="labrat-command-hero-copy" style={{ y: heroCopyY }}>
+          <span className="labrat-command-eyebrow">{labratTheme === 'neon' ? 'LabRat Research Console' : 'Clinical Research Console'}</span>
+          <h2>Daily Protocol</h2>
           <p>Track today's active schedule, verify administrations, monitor cycle progress, and keep device reminders ready from one high-visibility command surface.</p>
           <div className="labrat-command-metrics">
             <div><strong>{scheduledCompounds.length}</strong><span>Scheduled</span></div>
@@ -290,10 +296,10 @@ export default function CycleDashboard({
               <div className="missed-metric"><strong>{visibleMissedCount}</strong><span>Missed</span></div>
             )}
           </div>
-        </div>
-        <div className="labrat-command-hero-art" aria-hidden="true">
+        </motion.div>
+        <motion.div className="labrat-command-hero-art" aria-hidden="true" style={{ y: heroArtY }}>
           <img src={labratTheme === 'neon' ? '/labrat_top_left_logo_transparent.png' : '/labrat_hero_rat_dark.png'} alt="" />
-        </div>
+        </motion.div>
       </section>
 
       {/* Missed Doses Alert Panel */}
@@ -405,7 +411,7 @@ export default function CycleDashboard({
               {/* Date Navigator */}
               <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4" id="dashboard-header-navigator">
                 <div>
-                  <span className="text-xs text-cyan-400 font-mono tracking-wider font-semibold uppercase">Daily Cockpit & Verification Log</span>
+                  <span className="text-xs text-cyan-400 font-mono tracking-wider font-semibold uppercase">Daily Protocol & Verification Log</span>
                   <h3 className="text-lg font-bold text-slate-100 flex items-center gap-1.5 mt-0.5">
                     <CalendarDays className="w-5 h-5 text-cyan-400" />
                     <span>Current Log Target Date</span>

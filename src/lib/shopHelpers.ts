@@ -335,6 +335,24 @@ export function getChinaFlatShipping(items: { name: string }[]): number {
   return allUsWarehouse ? 0 : CHINA_FLAT_SHIPPING;
 }
 
+// Category accent hues — makes the catalog scannable by product type
+const CATEGORY_BADGE_STYLES: Record<string, string> = {
+  'Muscle Growth':          'bg-rose-500/10 text-rose-300 border-rose-500/25',
+  'Weight Loss':            'bg-amber-500/10 text-amber-300 border-amber-500/25',
+  'Healing & Repair':       'bg-emerald-500/10 text-emerald-300 border-emerald-500/25',
+  'Beauty & Radiance':      'bg-teal-500/10 text-teal-300 border-teal-500/25',
+  'Cognitive & Focus':      'bg-sky-500/10 text-sky-300 border-sky-500/25',
+  'Longevity & Cellular':   'bg-indigo-500/10 text-indigo-300 border-indigo-500/25',
+  'Immune & Health':        'bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/25',
+  'Sleep & Recovery':       'bg-violet-500/10 text-violet-300 border-violet-500/25',
+  'Sexual Health':          'bg-pink-500/10 text-pink-300 border-pink-500/25',
+  'Reconstitution Solvents':'bg-slate-500/10 text-slate-300 border-slate-600/40',
+};
+
+export function getCategoryBadgeStyle(category: string): string {
+  return CATEGORY_BADGE_STYLES[category] || 'bg-[#1e293b] text-slate-300 border-slate-700/50';
+}
+
 export function getCleanDescription(desc: string): string {
   if (!desc) return '';
   let clean = desc
