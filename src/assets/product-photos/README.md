@@ -20,5 +20,19 @@ no per-product photo of its own. Powder color follows the chemistry:
   _archetype-peptide-white.png   → all other peptides: WHITE lyophilized powder
   _archetype-solvent.png         → reconstitution solvents (BAC water): clear liquid
 
-Resolution order per product: exact per-product photo → type archetype →
-procedural vial render. Generated with Higgsfield (soul_2), 3:4 portrait.
+## Compound photos
+
+One branded photo per peptide compound, shared by every strength and source
+(Norway / China / US Warehouse) of that compound — the source flag badge is
+overlaid by the UI, so variants stay distinguishable. Files are named
+`_compound-<base-slug>.png` where the slug is the product name minus its
+strength, parentheticals, and "China"/"US Warehouse" suffix:
+
+  "Tirzepatide China (30mg)"        → _compound-tirzepatide.png
+  "BPC-157 / TB-500 Blend (10mg)"   → _compound-bpc-157-tb-500-blend.png
+  "SS-31 (Elamipretide) (10mg)"     → _compound-ss-31.png
+  "NAD+ (500mg)"                    → _compound-nad.png
+
+Resolution order per product: exact per-product photo → compound photo →
+type archetype → procedural vial render. Generated with Higgsfield, 1:1
+studio shots with the holographic LABRAT sticker.

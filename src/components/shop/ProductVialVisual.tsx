@@ -39,8 +39,70 @@ const ARCHETYPE_PHOTOS = {
   solvent: PRODUCT_PHOTOS['_archetype-solvent'],
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Remote compound photos (Higgsfield CDN): one branded studio shot per peptide
+// compound, shared by all strengths/sources. Used until the files are committed
+// locally — a local _compound-<slug>.png in this folder always wins. Download
+// all of these into the repo with scripts/fetch-compound-photos.sh.
+// ─────────────────────────────────────────────────────────────────────────────
+const HF = 'https://d8j0ntlcm91z4.cloudfront.net/user_3EySHfd5WtGWSyMpbX7CTnKeTxH';
+const REMOTE_COMPOUND_PHOTOS: Record<string, string> = {
+  'klow': `${HF}/hf_20260612_191939_06fc791c-6d8f-4da3-a3ef-22f43e2e171e.png`,
+  'bpc-157': `${HF}/hf_20260612_193048_a21418cb-0f15-4801-abd3-7442fe611030.png`,
+  'tirzepatide': `${HF}/hf_20260612_193051_7fa367e9-0f06-496e-8d4c-265910577099.png`,
+  'retatrutide': `${HF}/hf_20260612_193053_0e441ccd-9fc4-42de-b939-7e3f3740e50b.png`,
+  'semaglutide': `${HF}/hf_20260612_193056_8306eb7d-8b40-4716-9b25-0ad63e618a65.png`,
+  'cagrilintide': `${HF}/hf_20260612_193142_9b5bf95c-917e-43ea-8fe6-79135d40ad95.png`,
+  'mazdutide': `${HF}/hf_20260612_193145_82ae8ef0-986c-4c58-8e51-3db55bc97ae5.png`,
+  'aod-9604': `${HF}/hf_20260612_193206_edfddfe1-83d9-47da-9368-b91b2b238110.png`,
+  'tb-500': `${HF}/hf_20260612_193209_b7c85899-75da-46ba-b22e-156138ff6bba.jpeg`,
+  'bpc-157-tb-500-blend': `${HF}/hf_20260612_193227_906d041d-b1a6-4d58-a205-f6afcb4cbc85.png`,
+  'cjc-1295-ipamorelin': `${HF}/hf_20260612_193229_80c2a328-f973-442d-aa7a-4d5ec3172f2e.png`,
+  'cjc-1295-without-dac': `${HF}/hf_20260612_193250_51f5bd74-0d1d-4d76-a36c-95d1645ccb42.png`,
+  'ipamorelin': `${HF}/hf_20260612_193315_d55af26e-cc9c-4001-9170-96448dc515c7.png`,
+  'tesamorelin': `${HF}/hf_20260612_193335_cab2940e-16a0-45ec-8d13-59e38cfafc5e.png`,
+  'sermorelin': `${HF}/hf_20260612_193354_aac676a8-408f-4399-9ee8-3e0030281b42.png`,
+  'mots-c': `${HF}/hf_20260612_193416_96e68f71-eedd-4ff8-bf3a-f944b67c0623.png`,
+  'igf-1-lr3': `${HF}/hf_20260612_193435_ae5d3fe7-1844-4511-94e8-92189a15c1e9.png`,
+  'arachidonic-acid': `${HF}/hf_20260612_193453_264725c5-02a4-4ece-87be-4597571d2afc.png`,
+  'glow': `${HF}/hf_20260612_193512_f8aca0c7-bf9e-4f7d-aeaf-96e4157c4ae0.png`,
+  'melanotan-i': `${HF}/hf_20260612_193530_91351bef-3dc4-47ed-9ac8-197232336382.png`,
+  'melanotan-ii': `${HF}/hf_20260612_193550_b6c7490c-93a8-4d3e-8b2e-3de417c76666.png`,
+  'snap-8': `${HF}/hf_20260612_193607_9063b666-150f-4103-95fc-497f2b1f1987.png`,
+  'pt-141': `${HF}/hf_20260612_193626_aeda9ff0-182c-4b21-88e5-d011f0102719.png`,
+  'nad': `${HF}/hf_20260612_193649_c2988d40-2a0d-4b31-8b5d-6d3a2728835a.png`,
+  'glutathione': `${HF}/hf_20260612_193710_6bba5a43-feba-40a4-adf1-765b56ed89d7.png`,
+  'semax': `${HF}/hf_20260612_193732_a98ad971-807a-4d50-83cd-1123a4d3478c.png`,
+  'selank': `${HF}/hf_20260612_193751_571a13cc-d54a-48f8-b23e-585723c47430.png`,
+  'semax-selank': `${HF}/hf_20260612_193811_9b8ed3a6-42c7-4931-88d1-cf8328cf3a23.png`,
+  'epitalon': `${HF}/hf_20260612_193835_9f2b9592-99a1-4998-8565-28fabc54e7f4.png`,
+  'ss-31': `${HF}/hf_20260612_193859_beeb0ad5-f09c-416a-84f0-a863d2612ece.png`,
+  'slu-pp-332': `${HF}/hf_20260612_193928_e7a4efc2-a4ab-4edf-8990-35e9587d5501.png`,
+  '5-amino-1mq': `${HF}/hf_20260612_193946_b4b50bb0-91b8-4d61-bda2-7dc70a2e481e.png`,
+  'thymosin-alpha-1': `${HF}/hf_20260612_194018_19475767-84a1-4090-9c59-f62cc9e1b21b.png`,
+  'kpv-peptide': `${HF}/hf_20260612_194033_13ca295d-f219-4868-a9bd-89973d550bf7.png`,
+  'dsip': `${HF}/hf_20260612_194055_7470eb64-4d45-4f25-b60a-dafbd5e1abc4.png`,
+  'ghk-cu': `${HF}/hf_20260612_194117_d609ffa5-b8df-44f0-bfc3-04792ce2837a.png`,
+  'bac-water': `${HF}/hf_20260612_194120_d070ad26-c20b-4b1a-933e-c2c7e6c3fde9.png`,
+  'lemon-bottle': `${HF}/hf_20260612_194136_379451ad-2bc0-40c2-88ab-424a54fb41c4.png`,
+};
+
 export function productPhotoSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+// Base-compound slug shared by all strengths/sources of one peptide:
+// "Tirzepatide China (30mg)" → "tirzepatide", "SS-31 (Elamipretide) (10mg)" → "ss-31".
+// Compound photos live at _compound-<slug>.png and cover every SKU of that
+// compound that lacks its own per-product photo.
+export function compoundPhotoSlug(name: string): string {
+  const { baseName } = getProductBaseAndSize(name);
+  const cleanBase = baseName
+    .replace(/\(.*?\)/g, ' ')
+    .replace(/\s+(china|us warehouse)\s*$/i, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  return productPhotoSlug(cleanBase);
 }
 
 // Category → accent hue used for the strength block + purity flash on the
@@ -348,10 +410,15 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   // a vivid blue lyophilized powder; every other peptide is white powder.
   const isCopper = /\bghk\b|\bahk\b|klow|copper/i.test(name);
 
-  // Per-product photo wins; otherwise fall back to the type archetype photo
-  // (copper → blue, normal → white, solvent → clear) when one is present.
+  // Photo resolution: exact per-product photo → compound photo (shared by all
+  // strengths and Norway/China/USA sources of one peptide) → type archetype
+  // (copper → blue, normal → white, solvent → clear) → procedural render.
   const archetype = isSolvent ? ARCHETYPE_PHOTOS.solvent : isCopper ? ARCHETYPE_PHOTOS.copper : ARCHETYPE_PHOTOS.white;
-  const photo = PRODUCT_PHOTOS[productPhotoSlug(name)] || archetype;
+  const cSlug = compoundPhotoSlug(name);
+  const photo = PRODUCT_PHOTOS[productPhotoSlug(name)]
+    || PRODUCT_PHOTOS[`_compound-${cSlug}`]
+    || REMOTE_COMPOUND_PHOTOS[cSlug]
+    || archetype;
 
   const glowClass = isSolvent ? 'labrat-real-vial-visual--solvent'
     : isChina ? 'labrat-real-vial-visual--china'
