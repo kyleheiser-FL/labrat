@@ -4,6 +4,14 @@ import { PEPTIDE_LIBRARY } from '../data/peptides';
 import { LibraryItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { triggerHaptic } from '../lib/haptics';
+import { rankSearch, SearchFields } from '../lib/search';
+
+const libraryFields = (item: LibraryItem): SearchFields => ({
+  name: item.name,
+  chemicalName: item.chemicalName,
+  aliasKey: item.id,
+  extra: `${item.description} ${item.benefits.join(' ')}`,
+});
 
 interface PeptideLibraryProps {
   onAddToCycle: (item: LibraryItem) => void;
@@ -30,22 +38,10 @@ export default function PeptideLibrary({ onAddToCycle, visibility = { filters: t
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Suggested matches list based on keyword matches (name, synonym or benefit)
-  // Sort so exact/prefix name matches appear before substring matches
+  // Ranked autocomplete: name/chemical-name/alias/benefit matches scored so the
+  // best hit leads even on a single keystroke. Capped at 6 for the dropdown.
   const suggestions = searchTerm.trim()
-    ? (() => {
-        const q = searchTerm.toLowerCase();
-        const matched = PEPTIDE_LIBRARY.filter((item) =>
-          item.name.toLowerCase().includes(q) ||
-          item.chemicalName?.toLowerCase().includes(q)
-        );
-        matched.sort((a, b) => {
-          const aNameStart = a.name.toLowerCase().startsWith(q) ? 0 : 1;
-          const bNameStart = b.name.toLowerCase().startsWith(q) ? 0 : 1;
-          return aNameStart - bNameStart;
-        });
-        return matched.slice(0, 6);
-      })()
+    ? rankSearch(searchTerm, PEPTIDE_LIBRARY, libraryFields).slice(0, 6)
     : [];
 
   const handleSelectSuggestion = (item: LibraryItem) => {
@@ -68,15 +64,12 @@ export default function PeptideLibrary({ onAddToCycle, visibility = { filters: t
     }, 150);
   };
 
-  // Filter items for main view list
-  const filteredItems = PEPTIDE_LIBRARY.filter((item) => {
-    const q = searchTerm.toLowerCase();
-    const matchesSearch = !q ||
-      item.name.toLowerCase().includes(q) ||
-      item.chemicalName?.toLowerCase().includes(q);
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Filter items for main view list: category filter first, then ranked search
+  // so the grid is ordered by relevance (and stays input-order when no query).
+  const categoryItems = PEPTIDE_LIBRARY.filter(
+    (item) => selectedCategory === 'all' || item.category === selectedCategory,
+  );
+  const filteredItems = rankSearch(searchTerm, categoryItems, libraryFields);
 
   // Progressive rendering — the full library is 100+ rich cards; rendering
   // them all at once makes a 100k-pixel page. Show batches instead.
