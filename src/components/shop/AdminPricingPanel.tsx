@@ -75,6 +75,7 @@ export default function AdminPricingPanel() {
   const initialized = useRef(false);
 
   const [norKitPct,     setNorKitPct]     = useState(DEFAULT_PRICING.markups.norKitPct);
+  const [norVialPct,    setNorVialPct]    = useState(DEFAULT_PRICING.markups.norVialPct ?? 150);
   const [chnKitPct,     setChnKitPct]     = useState(DEFAULT_PRICING.markups.chnKitPct);
   const [chnVialUSPct,  setChnVialUSPct]  = useState(DEFAULT_PRICING.markups.chnVialUSPct);
   const [chnVialDirPct, setChnVialDirPct] = useState(DEFAULT_PRICING.markups.chnVialDirPct);
@@ -106,6 +107,7 @@ export default function AdminPricingPanel() {
         setOverrides(parsed.overrides);
         if (parsed.markups) {
           if (parsed.markups.norKitPct    !== undefined) setNorKitPct(parsed.markups.norKitPct);
+          if (parsed.markups.norVialPct   !== undefined) setNorVialPct(parsed.markups.norVialPct);
           if (parsed.markups.chnKitPct    !== undefined) setChnKitPct(parsed.markups.chnKitPct);
           if (parsed.markups.chnVialUSPct  !== undefined) setChnVialUSPct(parsed.markups.chnVialUSPct);
           if (parsed.markups.chnVialDirPct !== undefined) setChnVialDirPct(parsed.markups.chnVialDirPct);
@@ -122,10 +124,10 @@ export default function AdminPricingPanel() {
   useEffect(() => {
     if (!dirty) return;
     localStorage.setItem('labrat_pricing_draft', JSON.stringify({
-      markups: { norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct },
+      markups: { norKitPct, norVialPct, chnKitPct, chnVialUSPct, chnVialDirPct },
       overrides,
     }));
-  }, [overrides, norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct, dirty]);
+  }, [overrides, norKitPct, norVialPct, chnKitPct, chnVialUSPct, chnVialDirPct, dirty]);
 
   // Load saved config from Firestore (skipped if localStorage draft was found)
   useEffect(() => {
@@ -133,6 +135,7 @@ export default function AdminPricingPanel() {
     initialized.current = true;
     const { markups, overrides: o } = savedConfig;
     setNorKitPct(markups.norKitPct);
+    if (markups.norVialPct !== undefined) setNorVialPct(markups.norVialPct);
     setChnKitPct(markups.chnKitPct);
     setChnVialUSPct(markups.chnVialUSPct);
     setChnVialDirPct(markups.chnVialDirPct);
@@ -154,7 +157,7 @@ export default function AdminPricingPanel() {
     return {
       norW, usW, chnW,
       norKit:  norW  ? Math.round(norW  * (1 + norKitPct  / 100)) : null,
-      norVial: listPrice || null,
+      norVial: norW  ? Math.round((norW / 10) * (1 + norVialPct / 100)) : (listPrice || null),
       chnKit:  chnW  ? Math.round(chnW  * (1 + chnKitPct  / 100)) : null,
       chnVial: usW
         ? Math.round((usW  / 10) * (1 + chnVialUSPct  / 100))
@@ -203,6 +206,7 @@ export default function AdminPricingPanel() {
   function resetAll() {
     setOverrides({});
     setNorKitPct(DEFAULT_PRICING.markups.norKitPct);
+    setNorVialPct(DEFAULT_PRICING.markups.norVialPct ?? 150);
     setChnKitPct(DEFAULT_PRICING.markups.chnKitPct);
     setChnVialUSPct(DEFAULT_PRICING.markups.chnVialUSPct);
     setChnVialDirPct(DEFAULT_PRICING.markups.chnVialDirPct);
@@ -214,7 +218,7 @@ export default function AdminPricingPanel() {
     setSaving(true);
     setSaveError('');
     try {
-      await savePricingConfig({ markups: { norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct }, overrides });
+      await savePricingConfig({ markups: { norKitPct, norVialPct, chnKitPct, chnVialUSPct, chnVialDirPct }, overrides });
       localStorage.removeItem('labrat_pricing_draft');
       setSaved(true);
       setDirty(false);
@@ -230,7 +234,7 @@ export default function AdminPricingPanel() {
   const overrideCount = Object.keys(overrides).length;
 
   function handleExport() {
-    const data = JSON.stringify({ markups: { norKitPct, chnKitPct, chnVialUSPct, chnVialDirPct }, overrides }, null, 2);
+    const data = JSON.stringify({ markups: { norKitPct, norVialPct, chnKitPct, chnVialUSPct, chnVialDirPct }, overrides }, null, 2);
     const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -251,6 +255,7 @@ export default function AdminPricingPanel() {
           if (parsed.overrides) { setOverrides(parsed.overrides); setDirty(true); setSaved(false); }
           if (parsed.markups) {
             if (parsed.markups.norKitPct    !== undefined) setNorKitPct(parsed.markups.norKitPct);
+            if (parsed.markups.norVialPct   !== undefined) setNorVialPct(parsed.markups.norVialPct);
             if (parsed.markups.chnKitPct    !== undefined) setChnKitPct(parsed.markups.chnKitPct);
             if (parsed.markups.chnVialUSPct  !== undefined) setChnVialUSPct(parsed.markups.chnVialUSPct);
             if (parsed.markups.chnVialDirPct !== undefined) setChnVialDirPct(parsed.markups.chnVialDirPct);
@@ -412,6 +417,8 @@ export default function AdminPricingPanel() {
       <div className="flex gap-2.5 flex-wrap">
         <MarkupCard flag="🇳🇴" label="Kit Markup" value={norKitPct} accent="blue"
           max={150} step={0.5} onChange={v => change(setNorKitPct, v)} />
+        <MarkupCard flag="🇳🇴" label="Vial Markup" value={norVialPct} accent="blue"
+          max={500} onChange={v => change(setNorVialPct, v)} />
         <MarkupCard flag="🇨🇳" label="Kit Markup" value={chnKitPct} accent="orange"
           max={300} onChange={v => change(setChnKitPct, v)} />
         <MarkupCard flag="🇺🇸" label="Vial Markup" value={chnVialUSPct} accent="emerald"

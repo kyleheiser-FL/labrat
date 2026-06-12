@@ -12,6 +12,8 @@ export interface PriceOverride {
 
 export interface PricingMarkups {
   norKitPct: number;
+  /** Optional — when absent, Norway vials fall back to the product list price */
+  norVialPct?: number;
   chnKitPct: number;
   chnVialUSPct: number;
   chnVialDirPct: number;

@@ -2039,7 +2039,7 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     clinicalResearch: 'Binds directly to the LH/choriogonadotropin receptor in testicles, bypassing the suppressed pituitary pathway. This keeps Leydig cells active, pumping out natural testosterone, preventing cell atrophy, and maintaining fertility.',
     typicalDosage: '250 IU - 500 IU per dose',
     frequencyText: 'Injected subcutaneously 2 to 3 times weekly during active suppressive cycles.',
-    reconstitutionText: 'Add 5.0 ml of Bacteriostatic Water to a 5,000 IU vial. A 250 IU dose corresponds to exactly 25 units (0.25 ml) on standard syringes.',
+    reconstitutionText: 'Add 2.5 ml of Bacteriostatic Water to a 5,000 IU vial (2,000 IU per ml). A 250 IU dose corresponds to 12.5 units (0.125 ml) on a U100 insulin syringe.',
     halfLife: 'Approx. 36 hours',
     benefits: [
       'Plus (+): Completely prevents or reverses testicular shrinkage on anabolic cycles',

@@ -17,7 +17,7 @@ export default function ReconstitutionCalculator({
 }: ReconstitutionCalculatorProps) {
   // Calculator inputs
   const [vialSizeMg, setVialSizeMg] = useState<number>(initialVialMg);
-  const [bacWaterMl, setBacWaterMl] = useState<number>(initialWaterMl);
+  const [bacWaterMl, setBacWaterMl] = useState<number>(Math.min(initialWaterMl, 3));
   const [targetDoseMcg, setTargetDoseMcg] = useState<number>(initialDoseMcg);
   const [syringeSize, setSyringeSize] = useState<number>(100); // 100 units = 1.0cc, support up to 3.0cc (300 units)
   const [doseUnit, setDoseUnit] = useState<'mcg' | 'mg'>('mg');
@@ -25,7 +25,8 @@ export default function ReconstitutionCalculator({
 
   // Presets
   const vialPresets = [2, 5, 10, 15, 20];
-  const waterPresets = [1, 2, 2.5, 3, 5];
+  // Vials are 3ml — never suggest more BAC water than the vial can hold
+  const waterPresets = [1, 1.5, 2, 2.5, 3];
 
   // Calculated values
   const [totalMcg, setTotalMcg] = useState<number>(5000);
@@ -159,8 +160,8 @@ export default function ReconstitutionCalculator({
             <input
               type="range"
               min="0.5"
-              max="10"
-              step="0.5"
+              max="3"
+              step="0.1"
               value={bacWaterMl}
               onChange={(e) => setBacWaterMl(Number(e.target.value))}
               className="w-full accent-cyan-400 cursor-pointer bg-slate-800 rounded-lg appearance-none h-2"

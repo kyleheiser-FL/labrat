@@ -7,6 +7,8 @@ import { SAMPLE_INVENTORY } from '../src/data/shopInventory';
 
 export interface PricingMarkups {
   norKitPct: number;
+  /** Optional — when absent, Norway vials fall back to the product list price */
+  norVialPct?: number;
   chnKitPct: number;
   chnVialUSPct: number;
   chnVialDirPct: number;
@@ -275,6 +277,9 @@ export function computePriceBook(
     if (norKit) entry.norKit = norKit;
 
     if (o.norVial !== undefined) entry.norVial = o.norVial;
+    else if (typeof markups.norVialPct === 'number' && norW) {
+      entry.norVial = Math.round((norW / 10) * (1 + markups.norVialPct / 100));
+    }
 
     const usW = resolveChineseUsWarehouseCost(norm);
     const chnW = usW || resolveChineseKitCost(norm);
