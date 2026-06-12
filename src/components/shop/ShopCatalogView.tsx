@@ -190,14 +190,14 @@ export default function ShopCatalogView({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-orange-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-orange-400" />
-              🇨🇳 China Vial Member: <span className="text-orange-300 bg-orange-950/65 px-2 py-0.5 rounded border border-orange-500/20 text-xs font-black">Free USA Shipping</span>
+              🇨🇳 China Vial Member: <span className="text-orange-300 bg-orange-950/65 px-2 py-0.5 rounded border border-orange-500/20 text-xs font-black">$25 Flat Shipping</span>
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-orange-300 bg-orange-950/45 px-2.5 py-0.5 rounded border border-orange-500/20 self-start sm:self-center">
               Per-Vial Rate
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            You are enrolled in <strong className="text-orange-300 font-bold">China vial pricing</strong>. Every listed price represents exactly one (1) individual research vial, ships from our USA warehouse, and qualifies for free shipping on every order.
+            You are enrolled in <strong className="text-orange-300 font-bold">China vial pricing</strong>. Every listed price represents exactly one (1) individual research vial sourced from our China lab partners. All China orders ship at a flat <strong className="text-orange-300">$25.00</strong> rate. <strong className="text-emerald-400">USA Fast Ship</strong> items below ship free.
           </p>
         </div>
       ) : (
