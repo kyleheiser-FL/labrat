@@ -43,6 +43,20 @@ export function productPhotoSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
+// Base-compound slug shared by all strengths/sources of one peptide:
+// "Tirzepatide China (30mg)" → "tirzepatide", "SS-31 (Elamipretide) (10mg)" → "ss-31".
+// Compound photos live at _compound-<slug>.png and cover every SKU of that
+// compound that lacks its own per-product photo.
+export function compoundPhotoSlug(name: string): string {
+  const { baseName } = getProductBaseAndSize(name);
+  const cleanBase = baseName
+    .replace(/\(.*?\)/g, ' ')
+    .replace(/\s+(china|us warehouse)\s*$/i, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  return productPhotoSlug(cleanBase);
+}
+
 // Category → accent hue used for the strength block + purity flash on the
 // dark gunmetal LABRAT label (mirrors the catalog badge color system)
 const CATEGORY_HUES: Record<string, { band: string; bandText: string }> = {
@@ -348,10 +362,13 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   // a vivid blue lyophilized powder; every other peptide is white powder.
   const isCopper = /\bghk\b|\bahk\b|klow|copper/i.test(name);
 
-  // Per-product photo wins; otherwise fall back to the type archetype photo
-  // (copper → blue, normal → white, solvent → clear) when one is present.
+  // Photo resolution: exact per-product photo → compound photo (shared by all
+  // strengths and Norway/China/USA sources of one peptide) → type archetype
+  // (copper → blue, normal → white, solvent → clear) → procedural render.
   const archetype = isSolvent ? ARCHETYPE_PHOTOS.solvent : isCopper ? ARCHETYPE_PHOTOS.copper : ARCHETYPE_PHOTOS.white;
-  const photo = PRODUCT_PHOTOS[productPhotoSlug(name)] || archetype;
+  const photo = PRODUCT_PHOTOS[productPhotoSlug(name)]
+    || PRODUCT_PHOTOS[`_compound-${compoundPhotoSlug(name)}`]
+    || archetype;
 
   const glowClass = isSolvent ? 'labrat-real-vial-visual--solvent'
     : isChina ? 'labrat-real-vial-visual--china'
