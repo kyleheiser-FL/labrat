@@ -51,7 +51,7 @@ const DEFAULT_FORM = {
   frequency: 'daily' as 'daily' | 'eod' | 'twice_weekly' | 'weekly' | 'custom',
   customDays: '3', startDate: new Date().toISOString().split('T')[0],
   durationWeeks: 8, notes: '', color: PRESET_COLORS[0],
-  steroidForm: 'oil' as 'oil' | 'pill', pillSizeMg: '10', oilConcMgMl: '250',
+  steroidForm: 'oil' as 'oil' | 'pill', pillSizeMg: '10', oilConcMgMl: '250', vialMl: '10',
 };
 
 function buildFormFromCompound(comp: Compound) {
@@ -67,6 +67,7 @@ function buildFormFromCompound(comp: Compound) {
     steroidForm: comp.steroidForm || 'oil',
     pillSizeMg: comp.pillSizeMg ? comp.pillSizeMg.toString() : '10',
     oilConcMgMl: comp.oilConcMgMl ? comp.oilConcMgMl.toString() : '250',
+    vialMl: comp.vialMl ? comp.vialMl.toString() : '10',
   };
 }
 
@@ -118,6 +119,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
   const [steroidForm, setSteroidForm] = useState(DEFAULT_FORM.steroidForm);
   const [pillSizeMg, setPillSizeMg] = useState(DEFAULT_FORM.pillSizeMg);
   const [oilConcMgMl, setOilConcMgMl] = useState(DEFAULT_FORM.oilConcMgMl);
+  const [vialMl, setVialMl] = useState(DEFAULT_FORM.vialMl);
   const [reminderTime, setReminderTime] = useState('');
   const [showCalcModal, setShowCalcModal] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -138,7 +140,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       setDoseAmount(f.doseAmount); setDoseUnit(f.doseUnit as any); setFrequency(f.frequency as any);
       setCustomDays(f.customDays); setStartDate(f.startDate); setDurationWeeks(f.durationWeeks);
       setNotes(f.notes); setColor(f.color); setSteroidForm(f.steroidForm as any);
-      setPillSizeMg(f.pillSizeMg); setOilConcMgMl(f.oilConcMgMl);
+      setPillSizeMg(f.pillSizeMg); setOilConcMgMl(f.oilConcMgMl); setVialMl(f.vialMl);
       setReminderTime(editingCompound.reminderTime || '');
     } else if (prefill && open) {
       setName(prefill.name ?? ''); setNameFromLibrary(true); setNameError('');
@@ -155,12 +157,13 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       setSteroidForm((prefill.steroidForm ?? 'oil') as any);
       setPillSizeMg(prefill.pillSizeMg ? prefill.pillSizeMg.toString() : '10');
       setOilConcMgMl(prefill.oilConcMgMl ? prefill.oilConcMgMl.toString() : '250');
+      setVialMl(prefill.vialMl ? prefill.vialMl.toString() : '10');
     } else {
       setName(''); setNameFromLibrary(false); setNameError(''); setType('peptide');
       setVialSizeMg(''); setBacWaterMl(''); setDoseAmount('1'); setDoseUnit('mg');
       setFrequency('daily'); setCustomDays('3'); setStartDate(new Date().toISOString().split('T')[0]);
       setDurationWeeks(8); setNotes(''); setColor(PRESET_COLORS[0]);
-      setSteroidForm('oil'); setPillSizeMg('10'); setOilConcMgMl('250');
+      setSteroidForm('oil'); setPillSizeMg('10'); setOilConcMgMl('250'); setVialMl('10');
       setReminderTime('');
     }
   }, [editingCompound, open]);
@@ -235,7 +238,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
     setVialSizeMg(''); setBacWaterMl(''); setDoseAmount('1'); setDoseUnit('mg');
     setFrequency('daily'); setCustomDays('3'); setStartDate(new Date().toISOString().split('T')[0]);
     setDurationWeeks(8); setNotes(''); setColor(PRESET_COLORS[0]);
-    setSteroidForm('oil'); setPillSizeMg('10'); setOilConcMgMl('250');
+    setSteroidForm('oil'); setPillSizeMg('10'); setOilConcMgMl('250'); setVialMl('10');
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -269,6 +272,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       steroidForm: (type === 'steroid' || type === 'supplement' || type === 'compound') ? steroidForm : undefined,
       pillSizeMg: (type === 'steroid' || type === 'supplement' || type === 'compound') && steroidForm === 'pill' && pillSizeMg ? parseFloat(pillSizeMg) : undefined,
       oilConcMgMl: (type === 'steroid' || type === 'supplement' || type === 'compound') && steroidForm === 'oil' && oilConcMgMl ? parseFloat(oilConcMgMl) : undefined,
+      vialMl: (type === 'steroid' || type === 'supplement' || type === 'compound') && steroidForm === 'oil' && vialMl ? parseFloat(vialMl) : undefined,
       reminderTime: reminderTime.trim() || undefined,
     };
 
@@ -479,8 +483,8 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                             className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-vial-mg-input" />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[11px] font-semibold text-slate-300">Bacteriostatic Water Added (ml / cc)</label>
-                          <input type="number" step="0.1" value={bacWaterMl} onChange={(e) => setBacWaterMl(e.target.value)} placeholder="e.g. 2"
+                          <label className="text-[11px] font-semibold text-slate-300">Bacteriostatic Water Added (ml / cc, max 3 — peptide vials are 3ml)</label>
+                          <input type="number" step="0.1" min="0.5" max="3" value={bacWaterMl} onChange={(e) => setBacWaterMl(e.target.value)} placeholder="e.g. 2"
                             className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-water-ml-input" />
                         </div>
                       </div>
@@ -510,17 +514,24 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                               className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-pill-size-input" />
                           </div>
                         ) : (
-                          <div className="space-y-1 col-span-2">
-                            <label className="text-[11px] font-semibold text-slate-300">Liquid Concentration (mg per 1 ml / cc)</label>
-                            <input type="number" step="any" value={oilConcMgMl} onChange={(e) => setOilConcMgMl(e.target.value)} placeholder="e.g. 250"
-                              className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-oil-conc-input" />
-                          </div>
+                          <>
+                            <div className="space-y-1">
+                              <label className="text-[11px] font-semibold text-slate-300">Liquid Concentration (mg per 1 ml / cc)</label>
+                              <input type="number" step="any" value={oilConcMgMl} onChange={(e) => setOilConcMgMl(e.target.value)} placeholder="e.g. 250"
+                                className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-oil-conc-input" />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[11px] font-semibold text-slate-300">Vial Volume (ml) — roids are 10ml</label>
+                              <input type="number" step="any" min="1" max="20" value={vialMl} onChange={(e) => setVialMl(e.target.value)} placeholder="e.g. 10"
+                                className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-vial-ml-input" />
+                            </div>
+                          </>
                         )}
                       </div>
                       <span className="text-[9.5px] text-cyan-400 leading-normal block font-mono bg-cyan-950/20 border border-cyan-900/10 p-2 rounded-lg">
                         {steroidForm === 'pill'
                           ? <span>✓ Daily dosage of <strong className="text-cyan-300 font-extrabold">{doseAmount || '20'} {doseUnit}</strong> automatically corresponds to taking <strong className="text-cyan-300 font-extrabold">{(parseFloat(doseAmount) / (parseFloat(pillSizeMg) || 10)).toFixed(2)} pills</strong> (using {pillSizeMg || 10}mg tablets).</span>
-                          : <span>✓ Each injection dose of <strong className="text-cyan-300 font-extrabold">{doseAmount || '250'} {doseUnit}</strong> automatically corresponds to drawing <strong className="text-cyan-300 font-extrabold">{(parseFloat(doseAmount) / (parseFloat(oilConcMgMl) || 250)).toFixed(2)} ml / cc</strong> on standard syringe scales (using {oilConcMgMl || 250}mg/ml susp).</span>
+                          : <span>✓ Each injection dose of <strong className="text-cyan-300 font-extrabold">{doseAmount || '250'} {doseUnit}</strong> automatically corresponds to drawing <strong className="text-cyan-300 font-extrabold">{(parseFloat(doseAmount) / (parseFloat(oilConcMgMl) || 250)).toFixed(2)} ml / cc</strong> on standard syringe scales (using {oilConcMgMl || 250}mg/ml susp). A {vialMl || 10}ml vial holds ~<strong className="text-cyan-300 font-extrabold">{Math.floor((parseFloat(vialMl) || 10) / Math.max(0.01, parseFloat(doseAmount) / (parseFloat(oilConcMgMl) || 250)))} doses</strong>.</span>
                         }
                       </span>
                     </div>
