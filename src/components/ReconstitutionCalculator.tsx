@@ -7,13 +7,15 @@ interface ReconstitutionCalculatorProps {
   initialVialMg?: number;
   initialWaterMl?: number;
   initialDoseMcg?: number;
+  solventType?: 'bac_water' | 'acetic_acid' | 'sterile_water' | 'sterile_saline';
 }
 
 export default function ReconstitutionCalculator({
   onApplyConfig,
   initialVialMg = 5,
   initialWaterMl = 2,
-  initialDoseMcg = 250
+  initialDoseMcg = 250,
+  solventType
 }: ReconstitutionCalculatorProps) {
   // Calculator inputs
   const [vialSizeMg, setVialSizeMg] = useState<number>(initialVialMg);
@@ -110,6 +112,26 @@ export default function ReconstitutionCalculator({
           </button>
         </div>
 
+        {solventType && solventType !== 'bac_water' && (
+          <div className={`mb-4 rounded-xl border px-3.5 py-2.5 flex items-start gap-2.5 ${solventType === 'acetic_acid' ? 'bg-amber-950/30 border-amber-500/30' : 'bg-blue-950/30 border-blue-500/25'}`}>
+            <span className="text-base leading-none mt-0.5 shrink-0">{solventType === 'acetic_acid' ? '⚠️' : 'ℹ️'}</span>
+            <div className="space-y-0.5">
+              <p className={`text-[11px] font-bold ${solventType === 'acetic_acid' ? 'text-amber-400' : 'text-blue-400'}`}>
+                {solventType === 'acetic_acid' ? 'Use 0.1% Acetic Acid — not Bacteriostatic Water'
+                  : solventType === 'sterile_water' ? 'Use Sterile Water for Injection'
+                  : 'Use Sterile Saline (0.9% NaCl)'}
+              </p>
+              <p className="text-[10px] text-slate-400 leading-snug">
+                {solventType === 'acetic_acid'
+                  ? 'Benzyl alcohol in BAC water degrades this peptide. Enter your acetic acid volume in the "Added" field below.'
+                  : solventType === 'sterile_water'
+                  ? 'This peptide requires sterile water — reconstituted solution should be used within 24–48 hours.'
+                  : 'Reconstitute with sterile saline (0.9% NaCl) for nasal spray delivery.'}
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-6">
           {/* Vial Size */}
           <div>
@@ -148,11 +170,14 @@ export default function ReconstitutionCalculator({
             </div>
           </div>
 
-          {/* Bac Water Volume */}
+          {/* Solvent Volume */}
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="text-sm font-medium text-slate-300 flex items-center gap-1.5">
-                Bacteriostatic Water Added (Vial Fluid Volume)
+                {solventType === 'acetic_acid' ? '0.1% Acetic Acid Added'
+                  : solventType === 'sterile_water' ? 'Sterile Water Added'
+                  : solventType === 'sterile_saline' ? 'Sterile Saline Added'
+                  : 'Bacteriostatic Water Added'} (Vial Fluid Volume)
                 <span className="text-[10px] text-slate-500 font-mono">(ml / cc)</span>
               </label>
               <span className="text-sm font-semibold text-cyan-400 font-mono">{bacWaterMl} ml / cc</span>

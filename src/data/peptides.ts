@@ -279,7 +279,8 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     clinicalResearch: 'Promotes true myofibrillar hyperplasia (formation of new muscle cellular fibers), breaking past genetic limits by dividing and creating new receptive muscle structures instead of merely expanding existing cells.',
     typicalDosage: '30 mcg - 80 mcg once daily',
     frequencyText: 'Administered sub-Q once daily, typically directly post-workout on active training days.',
-    reconstitutionText: 'Add 2.0 ml of Bacteriostatic Water to a 1 mg vial. This yields a concentration of 50 mcg per 10 syringe units.',
+    reconstitutionText: 'Add 2.0 ml of 0.1% Acetic Acid solution to a 1 mg vial — do NOT use Bacteriostatic Water, as the benzyl alcohol preservative rapidly degrades the IGF-1 LR3 peptide chain. This yields a concentration of 50 mcg per 10 syringe units. Acetic Acid solution is available from most peptide suppliers.',
+    reconstitutionSolvent: 'acetic_acid',
     halfLife: 'Approx. 20 hours (highly stable)',
     benefits: [
       'Triggers hyperplasia (generation of brand-new muscle fiber cells)',
@@ -1077,7 +1078,8 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     clinicalResearch: 'Comprehensive neurological studies show that Semax elevates BDNF and Nerve Growth Factor (NGF) in the brain, improving synaptogenesis. Concurrently, Selank modulates serotonin and GABA receptors, preventing emotional overwhelm. The combined profile provides clean cognitive drive without causing heart palpitations, high blood pressure, or stimulant crashes.',
     typicalDosage: '250 mcg Semax / 250 mcg Selank twice daily',
     frequencyText: 'Administered intranasally (nasal spray pumps) or subcutaneously in the morning and early afternoon.',
-    reconstitutionText: 'Reconstitute the 10mg + 10mg vial with 2.0 ml of Sterile Water (or direct saline) for nasal spray dispensers. Generates 250 mcg of each active peptide per nasal pump.',
+    reconstitutionText: 'Reconstitute the 10mg + 10mg vial with 2.0 ml of Sterile Water for Injection (or sterile saline) — use sterile water, not bacteriostatic water, as these peptides are formulated for nasal delivery. Generates 250 mcg of each active peptide per nasal pump.',
+    reconstitutionSolvent: 'sterile_water' as const,
     halfLife: 'Semax: ~30 Min | Selank: ~2 Hours (with day-long downstream neurological activation)',
     benefits: [
       'Plus (+): Upregulates BDNF and NGF by up to 200%, dramatically enhancing memory formation and recall speed',
@@ -1398,7 +1400,8 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     clinicalResearch: 'Clinical and preclinical studies show that binding of Follistatin to myostatin blocks downstream receptor signaling. This releases the biological limitations on muscle building, allowing rapid muscle cell proliferation and lean tissue development.',
     typicalDosage: '100 mcg daily for 10-20 days',
     frequencyText: 'Injected subcutaneously or intramuscularly inside target muscle groups once daily.',
-    reconstitutionText: 'Add 1.0 ml of Sterile Water to a 1 mg Follistatin-344 vial. This yields a concentration of 100 mcg per 10 units (0.1 ml) on a U100 insulin syringe.',
+    reconstitutionText: 'Add 1.0 ml of Sterile Water for Injection to a 1 mg Follistatin-344 vial — use sterile water (not bacteriostatic water). This yields a concentration of 100 mcg per 10 units (0.1 ml) on a U100 insulin syringe.',
+    reconstitutionSolvent: 'sterile_water' as const,
     halfLife: 'Approx. 36 hours',
     benefits: [
       'Plus (+): Strongly blocks myostatin, promoting accelerated skeletal muscle cell size',
@@ -1425,7 +1428,8 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     clinicalResearch: 'Pre-clinical and clinical trials demonstrate that AOD-9604 selectively stimulates lipolysis (fat breakdown) and inhibits lipogenesis (accumulation of lipid structures in fat cells), especially in stubborn fat deposits. It acts directly without altering insulin sensitivity.',
     typicalDosage: '250 mcg - 500 mcg once daily',
     frequencyText: 'Administered via subcutaneous injection in the morning on an empty stomach.',
-    reconstitutionText: 'Add 2.0 ml of Bacteriostatic Water to a 5 mg AOD-9604 vial. This yields a concentration of 250 mcg per 10 units (0.1 ml) on a U100 insulin syringe.',
+    reconstitutionText: 'Add 2.0 ml of 0.1% Acetic Acid solution to a 5 mg AOD-9604 vial — AOD-9604 (a C-terminal HGH fragment) does not dissolve cleanly at neutral pH and will aggregate in Bacteriostatic Water. This yields a concentration of 250 mcg per 10 units (0.1 ml) on a U100 insulin syringe.',
+    reconstitutionSolvent: 'acetic_acid',
     halfLife: 'Approx. 3 hours',
     benefits: [
       'Plus (+): Highly targeted cellular lipolysis without impacting serum insulin levels',
@@ -1477,7 +1481,8 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     clinicalResearch: 'Research shows VIP upregulates pulmonary arterial dilation, modulates immunological responses, and enhances tight junction integrity in the blood-brain barrier. It plays a highly protective role in neurological and respiratory tissues facing biotoxins.',
     typicalDosage: '50 mcg - 200 mcg daily',
     frequencyText: 'Administered via nasal spray pump or sterile subcutaneous injection 1-2 times daily.',
-    reconstitutionText: 'For nasal spray formulation, reconstitute 5mg of VIP with 5ml of sterile saline. This creates a concentration of 100 mcg per standard nasal spray pump.',
+    reconstitutionText: 'For nasal spray formulation, reconstitute 5mg of VIP with 5ml of sterile saline (0.9% NaCl) — do not use Bacteriostatic Water for nasal delivery. This creates a concentration of 100 mcg per standard nasal spray pump.',
+    reconstitutionSolvent: 'sterile_saline' as const,
     halfLife: 'Approx. 2 minutes',
     benefits: [
       'Plus (+): Dramatically downregulates neuroinflammation in Chronic Inflammatory Response Syndrome',

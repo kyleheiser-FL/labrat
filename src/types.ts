@@ -58,7 +58,8 @@ export interface LibraryItem {
   clinicalResearch: string;   // Clinical context or brief research bio
   typicalDosage: string;      // Recommended dosage ranges
   frequencyText: string;      // E.g. "Once daily before bed"
-  reconstitutionText?: string; // Guidance on bacteriostatic water volume
+  reconstitutionText?: string; // Guidance on reconstitution volume
+  reconstitutionSolvent?: 'bac_water' | 'acetic_acid' | 'sterile_water' | 'sterile_saline'; // Non-default solvent requirement
   halfLife: string;
   benefits: string[];
   sideEffects: string[];

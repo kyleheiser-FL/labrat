@@ -286,6 +286,11 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
   };
 
   const matchedLibraryItem = nameFromLibrary ? PEPTIDE_LIBRARY.find(it => it.name === name) : null;
+  const matchedSolvent = matchedLibraryItem?.reconstitutionSolvent ?? null;
+  const solventLabel = matchedSolvent === 'acetic_acid' ? '0.1% Acetic Acid'
+    : matchedSolvent === 'sterile_water' ? 'Sterile Water'
+    : matchedSolvent === 'sterile_saline' ? 'Sterile Saline'
+    : 'Bacteriostatic Water';
   const activePresets: GoalPreset[] = matchedLibraryItem
     ? (type === 'steroid' && steroidForm === 'oil')
       ? (STEROID_GOAL_PRESETS[matchedLibraryItem.id] ?? STEROID_CATEGORY_PRESETS)
@@ -455,7 +460,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                                 <span className="text-cyan-600">{preset.doseAmount} {preset.doseUnit}</span>
                                 <span className="text-slate-600"> · {freqLabel(preset.frequency)} · {preset.durationWeeks} wks</span>
                                 {preset.vialSizeMg && preset.bacWaterMl && (
-                                  <span className="text-slate-600"> · {preset.vialSizeMg}mg vial + {preset.bacWaterMl}ml BAC</span>
+                                  <span className="text-slate-600"> · {preset.vialSizeMg}mg vial + {preset.bacWaterMl}ml {matchedSolvent === 'acetic_acid' ? 'Acetic Acid' : matchedSolvent === 'sterile_water' ? 'Sterile H₂O' : matchedSolvent === 'sterile_saline' ? 'Saline' : 'BAC'}</span>
                                 )}
                               </p>
                             </div>
@@ -476,6 +481,25 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                   {type === 'peptide' && (
                     <div className="bg-cyan-500/5 border border-cyan-500/15 p-4 rounded-xl space-y-3.5">
                       <span className="text-[10px] uppercase font-mono tracking-wider text-cyan-400 font-bold block">Optional Reconstitution Mapping</span>
+                      {matchedSolvent && matchedSolvent !== 'bac_water' && (
+                        <div className={`rounded-xl border px-3.5 py-2.5 flex items-start gap-2.5 ${matchedSolvent === 'acetic_acid' ? 'bg-amber-950/30 border-amber-500/30' : 'bg-blue-950/30 border-blue-500/25'}`}>
+                          <span className="text-base leading-none mt-0.5 shrink-0">{matchedSolvent === 'acetic_acid' ? '⚠️' : 'ℹ️'}</span>
+                          <div className="space-y-0.5 min-w-0">
+                            <p className={`text-[11px] font-bold ${matchedSolvent === 'acetic_acid' ? 'text-amber-400' : 'text-blue-400'}`}>
+                              {matchedSolvent === 'acetic_acid' ? 'Requires 0.1% Acetic Acid — NOT Bacteriostatic Water'
+                                : matchedSolvent === 'sterile_water' ? 'Requires Sterile Water for Injection'
+                                : 'Requires Sterile Saline Solution'}
+                            </p>
+                            <p className="text-[10px] text-slate-400 leading-snug">
+                              {matchedSolvent === 'acetic_acid'
+                                ? 'Benzyl alcohol in BAC water rapidly degrades this peptide. Use 0.1% Acetic Acid solution (available from your peptide supplier) instead.'
+                                : matchedSolvent === 'sterile_water'
+                                ? 'Use sterile water for injection — not bacteriostatic water. Use within 24–48 hours once reconstituted.'
+                                : 'Reconstitute with sterile saline (0.9% NaCl) for nasal spray delivery.'}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                       <div className="grid grid-cols-2 gap-3.5">
                         <div className="space-y-1">
                           <label className="text-[11px] font-semibold text-slate-300">Vial Capacity (mg)</label>
@@ -483,7 +507,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                             className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-vial-mg-input" />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[11px] font-semibold text-slate-300">Bacteriostatic Water Added (ml / cc, max 3 — peptide vials are 3ml)</label>
+                          <label className="text-[11px] font-semibold text-slate-300">{solventLabel} Added (ml / cc, max 3 — peptide vials are 3ml)</label>
                           <input type="number" step="0.1" min="0.5" max="3" value={bacWaterMl} onChange={(e) => setBacWaterMl(e.target.value)} placeholder="e.g. 2"
                             className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-water-ml-input" />
                         </div>
@@ -659,6 +683,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                 initialVialMg={parseFloat(vialSizeMg) || 5}
                 initialWaterMl={parseFloat(bacWaterMl) || 2}
                 initialDoseMcg={doseUnit === 'mcg' ? (parseFloat(doseAmount) || 250) : (doseUnit === 'mg' ? (parseFloat(doseAmount) * 1000 || 250) : 250)}
+                solventType={matchedSolvent ?? undefined}
               />
             </div>
           </div>
