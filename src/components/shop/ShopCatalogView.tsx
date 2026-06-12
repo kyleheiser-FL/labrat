@@ -260,8 +260,8 @@ export default function ShopCatalogView({
                   >
                     <span className="text-[9px] font-black text-amber-400 uppercase tracking-wider">{size}</span>
                     <span className="text-sm font-black text-white">${displayPrice}</span>
-                    <span className="text-[8px] text-emerald-400 font-bold flex items-center gap-0.5">
-                      <span className="w-1 h-1 rounded-full bg-emerald-400 inline-block"></span> In Stock
+                    <span className="text-[8px] text-emerald-400 font-bold flex items-center gap-0.5 whitespace-nowrap">
+                      <span className="w-1 h-1 rounded-full bg-emerald-400 inline-block shrink-0"></span> In Stock
                     </span>
                   </button>
                 );
@@ -678,8 +678,8 @@ export default function ShopCatalogView({
                           <span className="text-[11px] ml-auto">
                             {(() => {
                               return (
-                                <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> In Stock
+                                <span className="text-emerald-400 font-semibold flex items-center gap-1 whitespace-nowrap">
+                                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span> In Stock
                                 </span>
                               );
                             })()}
