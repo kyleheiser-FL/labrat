@@ -211,7 +211,7 @@ function RealisticVial({ name, category, flags, light }: {
   );
 
   return (
-    <svg viewBox="0 0 220 280" className="w-[156px]" aria-hidden="true">
+    <svg viewBox="0 0 220 248" className="w-[150px]" aria-hidden="true">
       <defs>
         <linearGradient id={`glassbase-${uid}`} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor={light ? '#cdd6e2' : '#3c4858'} />
@@ -248,10 +248,6 @@ function RealisticVial({ name, category, flags, light }: {
           <stop offset="46%" stopColor="#fff" stopOpacity="1" /><stop offset="56%" stopColor="#fff" stopOpacity="1" />
           <stop offset="74%" stopColor="#fff" stopOpacity="0.35" /><stop offset="100%" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
-        <linearGradient id={`reflfade-${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={light ? '#eef2f7' : '#020617'} stopOpacity="0" />
-          <stop offset="60%" stopColor={light ? '#eef2f7' : '#020617'} stopOpacity={light ? 0.95 : 0.85} />
-        </linearGradient>
         <clipPath id={`body-${uid}`}><path d={BODY} /></clipPath>
         <filter id={`spec-${uid}`} x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="b" />
@@ -278,14 +274,8 @@ function RealisticVial({ name, category, flags, light }: {
         </filter>
       </defs>
 
-      {/* Floor contact shadow */}
-      <ellipse cx="111" cy="232" rx="46" ry="8" fill="#000" opacity={light ? 0.18 : 0.5} filter={`url(#softsh-${uid})`} />
-
-      {/* Floor reflection (flipped, faded, blurred) */}
-      <g transform="translate(0,460) scale(1,-1)" opacity={light ? 0.28 : 0.42}>
-        <g filter={`url(#softsh-${uid})`}>{renderVial(true)}</g>
-      </g>
-      <rect x="50" y="230" width="120" height="50" fill={`url(#reflfade-${uid})`} />
+      {/* Soft drop shadow beneath the vial */}
+      <ellipse cx="111" cy="234" rx="44" ry="6.5" fill="#000" opacity={light ? 0.16 : 0.42} filter={`url(#softsh-${uid})`} />
 
       {/* The vial */}
       {renderVial(false)}
