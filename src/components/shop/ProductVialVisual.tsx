@@ -22,6 +22,23 @@ for (const [path, url] of Object.entries(photoModules)) {
   PRODUCT_PHOTOS[slug] = url;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Type archetype photos (optional): one ultra-realistic studio shot per vial
+// type, used for every product of that type that lacks its own per-product photo.
+// Powder color follows the chemistry: copper peptides (GHK-Cu / KLOW) are blue,
+// other peptides are white powder, solvents are a clear liquid. Drop files named:
+//   _archetype-peptide-copper.png  → copper peptides (blue powder)
+//   _archetype-peptide-white.png   → normal peptides (white powder)
+//   _archetype-solvent.png         → reconstitution solvents (clear liquid)
+// Per-product photos still win; if an archetype file is absent the procedural
+// vial render is used.
+// ─────────────────────────────────────────────────────────────────────────────
+const ARCHETYPE_PHOTOS = {
+  copper: PRODUCT_PHOTOS['_archetype-peptide-copper'],
+  white: PRODUCT_PHOTOS['_archetype-peptide-white'],
+  solvent: PRODUCT_PHOTOS['_archetype-solvent'],
+};
+
 export function productPhotoSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
@@ -327,8 +344,14 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   const flags: VialFlags = { isSolvent, isChina, isUsaWarehouse };
   const light = theme === 'clinical-light';
 
-  // Real per-product photo wins when one has been added to assets
-  const photo = PRODUCT_PHOTOS[productPhotoSlug(name)];
+  // Contents color follows the chemistry: copper peptides (GHK-Cu / KLOW) carry
+  // a vivid blue lyophilized powder; every other peptide is white powder.
+  const isCopper = /\bghk\b|\bahk\b|klow|copper/i.test(name);
+
+  // Per-product photo wins; otherwise fall back to the type archetype photo
+  // (copper → blue, normal → white, solvent → clear) when one is present.
+  const archetype = isSolvent ? ARCHETYPE_PHOTOS.solvent : isCopper ? ARCHETYPE_PHOTOS.copper : ARCHETYPE_PHOTOS.white;
+  const photo = PRODUCT_PHOTOS[productPhotoSlug(name)] || archetype;
 
   const glowClass = isSolvent ? 'labrat-real-vial-visual--solvent'
     : isChina ? 'labrat-real-vial-visual--china'
