@@ -1460,13 +1460,17 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           )}
 
           {/* NORWAY CUSTOMER BANNER */}
-          {isKitPricing && view === 'catalog' && (
+          {(isKitPricing || isApprovedVialPricing) && view === 'catalog' && (
             <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl px-4 py-3 flex items-center gap-3">
               <span className="text-2xl shrink-0">🇳🇴</span>
               <div>
-                <p className="text-xs font-bold text-cyan-300">Norway Kit Pricing — 10-Vial Kits</p>
+                <p className="text-xs font-bold text-cyan-300">
+                  {isKitPricing ? 'Norway Kit Pricing — 10-Vial Kits' : 'Norway Per-Vial Pricing'}
+                </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
-                  Products priced per 10-vial kit, sourced under Swiss GMP standards. Flat rate $30 international shipping on every order.
+                  {isKitPricing
+                    ? 'Products priced per 10-vial kit, sourced under Swiss GMP standards. Flat rate $30 international shipping on every order.'
+                    : 'Per-vial pricing sourced from Norway under Swiss GMP standards. Free shipping on orders of $100+, otherwise calculated at checkout.'}
                 </p>
               </div>
             </div>
