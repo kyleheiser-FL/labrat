@@ -1217,10 +1217,7 @@ html[data-labrat-theme="clinical"] .labrat-real-vial-bottom-strip strong {
   margin-top: 1.05rem !important;
 }
 html[data-labrat-theme="clinical"] .labrat-real-vial-visual {
-  background:
-    radial-gradient(circle at 18% 22%, rgba(96, 165, 250, 0.18), transparent 36%),
-    radial-gradient(circle at 82% 18%, rgba(148, 163, 184, 0.14), transparent 34%),
-    linear-gradient(135deg, rgba(14, 27, 48, 0.98), rgba(18, 35, 58, 0.96) 52%, rgba(30, 48, 72, 0.94)) !important;
+  background: #000000 !important;
 }
 html[data-labrat-theme="clinical"] .labrat-real-vial-photo {
   filter: brightness(1.12) contrast(1.06) saturate(0.92) !important;
@@ -3452,4 +3449,18 @@ html[data-labrat-theme="neon"] a.bg-cyan-500:active {
 }
 @media (prefers-reduced-motion: reduce) {
   .labrat-command-hero-art img { animation: none; }
+}
+
+/* ── Clinical dark: pure black studio backdrop for product vials — no colored
+     glows, grids, or orbs (matches the OLED-black theme identity) ── */
+html[data-labrat-theme="clinical"] .labrat-real-vial-visual,
+html[data-labrat-theme="clinical"] .labrat-real-vial-visual--china,
+html[data-labrat-theme="clinical"] .labrat-real-vial-visual--usa,
+html[data-labrat-theme="clinical"] .labrat-real-vial-visual--solvent,
+html[data-labrat-theme="clinical"] .labrat-real-vial-visual--peptide {
+  background: #000000 !important;
+}
+html[data-labrat-theme="clinical"] .labrat-real-vial-grid,
+html[data-labrat-theme="clinical"] .labrat-real-vial-orb {
+  display: none;
 }
