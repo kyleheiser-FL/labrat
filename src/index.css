@@ -2332,7 +2332,8 @@ html[data-labrat-theme="clinical-light"] .text-slate-500 {
 }
 
 html[data-labrat-theme="clinical-light"] .text-slate-600 {
-  color: #94a3b8 !important;
+  /* Keep muted text readable on white — #94a3b8 was below AA contrast */
+  color: #64748b !important;
 }
 
 /* Borders → light gray */
@@ -3463,4 +3464,72 @@ html[data-labrat-theme="clinical"] .labrat-real-vial-visual--peptide {
 html[data-labrat-theme="clinical"] .labrat-real-vial-grid,
 html[data-labrat-theme="clinical"] .labrat-real-vial-orb {
   display: none;
+}
+
+/* ── clinical-light: readability fixes — compound form modal + protocol
+     presets. Dark hex panels that had no light override left dark-on-dark
+     or light-on-light text combinations. ─────────────────────────────── */
+
+/* Protocol panel header + vial-size selector row */
+html[data-labrat-theme="clinical-light"] .bg-\[\#0d1422\]\/80,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0d1422\]\/40 {
+  background-color: rgba(241, 245, 249, 0.92) !important;
+}
+
+/* Preset "Apply" buttons */
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f2137\] {
+  background-color: rgba(37, 99, 235, 0.08) !important;
+}
+
+/* Remaining dark slate chip/button backgrounds not covered above */
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/35,
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/50,
+html[data-labrat-theme="clinical-light"] .bg-\[\#1e293b\]\/85,
+html[data-labrat-theme="clinical-light"] .bg-slate-900\/45,
+html[data-labrat-theme="clinical-light"] .hover\:bg-slate-900\/30:hover {
+  background-color: rgba(241, 245, 249, 0.90) !important;
+}
+
+/* Cyan tinted chips/notes → soft clinical blue */
+html[data-labrat-theme="clinical-light"] .bg-cyan-500\/15,
+html[data-labrat-theme="clinical-light"] .bg-cyan-700\/20,
+html[data-labrat-theme="clinical-light"] .bg-cyan-950\/20,
+html[data-labrat-theme="clinical-light"] .hover\:bg-cyan-500\/15:hover,
+html[data-labrat-theme="clinical-light"] .hover\:bg-cyan-500\/20:hover,
+html[data-labrat-theme="clinical-light"] .hover\:bg-cyan-600\/30:hover {
+  background-color: rgba(37, 99, 235, 0.08) !important;
+}
+
+/* Borders on those chips */
+html[data-labrat-theme="clinical-light"] .border-slate-700\/50,
+html[data-labrat-theme="clinical-light"] .border-cyan-900\/10 {
+  border-color: rgba(148, 163, 184, 0.38) !important;
+}
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/15,
+html[data-labrat-theme="clinical-light"] .border-cyan-500\/50,
+html[data-labrat-theme="clinical-light"] .hover\:border-cyan-500\/50:hover {
+  border-color: rgba(37, 99, 235, 0.30) !important;
+}
+
+/* Cyan accent text → clinical blue (cyan-600 was marginal on white) */
+html[data-labrat-theme="clinical-light"] .text-cyan-600 {
+  color: #2563eb !important;
+}
+
+/* Hover text states assumed a dark backdrop — keep them dark-on-light */
+html[data-labrat-theme="clinical-light"] .hover\:text-white:hover,
+html[data-labrat-theme="clinical-light"] .hover\:text-slate-100:hover,
+html[data-labrat-theme="clinical-light"] .hover\:text-slate-200:hover {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] .hover\:text-cyan-200:hover,
+html[data-labrat-theme="clinical-light"] .hover\:text-cyan-300:hover {
+  color: #1d4ed8 !important;
+}
+
+/* Primary CTAs: bg-cyan-500 maps to solid blue, so dark button text
+   (text-slate-950) must flip to white */
+html[data-labrat-theme="clinical-light"] .bg-cyan-500.text-slate-950,
+html[data-labrat-theme="clinical-light"] .bg-cyan-500 .text-slate-950 {
+  color: #ffffff !important;
 }
