@@ -31,8 +31,22 @@ import {
   getCategoryBadgeStyle,
 } from '../../lib/shopHelpers';
 import { usePricingConfig } from '../../lib/pricingConfig';
+import { rankSearch, SearchFields } from '../../lib/search';
 import ProductVialVisual from './ProductVialVisual';
 import PeptideRequestForm from './PeptideRequestForm';
+
+const shopFields = (p: ShopProduct): SearchFields => ({
+  name: p.name,
+  chemicalName: p.chemicalName,
+  aliasKey: getProductBaseAndSize(p.name).baseName
+    .replace(/\(.*?\)/g, ' ')
+    .replace(/\s+(china|us warehouse)\s*$/i, '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, ''),
+  extra: p.description,
+});
 
 function getProductAvailableStock(prodId: string, baseInventory: number, allOrdersGlobal: OrderDetail[]): number {
   let stock = baseInventory;
@@ -130,10 +144,12 @@ export default function ShopCatalogView({
 
   const isChinaTier = isChinaKitPricing || isChinaVialPricing;
 
+  const searchMatchIds = searchQuery.trim()
+    ? new Set(rankSearch(searchQuery, products, shopFields).map(p => p.id))
+    : null;
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
-    const q = searchQuery.toLowerCase();
-    const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.chemicalName?.toLowerCase().includes(q);
+    const matchesSearch = !searchMatchIds || searchMatchIds.has(p.id);
     if (!matchesCategory || !matchesSearch) return false;
 
     // Source restriction: China members can't see Norway-only, Norway members can't see China-only
@@ -351,11 +367,7 @@ export default function ShopCatalogView({
 
             {/* High-fidelity autocomplete popup dropdown */}
             {showShopSuggestions && searchQuery.trim().length > 0 && (() => {
-              const q = searchQuery.toLowerCase();
-              const shopSuggestions = products.filter(p =>
-                p.name.toLowerCase().includes(q) ||
-                p.chemicalName?.toLowerCase().includes(q)
-              ).slice(0, 5);
+              const shopSuggestions = rankSearch(searchQuery, products, shopFields).slice(0, 5);
 
               return (
                 <div
