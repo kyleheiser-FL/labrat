@@ -24,15 +24,21 @@ no per-product photo of its own. Powder color follows the chemistry:
 
 One branded photo per peptide compound, shared by every strength and source
 (Norway / China / US Warehouse) of that compound — the source flag badge is
-overlaid by the UI, so variants stay distinguishable. Files are named
-`_compound-<base-slug>.png` where the slug is the product name minus its
-strength, parentheticals, and "China"/"US Warehouse" suffix:
+overlaid by the UI, so variants stay distinguishable. Two variants per
+compound, named by the product name minus its strength, parentheticals, and
+"China"/"US Warehouse" suffix:
 
-  "Tirzepatide China (30mg)"        → _compound-tirzepatide.png
-  "BPC-157 / TB-500 Blend (10mg)"   → _compound-bpc-157-tb-500-blend.png
-  "SS-31 (Elamipretide) (10mg)"     → _compound-ss-31.png
-  "NAD+ (500mg)"                    → _compound-nad.png
+  _compound-<base-slug>-cutout.png  → transparent-background cutout (preferred,
+                                      used on every theme)
+  _compound-<base-slug>.png         → 1:1 dark studio shot (fallback)
 
-Resolution order per product: exact per-product photo → compound photo →
-type archetype → procedural vial render. Generated with Higgsfield, 1:1
-studio shots with the holographic LABRAT sticker.
+  "Tirzepatide China (30mg)"        → _compound-tirzepatide-cutout.png
+  "BPC-157 / TB-500 Blend (10mg)"   → _compound-bpc-157-tb-500-blend-cutout.png
+  "SS-31 (Elamipretide) (10mg)"     → _compound-ss-31-cutout.png
+  "NAD+ (500mg)"                    → _compound-nad-cutout.png
+
+Resolution order per product: exact per-product photo → compound cutout →
+compound studio shot → type archetype → procedural vial render. Generated
+with Higgsfield (holographic LABRAT sticker), vendored locally at ~900×900;
+re-download with scripts/fetch-compound-photos.sh and
+scripts/fetch-compound-cutouts.sh.
