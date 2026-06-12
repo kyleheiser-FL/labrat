@@ -87,6 +87,17 @@ function RealisticVial({ name, category, flags, light }: {
   const capDark   = isSolvent ? '#0369a1' : isChina ? '#991b1b' : isUsaWarehouse ? '#92400e' : '#1e40af';
   const uid = (name + category).replace(/[^a-z0-9]/gi, '').slice(0, 12).toLowerCase() || 'vial';
 
+  // Reconstituted/lyophilized contents color. Research: nearly every peptide is
+  // a white powder / clear solution — copper peptides (GHK-Cu, AHK-Cu) and any
+  // blend containing them (e.g. KLOW) are the exception, appearing cobalt blue
+  // from the bound copper(II) ion.
+  const isCopper = /\bghk\b|\bahk\b|klow|copper/i.test(name);
+  const powderTop     = isCopper ? '#60a5fa' : '#ffffff';
+  const powderBottom  = isCopper ? '#1d4ed8' : (light ? '#e2e8f0' : '#cbd5e1');
+  const powderSurface = isCopper ? '#bfdbfe' : '#ffffff';
+  const liquidFill    = isCopper ? '#3b82f6' : '#bae6fd';
+  const liquidSurface = isCopper ? '#93c5fd' : '#bae6fd';
+
   // Label geometry — dark gunmetal stock wrapped around the squat 3ml body
   const LABEL_TOP = 80, LABEL_BOTTOM = 210;
   const nameBaseline = line2 ? 112 : 117;
@@ -132,12 +143,12 @@ function RealisticVial({ name, category, flags, light }: {
           <stop offset="100%" stopColor="#22d3ee" />
         </linearGradient>
         <linearGradient id={`w-${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="100%" stopColor={light ? '#e2e8f0' : '#cbd5e1'} />
+          <stop offset="0%" stopColor={powderTop} />
+          <stop offset="100%" stopColor={powderBottom} />
         </linearGradient>
         <linearGradient id={`l-${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#bae6fd" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#7dd3fc" stopOpacity="0.35" />
+          <stop offset="0%" stopColor={liquidFill} stopOpacity={isCopper ? 0.6 : 0.5} />
+          <stop offset="100%" stopColor={isCopper ? '#1d4ed8' : '#7dd3fc'} stopOpacity={isCopper ? 0.5 : 0.35} />
         </linearGradient>
       </defs>
 
@@ -158,16 +169,17 @@ function RealisticVial({ name, category, flags, light }: {
         fill={`url(#g-${uid})`} stroke={light ? '#cbd5e1' : '#1e293b'} strokeWidth="1"
       />
 
-      {/* Contents — visible above (neck) and below the wrapped label */}
+      {/* Contents — visible above (neck) and below the wrapped label.
+          Powder color is data-driven: copper peptides (GHK-Cu / KLOW) read blue. */}
       {isSolvent ? (
         <>
           <rect x="67" y="52" width="86" height="176" rx="10" fill={`url(#l-${uid})`} />
-          <ellipse cx="110" cy="52" rx="43" ry="4" fill="#bae6fd" opacity="0.65" />
+          <ellipse cx="110" cy="52" rx="43" ry="4" fill={liquidSurface} opacity="0.65" />
         </>
       ) : (
         <>
-          <rect x="67" y="208" width="86" height="20" rx="8" fill={`url(#w-${uid})`} opacity="0.95" />
-          <ellipse cx="110" cy="208" rx="43" ry="4.5" fill="#ffffff" opacity="0.9" />
+          <rect x="67" y="204" width="86" height="24" rx="8" fill={`url(#w-${uid})`} opacity="0.97" />
+          <ellipse cx="110" cy="204" rx="43" ry="4.5" fill={powderSurface} opacity="0.92" />
         </>
       )}
 
