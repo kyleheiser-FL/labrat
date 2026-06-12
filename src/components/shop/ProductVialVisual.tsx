@@ -74,8 +74,8 @@ function RealisticVial({ name, category, flags, light }: {
     }
   }
   const longest = Math.max(line1.length, line2.length);
-  const nameSize = longest > 14 ? 9.5 : longest > 11 ? 11 : 13;
-  const LABEL_TEXT_MAX = 72;
+  const nameSize = longest > 15 ? 11 : longest > 12 ? 12.5 : 14;
+  const LABEL_TEXT_MAX = 78;
   const fit = (text: string) => {
     const est = text.length * nameSize * 0.62;
     return est > LABEL_TEXT_MAX ? { textLength: LABEL_TEXT_MAX, lengthAdjust: 'spacingAndGlyphs' as const } : {};
@@ -86,8 +86,9 @@ function RealisticVial({ name, category, flags, light }: {
   const capDark   = isSolvent ? '#0369a1' : isChina ? '#991b1b' : isUsaWarehouse ? '#92400e' : '#1e40af';
   const uid = (name + category).replace(/[^a-z0-9]/gi, '').slice(0, 12).toLowerCase() || 'vial';
 
+  // True 3ml vial proportions: squat, wide body (~1.5:1 h/w) with rounded shoulders
   return (
-    <svg viewBox="0 0 220 300" className="w-[150px] drop-shadow-xl" aria-hidden="true">
+    <svg viewBox="0 0 220 250" className="w-[150px] drop-shadow-xl" aria-hidden="true">
       <defs>
         {/* Borosilicate glass */}
         <linearGradient id={`g-${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
@@ -98,13 +99,11 @@ function RealisticVial({ name, category, flags, light }: {
           <stop offset="92%" stopColor="#ffffff" stopOpacity="0.55" />
           <stop offset="100%" stopColor={light ? '#cbd5e1' : '#475569'} stopOpacity="0.6" />
         </linearGradient>
-        {/* Flip-top plastic cap */}
         <linearGradient id={`c-${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor={capColor} />
           <stop offset="55%" stopColor={capColor} />
           <stop offset="100%" stopColor={capDark} />
         </linearGradient>
-        {/* Aluminum crimp */}
         <linearGradient id={`a-${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#94a3b8" />
           <stop offset="25%" stopColor="#e2e8f0" />
@@ -112,7 +111,6 @@ function RealisticVial({ name, category, flags, light }: {
           <stop offset="75%" stopColor="#cbd5e1" />
           <stop offset="100%" stopColor="#64748b" />
         </linearGradient>
-        {/* Label paper */}
         <linearGradient id={`p-${uid}`} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#e8e6e0" />
           <stop offset="12%" stopColor="#fdfcf9" />
@@ -120,12 +118,10 @@ function RealisticVial({ name, category, flags, light }: {
           <stop offset="90%" stopColor="#fbfaf6" />
           <stop offset="100%" stopColor="#dcd9d0" />
         </linearGradient>
-        {/* Powder cake */}
         <linearGradient id={`w-${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="#ffffff" />
           <stop offset="100%" stopColor={light ? '#e2e8f0' : '#cbd5e1'} />
         </linearGradient>
-        {/* Liquid (solvent) */}
         <linearGradient id={`l-${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="#bae6fd" stopOpacity="0.5" />
           <stop offset="100%" stopColor="#7dd3fc" stopOpacity="0.35" />
@@ -133,93 +129,92 @@ function RealisticVial({ name, category, flags, light }: {
       </defs>
 
       {/* Floor shadow */}
-      <ellipse cx="110" cy="285" rx="44" ry="6" fill="#000" opacity={light ? 0.12 : 0.45} />
+      <ellipse cx="110" cy="240" rx="52" ry="5" fill="#000" opacity={light ? 0.12 : 0.45} />
 
       {/* Flip-top cap */}
-      <rect x="76" y="14" width="68" height="17" rx="4" fill={`url(#c-${uid})`} />
-      <ellipse cx="110" cy="15.5" rx="34" ry="4.5" fill={capColor} />
-      <ellipse cx="110" cy="15.5" rx="22" ry="2.8" fill="#ffffff" opacity="0.28" />
+      <rect x="75" y="14" width="70" height="15" rx="4.5" fill={`url(#c-${uid})`} />
+      <ellipse cx="110" cy="15.5" rx="35" ry="4.5" fill={capColor} />
+      <ellipse cx="110" cy="15.5" rx="23" ry="2.6" fill="#ffffff" opacity="0.28" />
       {/* Aluminum crimp collar */}
-      <rect x="73" y="30" width="74" height="16" rx="3" fill={`url(#a-${uid})`} />
-      <rect x="73" y="42" width="74" height="2.5" fill="#475569" opacity="0.5" />
+      <rect x="72" y="28" width="76" height="15" rx="3" fill={`url(#a-${uid})`} />
+      <rect x="72" y="40" width="76" height="2.2" fill="#475569" opacity="0.5" />
 
-      {/* Neck */}
-      <path d="M80 46 L80 56 Q80 60 84 61 L136 61 Q140 60 140 56 L140 46 Z" fill={`url(#g-${uid})`} />
-
-      {/* Body */}
-      <rect x="68" y="61" width="84" height="212" rx="10" fill={`url(#g-${uid})`}
-        stroke={light ? '#cbd5e1' : '#1e293b'} strokeWidth="1" />
+      {/* Neck + shoulder + squat body as one silhouette */}
+      <path
+        d="M78 43 L78 47 Q68 50 66 55 Q65 58 65 66 L65 218 Q65 230 77 230 L143 230 Q155 230 155 218 L155 66 Q155 58 154 55 Q152 50 142 47 L142 43 Z"
+        fill={`url(#g-${uid})`} stroke={light ? '#cbd5e1' : '#1e293b'} strokeWidth="1"
+      />
 
       {/* Contents: powder cake for peptides, liquid for solvents */}
       {isSolvent ? (
         <>
-          <rect x="70" y="92" width="80" height="176" rx="9" fill={`url(#l-${uid})`} />
-          <ellipse cx="110" cy="92" rx="40" ry="4" fill="#bae6fd" opacity="0.65" />
+          <rect x="67" y="94" width="86" height="134" rx="10" fill={`url(#l-${uid})`} />
+          <ellipse cx="110" cy="94" rx="43" ry="4" fill="#bae6fd" opacity="0.65" />
         </>
       ) : (
         <>
-          <rect x="70" y="238" width="80" height="30" rx="6" fill={`url(#w-${uid})`} opacity="0.95" />
-          <ellipse cx="110" cy="238" rx="40" ry="4.5" fill="#ffffff" opacity="0.95" />
-          <ellipse cx="96" cy="244" rx="10" ry="2" fill="#ffffff" opacity="0.7" />
+          <rect x="67" y="196" width="86" height="32" rx="8" fill={`url(#w-${uid})`} opacity="0.95" />
+          <ellipse cx="110" cy="196" rx="43" ry="4.5" fill="#ffffff" opacity="0.95" />
+          <ellipse cx="94" cy="205" rx="12" ry="2.2" fill="#ffffff" opacity="0.7" />
         </>
       )}
 
       {/* ── Wrapped paper label (the product IS the label) ── */}
       <g>
-        <rect x="68" y="78" width="84" height="120" fill={`url(#p-${uid})`} />
+        <rect x="65" y="84" width="90" height="110" fill={`url(#p-${uid})`} />
         {/* Category color band */}
-        <rect x="68" y="78" width="84" height="20" fill={hue.band} />
-        <text x="110" y="87.5" textAnchor="middle" fontSize="7.5" fontWeight="900" letterSpacing="2.2"
+        <rect x="65" y="84" width="90" height="20" fill={hue.band} />
+        <text x="110" y="93.5" textAnchor="middle" fontSize="8" fontWeight="900" letterSpacing="2.4"
           fill="#ffffff" fontFamily="'Space Grotesk', system-ui, sans-serif">LABRAT</text>
-        <text x="110" y="95" textAnchor="middle" fontSize="4.6" fontWeight="700" letterSpacing="1.4"
+        <text x="110" y="101" textAnchor="middle" fontSize="4.8" fontWeight="700" letterSpacing="1.5"
           fill={hue.bandText} fontFamily="system-ui, sans-serif">RESEARCH COMPOUND</text>
 
         {/* Product name printed on the label */}
         {line2 ? (
           <>
-            <text x="110" y="116" textAnchor="middle" fontSize={nameSize} fontWeight="800"
+            <text x="110" y="119" textAnchor="middle" fontSize={nameSize} fontWeight="800"
               fill="#111827" fontFamily="'Space Grotesk', system-ui, sans-serif" {...fit(line1)}>{line1}</text>
-            <text x="110" y={116 + nameSize + 2} textAnchor="middle" fontSize={nameSize} fontWeight="800"
+            <text x="110" y={119 + nameSize + 2} textAnchor="middle" fontSize={nameSize} fontWeight="800"
               fill="#111827" fontFamily="'Space Grotesk', system-ui, sans-serif" {...fit(line2)}>{line2}</text>
           </>
         ) : (
-          <text x="110" y="122" textAnchor="middle" fontSize={nameSize} fontWeight="800"
+          <text x="110" y="125" textAnchor="middle" fontSize={nameSize} fontWeight="800"
             fill="#111827" fontFamily="'Space Grotesk', system-ui, sans-serif" {...fit(line1)}>{line1}</text>
         )}
 
         {/* Strength pill */}
         {strength && (
           <>
-            <rect x={110 - (strength.length * 3.2 + 10) / 2} y="138" width={strength.length * 3.2 + 10} height="13" rx="6.5"
+            <rect x={110 - (strength.length * 4 + 12) / 2} y="138" width={strength.length * 4 + 12} height="14" rx="7"
               fill={hue.band} opacity="0.92" />
-            <text x="110" y="147" textAnchor="middle" fontSize="7.5" fontWeight="900" letterSpacing="0.5"
+            <text x="110" y="148" textAnchor="middle" fontSize="8" fontWeight="900" letterSpacing="0.5"
               fill="#ffffff" fontFamily="system-ui, sans-serif">{strength}</text>
           </>
         )}
 
         {/* Fine print */}
-        <text x="110" y={strength ? 162 : 150} textAnchor="middle" fontSize="4.8" fontWeight="600"
+        <text x="110" y={strength ? 162 : 151} textAnchor="middle" fontSize="5" fontWeight="600"
           fill="#6b7280" fontFamily="system-ui, sans-serif">
           {isSolvent ? 'Sterile Reconstitution Solvent' : 'Lyophilized · 3ml Glass Vial'}
         </text>
-        <text x="110" y={strength ? 170 : 158} textAnchor="middle" fontSize="4.8" fontWeight="600"
+        <text x="110" y={strength ? 169 : 158} textAnchor="middle" fontSize="5" fontWeight="600"
           fill="#9ca3af" fontFamily="system-ui, sans-serif">For Laboratory Research Use Only</text>
 
         {/* Barcode */}
         <g opacity="0.8">
-          {[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17].map(i => (
-            <rect key={i} x={78 + i * 3.6} y="180" width={i % 3 === 0 ? 2 : 1.2} height="11" fill="#374151" />
+          {[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19].map(i => (
+            <rect key={i} x={76 + i * 3.5} y="176" width={i % 3 === 0 ? 2.2 : 1.2} height="12" fill="#374151" />
           ))}
         </g>
         {/* Label edge shadows for wrap illusion */}
-        <rect x="68" y="78" width="5" height="120" fill="#000" opacity="0.10" />
-        <rect x="147" y="78" width="5" height="120" fill="#000" opacity="0.12" />
+        <rect x="65" y="84" width="5" height="110" fill="#000" opacity="0.10" />
+        <rect x="150" y="84" width="5" height="110" fill="#000" opacity="0.12" />
       </g>
 
       {/* Glass highlights over everything */}
-      <rect x="74" y="64" width="6" height="200" rx="3" fill="#ffffff" opacity={light ? 0.65 : 0.5} />
-      <rect x="140" y="70" width="3.5" height="120" rx="1.75" fill="#ffffff" opacity="0.3" />
-      <ellipse cx="110" cy="270" rx="40" ry="5" fill="#ffffff" opacity="0.12" />
+      <rect x="70" y="60" width="6" height="160" rx="3" fill="#ffffff" opacity={light ? 0.65 : 0.5} />
+      <rect x="143" y="64" width="4" height="95" rx="2" fill="#ffffff" opacity="0.3" />
+      <ellipse cx="110" cy="226" rx="40" ry="4" fill="#ffffff" opacity="0.12" />
     </svg>
   );
 }
