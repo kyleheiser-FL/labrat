@@ -87,6 +87,14 @@ const REMOTE_COMPOUND_PHOTOS: Record<string, string> = {
   'lemon-bottle': `${HF}/hf_20260612_194136_379451ad-2bc0-40c2-88ab-424a54fb41c4.png`,
 };
 
+// Transparent-background cutouts of the same compound photos, used on the
+// clinical-light theme so the vial sits on the white card instead of a dark
+// studio square. Filled in per compound as background removals complete; any
+// compound missing here falls back to the dark studio shot on light too.
+const REMOTE_COMPOUND_PHOTOS_LIGHT: Record<string, string> = {
+  'snap-8': `${HF}/hf_20260612_221605_d2a1c12f-d64e-47c1-9c08-ec3f55cd38d3.png`,
+};
+
 export function productPhotoSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
@@ -415,7 +423,10 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   // (copper → blue, normal → white, solvent → clear) → procedural render.
   const archetype = isSolvent ? ARCHETYPE_PHOTOS.solvent : isCopper ? ARCHETYPE_PHOTOS.copper : ARCHETYPE_PHOTOS.white;
   const cSlug = compoundPhotoSlug(name);
+  // Light theme prefers the transparent cutout so the vial sits on the white
+  // card; dark themes keep the studio-background shot.
   const photo = PRODUCT_PHOTOS[productPhotoSlug(name)]
+    || (light && (PRODUCT_PHOTOS[`_compound-${cSlug}-cutout`] || REMOTE_COMPOUND_PHOTOS_LIGHT[cSlug]))
     || PRODUCT_PHOTOS[`_compound-${cSlug}`]
     || REMOTE_COMPOUND_PHOTOS[cSlug]
     || archetype;
