@@ -46,6 +46,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'TB-500',
     chemicalName: 'Thymosin Beta-4 (Frag. 17-23)',
     category: 'healing',
+    clinicalStudies: [
+      {
+        studyTitle: 'Thymosin beta4 activates integrin-linked kinase and promotes cardiac cell migration, survival and cardiac repair',
+        citation: 'Nature, 2004 (Bock-Marquette et al.)',
+        keyFinding: 'In mice, thymosin beta-4 promoted cardiomyocyte migration and survival via an ILK/Akt pathway, and treatment after coronary artery ligation enhanced early myocyte survival and improved cardiac function. Animal/in vitro.'
+      },
+      {
+        studyTitle: 'Thymosin beta4 and cardiac repair',
+        citation: 'Annals of the New York Academy of Sciences, 2010',
+        keyFinding: 'Review documenting that exogenous thymosin beta-4 in animal models of cardiac injury reduces fibrosis, mobilizes epicardial progenitor cells, and promotes angiogenesis.'
+      },
+    ],
     description: 'A synthetic version of the active healing region of Thymosin Beta-4. It acts as an actin-sequestering protein that plays a vital role in repairing damaged tissues, improving range of motion, and reducing inflammatory scarring.',
     clinicalResearch: 'Thymosin Beta-4 has remarkable wound healing properties. It promotes cellular migration, stem cell differentiation, and acts as a potent anti-scarring agent. Widely stacked with BPC-157 for synergistic recovery.',
     typicalDosage: '2.5 mg - 5 mg twice weekly',
@@ -109,6 +121,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Tirzepatide',
     chemicalName: 'Dual GIP / GLP-1 Receptor Agonist',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Tirzepatide Once Weekly for the Treatment of Obesity (SURMOUNT-1)',
+        citation: 'New England Journal of Medicine, Vol 387, 2022 (NEJMoa2206038)',
+        keyFinding: 'In 2,539 adults with obesity or overweight over 72 weeks, mean weight reduction was 16.0% (5 mg), 21.4% (10 mg), and 22.5% (15 mg) versus 2.4% on placebo; 89–96% of treated participants lost at least 5% of body weight versus 28% on placebo.'
+      },
+    ],
     description: 'A novel synthetic companion that acts as a dual glucose-dependent insulinotropic polypeptide (GIP) and GLP-1 receptor agonist. Features higher weight reduction metrics on average than GLP-1 mono-agonists.',
     clinicalResearch: 'SURMOUNT trials showed that the synergistic dual-receptor action of GIP and GLP-1 achieves elevated weight mitigation with slightly improved nausea profiles compared to Semaglutide alone.',
     typicalDosage: '2.5 mg - 15 mg once weekly',
@@ -137,6 +156,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Retatrutide',
     chemicalName: 'GIP / GLP-1 / Glucagon Receptor Agonist',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Triple-Hormone-Receptor Agonist Retatrutide for Obesity — A Phase 2 Trial (Jastreboff et al.)',
+        citation: 'New England Journal of Medicine, Vol 389, 2023 (NEJMoa2301972)',
+        keyFinding: 'In 338 adults with obesity, least-squares mean weight change at 48 weeks was −8.7% (1 mg), −17.1% (4 mg), −22.8% (8 mg), and −24.2% (12 mg) versus −2.1% on placebo — the largest mid-stage weight loss reported for an incretin agent to date.'
+      },
+    ],
     description: 'A next-generation co-agonist targeting three distinct metabolic hunger pathways (GIP, GLP-1, and GCG). It delivers the most powerful weight-mitigation rates currently noted in clinical literature.',
     clinicalResearch: 'By stimulating GIP, GLP-1, and glucagon receptors simultaneously, Retatrutide accelerates metabolic energy expenditure and thermogenesis while safely keeping insulin secretions optimized.',
     typicalDosage: '1 mg - 12 mg once weekly',
@@ -164,6 +190,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Ipamorelin',
     chemicalName: 'Growth Hormone Releasing Peptide (GHRP)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Ipamorelin, the first selective growth hormone secretagogue',
+        citation: 'European Journal of Endocrinology, 1998 (Raun et al.)',
+        keyFinding: 'In rats, ipamorelin released GH with potency comparable to GHRP-6 but, unlike other GHRPs, did NOT raise ACTH or cortisol above GHRH-stimulated levels, establishing it as the first GH-selective secretagogue. Animal/in vitro.'
+      },
+    ],
     description: 'A highly selective, mild growth hormone secretagogue. It mimics ghrelin to stimulate growth hormone release without triggering spikes in cortisol, prolactin, or aldosterone, making it exceptionally safe.',
     clinicalResearch: 'Ipamorelin binds to the growth hormone secretagogue receptor in the pituitary. Clinical models highlight its efficacy in maintaining body mass index, increasing bone mineral density, and promoting youth status in skin and tissues.',
     typicalDosage: '200 mcg - 300 mcg once daily',
@@ -220,6 +253,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'GHK-Cu',
     chemicalName: 'Copper Tripeptide-1',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Regenerative and Protective Actions of the GHK-Cu Peptide in the Light of the New Gene Data',
+        citation: 'International Journal of Molecular Sciences, 2018',
+        keyFinding: 'Mechanistic review documenting that GHK-Cu modulates expression of a large number of human genes, stimulates collagen and glycosaminoglycan synthesis, and promotes angiogenesis and wound contraction (drawing on in vitro and animal wound-healing data).'
+      },
+      {
+        studyTitle: 'Exploring the Role of Tripeptides in Wound Healing and Skin Regeneration: A Comprehensive Review',
+        citation: 'International Journal of Medical Sciences, 2025',
+        keyFinding: 'Reviews rat full-thickness wound experiments in which GHK-Cu-treated wounds contracted ~64.5% over 13 days versus ~45.6% (vehicle) and ~28.2% (untreated), with faster epithelialization and increased collagen. Animal data.'
+      },
+    ],
     description: 'An elemental copper-binding tripeptide found naturally in human plasma. It regulates a vast array of human genes (upregulated collagen, elastin, decorin) to act as a powerful rejuvenator of skin, hair, and neurological tissue.',
     clinicalResearch: 'Research indicates GHK-Cu has anti-inflammatory, antioxidant, and tissue-regenerative properties. It remodels skin layers, reverses fine wrinkles, stimulates hair follicle size, and repairs protective nerve fibers.',
     typicalDosage: '1.5 mg - 3 mg once daily',
@@ -248,6 +293,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Human Growth Hormone (HGH)',
     chemicalName: 'Somatropin (recombinant 191aa)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of Human Growth Hormone in Men over 60 Years Old',
+        citation: 'New England Journal of Medicine, 1990 (Rudman et al.)',
+        keyFinding: 'Six months of GH in 12 men aged 61-81 with low IGF-I increased lean body mass by ~4.7 kg and decreased fat mass by ~3.5 kg, with a rise in lumbar spine bone density.'
+      },
+      {
+        studyTitle: 'Effects of recombinant human growth hormone on body composition and metabolism in adults with GH deficiency',
+        citation: 'New England Journal of Medicine, 1989 (Salomon et al.)',
+        keyFinding: 'In GH-deficient adults, six months of recombinant GH increased lean body mass by ~5.5 kg and reduced fat mass by ~5.7 kg versus no significant change on placebo.'
+      },
+    ],
     description: 'The premier clinical human hormone regulating nitrogen retention, growth processes, cellular division, tissue repair, and skeletal structural healing.',
     clinicalResearch: 'Induces downstream anabolic actions by stimulating liver synthesis of Insulin-Like Growth Factor 1 (IGF-1). Profoundly stimulates osteoblast bone thickness, skin density, and cellular protein transcription.',
     typicalDosage: '2 IU - 4 IU once daily',
@@ -275,6 +332,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'IGF-1 LR3',
     chemicalName: 'Long R3 Insulin-Like Growth Factor-1',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Recombinant Human LR3 IGF-I: in vitro cell proliferation characterization',
+        citation: 'Manufacturer technical/characterization data (in vitro)',
+        keyFinding: 'LR3 IGF-I stimulates proliferation of MCF-7 human cells and, via the Arg3 substitution plus N-terminal extension, binds IGF-binding proteins poorly, giving prolonged bioactivity. Characterization data, not a clinical trial; no human efficacy trials exist for this analog.'
+      },
+    ],
     description: 'An advanced, highly stable analogue of indigenous human IGF-1. Re-engineered with an 83 amino acid sequence to prevent binding to inhibitory proteins and dramatically multiply its potency.',
     clinicalResearch: 'Promotes true myofibrillar hyperplasia (formation of new muscle cellular fibers), breaking past genetic limits by dividing and creating new receptive muscle structures instead of merely expanding existing cells.',
     typicalDosage: '30 mcg - 80 mcg once daily',
@@ -303,6 +367,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'PT-141 (Bremelanotide)',
     chemicalName: 'Melanocortin Receptor Agonist Bremelanotide',
     category: 'sexual_health',
+    clinicalStudies: [
+      {
+        studyTitle: 'Bremelanotide for the Treatment of Hypoactive Sexual Desire Disorder: Two Randomized Phase 3 Trials',
+        citation: 'Obstetrics & Gynecology, 2019',
+        keyFinding: 'In the integrated RECONNECT trials (1,267 premenopausal women), self-administered subcutaneous bremelanotide 1.75 mg significantly increased sexual desire and reduced desire-related distress versus placebo; nausea, flushing, and headache were most common.'
+      },
+    ],
     description: 'A synthetic cyclic peptide that crosses the blood-brain barrier to target central nervous system receptors, dramatically upgrading neurological sexual drive and libido signals.',
     clinicalResearch: 'Binds predominantly to MC3 and MC4 melanocortin receptors in the hypothalamus, stimulating central pathways to overcome physical or psychological sexual dysfunction.',
     typicalDosage: '1 mg - 2 mg as needed',
@@ -330,6 +401,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Tesamorelin',
     chemicalName: 'Growth Hormone Releasing Hormone Analogue (44aa)',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Metabolic Effects of a Growth Hormone-Releasing Factor in Patients with HIV (Falutz et al.)',
+        citation: 'New England Journal of Medicine, Vol 357, 2007 (NEJMoa072375)',
+        keyFinding: 'In 412 HIV-infected patients with excess visceral adiposity, 26 weeks of daily subcutaneous tesamorelin reduced visceral adipose tissue by ~15% versus a ~5% increase on placebo, without worsening glucose tolerance. Tesamorelin is FDA-approved (Egrifta) for HIV-associated lipodystrophy.'
+      },
+    ],
     description: 'A synthetic analogue of Growth Hormone Releasing Hormone (GHRH) with an anchoring hexenoyl group that makes it resistant to enzymatic breakdown. Specially researched for visceral fat loss.',
     clinicalResearch: 'Promotes pulsatile growth hormone secretion matching endogenous cycles. Heavily researched and clinically shown to reduce deep belly visceral adiposity without altering subcutaneous structures.',
     typicalDosage: '1 mg - 2 mg once daily',
@@ -357,6 +435,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Epitalon',
     chemicalName: 'Epithalon Tetrapeptide (Ala-Glu-Asp-Gly)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Epithalon Peptide Induces Telomerase Activity and Telomere Elongation in Human Somatic Cells',
+        citation: 'Bulletin of Experimental Biology and Medicine, 2003 (Khavinson et al.)',
+        keyFinding: 'Adding Epithalon to telomerase-negative human fetal fibroblasts induced expression of the telomerase catalytic subunit, restored telomerase activity, and produced telomere elongation. In vitro (human cell culture).'
+      },
+      {
+        studyTitle: 'Overview of Epitalon - Highly Bioactive Pineal Tetrapeptide with Promising Properties',
+        citation: 'Nutrients (review), 2024',
+        keyFinding: 'Review summarizing rodent studies in which Epitalon extended lifespan and reduced spontaneous tumor incidence in mice and rats; human longevity evidence remains limited and there is no Western regulatory approval.'
+      },
+    ],
     description: 'A synthetic tetrapeptide derived from pineal gland secretions (epithalamin). Researched for its ability to activate telomerase, elongate telomeres, and safely restore pineal melatonin cycles.',
     clinicalResearch: 'In clinical trials, Epitalon has been shown to upregulate telomerase enzymes, slowing cellular aging. It restores endocrine balance, regulates circadian sleep rhythms, and rejuvenates immune defenses.',
     typicalDosage: '5 mg - 10 mg once daily',
@@ -384,6 +474,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Melanotan II',
     chemicalName: 'MT-2 cyclic peptide',
     category: 'lifestyle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Melanotan Tanning Injection: A Rare Cause of Priapism',
+        citation: 'Case report, 2021',
+        keyFinding: 'Documents priapism following Melanotan II self-injection, illustrating off-target MC4R-mediated proerectile activity of the non-selective melanocortin agonist. Melanotan II is an unapproved research chemical associated with serious adverse events.'
+      },
+    ],
     description: 'A synthetic analog of alpha-melanocyte stimulating hormone (α-MSH). It stimulates melanogenesis, enhancing systemic skin pigmentation (tanning) and increasing libido through protective pathways.',
     clinicalResearch: 'Melanotan II non-selectively mimics melanocortin receptors (MC1, MC3, MC4). By active agonist recruitment, it causes significant tanning without dangerous UV sun damage, and acts as a neurological pro-erectile agent.',
     typicalDosage: '100 mcg - 500 mcg once daily',
@@ -412,6 +509,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Testosterone Cypionate',
     chemicalName: 'Injectable Bioidentical Androgen (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Cardiovascular Safety of Testosterone-Replacement Therapy (TRAVERSE)',
+        citation: 'New England Journal of Medicine, 2023',
+        keyFinding: 'In 5,246 hypogonadal men 45-80 with high cardiovascular risk, testosterone replacement was noninferior to placebo for major adverse cardiac events over ~22 months, though it modestly raised nonfatal arrhythmias including atrial fibrillation.'
+      },
+      {
+        studyTitle: 'The Effects of Supraphysiologic Doses of Testosterone on Muscle Size and Strength in Normal Men',
+        citation: 'New England Journal of Medicine, 1996 (Bhasin et al.)',
+        keyFinding: 'Supraphysiologic testosterone enanthate (600 mg/week, 10 weeks) increased fat-free mass, muscle size, and strength in normal men, with effects additive to resistance training. Cypionate shares the parent hormone.'
+      },
+    ],
     description: 'A highly prominent androgenic-anabolic steroid (AAS) suspended in a cottonseed or sesame carrier oil. It serves as the standard clinical cornerstone of chemical TRT therapy and muscle hypertrophy schedules.',
     clinicalResearch: 'Binds intracellularly to high-affinity androgen receptors, encouraging profound nuclear nitrogen retention and upregulating myofibrillar protein translation. Highly stable pharmacokinetics thanks to the slow-release cypionate ester.',
     typicalDosage: '100 mg - 400 mg weekly',
@@ -438,6 +547,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Testosterone Enanthate',
     chemicalName: 'Injectable Heptanoate Androgen (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Testosterone dose-response relationships in healthy young men',
+        citation: 'American Journal of Physiology - Endocrinology and Metabolism, 2001 (Bhasin et al.)',
+        keyFinding: 'Graded weekly doses of testosterone enanthate (25-600 mg) produced dose-dependent gains in fat-free mass, muscle size, and strength, alongside dose-dependent reductions in plasma HDL cholesterol. Same-ester reference.'
+      },
+      {
+        studyTitle: 'Pharmacokinetics of Testosterone Enanthate After Intramuscular Injection for Transgender Men',
+        citation: 'Androgens: Clinical Research and Therapeutics, 2020',
+        keyFinding: 'After IM testosterone enanthate, mean time to maximum serum level was ~1.7 days (all within 3 days), confirming a rapid peak followed by gradual decline. Same-ester PK study.'
+      },
+    ],
     description: 'A classical, long-acting ester of bioidentical testosterone suspended in oil. Popular globally as the structural baseline for bodybuilding cycles and TRT schedules.',
     clinicalResearch: 'Provides stable, continuous androgen release. Enters the muscle cell nuclei directly to stimulate myofibrillar growth and accelerate structural cellular hypertrophy.',
     typicalDosage: '100 mg - 500 mg weekly',
@@ -464,6 +585,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Testosterone Propionate',
     chemicalName: 'Short-Ester Injectable Androgen (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'The Effects of Supraphysiologic Doses of Testosterone on Muscle Size and Strength in Normal Men',
+        citation: 'New England Journal of Medicine, 1996 (Bhasin et al.)',
+        keyFinding: 'Testosterone administration increased muscle size and strength in normal men beyond exercise alone, establishing the anabolic dose-response of the parent hormone. Propionate is the shortest-acting common ester (half-life ~0.8 days).'
+      },
+    ],
     description: 'A rapid-acting ester of testosterone. Because of its fast-releasing propionate chain, it produces immediate peaks, less systemic water logging, and is heavily preferred in "cutting" schedules.',
     clinicalResearch: 'Rapidly absorbed upon IM injection with a short duration of activity, allowing for quick adjustments of serum testosterone levels compared to longer esters.',
     typicalDosage: '50 mg - 150 mg every other day (EOD)',
@@ -490,6 +618,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Deca-Durabolin',
     chemicalName: 'Nandrolone Decanoate (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of nandrolone decanoate compared with placebo or testosterone on HIV-associated wasting',
+        citation: 'HIV Medicine, 2006 (Gold et al.)',
+        keyFinding: 'In 303 HIV-positive men, nandrolone decanoate 150 mg IM every 2 weeks for 12 weeks produced significantly greater gains in fat-free mass (mean +1.34 kg) and weight (+1.48 kg) than placebo.'
+      },
+      {
+        studyTitle: 'Randomized, Placebo-Controlled Trial of Nandrolone Decanoate in HIV-Infected Men with Mild to Moderate Weight Loss',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2005 (Storer et al.)',
+        keyFinding: 'Nandrolone decanoate 150 mg IM biweekly increased lean body mass (+1.6 kg) significantly more than placebo (+0.4 kg) over 12 weeks.'
+      },
+    ],
     description: 'A highly anabolic 19-nor derivative ester famous for its ability to construct heavy muscle mass while dramatically restoring joint collagen matrices.',
     clinicalResearch: 'Nandrolone exhibits lower binding with 5-alpha-reductase, rendering it less androgenic than testosterone. Proactively stimulates osteoblasts and accelerates joint lubricating collagen tissue synthesis.',
     typicalDosage: '200 mg - 450 mg weekly',
@@ -516,6 +656,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Trenbolone Acetate',
     chemicalName: 'Short-Ester 19-Nor Progestin (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Androgen receptors in skeletal muscle cytosol from sheep treated with trenbolone acetate',
+        citation: 'Hormone and Metabolic Research, 1986',
+        keyFinding: 'Trenbolone acetate implants in sheep altered skeletal-muscle cytosolic androgen receptor binding, indicating direct receptor-mediated action in muscle. Animal; no human trials exist.'
+      },
+      {
+        studyTitle: 'Transcriptional regulation of myotrophic actions by testosterone and trenbolone on androgen-responsive muscle',
+        citation: 'Steroids, 2014',
+        keyFinding: 'Trenbolone, not a substrate for 5-alpha reductase or aromatase, induced myotrophic effects and suppressed atrogin-1 more than testosterone while elevating IGF-1, without prostate enlargement. Animal/cell-based.'
+      },
+    ],
     description: 'The most powerful anabolic-androgenic steroid in common use. Boasting five times the anabolic and androgenic rating of testosterone, it creates instant, dry, granite-like physique shifts.',
     clinicalResearch: 'Binds with extremely high affinity to androgen receptors and aggressively blocks cortisol pathways. Enhances feed-efficiency, meaning nutrients are absorbed at extreme cellular loading ratios.',
     typicalDosage: '150 mg - 350 mg weekly',
@@ -543,6 +695,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Primobolan',
     chemicalName: 'Methenolone Enanthate (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Methenolone enanthate in the treatment of aplastic anemia',
+        citation: 'Clinical report, c.1980',
+        keyFinding: 'Methenolone enanthate was used clinically for aplastic anemia, consistent with its original development as a therapy for anemia and wasting. Older, lower-confidence literature; no modern RCTs.'
+      },
+    ],
     description: 'A premium, non-aromatizing DHT derivative of legendary purity and safety. It is coveted for its cosmetic "dryness," tissue-building potential, and minimal direct side effects.',
     clinicalResearch: 'Exhibits clean, highly targeted androgen receptor binding. Does not convert into estrogen, eliminating risks of blood pressure or fluid storage. Promotes nitrogen retention without water logging.',
     typicalDosage: '200 mg - 500 mg weekly',
@@ -569,6 +728,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Masteron',
     chemicalName: 'Drostanolone Propionate (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'A comparison of drostanolone propionate (Masteril) and nandrolone decanoate in the treatment of breast carcinoma',
+        citation: 'Clinical study, 1976',
+        keyFinding: 'Drostanolone propionate was evaluated as hormonal therapy for breast carcinoma, reflecting its historical approved indication for advanced/metastatic breast cancer in women.'
+      },
+      {
+        studyTitle: 'A dose-response evaluation of androgens in metastatic breast cancer (dromostanolone propionate arm)',
+        citation: 'Cancer, 1973',
+        keyFinding: 'Dromostanolone (drostanolone) propionate produced objective tumor regression in roughly 16-22% of metastatic breast cancer patients depending on dose.'
+      },
+    ],
     description: 'A structural DHT derivative with highly anti-estrogenic properties. It operates as a powerful muscle hardener and cosmetic drying agent, heavily utilized in the final weeks of fat-shredding cycles.',
     clinicalResearch: 'Drostanolone has an inherent chemical arrangement that prevents aromatization and acts as a mild aromatase inhibitor in peripheral tissue, helping to limit circulating estrogen levels.',
     typicalDosage: '200 mg - 400 mg weekly',
@@ -595,6 +766,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Anavar (Oxandrolone)',
     chemicalName: 'Oral 17α-Alkylated Class-I AAS',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Five-Year Outcomes after Oxandrolone Administration in Severely Burned Children: A Randomized Clinical Trial',
+        citation: 'Journal of the American College of Surgeons, 2012',
+        keyFinding: 'Oxandrolone 0.1 mg/kg twice daily for 12 months in severely burned children improved lean body mass, bone mineral content, and height percentile versus placebo with no virilization or growth-plate adverse effects.'
+      },
+      {
+        studyTitle: 'Oxandrolone for burn patients: a systematic review and updated meta-analysis of RCTs (2005-2025)',
+        citation: 'World Journal of Emergency Surgery, 2025',
+        keyFinding: 'Pooled RCT data confirm oxandrolone improves lean body mass and clinical outcomes in burn patients, with combination regimens outperforming monotherapy for lean-mass gains.'
+      },
+    ],
     description: 'An oral anabolic steroid famous for its dry cosmetic results and highly favorable safety-to-potency ratio. It increases lean tissue and absolute power without aromatizing into estrogen.',
     clinicalResearch: 'Operates by actively storing intramuscular creatine phosphate levels, resulting in significant ATP replenishment. It exhibits minimized binding to estrogen receptors, preventing cosmetic bloating and water-logging.',
     typicalDosage: '20 mg - 80 mg daily',
@@ -621,6 +804,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Dianabol',
     chemicalName: 'Methandrostenolone (Oral Pill)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of methandienone on the performance and body composition of men undergoing athletic training',
+        citation: 'Clinical Science, 1981 (Hervey et al.)',
+        keyFinding: 'In a double-blind crossover, 100 mg/day methandienone with training significantly increased body weight, body potassium and nitrogen, muscle size, and leg strength versus placebo, though gains were disproportionate to lean-tissue weight.'
+      },
+    ],
     description: 'The historic oral AAS archetype. Noted for driving rapid, massive increases in raw strength, intracellular glycogen, and overall bodyweight within days of starting.',
     clinicalResearch: 'Profoundly increases protein synthesis, nitrogen retention, and glycogenolysis. Rapidly shifts muscle tissue state to high-anabolism, storing extracellular hydration inside muscle fibers.',
     typicalDosage: '15 mg - 50 mg daily',
@@ -647,6 +837,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Winstrol (Stanozolol)',
     chemicalName: 'Stanozolol Oral DHT Derivative',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Clinical and biochemical effects of stanozolol therapy for hereditary angioedema',
+        citation: 'Journal of Allergy and Clinical Immunology, 1981',
+        keyFinding: 'In 27 patients with hereditary angioedema, stanozolol at minimal effective doses (0.5-2 mg/day) controlled attack frequency and intensity with minimal side effects.'
+      },
+      {
+        studyTitle: 'Contrasting effects of testosterone and stanozolol on serum lipoprotein levels',
+        citation: 'JAMA, 1989',
+        keyFinding: 'Stanozolol reduced HDL cholesterol by ~33% and the HDL2 subfraction by ~71% (far more than testosterone) and sharply increased hepatic triglyceride lipase, highlighting an adverse lipid profile.'
+      },
+    ],
     description: 'A rapid-acting oral DHT derivative. Renowned for its ability to lower Sex Hormone-Binding Globulin (SHBG), freeing up other active hormones while promoting extreme definition.',
     clinicalResearch: 'Exhibits powerful binding to progesterone receptors and acts on SHBG. By lowering SHBG, it multiplies the active "free" testosterone level of standard stacked compounds.',
     typicalDosage: '20 mg - 50 mg daily',
@@ -673,6 +875,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Clenbuterol',
     chemicalName: 'Clenbuterol HCl Beta-2 Agonist',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Anabolic effects of clenbuterol on skeletal muscle are mediated by beta-2-adrenoceptor activation',
+        citation: 'American Journal of Physiology — Endocrinology and Metabolism, Vol 263, 1992',
+        keyFinding: 'In rats, clenbuterol increased gastrocnemius muscle mass, protein, and RNA content and decreased fat-pad mass, with the anabolic effect blocked by beta-2 antagonism. This is an animal study; clenbuterol is not approved as a human anabolic or weight-loss drug in the US.'
+      },
+    ],
     description: 'A powerful sympathomimetic bronchodilator. While not a steroid, it is widely utilized to burn fat by directly stimulating beta-2 receptors, accelerating core body temperature and metabolic rate.',
     clinicalResearch: 'Acts on beta-2 adrenergic receptors, upregulating lipolysis and fat mobilization. Increases basal metabolic rate (BMR) by stimulating cellular mitochondria.',
     typicalDosage: '20 mcg - 80 mcg daily',
@@ -699,6 +908,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'TUDCA',
     chemicalName: 'Tauroursodeoxycholic Acid',
     category: 'healing',
+    clinicalStudies: [
+      {
+        studyTitle: 'Tauroursodeoxycholic Acid May Improve Liver and Muscle but Not Adipose Tissue Insulin Sensitivity in Obese Men and Women',
+        citation: 'Diabetes, 2010 (Kars et al.)',
+        keyFinding: 'Human RCT: 20 obese subjects given TUDCA 1,750 mg/day for 4 weeks showed roughly 30% improvement in hepatic and muscle insulin sensitivity versus placebo (no effect on adipose tissue).'
+      },
+      {
+        studyTitle: 'Tauroursodeoxycholic acid attenuates endoplasmic reticulum stress and protects the liver from chronic intermittent hypoxia induced injury',
+        citation: 'Scientific Reports, 2017',
+        keyFinding: 'Mouse study: TUDCA protected the liver from chronic intermittent hypoxia-induced injury, at least partly by inhibiting ER stress. Animal.'
+      },
+    ],
     description: 'A clinically researched, naturally occurring bile acid salt that prevents liver cell death. It is considered the gold-standard support supplement to offset oral chemical toxicity.',
     clinicalResearch: 'Acts as a mitochondrial cell chaperone to eliminate cellular endoplasmic reticulum strain. TUDCA lowers bile acid saturation, preventing chemical stagnation (cholestasis) in liver tissues.',
     typicalDosage: '250 mg - 500 mg daily',
@@ -722,6 +943,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'NAC (N-Acetyl Cysteine)',
     chemicalName: 'Glutathione Synthase Precursor',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'GlyNAC (Glycine + N-acetylcysteine) supplementation in older adults improves glutathione deficiency, oxidative stress, mitochondrial dysfunction and muscle strength: a pilot clinical trial',
+        citation: 'Clinical and Translational Medicine, 2021 (Kumar et al.)',
+        keyFinding: 'Human pilot trial: NAC combined with glycine corrected glutathione deficiency and improved oxidative stress, mitochondrial function, inflammation, insulin resistance, muscle strength and cognition in older adults.'
+      },
+      {
+        studyTitle: 'A randomized placebo-controlled pilot study of N-acetylcysteine in youth with autism spectrum disorder',
+        citation: 'Molecular Autism, 2016',
+        keyFinding: 'Human RCT: at 12 weeks NAC did not significantly improve the primary clinical endpoint, but blood glutathione was significantly higher in the NAC group than placebo, confirming NAC raises GSH.'
+      },
+    ],
     description: 'A powerful amino-acid precursor to Glutathione, the human body\'s primary self-defense oxidant. Widely used as a multi-organ support supplement to offset the systemic stress of complex schedules.',
     clinicalResearch: 'NAC provides a rate-limiting substrate for cellular glutathione generation, scavenging toxic reactive oxygen species (ROS) and neutralizing metabolic bioproducts to safeguard the liver and kidneys.',
     typicalDosage: '600 mg - 1200 mg daily',
@@ -745,6 +978,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Arimidex',
     chemicalName: 'Anastrozole Aromatase Inhibitor',
     category: 'healing',
+    clinicalStudies: [
+      {
+        studyTitle: 'Anastrozole alone or with tamoxifen versus tamoxifen alone for adjuvant treatment of postmenopausal early breast cancer (ATAC): first results',
+        citation: 'The Lancet, 2002',
+        keyFinding: 'Among 9,366 postmenopausal women, anastrozole significantly prolonged disease-free survival versus tamoxifen and was better tolerated for endometrial cancer, thromboembolism, and hot flashes (with more fractures).'
+      },
+      {
+        studyTitle: 'Anastrozole and tamoxifen as adjuvant treatment for early breast cancer: 10-year analysis of the ATAC trial',
+        citation: 'The Lancet Oncology, 2010',
+        keyFinding: 'At 10 years anastrozole confirmed long-term superior efficacy over tamoxifen in disease-free survival and recurrence in hormone-sensitive early breast cancer.'
+      },
+    ],
     description: 'A highly potent non-steroidal selective aromatase inhibitor. It is the primary clinical compound used to prevent testosterone from converting into circulating estrogen.',
     clinicalResearch: 'Anastrozole binds reversibly to the aromatase enzyme, blocking the conversion of androgens into estrone and estradiol. Extremely effective at low doses, reducing estrogen by ~80%.',
     typicalDosage: '0.25 mg - 0.5 mg every other day (EOD) or as needed',
@@ -992,6 +1237,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Wolverine Healing Blend [BLEND]',
     chemicalName: 'BPC-157 (5mg) + TB-500 (5mg) Co-Reconstitution',
     category: 'healing',
+    clinicalStudies: [
+      {
+        studyTitle: 'Gastric Pentadecapeptide BPC 157 Promotes Healing of Achilles Tendon',
+        citation: 'Journal of Orthopaedic Research (BPC-157 component evidence)',
+        keyFinding: 'Component evidence: systemic or local BPC-157 healed transected Achilles tendons in animal models with increased collagen density. This blend pairs BPC-157 with TB-500 for connective-tissue repair.'
+      },
+      {
+        studyTitle: 'Thymosin beta4 activates integrin-linked kinase and promotes cardiac cell migration, survival and cardiac repair',
+        citation: 'Nature, 2004 (Bock-Marquette et al.)',
+        keyFinding: 'In mice, thymosin beta-4 promoted cardiomyocyte migration and survival via an ILK/Akt pathway, and treatment after coronary artery ligation enhanced early myocyte survival and improved cardiac function. Animal/in vitro.'
+      },
+    ],
     description: 'A custom pre-mixed synergistic blend combining Body Protection Compound 157 and Thymosin Beta-4. It is engineered to trigger tissue repair from multiple angles simultaneously: BPC-157 stimulates rapid localized angiogenesis and collagen fibroblast growth, while TB-500 accelerates cell migration and actin polymerization to dissolve chronic scar tissue.',
     clinicalResearch: 'Multiple clinical and laboratory animal models confirm that combining G-protein-coupled healing regulators (such as BPC-157) with actin-binding factors (TB-500) results in a powerful healing synergy. Together, they orchestrate up-regulated gene expression, capillary growth, and muscular elasticity, resulting in recovery speeds up to 2x faster than using either peptide in isolation.',
     typicalDosage: '250 mcg BPC / 250 mcg TB-500 twice daily',
@@ -1019,6 +1276,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Somatic Secretagogue [BLEND]',
     chemicalName: 'CJC-1295 No DAC (5mg) + Ipamorelin (5mg) Blend',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Ipamorelin, the first selective growth hormone secretagogue',
+        citation: 'European Journal of Endocrinology, 1998 (Raun et al.)',
+        keyFinding: 'In rats, ipamorelin released GH with potency comparable to GHRP-6 but, unlike other GHRPs, did NOT raise ACTH or cortisol above GHRH-stimulated levels, establishing it as the first GH-selective secretagogue. Animal/in vitro.'
+      },
+      {
+        studyTitle: 'Prolonged Stimulation of GH and IGF-I Secretion by CJC-1295, a Long-Acting Analog of GHRH, in Healthy Adults',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2006 (Teichman et al.)',
+        keyFinding: 'In healthy adults, a single subcutaneous CJC-1295 (with DAC) dose produced dose-dependent increases in mean plasma GH (2- to 10-fold for >=6 days) and IGF-I (1.5- to 3-fold for 9-11 days), with cumulative effect on repeat dosing.'
+      },
+    ],
     description: 'The definitive Growth Hormone Releasing Hormone (GHRH) and Growth Hormone Releasing Peptide (GHRP) synergistic pairing. Combining CJC-1295 (without Drug Affinity Complex) and Ipamorelin triggers a powerful, clean, pulsatile surge of endogenous growth hormone from the pituitary. It bypasses somatostatin inhibitory blockages without elevating prolactin, cortisol, or obsessive hunger.',
     clinicalResearch: 'Pituitary somatotropic cells contain distinct receptors for GHRH and GHRP. Laboratory assays demonstrate that when a GHRH analogue (CJC-1295) and a GHS agonist (Ipamorelin) are co-administered, their signaling pathways cooperate, resulting in a synergistic (multiplicative) growth hormone secretion up to 5x greater than singular usage.',
     typicalDosage: '100 mcg CJC / 100 mcg Ipamorelin once or twice daily',
@@ -1046,6 +1315,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Metabolic Shred & Shield [BLEND]',
     chemicalName: 'Tirzepatide (10mg) + BPC-157 (5mg) Gut-Shield',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Tirzepatide Once Weekly for the Treatment of Obesity (SURMOUNT-1)',
+        citation: 'New England Journal of Medicine, Vol 387, 2022 (NEJMoa2206038)',
+        keyFinding: 'In 2,539 adults with obesity or overweight over 72 weeks, mean weight reduction was 16.0% (5 mg), 21.4% (10 mg), and 22.5% (15 mg) versus 2.4% on placebo; 89–96% of treated participants lost at least 5% of body weight versus 28% on placebo.'
+      },
+      {
+        studyTitle: 'Stable Gastric Pentadecapeptide BPC 157 in Tissue Healing (BPC-157 component evidence)',
+        citation: 'Current Pharmaceutical Design (BPC-157 component)',
+        keyFinding: 'Component evidence: BPC-157 upregulates growth hormone receptors and angiogenesis to protect and heal the gut lining. The blend adds BPC-157 as a gut shield to tirzepatide\'s incretin-driven fat loss.'
+      },
+    ],
     description: 'An advanced medical-wellness blend combining the dual GLP-1/GIP receptor agonist Tirzepatide with the gut-lining and joint protective peptide BPC-157. Formulated to neutralize common GLP-1 gastrointestinal side effects while facilitating rapid weight loss and safeguarding active joint and muscle tissues from deficit-induced catabolism.',
     clinicalResearch: 'Clinical observations indicate that delayed gastric transit from Tirzepatide can occasionally trigger stomach tissue irritation, heartburn, or mild nausea. Co-administering BPC-157 upregulates mucosal gastric defense mechanisms, preventing inflammation. BPC-157 also preserves existing tendon and muscle structures during deep caloric deficits.',
     typicalDosage: '2.5 mg Tirzepatide / 250 mcg BPC-157 weekly (with daily BPC-157 sub-Q top-offs)',
@@ -1074,6 +1355,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Neuro-Focus & Calm [BLEND]',
     chemicalName: 'Semax (10mg) + Selank (10mg) Nootropic Complex',
     category: 'cognitive',
+    clinicalStudies: [
+      {
+        studyTitle: 'Intranasal Semax (ACTH 4-10 analog) in acute ischemic stroke',
+        citation: 'Russian clinical neurology literature (Semax registered since 1994)',
+        keyFinding: 'Intranasal Semax in acute ischemic stroke has been reported to shift inflammatory balance toward anti-inflammatory mediators (IL-10 up; IL-8 and CRP down) and improve neurological recovery. Evidence is almost entirely Russian, not replicated in large Western RCTs.'
+      },
+      {
+        studyTitle: 'Efficacy of the peptide anxiolytic Selank in generalized anxiety disorders and neurasthenia',
+        citation: 'Zhurnal Nevrologii i Psikhiatrii (Russian), 2000s',
+        keyFinding: 'In clinical trials of GAD and neurasthenia, Selank produced anxiolytic effects comparable to low-dose benzodiazepines without their sedative/dependence side effects, plus antiasthenic effects. Largely Russian evidence, not confirmed by large Western RCTs.'
+      },
+    ],
     description: 'A cutting-edge neuroregulatory peptide blend pairing Semax (a synthetic ACTH fragment) with Selank (a synthetic Tuftsin analogue). Together, they synthesize a balanced, highly productive focus state: Semax upregulates Brain-Derived Neurotrophic Factor (BDNF) for memory and executive processing, while Selank promotes GABAergic activity to block anxiety and nervous system distraction.',
     clinicalResearch: 'Comprehensive neurological studies show that Semax elevates BDNF and Nerve Growth Factor (NGF) in the brain, improving synaptogenesis. Concurrently, Selank modulates serotonin and GABA receptors, preventing emotional overwhelm. The combined profile provides clean cognitive drive without causing heart palpitations, high blood pressure, or stimulant crashes.',
     typicalDosage: '250 mcg Semax / 250 mcg Selank twice daily',
@@ -1102,6 +1395,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Glow (Klow) Skin & Cellular [BLEND]',
     chemicalName: 'GHK-Cu (50mg) + Epitalon (50mg) Rejuvenation Complex',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Regenerative and Protective Actions of the GHK-Cu Peptide in the Light of the New Gene Data',
+        citation: 'International Journal of Molecular Sciences, 2018',
+        keyFinding: 'Mechanistic review documenting that GHK-Cu modulates expression of a large number of human genes, stimulates collagen and glycosaminoglycan synthesis, and promotes angiogenesis and wound contraction (drawing on in vitro and animal wound-healing data).'
+      },
+      {
+        studyTitle: 'Epithalon Peptide Induces Telomerase Activity and Telomere Elongation in Human Somatic Cells',
+        citation: 'Bulletin of Experimental Biology and Medicine, 2003 (Khavinson et al.)',
+        keyFinding: 'Adding Epithalon to telomerase-negative human fetal fibroblasts induced expression of the telomerase catalytic subunit, restored telomerase activity, and produced telomere elongation. In vitro (human cell culture).'
+      },
+    ],
     description: 'The definitive anti-aging and skin health peptide pairing, widely referred to as the Glow (or Klow) blend. Combining the pineal-enhancing telomerase activator Epitalon with copper-complexed GHK-Cu, this synergistic blend targets cellular longevity from the inside out. Epitalon resets biological clocks and elongates telomeres, while GHK-Cu accelerates subcutaneous dermal remodeling, wound healing, and collagen synthesis.',
     clinicalResearch: 'Dermal assays indicate GHK-Cu significantly upregulates type I collagen, glycosaminoglycans, and blood vessel formation. Conversely, molecular research shows Epitalon stimulates telomerase activity in human fibroblasts, extending cellular replication limits (the Hayflick Limit) and restoring nocturnal pineal melatonin secretion patterns.',
     typicalDosage: '1.5 mg GHK-Cu / 1.5 mg Epitalon daily',
@@ -1129,6 +1434,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Metabolic Shred (Slight-Lean) [BLEND]',
     chemicalName: 'Semaglutide (5mg) + L-Carnitine (500mg) Synergy Complex',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Once-Weekly Semaglutide in Adults with Overweight or Obesity (STEP 1, semaglutide component evidence)',
+        citation: 'New England Journal of Medicine, 2021 (semaglutide component)',
+        keyFinding: 'Component evidence: once-weekly semaglutide 2.4 mg produced ~14.9% mean body-weight reduction over 68 weeks. The blend pairs semaglutide with L-carnitine for fatty-acid metabolism support.'
+      },
+      {
+        studyTitle: 'Effects of L-carnitine supplementation on weight loss and body composition: a systematic review and meta-analysis of 37 RCTs (Talenezhad et al.)',
+        citation: 'Clinical Nutrition ESPEN, 2020',
+        keyFinding: 'Pooling 37 randomized trials (~2,292 participants), L-carnitine significantly reduced body weight by 1.21 kg, BMI by 0.24 kg/m², and fat mass by 2.08 kg; effects were modest and seen mainly in overweight/obese subjects combined with lifestyle modification.'
+      },
+    ],
     description: 'A cutting-edge double-mechanism metabolic blend. Semaglutide acts centrally to slow digestion and suppress hunger cues, while L-Carnitine acts cell-side to upregulate mitochondrial transfer of fatty acids so they can be burned for active ATP energy. This limits the muscle fatigue and sluggishness commonly reported with caloric deficits on GLP-1 therapy.',
     clinicalResearch: 'GLP-1 receptor activation significantly suppresses hepatic gluconeogenesis and coordinates central neurotransmitter appetite suppression, while L-carnitine administration rescues lipid oxidation indices in skeletal myocytes, enhancing free fatty acid transport across the inner mitochondrial membrane.',
     typicalDosage: '0.25 mg Semaglutide / 25 mg L-Carnitine weekly',
@@ -1156,6 +1473,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Barbie & Ken Love Synergy [BLEND]',
     chemicalName: 'PT-141 Bremelanotide (10mg) + Melanotan II (10mg) Blend',
     category: 'sexual_health',
+    clinicalStudies: [
+      {
+        studyTitle: 'Bremelanotide for the Treatment of Hypoactive Sexual Desire Disorder: Two Randomized Phase 3 Trials',
+        citation: 'Obstetrics & Gynecology, 2019',
+        keyFinding: 'In the integrated RECONNECT trials (1,267 premenopausal women), self-administered subcutaneous bremelanotide 1.75 mg significantly increased sexual desire and reduced desire-related distress versus placebo; nausea, flushing, and headache were most common.'
+      },
+      {
+        studyTitle: 'Melanotan Tanning Injection: A Rare Cause of Priapism',
+        citation: 'Case report, 2021',
+        keyFinding: 'Documents priapism following Melanotan II self-injection, illustrating off-target MC4R-mediated proerectile activity of the non-selective melanocortin agonist. Melanotan II is an unapproved research chemical associated with serious adverse events.'
+      },
+    ],
     description: 'An ultra-popular dual melanocortin agonist blend. Melanotan II targets MC1R and MC4R to trigger rapid skin hyperpigmentation, building a deep, sunless protective tan. PT-141 (Bremelanotide) selectively acts on MC3R and MC4R in the central nervous system to rapidly boost neurological sexual desire and erectile function, creating intense systemic synergy.',
     clinicalResearch: 'Melanotans invoke potent central nervous system neurotransmission pathways. PT-141 acts on neural pathways in the brain to facilitate sexual excitation response, while MT-II targets follicular pigment pathways, stimulating eumelanin synthesis for accelerated dermal pigmentation.',
     typicalDosage: '1.5 mg PT-141 / 1.5 mg MT-II per administration',
@@ -1183,6 +1512,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Immune Guard Super Shield [BLEND]',
     chemicalName: 'Thymosin Alpha-1 (10mg) + Thymulin (10mg) Blend',
     category: 'healing',
+    clinicalStudies: [
+      {
+        studyTitle: 'The efficacy of thymosin alpha 1 for severe sepsis (ETASS): a multicenter randomized controlled trial',
+        citation: 'Critical Care, 2013',
+        keyFinding: 'In 361 patients with severe sepsis, thymosin alpha 1 reduced 28-day all-cause mortality versus placebo; however, the larger TESTS trial (1,106 patients) later found no overall mortality benefit, with possible signal only in subgroups.'
+      },
+      {
+        studyTitle: 'Thymulin reverses inflammatory hyperalgesia and modulates proinflammatory cytokines after central endotoxin injection',
+        citation: 'Neuroscience, 2003',
+        keyFinding: 'Thymulin reversed inflammatory hyperalgesia and reduced proinflammatory cytokine concentrations after central endotoxin challenge in rats, demonstrating anti-inflammatory and antinociceptive activity. Animal.'
+      },
+    ],
     description: 'A preeminent dual thymus-derived peptide blend focused entirely on rebuilding immune resilience. Thymosin Alpha-1 upregulates T-cell helper and natural killer cell activity, while Thymulin binds copper to modulate broad cytokine responses and downregulate inflammatory signaling, safeguarding the body under physical cycle stress.',
     clinicalResearch: 'Clinical evaluations of Thymosin Alpha-1 show increased expression of major histocompatibility complex (MHC) class I, leading to enhanced viral clearance. Thymulin, an peptide hormone produced by thymic epithelial cells, modulates pro-inflammatory cytokines such as TNF-alpha and IL-6 to keep immune markers healthy.',
     typicalDosage: '1.5 mg TA1 / 1.5 mg Thymulin daily',
@@ -1210,6 +1551,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Anadrol',
     chemicalName: 'Oxymetholone (Oral DHT Derivative)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Double-blind, randomized, placebo-controlled phase III trial of oxymetholone for HIV wasting',
+        citation: 'AIDS, 2003',
+        keyFinding: 'In 89 HIV patients with wasting, oxymetholone (100 or 150 mg/day) produced significant weight gain (3.0-3.5 kg vs 1.0 kg placebo) and increased body cell mass; 100 mg/day was equally effective with less liver toxicity.'
+      },
+      {
+        studyTitle: 'Oxymetholone promotes weight gain in patients with advanced HIV-1 infection',
+        citation: 'British Journal of Nutrition, 1996',
+        keyFinding: 'Oxymetholone administration promoted significant weight gain in patients with advanced HIV infection.'
+      },
+    ],
     description: 'One of the most powerful and fast-acting oral anabolic steroids in existence. Extensively deployed by powerlifters and bodybuilders looking to break strength plateaus and pack on massive overall size in record timelines.',
     clinicalResearch: 'Oxymetholone aggressively stimulates erythropoietin (EPO), resulting in an unprecedented increase in red blood cell volume and oxygen transportation. It upregulates protein synthesis while stimulating intense fluid accumulation within muscle cells, protecting joints under extreme loads.',
     typicalDosage: '25 mg - 100 mg daily',
@@ -1237,6 +1590,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Superdrol',
     chemicalName: 'Methasterone (Oral Designer Steroid)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Severe Cholestasis and Renal Failure Associated with the Designer Steroid Superdrol (Methasterone): A Case Report and Literature Review',
+        citation: 'Digestive Diseases and Sciences, 2009',
+        keyFinding: 'A previously healthy man developed severe cholestatic jaundice and acute renal failure after using the OTC designer steroid Superdrol. Human case report plus literature review on the 17-alpha-methylated steroid methasterone.'
+      },
+    ],
     description: 'An extremely potent oral anabolic steroid derived from drostanolone. Often termed "oral masteron on steroids," it is highly revered for building incredibly dry, dense, and full muscle structures without any estrogenic conversion.',
     clinicalResearch: 'Methasterone is a 17-alpha-alkylated steroid with high anabolic-to-androgenic separation. It drives massive intracellular glycogen and fluid loading into skeletal muscle cells without converting to estrogen, keeping the muscle cosmetic totally dry.',
     typicalDosage: '10 mg - 20 mg daily',
@@ -1264,6 +1624,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Equipoise',
     chemicalName: 'Boldenone Undecylenate (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Evaluation of boldenone undecylenate as an anabolic agent in horses',
+        citation: 'Canadian Veterinary Journal, 1977',
+        keyFinding: 'Boldenone undecylenate showed a marked anabolic effect in debilitated horses, with improved appetite, vigor, musculature, and haircoat. Veterinary; no human efficacy trials exist.'
+      },
+      {
+        studyTitle: 'Boldenone Undecylenate-Mediated Hepatorenal Impairment by Oxidative Damage: Vitamin C Preventive Role',
+        citation: 'Biological Trace Element Research, 2021',
+        keyFinding: 'In an animal model, boldenone undecylenate caused liver and kidney oxidative damage and dysregulated androgen receptor and HSP90 expression, partially mitigated by vitamin C.'
+      },
+    ],
     description: 'A long-acting injectable veterinary-turned-human anabolic steroid structurally related to testosterone. It is highly valued for delivering clean, steady muscle growth, extreme athletic endurance, and massive vascularity over extended cycle periods.',
     clinicalResearch: 'Boldenone is a 1-dehydro derivative of testosterone. It exhibits highly favorable nitrogen retention and protein synthesis properties while converting to estrogen at only half the rate of testosterone, minimizing fluid retention.',
     typicalDosage: '300 mg - 600 mg weekly',
@@ -1291,6 +1663,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Halotestin',
     chemicalName: 'Fluoxymesterone (Oral Methylated AAS)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Fluoxymesterone as third-line endocrine therapy for advanced breast cancer: a phase II trial of the Piedmont Oncology Association',
+        citation: 'American Journal of Clinical Oncology, 1992',
+        keyFinding: 'In 28 women with advanced breast cancer who had failed prior hormonal therapy, third-line fluoxymesterone produced a partial response in only 1 of 9 previously hormone-responsive patients, indicating limited value. Human phase II trial.'
+      },
+    ],
     description: 'An extremely potent oral anabolic-androgenic steroid with incredibly strong androgenic properties. It does not convert to estrogen and is used almost exclusively in final weeks of powerlifting pre-contests and athletic combats to force maximum neurological aggression and absolute strength.',
     clinicalResearch: 'Fluoxymesterone belongs to the 17-alpha-methylated family. It causes direct modifications of cells to support hemoglobin production and oxygen transport, while targeting central nervous system receptors directly to trigger peak aggression, raw force, and competitive drive.',
     typicalDosage: '100 mcg - 500 mcg once daily',
@@ -1318,6 +1697,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'KPV',
     chemicalName: 'Lysine-Proline-Valine (Tripeptide)',
     category: 'healing',
+    clinicalStudies: [
+      {
+        studyTitle: 'PepT1-Mediated Tripeptide KPV Uptake Reduces Intestinal Inflammation',
+        citation: 'Gastroenterology, 2008 (Dalmasso et al.)',
+        keyFinding: 'In mice, oral KPV was taken up into colonic epithelial and immune cells via the PepT1 transporter and reduced DSS- and TNBS-induced colitis, lowering pro-inflammatory cytokines; nanomolar KPV inhibited NF-kB and MAP kinase signaling in vitro.'
+      },
+      {
+        studyTitle: 'Orally Targeted Delivery of Tripeptide KPV via Hyaluronic Acid-Functionalized Nanoparticles Efficiently Alleviates Ulcerative Colitis',
+        citation: 'Molecular Therapy, 2017',
+        keyFinding: 'Hyaluronic-acid-functionalized nanoparticles delivering KPV to inflamed colon tissue accelerated mucosal healing and reduced colitis severity in a mouse model. Animal study.'
+      },
+    ],
     description: 'An active tripeptide fragment of alpha-Melanocyte Stimulating Hormone (α-MSH) with extremely powerful immune-modulating and anti-inflammatory pathways, especially in gastrointestinal systems.',
     clinicalResearch: 'KPV works by binding to melanocortin receptors, reducing pro-inflammatory cytokine expression, and directly inhibiting NF-kB signaling pathways. This decreases intestinal mucosal cell destruction and downregulates general skin inflammation.',
     typicalDosage: '200 mcg - 500 mcg once daily',
@@ -1344,6 +1735,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'MOTS-c',
     chemicalName: 'Mitochondrial Open Reading Frame of the 12S rRNA Type-c',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'The Mitochondrial-Derived Peptide MOTS-c Promotes Metabolic Homeostasis and Reduces Obesity and Insulin Resistance',
+        citation: 'Cell Metabolism, 2015',
+        keyFinding: 'MOTS-c, a 16-amino-acid peptide encoded in mitochondrial 12S rRNA, targets skeletal muscle and activates AMPK; in mice it prevented age-dependent and high-fat-diet-induced insulin resistance and diet-induced obesity.'
+      },
+      {
+        studyTitle: 'MOTS-c is an exercise-induced mitochondrial-encoded regulator of age-dependent physical decline and muscle homeostasis',
+        citation: 'Nature Communications, 2021',
+        keyFinding: 'Intermittent MOTS-c treatment increased running capacity and physical performance in young, middle-aged, and old mice, and 7 days of treatment improved skeletal muscle insulin sensitivity. Animal.'
+      },
+    ],
     description: 'An extremely unique mitochondrial-derived peptide of 16 amino acids. It coordinates systemic metabolic homeostasis, mimics exercise benefits, increases insulin sensitivity, and elevates cellular energy levels.',
     clinicalResearch: 'MOTS-c activates the AMPK signaling pathway, which is the primary sensor of cellular energy stress. In clinical models, it significantly boosts glucose uptake, enhances fatty acid oxidation, prevents diet-induced obesity, and preserves muscle mass under metabolic stress.',
     typicalDosage: '5 mg - 10 mg twice weekly',
@@ -1370,6 +1773,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'SS-31 (Elamipretide)',
     chemicalName: 'D-Arg-Dmt-Lys-Phe-NH2',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Elamipretide: A Review of Its Structure, Mechanism of Action, and Therapeutic Potential',
+        citation: 'International Journal of Molecular Sciences, 2025',
+        keyFinding: 'Review describing SS-31 as a synthetic tetrapeptide that selectively binds cardiolipin in the inner mitochondrial membrane, stabilizing cristae, reducing oxidative stress and enhancing ATP production; covers clinical programs (PROGRESS-HF, TAZPOWER, MMPOWER-3, ReCLAIM).'
+      },
+      {
+        studyTitle: 'SS-31 treatment ameliorates cardiac mitochondrial morphology and defective mitophagy in a murine model of Barth syndrome',
+        citation: 'Scientific Reports, 2024',
+        keyFinding: 'In a mouse model of Barth syndrome, SS-31 improved cardiac mitochondrial morphology and corrected defective mitophagy, supporting its cardiolipin-targeting mechanism. Animal.'
+      },
+    ],
     description: 'A groundbreaking mitochondria-targeting tetrapeptide that binds selectively to cardiolipin on the inner mitochondrial membrane, optimizing mitochondrial structure and boosting ATP synthesis rapidly.',
     clinicalResearch: 'SS-31 prevents pathological mitochondrial swelling and degradation under metabolic stress. It significantly reduces the production of toxic reactive oxygen species (ROS) while preserving critical respiratory chain supercomplexes, restoring cell energetic efficiency.',
     typicalDosage: '1 mg - 4 mg once daily',
@@ -1396,6 +1811,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Follistatin-344',
     chemicalName: 'FST-344 (Myostatin Inhibitor)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Follistatin Gene Delivery Enhances Muscle Growth and Strength in Nonhuman Primates',
+        citation: 'Science Translational Medicine, 2009 (Kota et al.)',
+        keyFinding: 'Macaque study: a single AAV1-FS344 (follistatin-344) injection into the quadriceps produced pronounced, durable increases in muscle size and strength. Animal.'
+      },
+      {
+        studyTitle: 'Long-term enhancement of skeletal muscle mass and strength by single gene administration of myostatin inhibitors',
+        citation: 'PNAS, 2008',
+        keyFinding: 'Mouse study: one-time gene delivery of myostatin inhibitors, with follistatin (FS-344) giving the greatest effect, enhanced muscle mass and strength for over 2 years and was well tolerated. Animal.'
+      },
+    ],
     description: 'An autocrine glycoprotein encoded by the FST gene. It is a potent inhibitor of myostatin (GDF-8), a signaling peptide that normally suppresses skeletal muscle growth, making it a valuable peptide for rapid skeletal hypertrophy.',
     clinicalResearch: 'Clinical and preclinical studies show that binding of Follistatin to myostatin blocks downstream receptor signaling. This releases the biological limitations on muscle building, allowing rapid muscle cell proliferation and lean tissue development.',
     typicalDosage: '100 mcg daily for 10-20 days',
@@ -1424,6 +1851,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'AOD-9604',
     chemicalName: 'Advanced Obesity Drug (HGH Fragment 177-191 Variant)',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'AOD-9604 Phase 2B obesity program (Metabolic Pharmaceuticals)',
+        citation: 'Phase 2B randomized controlled trial, 536 subjects, ~2007',
+        keyFinding: 'The pivotal 24-week Phase 2B trial in 536 subjects did NOT show significant weight loss versus placebo, and clinical development was terminated in 2007. An earlier 12-week study reported ~2.6 kg loss on 1 mg/day versus ~0.8 kg placebo, but this was not reproduced.'
+      },
+    ],
     description: 'A modified synthetic variant of the 15 amino acid carboxyl-terminus of human growth hormone (HGH). It targets local fat cells and drives fat oxidation, without modifying systemic blood sugar or IGF-1 levels.',
     clinicalResearch: 'Pre-clinical and clinical trials demonstrate that AOD-9604 selectively stimulates lipolysis (fat breakdown) and inhibits lipogenesis (accumulation of lipid structures in fat cells), especially in stubborn fat deposits. It acts directly without altering insulin sensitivity.',
     typicalDosage: '250 mcg - 500 mcg once daily',
@@ -1451,6 +1885,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'ARA-290',
     chemicalName: 'Cibinetide (Innate Repair Receptor Peptide)',
     category: 'healing',
+    clinicalStudies: [
+      {
+        studyTitle: 'Safety and Efficacy of ARA 290 in Sarcoidosis Patients with Symptoms of Small Fiber Neuropathy: A Randomized, Double-Blind Pilot Study',
+        citation: 'Molecular Medicine, 2013 (Heij et al.)',
+        keyFinding: 'In a randomized, double-blind, placebo-controlled pilot of sarcoidosis patients with small fiber neuropathy, 28 days of subcutaneous ARA-290 improved neuropathic/autonomic symptoms and quality of life versus placebo, with a favorable safety profile.'
+      },
+      {
+        studyTitle: 'Cibinetide Improves Corneal Nerve Fiber Abundance in Patients With Sarcoidosis-Associated Small Nerve Fiber Loss and Neuropathic Pain',
+        citation: 'Investigative Ophthalmology & Visual Science (IOVS), 2017 (Culver et al.)',
+        keyFinding: 'In a double-blind randomized trial (64 patients, 1/4/8 mg daily for 28 days), cibinetide met its primary endpoint, increasing corneal nerve fiber abundance (small-fiber regrowth) by confocal microscopy.'
+      },
+    ],
     description: 'A specialized synthetic peptide designed to bind selectively to the Innate Repair Receptor (IRR). It targets neuropathic pain, speeds neural cell repairs, and inhibits severe inflammatory pathways.',
     clinicalResearch: 'Derived from erythropoietin (EPO), ARA-290 represents a non-erythropoietic isoform. It does not elevate red blood cell thickness but is strongly anti-inflammatory, promoting local tissue repair and healing damaged peripheral nerve pain fibers.',
     typicalDosage: '1 mg - 4 mg once daily',
@@ -1477,6 +1923,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'VIP',
     chemicalName: 'Vasoactive Intestinal Peptide (28 amino acid sequence)',
     category: 'lifestyle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Inhaled Vasoactive Intestinal Peptide Exerts Immunoregulatory Effects in Sarcoidosis',
+        citation: 'American Journal of Respiratory and Critical Care Medicine, 2010',
+        keyFinding: 'A phase II study of 20 patients with active sarcoidosis found nebulized VIP for 4 weeks was safe and significantly reduced TNF-alpha production by bronchoalveolar lavage cells and expanded regulatory T cells.'
+      },
+    ],
     description: 'A powerful neuropeptide and neuroregulatory hormone that functions as a major systemic vasodilator, immunomodulator, and crucial component of brain-bioxin clearance pathways.',
     clinicalResearch: 'Research shows VIP upregulates pulmonary arterial dilation, modulates immunological responses, and enhances tight junction integrity in the blood-brain barrier. It plays a highly protective role in neurological and respiratory tissues facing biotoxins.',
     typicalDosage: '50 mcg - 200 mcg daily',
@@ -1505,6 +1958,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'NPP',
     chemicalName: 'Nandrolone Phenylpropionate (Short-Ester Nor-testosterone Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of nandrolone decanoate compared with placebo or testosterone on HIV-associated wasting',
+        citation: 'HIV Medicine, 2006 (Gold et al.)',
+        keyFinding: 'Nandrolone produced significantly greater fat-free mass and weight gains than placebo in HIV-associated wasting, demonstrating the anabolic efficacy of the parent hormone. NPP is the shorter-acting phenylpropionate ester of the same hormone.'
+      },
+    ],
     description: 'A fast-acting, short-ester version of the legendary anabolic steroid Nandrolone (Deca-Durabolin). Ideal for rapid lean muscle accumulation, strength gains, and profound joint lubrication with quick systemic clearance.',
     clinicalResearch: 'Nandrolone exhibits strong anabolic properties and low rate of androgenic conversion. The short phenylpropionate ester enters blood systems quickly, rapidly stimulating nitrogen retention, cellular protein translation, and collagen synthesis.',
     typicalDosage: '200 mg - 400 mg weekly',
@@ -1531,6 +1991,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Proviron',
     chemicalName: 'Mesterolone (Oral 1-Methylated DHT)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'The hormone response to a synthetic androgen (mesterolone) in oligospermia',
+        citation: 'Clinical Endocrinology (Oxford), 1977',
+        keyFinding: 'In 40 oligospermic men, mesterolone lowered serum testosterone and raised LH, with sperm concentration improving in 19 but unchanged or worse in 21, showing inconsistent benefit and HPG-axis suppression. Human clinical study.'
+      },
+    ],
     description: 'An oral androgenic steroid derived from DHT. It does not convert to estrogen and exhibits an extremely high binding affinity for Sex Hormone-Binding Globulin (SHBG), increasing free testosterone and muscle hardness.',
     clinicalResearch: 'Mesterolone bonds tightly to SHBG. Because SHBG normally binds to circulating testosterone and renders it inactive, Proviron frees up a much larger percentage of bioactive free testosterone, making any stacked steroid cycle perform significantly better.',
     typicalDosage: '25 mg - 75 mg daily',
@@ -1557,6 +2024,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'LGD-4033 (Ligandrol)',
     chemicalName: 'Selective Androgen Receptor Modulator LGD-4033',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'The Safety, Pharmacokinetics, and Effects of LGD-4033, a Novel Nonsteroidal Oral SARM, in Healthy Young Men',
+        citation: 'Journals of Gerontology: Series A, 2013 (Basaria et al.)',
+        keyFinding: 'Phase 1, placebo-controlled trial in 76 healthy men (0.1/0.3/1.0 mg for 21 days): LGD-4033 was well tolerated and dose-dependently increased lean body mass, but even this short course caused dose-dependent suppression of testosterone, SHBG and HDL cholesterol.'
+      },
+    ],
     description: 'One of the most powerful selective androgen receptor modulators (SARMs). It selectively targets androgen receptors in skeletal muscles and bones, producing massive lean tissue growth for overall size build-up.',
     clinicalResearch: 'Ligandrol binds selectively to androgen receptors, demonstrating high tissue selectivity. This allows high anabolic effects in muscle and bone tissue while minimizing androgenic activity in prostate and skin tissue.',
     typicalDosage: '5 mg - 10 mg daily',
@@ -1583,6 +2057,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'RAD-140 (Testolone)',
     chemicalName: 'Selective Androgen Receptor Modulator RAD-140',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Design, Synthesis, and Preclinical Characterization of the SARM RAD140',
+        citation: 'ACS Medicinal Chemistry Letters, 2011 (Miller et al.)',
+        keyFinding: 'Original disclosure of RAD140 (Radius Health): a potent, orally bioavailable nonsteroidal SARM with anabolic activity in preclinical rodent and primate models of androgen action.'
+      },
+      {
+        studyTitle: 'SARM RAD140 Inhibits the Growth of AR/ER-Positive Breast Cancer Models with a Distinct Mechanism of Action',
+        citation: 'Clinical Cancer Research, 2017',
+        keyFinding: 'RAD140 bound AR with high affinity and orally inhibited growth of AR+/ER+ breast cancer xenografts; it activated AR while suppressing the ER/ESR1 pathway. Preclinical/xenograft.'
+      },
+    ],
     description: 'An extremely potent SARM designed to mimic the high anabolic outputs of testosterone, providing dry muscle gains and high-intensity strength surges with robust neuroprotection.',
     clinicalResearch: 'RAD-140 binds selectively to androgen receptors in muscle, demonstrating high selectivity. Studies show it provides high lean tissue stimulation with low androgenic activity, while exhibiting neuroprotective properties in brain tissue.',
     typicalDosage: '10 mg - 20 mg daily',
@@ -1609,6 +2095,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'MK-2866 (Ostarine)',
     chemicalName: 'Enobosarm (Selective Androgen Receptor Modulator)',
     category: 'healing',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of enobosarm on muscle wasting and physical function in patients with cancer: a double-blind, randomised controlled phase 2 trial',
+        citation: 'The Lancet Oncology, 2013 (Dobs et al.)',
+        keyFinding: 'In patients with cancer, enobosarm (1 mg or 3 mg daily) significantly increased lean body mass versus placebo over ~113 days and improved physical function (stair climb), without notable androgenic toxicity.'
+      },
+      {
+        studyTitle: 'Activity and safety of enobosarm in AR+/ER+/HER2- advanced breast cancer (Study G200802): a randomised phase 2 trial',
+        citation: 'The Lancet Oncology, 2024',
+        keyFinding: 'In AR+/ER+/HER2-negative advanced breast cancer, enobosarm showed clinical benefit and was well tolerated, supporting AR agonism as an anti-tumour strategy in this subtype.'
+      },
+    ],
     description: 'A highly versatile SARM widely researched for its tissue-protective properties. It excels at preserving muscle mass during caloric deficits and accelerating the repair of skeletal joints and bone tissues.',
     clinicalResearch: 'Ostarine has been extensively researched in clinical trials for muscle wasting conditions. It selectively targets bone and muscle pathways with very low side effects, stimulating cellular repair without converting to estrogen.',
     typicalDosage: '15 mg - 25 mg daily',
@@ -1634,6 +2132,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Cardarine',
     chemicalName: 'GW-501516 (PPAR-Delta Receptor Agonist)',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Mouse carcinogenicity study with GW501516, a PPAR-delta agonist',
+        citation: 'Toxicological Sciences (Society of Toxicology), 2009 (Newsholme et al.)',
+        keyFinding: 'Chronic (104-week) high-dose GW501516 induced tumors at multiple organ sites in mice (a parallel rat study showed similar findings); these carcinogenicity results led GSK to halt development. Disclosed as conference abstracts.'
+      },
+      {
+        studyTitle: 'Induction of Metastatic Gastric Cancer by PPAR-delta Activation',
+        citation: 'PPAR Research, 2011',
+        keyFinding: 'Sustained PPAR-delta activation in mice drove development of metastatic gastric adenocarcinoma, mechanistically supporting an oncogenic role for chronic PPAR-delta agonism. Animal.'
+      },
+    ],
     description: 'Not a SARM or steroid, but a selective PPAR-delta receptor agonist. Extensively used to drive cellular lipid burning, improve heart efficiency, and boost athletic endurance to legendary heights.',
     clinicalResearch: 'GW-501516 activates the PPAR-delta pathway, the same pathway stimulated by aerobic exercise. In clinical trials, it significantly increases glucose uptake in skeletal muscle, shifts the body\'s energy source from glucose to fat, and reverses metabolic abnormalities.',
     typicalDosage: '10 mg - 20 mg daily',
@@ -1659,6 +2169,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Stenabolic',
     chemicalName: 'SR-9009 (Rev-ErbA Receptor Agonist)',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Regulation of circadian behaviour and metabolism by synthetic REV-ERB agonists',
+        citation: 'Nature, 2012 (Solt et al.)',
+        keyFinding: 'Synthetic REV-ERB agonists SR9009/SR9011 altered clock and metabolic gene expression in liver, muscle and fat, increasing energy expenditure and improving the metabolic profile of diet-induced obese mice. Animal.'
+      },
+      {
+        studyTitle: 'SR9009 has REV-ERB-independent effects on cell proliferation and metabolism',
+        citation: 'PNAS, 2019 (Dierickx et al.)',
+        keyFinding: 'SR9009 altered cell viability, metabolism and transcription even in REV-ERB-alpha/beta double-knockout cells, demonstrating substantial off-target effects independent of its supposed target. In vitro.'
+      },
+    ],
     description: 'A synthetic Rev-ErbA agonist that upregulates mitochondria counts, optimizes lipid/glucose metabolism, and acts as a powerful bio-mimetic of cardiovascular physical exercise.',
     clinicalResearch: 'SR-9009 binds to Rev-ErbA, a transcription factor that plays a crucial role in regulating circadian rhythm and mitochondrial networks. This triggers the biogenesis of new mitochondria in skeletal muscles, increasing oxygen consumption.',
     typicalDosage: '10 mg - 30 mg daily (split doses)',
@@ -1685,6 +2207,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'YK-11',
     chemicalName: 'Selective Androgen Receptor Modulator and Myostatin Inhibitor YK-11',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'SARM YK11 Regulates Myogenic Differentiation of C2C12 Myoblasts by Follistatin Expression',
+        citation: 'Biological & Pharmaceutical Bulletin, 2013 (Kanno et al.)',
+        keyFinding: 'In C2C12 myoblasts, YK11 induced myogenic regulators (MyoD, Myf5, myogenin) more strongly than DHT and upregulated follistatin (a myostatin antagonist), driving myotube hypertrophy. In vitro; no human trials.'
+      },
+      {
+        studyTitle: 'YK11 promotes osteogenic differentiation of BMSCs and repair of bone defects',
+        citation: 'Journal of Molecular Endocrinology, 2025',
+        keyFinding: 'YK11 enhanced osteogenic differentiation of bone marrow stromal cells and improved bone defect repair, indicating pro-osteogenic AR-mediated activity. In vitro/animal.'
+      },
+    ],
     description: 'The ultimate hybrid SARM and myostatin blocker. It binds to androgen receptors to stimulate high follistatin production, allowing rapid muscle gains that bypass normal genetic limits.',
     clinicalResearch: 'YK-11 stimulates muscle cells to produce high levels of Follistatin, which actively inhibits myostatin activity. It behaves as a complete androgen receptor agonist, making it significantly more anabolic than traditional selective modulators.',
     typicalDosage: '5 mg - 10 mg daily (divided)',
@@ -1711,6 +2245,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'S-23',
     chemicalName: 'Selective Androgen Receptor Modulator S-23',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Preclinical Characterization of a SARM for Hormonal Male Contraception (S-23)',
+        citation: 'Endocrinology, 2009 (Jones/Chen/Dalton et al.)',
+        keyFinding: 'S-23 bound AR with high affinity (Ki ~1.7 nM) and, in male rats, dose-dependently suppressed LH/FSH and spermatogenesis to produce reversible infertility, with full recovery after cessation. Animal; its focus was male contraception.'
+      },
+    ],
     description: 'The most powerful, dry, and suppressive SARM in existence. Widely used in professional pre-contest cycles to build extreme muscle thickness, vascular separation, and a deeply dry, aesthetic look.',
     clinicalResearch: 'S-23 displays an extremely high binding affinity for androgen receptors. It has been researched as a male hormonal contraceptive because it suppresses LH and FSH so completely that it halts spermatogenesis.',
     typicalDosage: '10 mg - 30 mg daily (divided)',
@@ -1737,6 +2278,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Cardarine Shred & Shield [BLEND]',
     chemicalName: 'Tirzepatide (5mg) + Cardarine (10mg) Fat-Melter',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Tirzepatide Once Weekly for the Treatment of Obesity (SURMOUNT-1)',
+        citation: 'New England Journal of Medicine, Vol 387, 2022 (NEJMoa2206038)',
+        keyFinding: 'In 2,539 adults with obesity or overweight over 72 weeks, mean weight reduction was 16.0% (5 mg), 21.4% (10 mg), and 22.5% (15 mg) versus 2.4% on placebo; 89–96% of treated participants lost at least 5% of body weight versus 28% on placebo.'
+      },
+      {
+        studyTitle: 'Mouse carcinogenicity study with GW501516, a PPAR-delta agonist',
+        citation: 'Toxicological Sciences (Society of Toxicology), 2009 (Newsholme et al.)',
+        keyFinding: 'Chronic (104-week) high-dose GW501516 induced tumors at multiple organ sites in mice (a parallel rat study showed similar findings); these carcinogenicity results led GSK to halt development. Disclosed as conference abstracts.'
+      },
+    ],
     description: 'A cutting-edge synergistic blend combining the metabolic GLP-1/GIP agonist Tirzepatide with the PPAR-delta agonist Cardarine. It shuts down food cravings completely while fueling physical stamina, creating a highly efficient environment for rapid fat loss.',
     clinicalResearch: 'Tirzepatide delays gastric emptying and stabilizes insulin, preventing blood sugar fluctuations. Simultaneously, Cardarine switches the body\'s primary fuel source from glucose to storage fats, meaning that even in a deep calorie deficit, physical training energy remains high.',
     typicalDosage: '2.5 mg Tirzepatide weekly / 10 mg Cardarine daily',
@@ -1762,6 +2315,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Mitochondrial Recharge [BLEND]',
     chemicalName: 'MOTS-c (5mg) + SS-31 (2mg) Cellular Energzer',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'The Mitochondrial-Derived Peptide MOTS-c Promotes Metabolic Homeostasis and Reduces Obesity and Insulin Resistance',
+        citation: 'Cell Metabolism, 2015',
+        keyFinding: 'MOTS-c, a 16-amino-acid peptide encoded in mitochondrial 12S rRNA, targets skeletal muscle and activates AMPK; in mice it prevented age-dependent and high-fat-diet-induced insulin resistance and diet-induced obesity.'
+      },
+      {
+        studyTitle: 'SS-31 treatment ameliorates cardiac mitochondrial morphology and defective mitophagy in a murine model of Barth syndrome',
+        citation: 'Scientific Reports, 2024',
+        keyFinding: 'In a mouse model of Barth syndrome, SS-31 improved cardiac mitochondrial morphology and corrected defective mitophagy, supporting its cardiolipin-targeting mechanism. Animal.'
+      },
+    ],
     description: 'An advanced peptide blend that targets cellular energy from two distinct angles: SS-31 repairs cardiolipin membranes to optimize ATP generation, while MOTS-c activates the AMPK pathway to stimulate mitochondrial biogenesis.',
     clinicalResearch: 'Dual metabolic pathways target mitochondrial cardiolipin surfaces and AMPK. SS-31 reduces cellular reactive oxygen species (ROS) and improves energy efficiency, while MOTS-c mimics exercise pathways, promoting nutrient burning and cellular repair.',
     typicalDosage: '5 mg MOTS-c twice weekly / 2 mg SS-31 once daily',
@@ -1787,6 +2352,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Ultimate Fat Fire [BLEND]',
     chemicalName: 'AOD-9604 (2.5mg) + Cardarine (10mg) Synergy',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'AOD-9604 Phase 2B obesity program (Metabolic Pharmaceuticals)',
+        citation: 'Phase 2B randomized controlled trial, 536 subjects, ~2007',
+        keyFinding: 'The pivotal 24-week Phase 2B trial in 536 subjects did NOT show significant weight loss versus placebo, and clinical development was terminated in 2007. An earlier 12-week study reported ~2.6 kg loss on 1 mg/day versus ~0.8 kg placebo, but this was not reproduced.'
+      },
+      {
+        studyTitle: 'Mouse carcinogenicity study with GW501516, a PPAR-delta agonist',
+        citation: 'Toxicological Sciences (Society of Toxicology), 2009 (Newsholme et al.)',
+        keyFinding: 'Chronic (104-week) high-dose GW501516 induced tumors at multiple organ sites in mice (a parallel rat study showed similar findings); these carcinogenicity results led GSK to halt development. Disclosed as conference abstracts.'
+      },
+    ],
     description: 'A potent, non-hormonal fat-burning blend that pairs the lipolytic, localized fat-releasing actions of AOD-9604 with the fat-oxidizing properties of Cardarine.',
     clinicalResearch: 'AOD-9604 targets and releases stored lipids from fat cells into circulation, while Cardarine activates PPAR-delta receptors to burn those free lipids for fuel. This synergistic mechanism accelerates fat breakdown.',
     typicalDosage: '250 mcg AOD-9604 daily / 15 mg Cardarine daily',
@@ -1812,6 +2389,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Androgenic Power Base [BLEND]',
     chemicalName: 'Test Cypionate (200mg) + Primobolan (200mg) + NPP (100mg) per ml',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'The Effects of Supraphysiologic Doses of Testosterone on Muscle Size and Strength in Normal Men',
+        citation: 'New England Journal of Medicine, 1996 (Bhasin et al.)',
+        keyFinding: 'Supraphysiologic testosterone enanthate (600 mg/week, 10 weeks) increased fat-free mass, muscle size, and strength in normal men, with effects additive to resistance training. Cypionate shares the parent hormone.'
+      },
+      {
+        studyTitle: 'Effects of nandrolone decanoate compared with placebo or testosterone on HIV-associated wasting',
+        citation: 'HIV Medicine, 2006 (Gold et al.)',
+        keyFinding: 'In 303 HIV-positive men, nandrolone decanoate 150 mg IM every 2 weeks for 12 weeks produced significantly greater gains in fat-free mass (mean +1.34 kg) and weight (+1.48 kg) than placebo.'
+      },
+    ],
     description: 'An advanced lean-gains injectable cycle. It pairs a stable testosterone base with the estrogen-blocking, high-density tissue properties of Primobolan, and the collagen and nitrogen-retaining actions of NPP.',
     clinicalResearch: 'The combined profile balances anabolic activity while managing side effects. Primobolan downregulates estrogenic side effects from testosterone aromatization, while NPP promotes rapid protein synthesis and joint healing.',
     typicalDosage: '1.0 ml - 2.0 ml injection volume weekly',
@@ -1838,6 +2427,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Nattokinase',
     chemicalName: 'Nattokinase Fibrinolytic Enzyme Extract',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of Nattokinase on Blood Pressure: A Randomized, Controlled Trial',
+        citation: 'Hypertension Research, 2008',
+        keyFinding: 'In 86 adults with pre/mild hypertension, 8 weeks of nattokinase (2,000 FU/day) reduced systolic blood pressure by roughly 5.5 mmHg versus placebo.'
+      },
+      {
+        studyTitle: 'Nattokinase Atherothrombotic Prevention Study (NAPS): A Randomized Controlled Trial',
+        citation: 'Clinical Hemorheology and Microcirculation, 2021',
+        keyFinding: 'In 265 adults followed ~3 years, nattokinase did NOT slow carotid atherosclerosis progression and showed no significant effect on blood pressure or lipids (a null result).'
+      },
+    ],
     description: 'A powerful systemic fibrinolytic enzyme extracted from Natto. It is widely used during cycles to thin the blood, dissolve micro-clots, and lower systemic blood pressure.',
     clinicalResearch: 'Classified as a potent thrombolytic agent. In clinical trials, it directly breaks down fibrinogen and fibrin structures (the primary building blocks of blood clots), improving blood flow and reducing viscosity.',
     typicalDosage: '2,000 FU - 4,000 FU daily',
@@ -1863,6 +2464,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Pycnogenol',
     chemicalName: 'French Maritime Pine Bark Extract',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Pycnogenol (French maritime pine bark) in randomized double-blind placebo-controlled human studies',
+        citation: 'Frontiers in Nutrition, 2024',
+        keyFinding: 'A review of 39 randomized, double-blind, placebo-controlled trials (2,009 subjects) found Pycnogenol beneficially affected cardiovascular health, chronic venous insufficiency, cognition, and joint and skin health over 2 weeks to 6 months.'
+      },
+    ],
     description: 'A powerful natural antioxidant that stimulates nitric oxide production, protecting endothelial cells and managing arterial stiffness under cycle loads.',
     clinicalResearch: 'Upregulates endothelial nitric oxide synthase (eNOS), which synthesizes nitric oxide for vasodilation. This relieves arterial pressure, increases muscular blood flow, and neutralizes free radicals.',
     typicalDosage: '100 mg - 200 mg daily',
@@ -1887,6 +2495,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Aged Garlic Extract',
     chemicalName: 'Kyolic Aged Garlic Extract (S-Allyl Cysteine)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'The effect of aged garlic extract on the atherosclerotic process: a randomized double-blind placebo-controlled trial',
+        citation: 'BMC Complementary Medicine and Therapies, 2020',
+        keyFinding: 'In 104 patients given 2,400 mg/day aged garlic extract for 1 year, the active group showed reduced coronary artery calcification progression and a significant fall in systolic blood pressure versus placebo.'
+      },
+      {
+        studyTitle: 'Aged Garlic Extract Reduces IL-6: A Double-Blind Placebo-Controlled Trial',
+        citation: 'Evidence-Based Complementary and Alternative Medicine, 2021',
+        keyFinding: 'In 29 women, 12 months of aged garlic extract significantly lowered the inflammatory marker IL-6 compared with placebo.'
+      },
+    ],
     description: 'A highly bioavailable garlic extract that lowers systemic blood pressure, reverses soft arterial plaque accumulation, and optimizes cholesterol ratios.',
     clinicalResearch: 'S-allyl cysteine (SAC) acts as a powerful antioxidant, modulating nitric oxide and hydrogen sulfide pathways. Clinical trials show it reduces coronary artery calcification and helps reverse plaque buildup.',
     typicalDosage: '600 mg - 1,200 mg daily',
@@ -1911,6 +2531,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Hawthorn Berry',
     chemicalName: 'Crataegus Oxyacantha Extract (Standardized Flavonoids)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Efficacy and safety of Crataegus extract WS 1442 in heart failure: the SPICE trial',
+        citation: 'European Journal of Heart Failure, 2008',
+        keyFinding: 'In 2,681 patients with NYHA II-III heart failure, 900 mg/day WS 1442 for 24 months did NOT significantly reduce the primary cardiac endpoint, though sudden cardiac death fell ~40% in a less-severe subgroup.'
+      },
+    ],
     description: 'A traditional cardiac herb used during cycles to regulate vascular resistance, optimize cardiac output, and maintain healthy blood pressure ranges.',
     clinicalResearch: 'Hawthorn active compounds (oligomeric proanthocyanidins) inhibit phosphodiesterase, relaxing coronary blood vessels and improving myocardial blood flow, leading to increased heart muscle efficiency.',
     typicalDosage: '500 mg - 1,500 mg daily',
@@ -1935,6 +2562,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Retatrutide (LY3437943)',
     chemicalName: 'MIP-Agonist Triple Hormone Peptide (GLP-1/GIP/GCGR)',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Triple-Hormone-Receptor Agonist Retatrutide for Obesity — A Phase 2 Trial (Jastreboff et al.)',
+        citation: 'New England Journal of Medicine, Vol 389, 2023 (NEJMoa2301972)',
+        keyFinding: 'In 338 adults with obesity, least-squares mean weight change at 48 weeks reached −24.2% in the 12 mg group versus −2.1% on placebo. This is the same molecule (LY3437943) as the standard Retatrutide listing.'
+      },
+    ],
     description: 'The absolute pinnacle of metabolic design. A third-generation triple co-agonist targeting GLP-1, GIP, and Glucagon (GCGR) receptors. Under research, it generates the most aggressive fat mobilization rate of any compound currently known, vastly outperforming Semaglutide and Tirzepatide.',
     clinicalResearch: 'Acts simultaneously on three major digestive and fat-burning hormone pathways. GIP increases insulin secretion and adipose lipid metabolism; GLP-1 delays gastric emptying to block hunger; GCGR directly stimulates energy expenditure, raising core temperature and cellular metabolic rates.',
     typicalDosage: '2 mg - 12 mg weekly (escalated slowly over months)',
@@ -1962,6 +2596,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Tesofensine',
     chemicalName: 'Presynaptic Triple Monoamine Reuptake Inhibitor',
     category: 'weight_loss',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effect of tesofensine on bodyweight loss, body composition, and quality of life in obese patients: a randomised, double-blind, placebo-controlled trial (Astrup et al.)',
+        citation: 'The Lancet, Vol 372, pp 1906–13, 2008',
+        keyFinding: 'In a 24-week Phase 2 trial, mean weight loss was 4.5% (0.25 mg), 9.2% (0.5 mg), and 10.6% (1.0 mg) versus 2.0% on placebo, with heart rate rising ~7.4 bpm at 0.5 mg. Note: The Lancet issued an unresolved Expression of Concern (2013) about trial irregularities.'
+      },
+    ],
     description: 'An advanced oral triple monoamine reuptake inhibitor (acting on dopamine, serotonin, and noradrenaline). It selectively suppresses appetite while upregulating resting metabolic thermogenesis and brain-derived dopamine motivation markers.',
     clinicalResearch: 'Prevents the reabsorption of dopamine, serotonin, and noradrenaline in brain synaptic junctions. This increases satiety levels, reduces the rewarding feel of high-calorie foods, and stimulates sympathetic energy output.',
     typicalDosage: '250 mcg - 500 mcg daily',
@@ -1988,6 +2629,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Kisspeptin-10',
     chemicalName: 'KISS1 Receptor Agonist (Hypothalamic Decapeptide)',
     category: 'sexual_health',
+    clinicalStudies: [
+      {
+        studyTitle: 'Kisspeptin-10 Is a Potent Stimulator of LH and Increases Pulse Frequency in Men',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2011',
+        keyFinding: 'Intravenous kisspeptin-10 produced a rapid, dose-dependent rise in serum LH (maximal at 1 mcg/kg), and continuous infusion increased LH pulse frequency and size in healthy men.'
+      },
+      {
+        studyTitle: 'Kisspeptin-10 stimulates serum testosterone and LH secretion in men with type 2 diabetes and mild hypogonadism',
+        citation: 'Clinical Endocrinology, 2013',
+        keyFinding: 'IV kisspeptin-10 increased LH in both healthy men and men with type 2 diabetes, supporting kisspeptin as an upstream stimulus to the reproductive axis.'
+      },
+    ],
     description: 'An extremely hypothalamic peptide that triggers the release of Gonadotropin-Releasing Hormone (GnRH). It upregulates endogenous Luteinizing Hormone (LH) and Follicle-Stimulating Hormone (FSH), naturally restoring high-level endogenous testosterone and driving deep libido pathways.',
     clinicalResearch: 'Binds with high affinity to the KISS1 protein-coupled receptor (GPR54) in the brain. This stimulates a natural physiological release of GnRH, which then commands the pituitary to release LH and FSH to drive testicular output.',
     typicalDosage: '100 mcg - 200 mcg per dose',
@@ -2014,6 +2667,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Thymosin Alpha-1 (TA1)',
     chemicalName: 'T-Cell Mature Phenotype Immunomodulator (28aa)',
     category: 'immune',
+    clinicalStudies: [
+      {
+        studyTitle: 'The efficacy of thymosin alpha 1 for severe sepsis (ETASS): a multicenter randomized controlled trial',
+        citation: 'Critical Care, 2013',
+        keyFinding: 'In 361 patients with severe sepsis, thymosin alpha 1 reduced 28-day all-cause mortality versus placebo; however, the larger TESTS trial (1,106 patients) later found no overall mortality benefit, with possible signal only in subgroups.'
+      },
+      {
+        studyTitle: 'Thymosin Alpha 1 and mortality in critically ill COVID-19 patients (Liu et al.)',
+        citation: 'Clinical Infectious Diseases, 2020',
+        keyFinding: 'In an observational cohort of critically ill COVID-19 patients, thymosin alpha 1 was associated with reduced 28-day mortality (11.1% vs 30.0%) and restoration of lymphocyte counts. Observational, not an RCT.'
+      },
+    ],
     description: 'A highly regarded immunological peptide that stimulates thymic T-cell activity, optimizes cytokine balance, and enhances natural host defenses. Extensively utilized to combat chronic viral pathways, resolve dormant bacterial infections, and modulate auto-immune sensitivities.',
     clinicalResearch: 'Isolated from thymic tissue, TA1 works via toll-like receptors to promote mature T-lymphocytes (helper, cytotoxic, and regulatory T-cells). This balances the immune response, boosting defense while suppressing self-destructive autoimmune pathways.',
     typicalDosage: '1.5 mg twice weekly',
@@ -2040,6 +2705,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Human Chorionic Gonadotropin (hCG)',
     chemicalName: 'Endogenous Glycoprotein Luteinizing Hormone Mimetic',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Testosterone undecanoate with hCG does not impair spermatogenesis in isolated hypogonadotropic hypogonadism',
+        citation: 'Asian Journal of Andrology, 2019',
+        keyFinding: 'Adding oral testosterone undecanoate to hCG did not impair spermatogenesis and shortened the time to normalize serum testosterone and promote virilization versus hCG alone.'
+      },
+      {
+        studyTitle: 'Optimal treatment for spermatogenesis in male hypogonadotropic hypogonadism',
+        citation: 'Review, 2019',
+        keyFinding: 'Spermatogenesis induction rates were higher with combined hCG + FSH (~86%) than with hCG alone (~40%) in hypogonadotropic hypogonadism.'
+      },
+    ],
     description: 'A naturally occurring peptide hormone that behaves as an analog of Luteinizing Hormone (LH). In endocrine networks, it directly stimulates Leydig cells in the testes to synthesize high quantities of testosterone, preventing testicular atrophy during suppressive cycles.',
     clinicalResearch: 'Binds directly to the LH/choriogonadotropin receptor in testicles, bypassing the suppressed pituitary pathway. This keeps Leydig cells active, pumping out natural testosterone, preventing cell atrophy, and maintaining fertility.',
     typicalDosage: '250 IU - 500 IU per dose',
@@ -2066,6 +2743,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Dianabol (Dbol)',
     chemicalName: 'Methandrostenolone (Oral Methylated AAS)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of methandienone on the performance and body composition of men undergoing athletic training',
+        citation: 'Clinical Science, 1981 (Hervey et al.)',
+        keyFinding: 'In a double-blind crossover of 100 mg/day methandienone vs placebo in trained weightlifters, body weight, total body potassium/nitrogen, muscle size, and leg strength rose significantly, though the disproportionate potassium/nitrogen gains were judged not normal muscle. Human clinical trial on methandrostenolone (Dianabol).'
+      },
+    ],
     description: 'The absolute undisputed grandfather of oral anabolic steroids. Highly celebrated for producing rapid gains in raw lifting strength, intramuscular glycogen accumulation, and overall muscle fullness.',
     clinicalResearch: 'An alkylated derivative of testosterone designed to survive oral ingestion. It binds aggressively to androgen receptors, inducing massive positive nitrogen balance in skeletal tissue and optimizing cellular glycogen storage.',
     typicalDosage: '20 mg - 50 mg daily',
@@ -2092,6 +2776,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'L-Carnitine',
     chemicalName: 'L-Carnitine Tartrate / Acetyl-L-Carnitine',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of L-carnitine supplementation on weight loss and body composition: a systematic review and meta-analysis of 37 RCTs (Talenezhad et al.)',
+        citation: 'Clinical Nutrition ESPEN, 2020',
+        keyFinding: 'Pooling 37 randomized trials (~2,292 participants), L-carnitine significantly reduced body weight by 1.21 kg, BMI by 0.24 kg/m², and fat mass by 2.08 kg; effects were modest and seen mainly in overweight/obese subjects combined with lifestyle modification.'
+      },
+    ],
     description: 'A core metabolic factor responsible for transporting circulating fatty acid chains directly into cellular mitochondria to be metabolized for muscular energy, optimizing physical endurance and cellular energy production.',
     clinicalResearch: 'Oral L-Carnitine is a widely researched dietary compound. It serves as an essential biological shuttle for long-chain fatty acids entering the mitochondrial matrix for beta-oxidation, helping optimize fat transport and supporting cardiovascular performance.',
     typicalDosage: '1,000 mg - 3,000 mg daily',
@@ -2116,6 +2807,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Aromasin',
     chemicalName: 'Exemestane (Irreversible Suicide Aromatase Inhibitor)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'A Randomized Trial of Exemestane after Two to Three Years of Tamoxifen Therapy in Postmenopausal Women with Primary Breast Cancer',
+        citation: 'New England Journal of Medicine, 2004',
+        keyFinding: 'In 4,742 women, switching to exemestane after 2-3 years of tamoxifen yielded a 32% reduction in recurrence risk (HR 0.68) versus continuing tamoxifen, with a 4.7% absolute disease-free survival benefit at 3 years.'
+      },
+    ],
     description: 'A premium Type I (steroidal) irreversible "suicide" aromatase inhibitor. It permanently binds to green-lit aromatase enzymes, completely deactivating them and preventing rebound estrogen flares when discontinuing therapy.',
     clinicalResearch: 'Binds permanently to the active site of the aromatase enzyme, deactivating it forever (requires the body to synthesize brand new aromatase enzymes). Provides a very stable, smooth estrogenic management profile.',
     typicalDosage: '12.5 mg - 25.0 mg per dose',
@@ -2141,6 +2839,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Clomid',
     chemicalName: 'Clomiphene Citrate (Selective Estrogen Receptor Modulator)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Clomiphene Citrate as an Alternative Therapeutic Approach for Male Hypogonadism: Mechanisms and Clinical Implications',
+        citation: 'Pharmaceuticals (MDPI), 2024',
+        keyFinding: 'Clomiphene citrate raises endogenous testosterone (reported increases such as ~256 to ~630 ng/dL) by blocking estrogen negative feedback, offering a fertility-preserving alternative to testosterone replacement.'
+      },
+      {
+        studyTitle: 'Clomiphene citrate improved testosterone and sperm concentration in hypogonadal males',
+        citation: 'Systems Biology in Reproductive Medicine, 2020',
+        keyFinding: 'Clomiphene citrate significantly improved both serum testosterone and sperm concentration in hypogonadal men.'
+      },
+    ],
     description: 'A potent Selective Estrogen Receptor Modulator (SERM). It operates by blocking estrogen receptors in the hypothalamus, tricking the pituitary gland into releasing massive pulses of LH and FSH to jumpstart endogenous testosterone production post-cycle.',
     clinicalResearch: 'Antagonizes estrogen receptors in the hypothalamus, disrupting the negative feedback loop. The brain believes there is zero estrogen, demanding high GnRH, which drives the pituitary to release LH and FSH to restimulate Leydig cells.',
     typicalDosage: '25 mg - 50 mg daily',
@@ -2166,6 +2876,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'DSIP',
     chemicalName: 'Delta Sleep-Inducing Peptide (9aa Somnotropic Peptide)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'A Clinical Trial with DSIP',
+        citation: 'European Neurology, 1984',
+        keyFinding: 'Seven patients with severe insomnia received 10 injections of DSIP; sleep normalized in all but one case over 3-7 month follow-up, with improved daytime mood. Small human case series, no placebo control.'
+      },
+      {
+        studyTitle: 'Delta sleep-inducing peptide increases hypothalamic substance P and resistance of rats to emotional stress',
+        citation: 'Neuroscience and Behavioral Physiology, 1992',
+        keyFinding: 'DSIP administration raised hypothalamic substance P and reduced classic stress markers (adrenal hypertrophy, thymus involution), suggesting a stress-protective effect. Animal.'
+      },
+    ],
     description: 'An ultra-specialized somnotropic nonapeptide. It naturally reorganizes circadian rhythms, stabilizes nocturnal body temperature, and increases the depth of slow-wave delta sleep while optimizing daytime endocrine pulses.',
     clinicalResearch: 'Crosses the blood-brain barrier and binds to neuromodulator receptors. It upregulates slow-wave delta brain waves, stabilizing sleep-wake cycles without acting as a direct GABA-sedative, preserving natural sleep stages.',
     typicalDosage: '100 mcg - 250 mcg per dose',
@@ -2192,6 +2914,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Thymulin',
     chemicalName: 'Zinc-Dependent Thymic Nonapeptide Bioregulator',
     category: 'immune',
+    clinicalStudies: [
+      {
+        studyTitle: 'Thymulin reverses inflammatory hyperalgesia and modulates proinflammatory cytokines after central endotoxin injection',
+        citation: 'Neuroscience, 2003',
+        keyFinding: 'Thymulin reversed inflammatory hyperalgesia and reduced proinflammatory cytokine concentrations after central endotoxin challenge in rats, demonstrating anti-inflammatory and antinociceptive activity. Animal.'
+      },
+      {
+        studyTitle: 'Thymulin: An Emerging Anti-Inflammatory Molecule',
+        citation: 'Current Medicinal Chemistry - Anti-Inflammatory & Anti-Allergy Agents, 2005',
+        keyFinding: 'Review establishing thymulin as a zinc-dependent nonapeptide that downregulates inflammatory cytokines and upregulates anti-inflammatory IL-10, with roles in T-cell differentiation.'
+      },
+    ],
     description: 'A natural zinc-dependent thymus-derived nonapeptide. It stimulates general lymphocyte cells, modulates allergic asthma pathways, and plays a vital role in T-cell differentiation and systemic wellness.',
     clinicalResearch: 'Requires zinc to form its biologically active 3D chelated structure. It commands lymphocyte differentiation, restoring immunocompetence, normalizing hyperactive IgE pathways, and controlling cellular inflammation.',
     typicalDosage: '100 mcg - 200 mcg daily',
@@ -2218,6 +2952,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Sermorelin',
     chemicalName: 'Growth Hormone Releasing Hormone Fragment (GRF 1-29)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Nine months\' subcutaneous therapy with synthetic GH-releasing factor (GRF 1-29) in children with short stature',
+        citation: 'Clinical study, 1987',
+        keyFinding: 'In short boys with partial GH deficiency, subcutaneous GRF(1-29) over three 3-month periods promoted linear growth, supporting use as a GH stimulator. Human study.'
+      },
+      {
+        studyTitle: 'GHRH(1-29)NH2 in children with idiopathic short stature induces a sustained increase in growth velocity',
+        citation: 'Clinical Endocrinology, 1994',
+        keyFinding: 'Sermorelin raised height velocity in non-GH-deficient short children, with the increase sustained over 12 months of treatment. Human study.'
+      },
+    ],
     description: 'A 29-amino acid synthetic peptide representing the active core of endogenous Growth Hormone-Releasing Hormone (GHRH). It binds directly to the pituitary gland to raise growth hormone and IGF-1 secretions, promoting fat metabolism, cell repair, and skin quality.',
     clinicalResearch: 'The shortest fully active GHRH peptide. It stimulates somatotropes in the pituitary gland to secrete pulses of growth hormone in a highly natural, self-regulating feedback loop, preventing pituitary exhaustion.',
     typicalDosage: '200 mcg - 500 mcg daily',
@@ -2244,6 +2990,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Theanine & Ashwagandha Blend',
     chemicalName: 'L-Theanine & Ashwagandha Synergy',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of L-Theanine on Stress-Related Symptoms and Cognitive Functions in Healthy Adults: A Randomized Controlled Trial',
+        citation: 'Nutrients, 2019',
+        keyFinding: 'In 30 healthy adults, 4 weeks of L-theanine (200 mg/day) reduced depression and anxiety scores and improved sleep quality versus placebo.'
+      },
+      {
+        studyTitle: 'A randomized double-blind placebo-controlled study of a full-spectrum ashwagandha root extract in reducing stress and anxiety in adults',
+        citation: 'Indian Journal of Psychological Medicine, 2012',
+        keyFinding: 'In 64 stressed adults, 60 days of ashwagandha root extract (300 mg twice daily) significantly reduced perceived stress scores and serum cortisol versus placebo. These are separate single-ingredient trials.'
+      },
+    ],
     description: 'A synergistic oral blend pairing the calming amino acid L-Theanine with standardized Ashwagandha root extract. Designed to reduce high central nervous system (CNS) arousal, lower cortisol, and balance cycle-induced tension or jitters.',
     clinicalResearch: 'L-Theanine crosses the blood-brain barrier to increase alpha brain waves, inducing alert relaxation. Ashwagandha is a highly standardized adaptogen clinically shown to optimize the hypothalamic-pituitary-adrenal (HPA) axis, reducing serum cortisol and calming vascular tension.',
     typicalDosage: '200 mg L-Theanine / 300 mg Ashwagandha twice daily',
@@ -2268,6 +3026,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'NAC',
     chemicalName: 'N-Acetyl L-Cysteine (Precursor to Glutathione)',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'RCT in Healthy Older Adults: Glycine and N-Acetylcysteine on Glutathione Redox Status and Oxidative Damage',
+        citation: 'Frontiers in Aging, 2022',
+        keyFinding: 'In 114 healthy older adults, GlyNAC (4.8-7.2 g/day for 2 weeks) raised glutathione in subjects who started with low glutathione, supporting a precursor effect.'
+      },
+      {
+        studyTitle: 'High-dose N-acetylcysteine in diabetic peripheral neuropathy: a randomized controlled study',
+        citation: 'Frontiers in Endocrinology, 2025',
+        keyFinding: 'In 90 patients, NAC 2,400 mg/day for 12 weeks increased antioxidant glutathione peroxidase and Nrf-2 and lowered the inflammatory marker TNF versus control.'
+      },
+    ],
     description: 'A powerful precursor to glutathione—the body\'s ultimate antioxidant. It shields cells from oxidative stress, optimizes respiratory function, and protects the liver during toxic cycle exposures.',
     clinicalResearch: 'Directly converted by the liver into L-cysteine, which acts as the rate-limiting step in glutathione synthesis. This actively detoxifies lipid-soluble pollutants, drugs, heavy metals, and methylated steroidal structures.',
     typicalDosage: '600 mg - 1,200 mg daily',
@@ -2292,6 +3062,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Taurine',
     chemicalName: '2-Aminoethanesulfonic Acid',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Taurine deficiency as a driver of aging',
+        citation: 'Science, 2023',
+        keyFinding: 'Circulating taurine declines with age across mice, monkeys, and humans; supplementation extended healthspan and lifespan in mice and improved healthspan markers in monkeys. Human data were observational, not interventional.'
+      },
+      {
+        studyTitle: 'Experimental Evidence Against Taurine Deficiency as a Driver of Aging in Humans',
+        citation: 'Aging Cell, 2025',
+        keyFinding: 'A follow-up human analysis found blood taurine did not consistently decline with age in humans, tempering the 2023 claim.'
+      },
+    ],
     description: 'A vital amino sulfonic acid occurring naturally in the human body, with heavy concentrations in the brain, heart, eyes, and active skeletal muscle fibers. Highly critical for managing severe muscle cramping and agonizing "back pumps" frequently associated with specific anabolic agents.',
     clinicalResearch: 'Taurine serves as an essential cellular osmolyte and neuromodulator. It regulates intracellular calcium levels, potassium, and sodium balance, stabilizing cell membranes under physical and physiological stressors to prevent hyper-excitability of muscle tissues.',
     typicalDosage: '1,000 mg - 3,000 mg daily',
@@ -2316,6 +3098,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Glycine',
     chemicalName: 'Aminoacetic Acid',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'GlyNAC (Glycine + N-Acetylcysteine) in Older Adults Improves Glutathione, Oxidative Stress, Physical Function, and Aging Hallmarks: A Randomized Clinical Trial',
+        citation: 'Journals of Gerontology: Series A, 2023',
+        keyFinding: 'In older adults, 16 weeks of GlyNAC (vs alanine placebo) corrected glutathione deficiency, lowered oxidative stress and inflammation, and improved gait speed and physical function.'
+      },
+      {
+        studyTitle: 'GlyNAC supplementation in older adults improves multiple aging hallmarks: results of a pilot clinical trial',
+        citation: 'Clinical and Translational Medicine, 2021',
+        keyFinding: 'The earlier pilot trial reported broad improvements across mitochondrial, metabolic, vascular, and cognitive measures. Trials are small and from a single research group.'
+      },
+    ],
     description: 'The simplest stable amino acid in existence, performing crucial duty as a primary building block for structural proteins, endogenous collagen synthesis, and functioning as an inhibitory neurotransmitter in the central nervous system.',
     clinicalResearch: 'Glycine binds to and activates inhibitory glycine receptors in the brain stem and spinal cord, which calms neuronal excitability and lowers core body temperature to facilitate deep sleep. It is also the rate-limiting amino acid for endogenous collagen fabrication and cellular glutathione synthesis.',
     typicalDosage: '3,000 mg - 5,000 mg daily',
@@ -2340,6 +3134,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Omega-3 Fish Oil',
     chemicalName: 'Concentrated EPA & DHA Essential Fatty Acids',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Cardiovascular Risk Reduction with Icosapent Ethyl for Hypertriglyceridemia (REDUCE-IT)',
+        citation: 'New England Journal of Medicine, 2019',
+        keyFinding: 'In 8,179 statin-treated patients with elevated triglycerides, 4 g/day icosapent ethyl (high-dose EPA) cut the primary composite cardiovascular endpoint to 17.2% vs 22.0% on placebo (HR 0.75) over ~4.9 years.'
+      },
+      {
+        studyTitle: 'Marine n-3 Fatty Acids and Prevention of Cardiovascular Disease and Cancer (VITAL)',
+        citation: 'New England Journal of Medicine, 2019',
+        keyFinding: 'In over 25,000 adults, 1 g/day EPA+DHA did NOT significantly reduce major cardiovascular events or cancer overall, though total myocardial infarction fell ~28%. Outcomes appear dose- and formulation-dependent.'
+      },
+    ],
     description: 'An ultra-purified, clinical-tier softgel oil complex delivering highly concentrated Omega-3 essential fatty acids (EPA and DHA) to support cardiovascular integrity and counter cycle-induced lipid strains.',
     clinicalResearch: 'Eicosapentaenoic Acid (EPA) and Docosahexaenoic Acid (DHA) integrate directly into the phospholipid bilayer of cardiac and vascular cells. This processes down-regulation of inflammatory cytokines, reduces circulating blood triglycerides, and improves endothelial elasticity.',
     typicalDosage: '2,000 mg daily with a fat-containing meal',
@@ -2364,6 +3170,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Benfotiamine',
     chemicalName: 'S-benzoylthiamine O-monophosphate',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Benfotiamine in diabetic polyneuropathy (BENDIP): a randomised double-blind placebo-controlled study',
+        citation: 'Experimental and Clinical Endocrinology & Diabetes, 2008',
+        keyFinding: 'In 165 patients with diabetic polyneuropathy, 6 weeks of benfotiamine (up to 600 mg/day) significantly improved the Neuropathy Symptom Score, with the greatest benefit for pain at the higher dose.'
+      },
+    ],
     description: 'A highly bioavailable, fat-soluble synthetic derivative of Thiamine (Vitamin B1). Achieves up to 5 times greater intracellular concentration than water-soluble thiamine salts, defending endothelial cells and micro-vasculature from carbohydrate-induced glycation and nerve damage.',
     clinicalResearch: 'Benfotiamine crosses cellular lipid barriers with ease and converts into active thiamine pyrophosphate. It strongly activates the enzyme transketolase, which redirects toxic glucose metabolites away from damaging capillary/nerve pathways, entirely blocking advanced glycation end-product (AGE) formulation.',
     typicalDosage: '300 mg - 600 mg daily',
@@ -2388,6 +3201,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Trace Minerals Enhanced',
     chemicalName: 'Ionic Trace Elements & Sea Kelp Blend',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Impact of trace elements and vitamin supplementation on immunity and infections in institutionalized elderly: a randomized controlled trial',
+        citation: 'Archives of Internal Medicine, 1999',
+        keyFinding: 'In 725 institutionalized elderly, 2 years of low-dose zinc plus selenium significantly improved post-vaccination antibody response and reduced respiratory tract infections; vitamins alone did not.'
+      },
+    ],
     description: 'A complete spectrum of pristine ionic trace elements, packed with critical Zinc, Copper, Manganese, Selenium, Boron, and sea-kelp natural Iodine. Designed to activate over 300 enzymatic reactions vital for thyroid conversion and natural hormone balance.',
     clinicalResearch: 'Trace elements function as key catalytic cofactors in enzymes handling cellular division, growth, and detoxification. Iodine and Selenium are indispensable for thyroid T4-to-T3 hormone conversions, while Zinc is required for luteinizing hormone (LH) and testosterone synthesis.',
     typicalDosage: '1 capsule daily',
@@ -2412,6 +3232,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Extended-Release Niacin',
     chemicalName: 'Wax-Matrix Nicotinic Acid',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Niacin in Patients with Low HDL Cholesterol Levels Receiving Intensive Statin Therapy (AIM-HIGH)',
+        citation: 'New England Journal of Medicine, 2011',
+        keyFinding: 'In 3,414 statin-treated patients, adding extended-release niacin raised HDL and lowered triglycerides but did NOT reduce cardiovascular events; the trial was stopped early for futility.'
+      },
+      {
+        studyTitle: 'Effects of Extended-Release Niacin with Laropiprant in High-Risk Patients (HPS2-THRIVE)',
+        citation: 'New England Journal of Medicine, 2014',
+        keyFinding: 'In 25,673 statin-treated patients, ER niacin/laropiprant did NOT reduce major vascular events and significantly increased serious adverse events including new-onset diabetes.'
+      },
+    ],
     description: 'A clinical-strength extended-release formulation of Niacin (Vitamin B3) utilizing a vegetable-wax matrix release system. Engineered to avoid the intense cutaneous "niacin flush" while forcefully optimizing lipid balances.',
     clinicalResearch: 'Nicotinic acid acts inside the liver to down-regulate the key enzyme diacylglycerol acyltransferase 2, restricting triglycerides synthesis. Simultaneously, it stabilizes and slows the clearance of cardio-protective ApoA-I proteins, forcing real elevations in heart-healthy HDL fractions.',
     typicalDosage: '500 mg - 1,000 mg once daily',
@@ -2436,6 +3268,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Vitamin D3 & K2',
     chemicalName: 'Cholecalciferol & Menaquinone-7 (MK-7) Synergy',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Menaquinone-7 (vitamin K2) improves arterial stiffness in healthy postmenopausal women: a double-blind randomised clinical trial',
+        citation: 'Thrombosis and Haemostasis, 2015',
+        keyFinding: 'In 244 healthy postmenopausal women, 180 mcg/day MK-7 for 3 years inhibited age-related arterial stiffening and improved vascular elasticity versus placebo. Evidence is for K2 alone, not a D3+K2 combination.'
+      },
+    ],
     description: 'A critical metabolic vitamin synergy. Vitamin D3 drives intestinal calcium absorption, while Bioactive Vitamin K2 activates osteocalcin and matrix Gla proteins to deposit calcium strictly into bones and teeth, shielding blood vessels from calcification.',
     clinicalResearch: 'Vitamin D receptor (VDR) is present in almost all human tissues and directly regulates hundreds of genes, including endocrine and immune parameters. Vitamin K2 as Menaquinone-7 has a 72-hour system half-life, ensuring continuous systemic carboxylating enzyme support.',
     typicalDosage: '5,000 IU D3 / 100 mcg K2 daily',
@@ -2460,6 +3299,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Magnesium Bisglycinate',
     chemicalName: 'Fully Chelated Magnesium Diglycinate',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Magnesium Supplementation and Blood Pressure: A Systematic Review and Meta-Analysis of RCTs',
+        citation: 'Hypertension, 2025',
+        keyFinding: 'Across 38 RCTs (2,709 participants), magnesium lowered systolic BP by ~2.8 mmHg and diastolic by ~2.1 mmHg, with larger reductions in medicated hypertensive or magnesium-deficient individuals. Evidence is for magnesium generally.'
+      },
+    ],
     description: 'The highest bioavailable chelated magnesium format. Coupled to the calming transmitter glycine, it bypasses the digestive laxative side-effects of cheap oxides, acting directly as an intracellular muscle relaxing agent.',
     clinicalResearch: 'Acts as a critical cofactor in over 300 enzymatic reactions, including ATP energy synthesis, protein translation, and muscular contraction. Glycinated magnesium crosses biological barriers to bind to inhibitory GABA-A receptors, calming neuronal arousal.',
     typicalDosage: '200 mg - 450 mg daily before sleep',
@@ -2484,6 +3330,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Coenzyme Q10 (Ubiquinol)',
     chemicalName: 'Ubiquinol (Active Mitochondrial CoQ10 Electron Carrier)',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'The Effect of Coenzyme Q10 on Morbidity and Mortality in Chronic Heart Failure (Q-SYMBIO): A Randomized Double-Blind Trial',
+        citation: 'JACC: Heart Failure, 2014',
+        keyFinding: 'In patients with moderate-to-severe heart failure, CoQ10 100 mg three times daily reduced major adverse cardiovascular events and all-cause mortality by ~42-43% over 2 years (10% vs 18% deaths) versus placebo.'
+      },
+    ],
     description: 'The highly bioavailable, pre-reduced antioxidant format of Coenzyme Q10. Critical for the mitochondrial electron transport chain to generate cellular ATP power, while specifically shielding cardiac and arterial cells from oxidation under cycle stress.',
     clinicalResearch: 'Ubiquinol serves as a powerful lipid-soluble antioxidant inside cellular membranes. It prevents the initiation and propagation of lipid peroxidation, which is main driver of arterial cardiovascular damage, while naturally supporting endothelial cell dilation.',
     typicalDosage: '100 mg - 200 mg once daily',
@@ -2508,6 +3361,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Clinical Multivitamin Core',
     chemicalName: 'Activated Micronutrient & Mineral Chelates',
     category: 'supplements',
+    clinicalStudies: [
+      {
+        studyTitle: 'Effects of cocoa extract and a multivitamin on cognitive function: a randomized clinical trial (COSMOS-Mind)',
+        citation: 'Alzheimer\'s & Dementia, 2023',
+        keyFinding: 'In over 2,200 adults aged 65+, daily multivitamin-mineral supplementation for 3 years improved global cognition, episodic memory, and executive function (slowing estimated cognitive aging by ~1.8 years); cocoa extract had no effect.'
+      },
+      {
+        studyTitle: 'Multivitamin-mineral supplementation and cognition: COSMOS clinic subcohort and meta-analysis',
+        citation: 'American Journal of Clinical Nutrition, 2023',
+        keyFinding: 'A pooled COSMOS analysis confirmed a statistically significant overall cognitive benefit of daily multivitamin-mineral supplementation versus placebo in older adults.'
+      },
+    ],
     description: 'A clinical-strength multi-nutrient spectrum featuring activated coenzyme B-vitamins, fully chelated mineral complexes, and organic antioxidants. Acts as metabolic cellular insurance during demanding athletic cycles.',
     clinicalResearch: 'Fills persistent cellular micronutrient gaps that occur under heavy anabolic synthesis or physical load. Loaded with methylcobalamin (B12) and pyridoxal-5-phosphate (B6) to support neuro-chemical pathways and prevent toxic homocysteine build-up.',
     typicalDosage: '1 - 2 tablets daily',
@@ -2532,6 +3397,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Sustanon 250',
     chemicalName: 'Testosterone Blend (4 Esters)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Sustanon 250 pharmacokinetic data (Summary of Product Characteristics)',
+        citation: 'Regulatory PK data (electronic Medicines Compendium)',
+        keyFinding: 'A single dose produces peak plasma testosterone (~70 nmol/L) at 24-48 h, then exponential decay to baseline by 2-3 weeks; the four-ester blend yields wider serum fluctuations than enanthate alone. No RCT of the blend specifically; parent-hormone efficacy (Bhasin, TRAVERSE) applies.'
+      },
+    ],
     description: 'A pharmaceutical-grade blend of four testosterone esters: Testosterone Propionate (30mg), Testosterone Phenylpropionate (60mg), Testosterone Isocaproate (60mg), and Testosterone Decanoate (100mg). Engineered to provide an immediate spike from short esters and a sustained release from the long decanoate ester, offering the benefits of both fast and slow testosterone profiles in a single injection.',
     clinicalResearch: 'The multi-ester profile creates near-immediate elevation of serum testosterone within hours (from propionate), sustained mid-range levels through days 3-7 (phenylpropionate and isocaproate), and a prolonged baseline from decanoate out to 18-21 days. Originally developed by Organon for TRT use.',
     typicalDosage: '250 mg - 750 mg weekly',
@@ -2559,6 +3431,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Testosterone Suspension',
     chemicalName: 'Testosterone Base Aqueous Suspension (No Ester)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Cardiovascular Safety of Testosterone-Replacement Therapy (TRAVERSE)',
+        citation: 'New England Journal of Medicine, 2023',
+        keyFinding: 'In 5,246 hypogonadal men at high cardiovascular risk, testosterone replacement was noninferior to placebo for major adverse cardiac events. Applies to the parent hormone testosterone; esters only alter release kinetics.'
+      },
+    ],
     description: 'Pure testosterone with zero ester chain, suspended in water. The fastest-acting form of testosterone available, reaching peak serum levels within 1-2 hours of injection. Primarily used by competitive powerlifters and athletes as a same-day pre-event performance maximizer.',
     clinicalResearch: 'Without an ester, testosterone suspension is immediately bioavailable upon injection. The extremely rapid spike in testosterone produces immediate nitrogen retention, glycogen loading, and explosive strength increases within 4-6 hours.',
     typicalDosage: '50 mg - 100 mg daily or pre-workout',
@@ -2586,6 +3465,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Testosterone Undecanoate (Nebido)',
     chemicalName: 'Long-Chain Ester Testosterone Undecanoate Oil',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Cardiovascular Safety of Testosterone-Replacement Therapy (TRAVERSE)',
+        citation: 'New England Journal of Medicine, 2023',
+        keyFinding: 'In 5,246 hypogonadal men at high cardiovascular risk, testosterone replacement was noninferior to placebo for major adverse cardiac events. Applies to the parent hormone testosterone; esters only alter release kinetics.'
+      },
+    ],
     description: 'The longest-acting ester of testosterone in clinical use. Formulated as a 1,000mg/4ml oily injection, Nebido (also known as Aveed in the USA) maintains stable testosterone levels for 10-14 weeks per injection — the foundation of modern long-cycle TRT.',
     clinicalResearch: 'FDA-approved for hypogonadism treatment. The extremely long undecanoate ester (C19:0) produces stable serum testosterone for 10-14 weeks with a single large-volume injection. Clinical studies show stable hormone levels with fewer peaks and troughs compared to shorter esters.',
     typicalDosage: '1,000 mg every 10-14 weeks (TRT) or 500 mg every 4-6 weeks (performance)',
@@ -2613,6 +3499,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Testosterone Phenylpropionate',
     chemicalName: 'Short-Medium Ester Injectable Testosterone (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Testosterone dose-response relationships in healthy young men',
+        citation: 'American Journal of Physiology - Endocrinology and Metabolism, 2001 (Bhasin et al.)',
+        keyFinding: 'Graded testosterone doses produced dose-dependent gains in fat-free mass, muscle size, and strength, with HDL reductions at higher doses. Applies to the parent hormone testosterone; this ester only alters release rate.'
+      },
+    ],
     description: 'A short-to-medium acting testosterone ester with a phenylpropionate chain. One of the four components of Sustanon 250, it can also be run as a standalone ester. It bridges the gap between the ultra-short propionate and the medium enanthate, providing good stability without daily injections.',
     clinicalResearch: 'The phenylpropionate ester has a 3-4 day effective half-life in human tissue, producing moderate-speed testosterone release with stable hormone levels when injected every 2-3 days. Less painful than propionate.',
     typicalDosage: '100 mg - 400 mg weekly',
@@ -2640,6 +3533,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Testosterone Isocaproate',
     chemicalName: 'Medium-Long Ester Injectable Testosterone (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Testosterone dose-response relationships in healthy young men',
+        citation: 'American Journal of Physiology - Endocrinology and Metabolism, 2001 (Bhasin et al.)',
+        keyFinding: 'Graded testosterone doses produced dose-dependent gains in fat-free mass, muscle size, and strength, with HDL reductions at higher doses. Applies to the parent hormone testosterone; this ester only alters release rate.'
+      },
+    ],
     description: 'A medium-to-long acting testosterone ester used primarily as one of four components in Sustanon 250. When used standalone, it provides testosterone release durations similar to enanthate, typically requiring once or twice weekly injections. Less commonly used as a solo compound but valued for its intermediate pharmacokinetic window.',
     clinicalResearch: 'The isocaproate ester provides a 7-9 day effective half-life, filling the pharmacokinetic gap between propionate/phenylpropionate and decanoate in multi-ester blends. Provides stable serum testosterone for 7-9 days per injection.',
     typicalDosage: '100 mg - 400 mg weekly',
@@ -2666,6 +3566,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Testosterone Decanoate',
     chemicalName: 'Long-Chain Ester Injectable Testosterone (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Testosterone dose-response relationships in healthy young men',
+        citation: 'American Journal of Physiology - Endocrinology and Metabolism, 2001 (Bhasin et al.)',
+        keyFinding: 'Graded testosterone doses produced dose-dependent gains in fat-free mass, muscle size, and strength, with HDL reductions at higher doses. Applies to the parent hormone testosterone; this ester only alters release rate.'
+      },
+    ],
     description: 'The longest-acting pure decanoate ester of testosterone, making up 100mg (40%) of the 250mg dose in Sustanon 250. When used as a standalone, it behaves similarly to Nandrolone Decanoate (Deca) in terms of release duration, maintaining active testosterone levels for up to 15-18 days per injection.',
     clinicalResearch: 'The decanoate ester chains attach to testosterone forming a depot that hydrolyzes slowly over 15-18 days. Clinical pharmacokinetic data confirms near-identical release profiles to testosterone undecanoate at comparable doses.',
     typicalDosage: '200 mg - 500 mg every 2 weeks',
@@ -2692,6 +3599,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Trenbolone Enanthate',
     chemicalName: 'Long-Ester 19-Nor Progestin (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Trenbolone exhibits tissue-selective anabolic activity: effects on muscle, bone, adiposity, hemoglobin, and prostate',
+        citation: 'American Journal of Physiology - Endocrinology and Metabolism, 2011',
+        keyFinding: 'In male rats, trenbolone increased androgen-sensitive muscle mass and preserved bone without the prostate enlargement or polycythemia seen with testosterone. Animal (rodent) data on the parent compound; human clinical efficacy data essentially does not exist.'
+      },
+    ],
     description: 'The long-acting enanthate ester of Trenbolone. Provides the same extreme androgenic and anabolic properties as Trenbolone Acetate but with the convenience of twice-weekly injections instead of daily. Preferred by intermediate-to-advanced users who want Trenbolone\'s powerful body composition effects with fewer injections and a smoother hormonal curve.',
     clinicalResearch: 'Trenbolone binds to androgen receptors with approximately five times the affinity of testosterone. The enanthate ester extends the active half-life to 5-7 days, enabling twice-weekly injection protocols and producing more stable blood level plateaus versus the acetate form.',
     typicalDosage: '150 mg - 400 mg weekly',
@@ -2719,6 +3633,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Parabolan',
     chemicalName: 'Trenbolone Hexahydrobenzylcarbonate (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Trenbolone exhibits tissue-selective anabolic activity: effects on muscle, bone, adiposity, hemoglobin, and prostate',
+        citation: 'American Journal of Physiology - Endocrinology and Metabolism, 2011',
+        keyFinding: 'In male rats, trenbolone increased androgen-sensitive muscle mass and preserved bone without the prostate enlargement or polycythemia seen with testosterone. Animal (rodent) data on the parent compound; human clinical efficacy data essentially does not exist.'
+      },
+    ],
     description: 'The original, legendary French pharmaceutical form of Trenbolone, produced under the brand name Parabolan by Negma Laboratories until 1997. Uses a hexahydrobenzylcarbonate (cyclohexylmethylcarbonate) ester that provides a medium-long release profile. The only trenbolone compound ever legitimately produced for human clinical use.',
     clinicalResearch: 'The hexahydrobenzylcarbonate ester provides a half-life of approximately 14 days, positioning Parabolan between Trenbolone Enanthate (5-7 days) and Nandrolone Decanoate (15 days) in pharmacokinetic terms. Produces the full trenbolone anabolic profile with slightly smoother peaks due to the longer ester.',
     typicalDosage: '150 mg - 350 mg weekly',
@@ -2746,6 +3667,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Tri-Trenbolone',
     chemicalName: 'Trenbolone Acetate + Enanthate + Hexahydrobenzylcarbonate Blend',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Trenbolone exhibits tissue-selective anabolic activity: effects on muscle, bone, adiposity, hemoglobin, and prostate',
+        citation: 'American Journal of Physiology - Endocrinology and Metabolism, 2011',
+        keyFinding: 'In male rats, trenbolone increased androgen-sensitive muscle mass and preserved bone without the prostate enlargement or polycythemia seen with testosterone. Animal (rodent) data on the parent compound; human clinical efficacy data essentially does not exist.'
+      },
+    ],
     description: 'A three-ester Trenbolone blend combining Trenbolone Acetate, Trenbolone Enanthate, and Trenbolone Hexahydrobenzylcarbonate in a single vial. Designed to provide immediate Tren activity from the acetate component alongside sustained 14-day coverage from the hex ester, creating a complete short-to-long pharmacokinetic profile.',
     clinicalResearch: 'The tri-ester Trenbolone profile has been popularized by underground laboratories. It delivers an immediate trenbolone blood-level spike from the acetate (active within 24-48 hours), sustained mid-range levels from enanthate (days 3-7), and prolonged baseline from hexahydrobenzylcarbonate (through day 14+).',
     typicalDosage: '150 mg - 400 mg weekly',
@@ -2773,6 +3701,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Masteron Enanthate',
     chemicalName: 'Drostanolone Enanthate (Long-Ester Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Treatment of Advanced Breast Carcinoma with Drostanolone Propionate',
+        citation: 'Bristol Medico-Chirurgical Journal, 1970',
+        keyFinding: 'Reports use of drostanolone (Masteril) as a less-virilizing androgen for palliation of advanced breast carcinoma. Human case report on the parent compound drostanolone; Masteron enanthate is the same molecule with a longer ester.'
+      },
+    ],
     description: 'The long-acting enanthate ester version of Masteron (Drostanolone), providing the same cosmetic muscle-hardening, anti-estrogenic, and SHBG-lowering properties as Masteron Propionate — but requiring only twice-weekly injections instead of every-other-day dosing.',
     clinicalResearch: 'Drostanolone enanthate was developed as a more patient-friendly version of the propionate ester. The enanthate chain extends the half-life from 2 days to approximately 10 days, enabling stable blood levels with bi-weekly injection frequency while maintaining all drostanolone activity.',
     typicalDosage: '200 mg - 500 mg weekly',
@@ -2800,6 +3735,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Primobolan Acetate (Oral)',
     chemicalName: 'Methenolone Acetate (Oral Tablet)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Treatment of refractory anemias with methenolone',
+        citation: 'Acta Medica Scandinavica, 1979',
+        keyFinding: 'In 19 patients with refractory anemias, methenolone (Primobolan) produced remissions in a subset with negligible side effects. Human clinical case series on the parent compound methenolone.'
+      },
+    ],
     description: 'The oral tablet form of Primobolan, using a shorter acetate ester on the methenolone base. Favored for its extremely clean anabolic profile, lack of liver toxicity compared to most oral steroids, and ability to produce dry, keepable lean mass. Historically used for pediatric muscle-wasting conditions due to its gentle safety profile.',
     clinicalResearch: 'Unlike most oral steroids, methenolone acetate is not 17-alpha-alkylated, making it notably less hepatotoxic. Its 1-methyl modification prevents first-pass liver destruction, allowing good oral bioavailability without the typical liver enzyme elevation seen with most oral AAS.',
     typicalDosage: '50 mg - 150 mg daily',
@@ -2827,6 +3769,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Turinabol',
     chemicalName: '4-Chlorodehydromethyltestosterone (Oral)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Hormonal doping and androgenization of athletes: a secret program of the German Democratic Republic government',
+        citation: 'Clinical Chemistry, 1997 (Franke & Berendonk)',
+        keyFinding: 'Documented the systematic East German state doping program in which thousands of athletes were given androgens, with Oral-Turinabol the principal agent, causing measurable performance gains and virilization. Human historical review based on Stasi files.'
+      },
+    ],
     description: 'A modified oral anabolic steroid derived from Dianabol with a 4-chloro substitution that completely eliminates aromatization. Originally developed in East Germany and infamously used in the state-sponsored doping program in the 1970s-80s. Produces slow, steady, entirely dry quality muscle without any estrogenic side effects.',
     clinicalResearch: 'The 4-chloro modification to the Dianabol backbone eliminates 5-alpha reduction and blocks aromatase binding, making Turinabol completely non-estrogenic. The result is a slower but cleaner anabolic profile than Dianabol with better tissue quality.',
     typicalDosage: '20 mg - 60 mg daily',
@@ -2854,6 +3803,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Boldenone Cypionate',
     chemicalName: 'Boldenone Cypionate (Shorter-Ester Equipoise Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Evaluation of Boldenone Undecylenate as an Anabolic Agent in Horses',
+        citation: 'The Canadian Veterinary Journal, 1973',
+        keyFinding: 'Evaluated boldenone undecylenate as a long-acting anabolic agent in horses, assessing weight gain and nitrogen retention. Veterinary (equine) study on the parent compound boldenone; this ester only changes release kinetics.'
+      },
+    ],
     description: 'A shorter-acting alternative to Boldenone Undecylenate (Equipoise), paired with a cypionate ester instead of undecylenate. Provides the same clean, vascular lean mass building and appetite-stimulating benefits of EQ but with faster blood level stabilization and a shorter cycle-end clearance window.',
     clinicalResearch: 'Boldenone shares structural roots with testosterone (a 1,2-dehydrogenated testosterone derivative). The cypionate ester provides an effective half-life of 8-9 days, compared to 14 days for Boldenone Undecylenate, enabling faster blood level equilibrium and quicker washout.',
     typicalDosage: '200 mg - 600 mg weekly',
@@ -2881,6 +3837,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Nandrolone Propionate',
     chemicalName: 'Nandrolone Propionate (Ultra-Short Ester Nor-testosterone Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Randomized, Placebo-Controlled Trial of Nandrolone Decanoate in HIV-Infected Men with Weight Loss',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2005',
+        keyFinding: 'Nandrolone decanoate increased lean body mass significantly more than placebo (+1.6 vs +0.4 kg), comparable to recombinant human growth hormone. Human RCT on the parent hormone nandrolone; this ester only changes release kinetics.'
+      },
+    ],
     description: 'The fastest-acting version of Nandrolone, using a propionate ester for ultra-rapid release and clearance. Offers the joint-healing, lean mass building, and nitrogen-retention properties of Deca or NPP but with daily or every-other-day injection dosing, allowing precise hormonal control and rapid exit if needed.',
     clinicalResearch: 'The propionate ester provides a half-life of approximately 24 hours — the shortest of any commercially available nandrolone form. This enables rapid onset of nandrolone\'s prolific joint-healing collagen synthesis within 48-72 hours of first injection.',
     typicalDosage: '50 mg - 100 mg daily or 100 mg - 200 mg EOD',
@@ -2908,6 +3871,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Trestolone (MENT)',
     chemicalName: '7α-Methyl-19-Nortestosterone Acetate',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'A clinical trial of 7-alpha-methyl-19-nortestosterone (MENT) implants as a long-acting male contraceptive',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2003',
+        keyFinding: 'In 35 healthy men, the highest-dose MENT (trestolone) implant group reached azoospermia in 8 of 12, showing sustained-release MENT can suppress spermatogenesis with reversible androgenic effects. Human clinical trial.'
+      },
+    ],
     description: 'One of the most potent androgenic-anabolic steroids ever synthesized. Trestolone (MENT) boasts an anabolic rating of approximately 2300 (vs testosterone at 100), making it 10-times more anabolic than standard testosterone. Originally researched as a male hormonal contraceptive due to its complete suppression of spermatogenesis.',
     clinicalResearch: 'MENT does not bind to 5-alpha reductase and does not convert to DHT. However, it aromatizes aggressively to 7α-methyl-estradiol, requiring aggressive aromatase inhibitor management. Clinical male contraceptive studies confirm complete, rapid azoospermia within 6-8 weeks.',
     typicalDosage: '10 mg - 25 mg daily (acetate form)',
@@ -2935,6 +3905,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Mibolerone (Cheque Drops)',
     chemicalName: '7α,17α-dimethyl-19-nortestosterone (Oral)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Biological evaluation of mibolerone in the female Beagle',
+        citation: 'Journal of Reproduction and Fertility, 1977',
+        keyFinding: 'Mibolerone suppressed estrous activity in Beagle bitches for up to 730 days at low daily doses, establishing it as a long-term canine estrus suppressant. Veterinary (canine) study.'
+      },
+    ],
     description: 'One of the most powerful anabolic-androgenic steroids ever produced, originally developed as a veterinary contraceptive for dogs. Taken orally in microgram quantities as a short-term pre-competition or pre-workout strength maximizer, it delivers extreme neurological aggression, explosive strength, and ferocious competitive drive within minutes.',
     clinicalResearch: 'Mibolerone is a methylated nandrolone derivative with extraordinarily high androgen receptor binding affinity. It stimulates CNS dopaminergic and noradrenergic pathways to create an unmatched state of aggression and strength. Its extreme hepatotoxicity limits use to minutes-per-day timeframes.',
     typicalDosage: '200 mcg - 500 mcg taken 30-60 minutes pre-competition or pre-workout',
@@ -2962,6 +3939,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Methyltestosterone',
     chemicalName: '17α-Methyltestosterone (Oral)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Liver damage from long-term methyltestosterone',
+        citation: 'The Lancet, 1977',
+        keyFinding: 'Of 60 patients on long-term high-dose methyltestosterone, 19 had abnormal liver-function tests and biopsies showed early peliosis hepatis, with one hepatic adenoma; risk rose after one year of use. Human clinical case series.'
+      },
+    ],
     description: 'One of the oldest synthetic anabolic steroids, first synthesized in 1935. A 17-alpha-methylated version of testosterone with oral bioavailability. Used historically for testosterone replacement therapy before injectable esters were developed. Now primarily used in oral doses to provide rapid androgenic stimulation and a testosterone-like hormonal environment.',
     clinicalResearch: 'Methyltestosterone retains full androgenic and anabolic properties of testosterone but is orally bioavailable due to the 17α-methyl group preventing first-pass degradation. It aromatizes to methylestradiol, which is significantly more potent than standard estradiol.',
     typicalDosage: '10 mg - 40 mg daily',
@@ -2989,6 +3973,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Nandrolone Undecylate (Dynabolan)',
     chemicalName: 'Nandrolone Undecylenate (Ultra-Long Ester Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Randomized, Placebo-Controlled Trial of Nandrolone Decanoate in HIV-Infected Men with Weight Loss',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2005',
+        keyFinding: 'Nandrolone decanoate increased lean body mass significantly more than placebo (+1.6 vs +0.4 kg), comparable to recombinant human growth hormone. Human RCT on the parent hormone nandrolone; this ester only changes release kinetics.'
+      },
+    ],
     description: 'An ultra-long-acting version of Nandrolone using an undecylate ester that provides a half-life similar to Boldenone Undecylenate (Equipoise). Rarely used standalone but valued in long-cycle protocols for its extremely slow, sustained nandrolone release providing joint healing and lean mass accumulation over extended timelines.',
     clinicalResearch: 'The undecylate ester is structurally identical to the undecylenate ester in EQ, providing a 14-16 day half-life on the nandrolone backbone. Provides the same benefits as Deca-Durabolin but requires only once-weekly to once-every-10-day injections.',
     typicalDosage: '200 mg - 400 mg every 10-14 days',
@@ -3016,6 +4007,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Omnadren 250',
     chemicalName: 'Testosterone Propionate + Phenylpropionate + Isocaproate + Caproate Blend',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Cardiovascular Safety of Testosterone-Replacement Therapy (TRAVERSE)',
+        citation: 'New England Journal of Medicine, 2023',
+        keyFinding: 'In 5,246 hypogonadal men at high cardiovascular risk, testosterone replacement was noninferior to placebo for major adverse cardiac events. Applies to the parent hormone testosterone; esters only alter release kinetics.'
+      },
+    ],
     description: 'A Polish-manufactured four-ester testosterone blend similar to Sustanon 250 but historically using testosterone caproate instead of decanoate as the longest-acting component. Now reformulated with the same four esters as Sustanon 250. Provides the same multi-speed pharmacokinetic profile: rapid onset from propionate, mid-range stability from phenylpropionate and isocaproate, and sustained levels from the caproate/decanoate.',
     clinicalResearch: 'The multi-ester profile of Omnadren functions virtually identically to Sustanon 250 in pharmacokinetic terms. The only significant historical difference was testosterone caproate (10-12 day half-life) vs decanoate (15 days), producing slightly faster total clearance of the original formula.',
     typicalDosage: '250 mg - 750 mg weekly',
@@ -3043,6 +4041,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Testosterone Acetate',
     chemicalName: 'Ultra-Short Ester Injectable Testosterone (Oil)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Testosterone dose-response relationships in healthy young men',
+        citation: 'American Journal of Physiology - Endocrinology and Metabolism, 2001 (Bhasin et al.)',
+        keyFinding: 'Graded testosterone doses produced dose-dependent gains in fat-free mass, muscle size, and strength, with HDL reductions at higher doses. Applies to the parent hormone testosterone; this ester only alters release rate.'
+      },
+    ],
     description: 'An extremely short-acting acetate ester of testosterone with a half-life of approximately 2-3 days. Faster than propionate in onset but longer than testosterone suspension. Preferred by athletes who need rapid blood level control, precise cycle management, or those transitioning between cycles where fast clearance is essential.',
     clinicalResearch: 'The acetate ester provides rapid testosterone absorption with near-complete bioavailability by day 1-2. Serum testosterone peaks sharply within 24 hours and returns to baseline within 4-5 days, enabling very precise hormonal manipulation.',
     typicalDosage: '50 mg - 100 mg daily or every other day',
@@ -3070,6 +4075,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Clostebol',
     chemicalName: '4-Chlorotestosterone Acetate (Oral/Injectable)',
     category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Detection of clostebol in sports: accidental doping?',
+        citation: 'Drug Testing and Analysis, 2020',
+        keyFinding: 'Reviews how topical clostebol acetate products (e.g., 0.5% creams/sprays) can produce adverse analytical findings in athletes via inadvertent transdermal or transmucosal transfer. Human anti-doping pharmacology review.'
+      },
+    ],
     description: 'A 4-chloro substituted testosterone derivative — the same modification that makes Turinabol non-estrogenic. Clostebol itself cannot aromatize to estrogen and has low androgenic activity due to its inability to be converted by 5-alpha reductase. Used medically in Europe for hypogonadism and wound healing.',
     clinicalResearch: 'The 4-chloro substitution at the C-4 position prevents aromatase binding, making Clostebol completely non-estrogenic. It has a favorable anabolic-to-androgenic ratio and is approved in several European countries as a topical pharmaceutical for wound healing.',
     typicalDosage: '100 mg - 200 mg weekly (injectable), 40 mg - 60 mg daily (oral)',
@@ -3096,6 +4108,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'GHRP-2',
     chemicalName: 'Growth Hormone-Releasing Peptide 2 (D-Ala-D-β-Nal-Ala-Trp-D-Phe-Lys-NH2)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Growth Hormone-Releasing Peptide-2 Stimulates GH Secretion in GH-Deficient Patients with Mutated GHRH Receptor',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2001',
+        keyFinding: 'GHRP-2 evoked a roughly 4.5-fold rise in serum GH even in patients with a mutated GHRH receptor, showing it can stimulate GH partly independently of GHRH signaling. Human study.'
+      },
+      {
+        studyTitle: 'GHRP-2, Like Ghrelin, Increases Food Intake in Healthy Men',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2005',
+        keyFinding: 'In healthy men, intravenous GHRP-2 infusion significantly increased food intake (~35-36%) relative to saline, confirming a ghrelin-mimetic, appetite-stimulating effect.'
+      },
+    ],
     description: 'A powerful synthetic hexapeptide that directly stimulates the pituitary gland to release massive, pulsatile bursts of growth hormone. Second only to Hexarelin in raw GH output, GHRP-2 is widely paired with CJC-1295 to create amplified dual-pituitary GH pulses far exceeding either compound alone.',
     clinicalResearch: 'Binds with high affinity to GHS-R1a (ghrelin receptor) on pituitary somatotroph cells, triggering 7–15× greater GH secretion than baseline. Studies confirm GHRP-2 also mildly elevates cortisol and prolactin, distinguishing it from the more selective ipamorelin.',
     typicalDosage: '100 mcg - 300 mcg per dose',
@@ -3122,6 +4146,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'GHRP-6',
     chemicalName: 'Growth Hormone-Releasing Peptide 6 (His-D-Trp-Ala-Trp-D-Phe-Lys-NH2)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'GH-Releasing Peptide-6 Requires Endogenous Hypothalamic GHRH for Maximal GH Stimulation',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 1998',
+        keyFinding: 'Demonstrated that intact endogenous hypothalamic GHRH is required for the full GH response to GHRP-6, establishing the synergistic rationale for combining a GHRP with GHRH. Human study.'
+      },
+      {
+        studyTitle: 'GHRP-6 stimulates phosphatidylinositol turnover in human pituitary somatotroph cells',
+        citation: 'Journal of Molecular Endocrinology, 1995',
+        keyFinding: 'In cultured human pituitary somatotrophs, GHRP-6 stimulated phosphatidylinositol turnover, supporting a distinct intracellular signaling pathway from GHRH. In vitro, human cells.'
+      },
+    ],
     description: 'The original hunger-stimulating GHRP. GHRP-6 delivers robust pulsatile GH secretion alongside a powerful ghrelin-like appetite surge, making it the compound of choice for hard-gainers in aggressive lean-bulk phases who struggle to hit high daily caloric targets.',
     clinicalResearch: 'One of the first GHRPs validated in clinical literature. GHRP-6 has high GHS-R1a receptor affinity and activates appetite-regulating centers in the hypothalamus by mimicking endogenous ghrelin — producing the most pronounced hunger response of any GHRP class compound.',
     typicalDosage: '100 mcg - 300 mcg per dose',
@@ -3148,6 +4184,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Hexarelin',
     chemicalName: 'Examorelin (His-D-2-MeTrp-Ala-Trp-D-Phe-Lys-NH2)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Growth hormone-releasing activity of hexarelin in humans: a dose-response study',
+        citation: 'European Journal of Endocrinology, 1994',
+        keyFinding: 'In healthy humans, hexarelin produced a dose-dependent GH release and was among the most potent acute GH-releasing peptides tested.'
+      },
+      {
+        studyTitle: 'The growth hormone secretagogue hexarelin improves cardiac function in rats after experimental myocardial infarction',
+        citation: 'Endocrinology, 1999 (Tivesten et al.)',
+        keyFinding: 'In post-infarct rats, hexarelin improved cardiac function and reduced peripheral resistance similarly to GH, suggesting GH-independent cardioprotective effects. Animal.'
+      },
+    ],
     description: 'The most potent GHRP ever developed. Hexarelin triggers the largest single-dose GH pulses of any growth hormone secretagogue peptide, while uniquely offering direct cardioprotective effects through GHS-R1 receptors expressed on heart tissue — independent of its GH-releasing actions.',
     clinicalResearch: 'Clinical trials demonstrate Hexarelin produces the strongest dose-dependent pituitary GH discharge of all GHRPs tested. Independent cardiac research confirms Hexarelin directly stimulates GHS receptors in myocardial tissue, improving cardiac function, reducing ischemic damage, and enhancing contractility — benefits not shared by other GHRPs.',
     typicalDosage: '100 mcg - 200 mcg per dose',
@@ -3174,6 +4222,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'CJC-1295 (DAC)',
     chemicalName: 'CJC-1295 with Drug Affinity Complex (Modified GRF 1-29 + Lysine-DAC)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Prolonged Stimulation of GH and IGF-I Secretion by CJC-1295, a Long-Acting Analog of GHRH, in Healthy Adults',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2006 (Teichman et al.)',
+        keyFinding: 'In healthy adults, a single subcutaneous CJC-1295 (with DAC) dose produced dose-dependent increases in mean plasma GH (2- to 10-fold for >=6 days) and IGF-I (1.5- to 3-fold for 9-11 days), with cumulative effect on repeat dosing.'
+      },
+    ],
     description: 'The long-acting, once-weekly GHRH analog. The Drug Affinity Complex (DAC) chemically binds CJC-1295 to circulating albumin, extending its plasma half-life from minutes to 6-8 days. This creates a sustained, elevated GH baseline rather than pulsatile spikes — ideal for anti-aging, metabolic enhancement, and year-round optimization protocols.',
     clinicalResearch: 'The DAC modification uses a reactive lysine residue to covalently bind circulating serum albumin, protecting the peptide from proteolytic degradation. Studies show CJC-1295 DAC produces a 2-10× increase in GH AUC and a 3-5× increase in circulating IGF-1 levels that persist for 6-10 days after a single injection.',
     typicalDosage: '1 mg - 2 mg per injection',
@@ -3200,6 +4255,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'MK-677',
     chemicalName: 'Ibutamoren Mesylate (Oral Ghrelin Receptor Agonist)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Stimulation of the GH-IGF-I axis by daily oral MK-677 in healthy elderly subjects',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 1996 (Chapman et al.)',
+        keyFinding: 'Daily oral MK-677 raised GH and serum IGF-I into the range of healthy young adults in elderly subjects, demonstrating oral activity of the secretagogue.'
+      },
+      {
+        studyTitle: 'Oral MK-677 Increases Markers of Bone Turnover in Healthy and Functionally Impaired Elderly Adults',
+        citation: 'Journal of Bone and Mineral Research, 1999 (Murphy et al.)',
+        keyFinding: 'Across pooled randomized placebo-controlled trials, oral MK-677 (10-50 mg/day) increased IGF-I and biochemical markers of bone formation and resorption in elderly adults.'
+      },
+    ],
     description: 'The only orally bioavailable growth hormone secretagogue. MK-677 activates the ghrelin receptor (GHS-R1a) at the pituitary and hypothalamus to drive sustained GH and IGF-1 elevation — without any injection. Unmatched for convenience in long-term anti-aging, muscle recovery, and sleep optimization protocols.',
     clinicalResearch: 'Phase I-II clinical trials confirm MK-677 increases 24-hour GH pulse amplitude and mean IGF-1 by 40-60% in both young and elderly subjects. Multiple studies in healthy older adults demonstrate improvements in lean body mass, bone mineral density, and sleep architecture with 2-year safety data available.',
     typicalDosage: '12.5 mg - 25 mg daily',
@@ -3225,6 +4292,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'IGF-1 DES',
     chemicalName: 'Des(1-3)IGF-1 (Truncated IGF-1 Variant, 67 Amino Acids)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Superior in vivo biological potency of an IGF-I analogue (des(1-3)IGF-I) that binds poorly to IGF-binding proteins',
+        citation: 'Endocrine literature, c.1990s',
+        keyFinding: 'Des(1-3)IGF-I lacks the first three N-terminal residues, binds IGFBP-3 with ~25-fold reduced affinity, and shows increased mitogenic/anabolic potency attributed to reduced IGFBP sequestration. In vitro/animal evidence.'
+      },
+    ],
     description: 'A naturally occurring truncated variant of IGF-1 with the first three N-terminal amino acids removed, dramatically reducing affinity for IGF-binding proteins (IGFBPs) and increasing free bioavailability at injection sites. IGF-1 DES is 10× more potent than standard IGF-1 at the receptor level, making it the most site-targeted anabolic IGF peptide available.',
     clinicalResearch: 'IGF-1 DES is found naturally in the brain and gut. Unlike LR3 (systemic), DES bypasses IGFBP-3 binding, delivering rapid anabolic signaling locally at the injection site. Research confirms DES has a dramatically shorter half-life but higher receptor binding potency, creating a highly localized hypertrophic effect useful for targeting lagging muscle groups.',
     typicalDosage: '20 mcg - 100 mcg per injection site',
@@ -3251,6 +4325,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'PEG-MGF',
     chemicalName: 'Pegylated Mechano Growth Factor (IGF-1Ec Splice Variant)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Different roles of the IGF-I Ec peptide (MGF) and mature IGF-I in myoblast proliferation and differentiation',
+        citation: 'FEBS Letters, 2002 (Yang & Goldspink)',
+        keyFinding: 'In cultured myoblasts, the MGF E-peptide increased proliferation while mature IGF-I drove differentiation, indicating the E-domain has distinct activity. In vitro; the PEGylated form specifically has no dedicated efficacy literature.'
+      },
+      {
+        studyTitle: 'MGF E-peptide activates human muscle progenitor cells and increases their fusion potential at different ages',
+        citation: 'Mechanisms of Ageing and Development, 2011',
+        keyFinding: 'Synthetic MGF E-peptide activated human muscle satellite cells and increased their proliferative lifespan/fusion potential, with diminished response in older-donor cells. In vitro.'
+      },
+    ],
     description: 'A pegylated synthetic analogue of Mechano Growth Factor — the IGF-1 splice variant released locally by muscle tissue in response to mechanical stress. PEGylation extends its half-life from 5 minutes to several days, enabling systemic satellite cell activation and deep muscle repair signaling after injection.',
     clinicalResearch: 'MGF is naturally upregulated only in mechanically loaded muscles. PEG-MGF extends this local repair signal systemically, activating dormant muscle satellite cells throughout the body via a distinct C-terminal peptide pathway. Unlike IGF-1 LR3, PEG-MGF does not activate the IGF-1 receptor directly — making the two compounds synergistic rather than redundant.',
     typicalDosage: '200 mcg - 400 mcg per injection',
@@ -3277,6 +4363,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Melanotan I',
     chemicalName: 'Afamelanotide (Linear α-MSH Analogue, MC1R-Selective Tanning Peptide)',
     category: 'cognitive',
+    clinicalStudies: [
+      {
+        studyTitle: 'Afamelanotide for Erythropoietic Protoporphyria',
+        citation: 'New England Journal of Medicine, 2015',
+        keyFinding: 'In two randomized placebo-controlled trials, subcutaneous 16 mg afamelanotide implants let EPP patients accumulate more pain-free time in direct sunlight (US trial median 69.4 vs 40.8 hours on placebo) with improved quality of life. Marketed as SCENESSE.'
+      },
+    ],
     description: 'The selective tanning peptide. Unlike Melanotan II which activates all 5 melanocortin receptors simultaneously, MT-1 (Afamelanotide) binds highly selectively to MC1R on skin melanocytes — delivering deep, long-lasting eumelanin pigmentation with minimal sexual, appetite, or cardiovascular side effects. EMA-approved in Europe for Erythropoietic Protoporphyria.',
     clinicalResearch: 'Afamelanotide is the most clinically studied tanning peptide. EMA-approved under the name Scenesse for EPP. Clinical studies confirm MC1R-selective agonism drives a profound shift from pheomelanin to eumelanin synthesis in melanocytes, producing UV-stable tan with documented anti-inflammatory and photoprotective effects independent of melanogenesis.',
     typicalDosage: '500 mcg - 1 mg per dose',
@@ -3303,6 +4396,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Andarine (S4)',
     chemicalName: 'S-4 / GTx-007 (Partial Androgen Receptor Agonist)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Pharmacodynamics of selective androgen receptor modulators (S-1 and S-4) in castrated rats',
+        citation: 'Journal of Pharmacology and Experimental Therapeutics, 2003 (Yin/Gao/Dalton et al.)',
+        keyFinding: 'S-4 (andarine, GTx-007) stimulated anabolic organs (levator ani muscle) more than androgenic organs (prostate) in castrated rats, with anabolic activity similar to or greater than testosterone propionate. Animal/in vitro; S-4 never reached human trials.'
+      },
+      {
+        studyTitle: 'Comparison of a novel SARM, finasteride, and hydroxyflutamide in intact rats: new approach for BPH',
+        citation: 'Endocrinology, 2004 (Gao et al.)',
+        keyFinding: 'S-4 reduced prostate weight comparably to finasteride while preserving or increasing skeletal muscle in intact rats, supporting a benign-prostate/anabolic dissociation. Animal.'
+      },
+    ],
     description: 'One of the original SARMs. Andarine delivers strong androgen receptor binding in muscle and bone tissue, producing lean muscle hardening, body fat reduction, and enhanced muscular density — particularly popular as a cutting and recomposition SARM due to its pronounced dry, vascular physique effects.',
     clinicalResearch: 'Developed by GTX Pharmaceuticals, S4 shows high AR binding affinity with partial agonism in muscle and bone and partial antagonism in the prostate. At moderate doses it produces significant body recomposition without the estrogenic or progestogenic side effects common to anabolic steroids.',
     typicalDosage: '25 mg - 50 mg daily',
@@ -3328,6 +4433,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'LGD-3303',
     chemicalName: 'LGD-3303 (Second-Generation Nonsteroidal Full-Agonist SARM)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Pharmacokinetics and Pharmacodynamics of LGD-3303, an Orally Available Nonsteroidal SARM',
+        citation: 'Journal of Pharmacology and Experimental Therapeutics, 2009 (Vajda et al.)',
+        keyFinding: 'Orally available LGD-3303 increased levator ani muscle weight above eugonadal levels while keeping prostate weight below 50% of eugonadal in rats, showing muscle-over-prostate selectivity. Animal.'
+      },
+      {
+        studyTitle: 'Combination of a SARM and a Bisphosphonate Has Additive Effects in Osteopenic Female Rats',
+        citation: 'Journal of Bone and Mineral Research, 2009 (Vajda et al.)',
+        keyFinding: 'In osteopenic ovariectomized rats, LGD-3303 increased bone mineral density and muscle mass, and combined with alendronate gave additive bone benefits. Animal model of postmenopausal osteoporosis.'
+      },
+    ],
     description: 'A next-generation SARM producing some of the driest, densest lean mass gains in the entire SARM class. LGD-3303 demonstrates near-full agonism in muscle and bone with minimal estrogenic conversion — delivering a hard, quality mass-building effect closer to DHT derivatives than traditional SARMs.',
     clinicalResearch: 'Animal models demonstrate LGD-3303 achieves near-complete AR full agonism in skeletal muscle with substantially less prostate activation than testosterone. Its dry mass quality surpasses LGD-4033 in research models with less water retention and a better androgenic-to-estrogenic ratio.',
     typicalDosage: '10 mg - 20 mg daily',
@@ -3378,6 +4495,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'ACP-105',
     chemicalName: 'Acadibol / ACP-105 (Partial Androgen Receptor Agonist)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'In Vitro and In Vivo Profile of a Tissue-Selective, Orally Bioavailable Nonsteroidal AR Modulator (ACP-105)',
+        citation: 'Acadia Pharmaceuticals, Experimental Biology meeting (poster), 2008',
+        keyFinding: 'ACP-105 was as potent as testosterone in vitro without cross-reactivity at other hormone receptors; in vivo it produced anabolic muscle/bone effects with minimal prostate effect. Preclinical conference poster; no published human trials.'
+      },
+    ],
     description: 'A newer-generation partial AR agonist SARM known for its exceptionally clean profile — significant anabolic benefit with very mild suppression and minimal androgenic side effects. Ideal for female athletes, beginners, or as a joint-support adjunct during hard cutting cycles where side effect avoidance is the primary concern.',
     clinicalResearch: 'Developed as part of a next-generation selective androgen modulator research program targeting muscle and bone anabolism with minimal prostate activity. Preclinical data confirms strong tissue-selective anabolic signaling with a uniquely low suppression profile versus full-agonist SARMs.',
     typicalDosage: '10 mg - 20 mg daily',
@@ -3403,6 +4527,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Gonadorelin',
     chemicalName: 'Gonadorelin Acetate (Synthetic GnRH Decapeptide)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Pulsatile Gonadorelin Pump Induces Earlier Spermatogenesis Than Cyclical Gonadotropin Therapy in Congenital Hypogonadotropic Hypogonadism',
+        citation: 'American Journal of Men\'s Health, 2019',
+        keyFinding: 'Pulsatile gonadorelin (GnRH) pump therapy induced spermatogenesis earlier than cyclical gonadotropin therapy in men with congenital hypogonadotropic hypogonadism.'
+      },
+      {
+        studyTitle: 'Therapeutic effects of a pulsatile GnRH pump in adult male congenital hypogonadotropic hypogonadism: a retrospective study',
+        citation: 'Translational Andrology and Urology, 2024',
+        keyFinding: 'In 54 adult male patients, pulsatile GnRH pump therapy was effective for inducing gonadal function and spermatogenesis over medium- and long-term follow-up.'
+      },
+    ],
     description: 'A synthetic analogue of endogenous GnRH (Gonadotropin-Releasing Hormone). Gonadorelin provides pulsatile LH and FSH stimulation to preserve testicular size, function, and fertility during TRT or steroid cycles — the gold-standard HCG replacement for men on testosterone therapy who wish to maintain sperm production and natural testicular tone.',
     clinicalResearch: 'When administered in a pulsatile fashion mimicking the hypothalamic 90-minute GnRH pulse, Gonadorelin maintains Leydig cell activity, testicular volume, and spermatogenesis during androgen-induced HPG suppression. Its short half-life is mechanistically critical — continuous infusion creates receptor desensitization and suppression, not stimulation.',
     typicalDosage: '100 mcg - 200 mcg per dose',
@@ -3429,6 +4565,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Triptorelin',
     chemicalName: 'Triptorelin Acetate (Synthetic Decapeptide GnRH Agonist)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Phase 3 Trial of Triptorelin 6-Month Formulation in Children with Central Precocious Puberty',
+        citation: 'Advances in Therapy, 2024',
+        keyFinding: 'The 6-month triptorelin formulation effectively suppressed pubertal hormones over 12 months in children with central precocious puberty, supporting registration of the long-acting formulation.'
+      },
+      {
+        studyTitle: 'Efficacy and safety of triptorelin 6-month formulation in central precocious puberty',
+        citation: 'Journal of Pediatric Endocrinology and Metabolism, 2016',
+        keyFinding: 'The triptorelin 6-month depot achieved sustained gonadotropin and sex-steroid suppression with a favorable safety profile.'
+      },
+    ],
     description: 'A powerful GnRH agonist peptide capable of fully restarting the hypothalamic-pituitary-gonadal axis from complete androgen suppression with a single strategic injection. Used in targeted PCT restart protocols where standard SERMs alone have failed to restore natural testosterone production.',
     clinicalResearch: 'Triptorelin creates a massive single-dose LH/FSH surge by flooding pituitary GnRH receptors. Paradoxically, continuous exposure suppresses the HPG axis (used in prostate cancer therapy), but a single 100 mcg injection induces a powerful acute gonadotropin surge that effectively reboots deeply suppressed Leydig cells.',
     typicalDosage: '100 mcg (single-shot restart protocol)',
@@ -3455,6 +4603,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'HMG',
     chemicalName: 'Human Menopausal Gonadotropin (Purified FSH + LH Complex)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Gonadotropins for pubertal induction in males with hypogonadotropic hypogonadism: systematic review and meta-analysis',
+        citation: 'European Journal of Endocrinology, 2024',
+        keyFinding: 'Systematic review supporting gonadotropin therapy (hCG with FSH-containing preparations such as hMG) for inducing puberty, testicular growth, and spermatogenesis in males with hypogonadotropic hypogonadism.'
+      },
+    ],
     description: 'A natural FSH-dominant gonadotropin complex that contains both FSH and LH activity — delivering the complete gonadotropin signal required for maximum spermatogenesis recovery and fertility optimization. Unlike HCG (LH-only), HMG provides the FSH signal essential for Sertoli cell function and full sperm maturation.',
     clinicalResearch: 'HMG is the clinical gold standard for male fertility restoration in hypogonadotropic hypogonadism. When HCG alone fails to restore sperm production, adding FSH-rich HMG completes the dual gonadotropin signal needed to fully support Sertoli cells and sperm maturation, recovering fertility within 3-6 months in clinical trials.',
     typicalDosage: '75 IU - 150 IU per injection',
@@ -3480,6 +4635,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Semax',
     chemicalName: 'Met-Glu-His-Phe-Pro-Gly-Pro (Synthetic ACTH 4-7 Heptapeptide Analogue)',
     category: 'cognitive',
+    clinicalStudies: [
+      {
+        studyTitle: 'Intranasal Semax (ACTH 4-10 analog) in acute ischemic stroke',
+        citation: 'Russian clinical neurology literature (Semax registered since 1994)',
+        keyFinding: 'Intranasal Semax in acute ischemic stroke has been reported to shift inflammatory balance toward anti-inflammatory mediators (IL-10 up; IL-8 and CRP down) and improve neurological recovery. Evidence is almost entirely Russian, not replicated in large Western RCTs.'
+      },
+    ],
     description: 'Russia\'s premier nootropic peptide and registered neuroprotective drug. A synthetic 7-amino acid fragment of ACTH that powerfully upregulates BDNF and NGF — the brain\'s primary neuroplasticity growth factors — improving memory, learning speed, executive function, and neuroresilience without stimulant effects or addiction risk.',
     clinicalResearch: 'Registered as a pharmaceutical drug in Russia since 1991. Multiple controlled clinical trials demonstrate Semax increases BDNF and NGF synthesis in the hippocampus and cortex, enhancing synaptic plasticity and neuroprotection. Used clinically in Russia for stroke recovery, attention deficit, and cognitive aging.',
     typicalDosage: '200 mcg - 600 mcg per dose',
@@ -3506,6 +4668,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Selank',
     chemicalName: 'Thr-Lys-Pro-Arg-Pro-Gly-Pro (Synthetic Tuftsin Heptapeptide Analogue)',
     category: 'cognitive',
+    clinicalStudies: [
+      {
+        studyTitle: 'Efficacy of the peptide anxiolytic Selank in generalized anxiety disorders and neurasthenia',
+        citation: 'Zhurnal Nevrologii i Psikhiatrii (Russian), 2000s',
+        keyFinding: 'In clinical trials of GAD and neurasthenia, Selank produced anxiolytic effects comparable to low-dose benzodiazepines without their sedative/dependence side effects, plus antiasthenic effects. Largely Russian evidence, not confirmed by large Western RCTs.'
+      },
+    ],
     description: 'Russia\'s premier anxiolytic peptide. A synthetic analogue of the endogenous immune peptide Tuftsin, modulating GABA, serotonin, and enkephalin systems to produce deep, stable anxiolysis without sedation, addiction risk, or withdrawal — a fundamental upgrade over benzodiazepines for daily stress and anxiety management.',
     clinicalResearch: 'Registered pharmaceutical in Russia for anxiety disorders. Controlled trials show Selank down-regulates anxiety through multiple pathways — enhancing GABAergic inhibitory tone, upregulating enkephalins, and stabilizing serotonin turnover — producing consistent clinical anxiolysis at 400-2000 mcg per day without cognitive blunting or tolerance.',
     typicalDosage: '250 mcg - 500 mcg per dose',
@@ -3532,6 +4701,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Dihexa',
     chemicalName: 'N-hexanoic-Tyr-Ile-(6)aminohexanoic Amide (HGF/MET Receptor Agonist)',
     category: 'cognitive',
+    clinicalStudies: [
+      {
+        studyTitle: 'Procognitive and synaptogenic effects of angiotensin IV-derived peptides depend on the HGF/c-Met system',
+        citation: 'Journal of Pharmacology and Experimental Therapeutics, 2014',
+        keyFinding: 'Dihexa binds HGF with high affinity and induces c-Met phosphorylation, driving hippocampal synaptogenesis; its procognitive effect in the Morris water maze was blocked by an HGF antagonist. Preclinical only.'
+      },
+      {
+        studyTitle: 'Dihexa Rescues Cognitive Impairment and Recovers Memory in the APP/PS1 Mouse via PI3K/AKT Signaling',
+        citation: 'Brain Sciences, 2021',
+        keyFinding: 'In an APP/PS1 Alzheimer mouse model, dihexa restored spatial learning and memory in the Morris water maze, with effects linked to PI3K/AKT signaling. Animal.'
+      },
+    ],
     description: 'The most potent nootropic peptide ever characterized in preclinical research — reported to be approximately 10 million times more potent than BDNF at stimulating synaptogenesis. Dihexa operates through the HGF/MET signaling axis to drive new synapse formation, memory consolidation, and neuroregeneration at vanishingly small concentrations.',
     clinicalResearch: 'Developed at Washington State University. Preclinical data show synaptogenesis induction at concentrations 7 orders of magnitude below BDNF. Multiple animal studies demonstrate reversal of cognitive deficits and improved spatial memory. No completed human clinical trials — currently experimental.',
     typicalDosage: '10 mg - 50 mg topical cream daily | 1 mcg - 5 mcg subcutaneous injection',
@@ -3557,6 +4738,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'NMN',
     chemicalName: 'Nicotinamide Mononucleotide (Direct NAD+ Biosynthesis Precursor)',
     category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Chronic NMN supplementation elevates blood NAD+ levels and alters muscle function in healthy older men',
+        citation: 'npj Aging, 2022',
+        keyFinding: 'In healthy older men, 12 weeks of NMN (up to 1,200 mg/day) significantly raised whole-blood NAD+ and improved some measures of muscle function, though most clinical outcomes were unchanged.'
+      },
+      {
+        studyTitle: 'NAD+ metabolism and arterial stiffness after long-term NMN supplementation: a randomized double-blind placebo-controlled trial',
+        citation: 'Scientific Reports, 2023',
+        keyFinding: 'In healthy middle-aged adults, 250 mg/day NMN raised serum NAD+ metabolites; arterial stiffness trended downward but did not reach statistical significance.'
+      },
+    ],
     description: 'The most direct and bioavailable precursor to NAD+ — the master metabolic coenzyme powering every cellular energy-generating reaction. NAD+ levels decline 50% by age 60, and NMN supplementation is the most evidence-backed strategy for cellular energy restoration, DNA repair capacity, and healthy aging available without a prescription.',
     clinicalResearch: 'The first human clinical NMN trials from Keio University and Washington University confirm NMN is safe, effectively raises blood NAD+ levels, and improves insulin sensitivity in aged populations. NMN has been validated in multiple mouse models to improve mitochondrial function, extend healthspan, and reverse some hallmarks of aging.',
     typicalDosage: '500 mg - 1,000 mg daily',
@@ -3582,6 +4775,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'LL-37',
     chemicalName: 'LL-37 (Human Cathelicidin Antimicrobial Peptide, hCAP-18 C-terminal Fragment)',
     category: 'immune',
+    clinicalStudies: [
+      {
+        studyTitle: 'The Human Cathelicidin Antimicrobial Peptide LL-37 as a Potential Treatment for Polymicrobial Infected Wounds',
+        citation: 'Frontiers in Microbiology, 2013',
+        keyFinding: 'In vitro/preclinical work showing LL-37 has broad-spectrum antimicrobial and anti-biofilm activity against multiple Gram-positive and Gram-negative pathogens, supporting potential use in infected wounds.'
+      },
+      {
+        studyTitle: 'Significance and Diagnostic Role of Antimicrobial Cathelicidins (LL-37) Peptides in Oral Health',
+        citation: 'Diseases, 2017',
+        keyFinding: 'Review documenting LL-37 as the only human cathelicidin-derived antimicrobial peptide, with immunomodulatory roles including reducing inflammatory cytokines, promoting wound healing, and macrophage differentiation.'
+      },
+    ],
     description: 'The only known human cathelicidin — an endogenous antimicrobial peptide produced by neutrophils and epithelial cells. LL-37 acts as a multifunctional innate immune modulator: directly killing bacteria, viruses, and fungi while simultaneously driving wound closure, angiogenesis, and anti-inflammatory signaling throughout damaged tissue.',
     clinicalResearch: 'LL-37 is expressed at sites of infection and tissue damage where it performs triple duty — direct microbial membrane lysis, immune cell recruitment (chemotaxis of neutrophils and monocytes), and angiogenic tissue repair via FPRL-1 receptor signaling that drives new blood vessel formation and wound healing.',
     typicalDosage: '100 mcg - 500 mcg per dose',
@@ -3608,6 +4813,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Nandrolone Laurate',
     chemicalName: 'Nandrolone Laurate (19-Nortestosterone C12 Fatty Acid Ester — Laurabolin)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Randomized, Placebo-Controlled Trial of Nandrolone Decanoate in HIV-Infected Men with Weight Loss',
+        citation: 'Journal of Clinical Endocrinology & Metabolism, 2005',
+        keyFinding: 'Nandrolone decanoate increased lean body mass significantly more than placebo (+1.6 vs +0.4 kg), comparable to recombinant human growth hormone. Human RCT on the parent hormone nandrolone; this ester only changes release kinetics.'
+      },
+    ],
     description: 'The longest-acting nandrolone ester ever produced, originally formulated as the veterinary injectable Laurabolin for horses and cattle. Nandrolone Laurate releases active nandrolone across 3-4 weeks from a single injection — ideal for athletes seeking the joint, collagen, and lean-mass benefits of nandrolone with minimum injection frequency.',
     clinicalResearch: 'The laurate ester (C12 fatty acid) is the longest-chain commercially produced AAS ester, with active release duration exceeding all other nandrolone forms. A single intramuscular injection provides sustained therapeutic nandrolone levels across a 3-4 week window, making it the nandrolone equivalent of testosterone undecanoate (Nebido).',
     typicalDosage: '200 mg - 400 mg every 3 to 4 weeks',
@@ -3633,6 +4845,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Boldenone Acetate',
     chemicalName: 'Boldenone Acetate (Fast-Release Equipoise Ester)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Evaluation of Boldenone Undecylenate as an Anabolic Agent in Horses',
+        citation: 'The Canadian Veterinary Journal, 1973',
+        keyFinding: 'Evaluated boldenone undecylenate as a long-acting anabolic agent in horses, assessing weight gain and nitrogen retention. Veterinary (equine) study on the parent compound boldenone; this ester only changes release kinetics.'
+      },
+    ],
     description: 'The short-acting ester form of Boldenone (Equipoise), designed for cycles where the standard 14-day half-life of Boldenone Undecylenate is too long. Boldenone Acetate delivers the same EPO-stimulating, lean mass, and appetite-enhancing benefits of Equipoise with a 3-day half-life — allowing precise cycle management and faster clearance.',
     clinicalResearch: 'Boldenone Acetate shares the same active compound as Equipoise but uses a short acetate ester to control release duration. The fast ester creates frequent peak/trough cycles requiring every-other-day injection but allows far more responsive dosing adjustments and a much faster washout than the ultra-long undecylenate ester.',
     typicalDosage: '200 mg - 400 mg per week (split into EOD injections)',
@@ -3658,6 +4877,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'DHT (Androstanolone)',
     chemicalName: '5α-Dihydrotestosterone / Androstanolone (Pure Endogenous Androgen)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Transdermal dihydrotestosterone treatment of andropause',
+        citation: 'Annals of Medicine, 1995',
+        keyFinding: 'Percutaneous DHT gel produced an androgenic effect comparable to testosterone in aging/hypogonadal men but did not significantly improve well-being or vitality. Human clinical study on dihydrotestosterone (androstanolone).'
+      },
+    ],
     description: 'The most potent endogenous androgen — the pure non-aromatizable active metabolite of testosterone. DHT delivers hardening, drying, and libido-enhancing androgenic effects with 5× greater androgen receptor binding affinity than testosterone, zero estrogen conversion, and powerful anti-estrogenic competition at breast tissue receptors. Used as a topical gel or short-ester injectable.',
     clinicalResearch: 'DHT has the highest androgen receptor binding affinity of any natural androgen. It does not aromatize and actively competes with estrogen for binding at breast tissue estrogen receptors — making it genuinely anti-estrogenic. Clinical studies with topical DHT gel confirm dramatic improvements in free testosterone equivalents, gynecomastia reversal, and lean physique composition.',
     typicalDosage: '70 mg - 125 mg topical gel daily | 100-200 mg Androstanolone Propionate injectable weekly',
@@ -3683,6 +4909,18 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Thymalin',
     chemicalName: 'Thymalin (Peptide Bioregulator Complex — Thymus-Derived)',
     category: 'immune',
+    clinicalStudies: [
+      {
+        studyTitle: 'Peptides of pineal gland and thymus prolong human life',
+        citation: 'Neuro Endocrinology Letters, 2003 (Khavinson group)',
+        keyFinding: 'In a 6-8 year study of 266 elderly patients, thymic (Thymalin) and pineal peptides were reported to reduce mortality (~28% in the combined group versus controls) and increase survival. Results from a single Russian group, not independently replicated.'
+      },
+      {
+        studyTitle: 'Peptide Drug Thymalin Regulates Immune Status in Severe COVID-19 Older Patients',
+        citation: 'Advances in Gerontology, 2021',
+        keyFinding: 'Thymalin administration in older patients with severe COVID-19 was reported to normalize immune and inflammatory indices.'
+      },
+    ],
     description: 'A natural thymus-derived peptide bioregulator complex that reverses age-related immunosenescence — the progressive collapse of immune competence that occurs with aging. Thymalin stimulates T-lymphocyte maturation, restores thymic function, and corrects dysregulated immune responses. A cornerstone of Russian clinical longevity and healthspan medicine.',
     clinicalResearch: 'Part of the Khavinson Russian peptide bioregulator research program with 40+ years of clinical data. Long-term studies in elderly populations show Thymalin reduces overall mortality, preserves immune function, and extends healthy lifespan. 15-year follow-up data in aging cohorts demonstrates statistically significant survival and immune competence benefits.',
     typicalDosage: '5 mg - 10 mg per dose',
@@ -3709,6 +4947,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Trenbolone Undecanoate',
     chemicalName: 'Trenbolone Undecanoate (Ultra-Long C11 Fatty Acid Ester Tren)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Trenbolone exhibits tissue-selective anabolic activity: effects on muscle, bone, adiposity, hemoglobin, and prostate',
+        citation: 'American Journal of Physiology - Endocrinology and Metabolism, 2011',
+        keyFinding: 'In male rats, trenbolone increased androgen-sensitive muscle mass and preserved bone without the prostate enlargement or polycythemia seen with testosterone. Animal (rodent) data on the parent compound; human clinical efficacy data essentially does not exist.'
+      },
+    ],
     description: 'The longest-acting trenbolone ester — extending active trenbolone release across 2-3 weeks per injection. Trenbolone Undecanoate delivers all of trenbolone\'s extraordinary anabolic and nutrient partitioning effects at 5× testosterone potency with extremely infrequent injection scheduling, comparable in convenience to Testosterone Undecanoate (Nebido).',
     clinicalResearch: 'Formulated to address the major limitations of trenbolone acetate (3-day half-life requiring frequent injections) and trenbolone enanthate (7-10 day half-life). The undecanoate ester extends active release to 2-3 weeks, dramatically reducing injection frequency while maintaining the same extraordinary anabolic potency trenbolone is renowned for.',
     typicalDosage: '300 mg - 600 mg every 2 to 3 weeks',
@@ -3734,6 +4979,13 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     name: 'Epistane',
     chemicalName: '2α,3α-Epithio-17α-Methyl-5α-Androstan-17β-ol (Methylepitiostanol)',
     category: 'hormones',
+    clinicalStudies: [
+      {
+        studyTitle: 'Epistane causes cholestasis by upregulating bile-acid synthesis (CYP8B1) and cross-talking with nuclear receptors in human hepatocytes',
+        citation: 'Archives of Toxicology, 2020',
+        keyFinding: 'Four men developed long-lasting cholestasis after epistane use (bile-acid pool up 14- to 61-fold); mechanistic work showed epistane activates the androgen receptor and upregulates CYP8B1 bile-acid synthesis. Human case series plus mechanistic study on methylepitiostanol.'
+      },
+    ],
     description: 'A unique designer oral anabolic steroid of the DHT family featuring an epithio bridge that gives it simultaneous anabolic and anti-estrogenic properties. Epistane acts as both an androgen receptor agonist AND an estrogen receptor antagonist at breast tissue — producing lean, dry, hard mass while actively fighting gynecomastia in a single compound.',
     clinicalResearch: 'First described in pharmaceutical literature in 1974. The epithio group creates an epitestosterone-like estrogen receptor antagonism at breast tissue while the 17α-methyl group provides oral activity. This dual anabolic + anti-estrogenic mechanism makes Epistane one of the leanest-producing oral anabolics ever documented.',
     typicalDosage: '20 mg - 40 mg daily',
