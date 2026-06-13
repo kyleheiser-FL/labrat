@@ -69,9 +69,9 @@ export interface SearchFields {
   aliasKey?: string;
 }
 
-// Higher score = better match. 0 means "no match" and the item is dropped.
-export function scoreMatch(query: string, fields: SearchFields): number {
-  const q = normalize(query);
+// Higher score = better match. 0 means "no match". Scores a single whitespace-free
+// term against the fields; `scoreMatch` handles multi-word queries.
+function scoreTerm(q: string, fields: SearchFields): number {
   if (!q) return 0;
 
   const name = normalize(fields.name);
@@ -114,6 +114,28 @@ export function scoreMatch(query: string, fields: SearchFields): number {
   if (score === 0 && q.length >= 3 && extra.includes(q)) score = 40;
 
   return score;
+}
+
+// Higher score = better match. 0 means "no match" and the item is dropped.
+// Multi-word queries ("reta 20mg") are split into terms; every term must match
+// somewhere in the fields (AND), and the per-term scores are summed — so adding
+// the size narrows to that SKU rather than breaking the search. The space-joined
+// query is also tested against the name so an exact full-name match still tops.
+export function scoreMatch(query: string, fields: SearchFields): number {
+  const q = normalize(query);
+  if (!q) return 0;
+
+  const terms = q.split(/\s+/).filter(Boolean);
+  if (terms.length <= 1) return scoreTerm(q, fields);
+
+  let total = 0;
+  for (const term of terms) {
+    const s = scoreTerm(term, fields);
+    if (s === 0) return 0; // every term must match
+    total += s;
+  }
+  if (normalize(fields.name).includes(q)) total += 200;
+  return total;
 }
 
 // Rank items by match score (descending), dropping non-matches. Ties keep the
