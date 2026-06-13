@@ -2854,6 +2854,28 @@ html[data-labrat-theme="clinical-light"] #shop-suggestions-dropdown {
   border-color: rgba(37, 99, 235, 0.3) !important;
   box-shadow: 0 15px 30px rgba(15, 23, 42, 0.12) !important;
 }
+/* Header bar ("Suggested Products" / "Tap to filter") — the dark translucent
+   bar reads as unreadable mid-gray on the white dropdown, so re-tint it light
+   with dark text. */
+html[data-labrat-theme="clinical-light"] #shop-suggestions-dropdown .bg-\[\#131e38\]\/70 {
+  background-color: rgba(241, 245, 249, 0.97) !important;
+  border-bottom-color: rgba(203, 213, 225, 0.7) !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-suggestions-dropdown .text-cyan-400 {
+  color: #0369a1 !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-suggestions-dropdown .text-white {
+  color: #0f172a !important;
+}
+html[data-labrat-theme="clinical-light"] #shop-suggestions-dropdown .text-slate-400,
+html[data-labrat-theme="clinical-light"] #shop-suggestions-dropdown .text-slate-500 {
+  color: #64748b !important;
+}
+/* Category chip on each suggestion */
+html[data-labrat-theme="clinical-light"] #shop-suggestions-dropdown .bg-slate-900 {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(203, 213, 225, 0.8) !important;
+}
 
 /* USA Fast Ship strip */
 html[data-labrat-theme="clinical-light"] #active-shop-interface .border-amber-500\/25 {
