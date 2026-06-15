@@ -6,6 +6,43 @@ interface Message {
   content: string;
 }
 
+// All colors hardcoded as inline styles so the light theme CSS variables
+// cannot override them — the chat panel is always dark.
+const C = {
+  panelBg:       '#0b1120',
+  headerBg:      'linear-gradient(90deg,#0f172a,#0b1329)',
+  headerBorder:  '#1e293b',
+  titleText:     '#f1f5f9',
+  subtitleText:  '#22d3ee',
+  closeIcon:     '#64748b',
+  bodyBg:        '#0b1120',
+  greetTitle:    '#f1f5f9',
+  greetSub:      '#94a3b8',
+  starterBg:     '#111827',
+  starterBorder: '#164e63',
+  starterText:   '#67e8f9',
+  userBubbleBg:  'rgba(6,182,212,0.15)',
+  userBubbleBdr: 'rgba(6,182,212,0.3)',
+  userBubbleTxt: '#e0f2fe',
+  aiBubbleBg:    '#1e293b',
+  aiBubbleBdr:   '#334155',
+  aiBubbleTxt:   '#cbd5e1',
+  inputBg:       '#1e293b',
+  inputBdr:      '#334155',
+  inputTxt:      '#f1f5f9',
+  inputPh:       '#475569',
+  inputFocusBdr: '#06b6d4',
+  divider:       '#1e293b',
+  footerTxt:     '#475569',
+  errorTxt:      '#f87171',
+  errorBg:       'rgba(239,68,68,0.1)',
+  errorBdr:      'rgba(239,68,68,0.25)',
+  spinnerColor:  '#06b6d4',
+  thinkingTxt:   '#64748b',
+  gradient:      'linear-gradient(135deg,#06b6d4,#7c3aed)',
+  bubbleShadow:  '0 4px 20px rgba(6,182,212,0.45)',
+};
+
 const STARTERS = [
   'How much Retatrutide should I start with?',
   'How do I mix BPC-157?',
@@ -19,6 +56,7 @@ export default function AiAssistant() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hoveredStarter, setHoveredStarter] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -63,55 +101,87 @@ export default function AiAssistant() {
       <button
         onClick={() => setOpen(o => !o)}
         aria-label="Open LABRAT AI Assistant"
-        className="fixed bottom-6 right-6 z-[9998] w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
-        style={{ background: 'linear-gradient(135deg, #06b6d4 0%, #7c3aed 100%)', boxShadow: '0 4px 20px rgba(6,182,212,0.45)' }}
+        style={{
+          position: 'fixed', bottom: 24, right: 24, zIndex: 9998,
+          width: 56, height: 56, borderRadius: '50%', border: 'none',
+          background: C.gradient, boxShadow: C.bubbleShadow,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', transition: 'transform 0.15s, box-shadow 0.15s',
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.08)'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)'; }}
       >
         {open
-          ? <ChevronDown className="w-6 h-6 text-white" />
-          : <Bot className="w-6 h-6 text-white" />
+          ? <ChevronDown style={{ width: 24, height: 24, color: '#fff' }} />
+          : <Bot style={{ width: 24, height: 24, color: '#fff' }} />
         }
         {!open && messages.length === 0 && (
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-cyan-400 rounded-full border-2 border-slate-950 animate-pulse" />
+          <span style={{
+            position: 'absolute', top: -4, right: -4,
+            width: 14, height: 14, borderRadius: '50%',
+            background: '#22d3ee', border: '2px solid #020617',
+          }} />
         )}
       </button>
 
       {/* Chat panel */}
       {open && (
-        <div
-          className="fixed bottom-24 right-4 z-[9997] w-[min(380px,calc(100vw-32px))] flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-cyan-500/20"
-          style={{ background: '#0b1120', maxHeight: 'min(520px, calc(100vh - 120px))' }}
-        >
+        <div style={{
+          position: 'fixed', bottom: 96, right: 16, zIndex: 9997,
+          width: 'min(380px, calc(100vw - 32px))',
+          maxHeight: 'min(520px, calc(100vh - 120px))',
+          display: 'flex', flexDirection: 'column',
+          borderRadius: 16, overflow: 'hidden',
+          boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+          border: '1px solid rgba(6,182,212,0.2)',
+          background: C.panelBg,
+        }}>
           {/* Header */}
-          <div className="flex items-center gap-2.5 px-4 py-3 border-b border-slate-800" style={{ background: 'linear-gradient(90deg, #0f172a, #0b1329)' }}>
-            <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#06b6d4,#7c3aed)' }}>
-              <Bot className="w-4 h-4 text-white" />
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '12px 16px',
+            borderBottom: `1px solid ${C.headerBorder}`,
+            background: C.headerBg,
+            flexShrink: 0,
+          }}>
+            <div style={{ width: 28, height: 28, borderRadius: '50%', background: C.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Bot style={{ width: 16, height: 16, color: '#fff' }} />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white leading-none">LABRAT AI</p>
-              <p className="text-[10px] text-cyan-400/70 mt-0.5">Research Assistant</p>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.titleText, lineHeight: 1 }}>LABRAT AI</p>
+              <p style={{ margin: '3px 0 0', fontSize: 10, color: C.subtitleText, opacity: 0.8 }}>Research Assistant</p>
             </div>
-            <button onClick={() => setOpen(false)} className="text-slate-500 hover:text-white transition-colors p-0.5">
-              <X className="w-4 h-4" />
+            <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, color: C.closeIcon, display: 'flex' }}>
+              <X style={{ width: 16, height: 16 }} />
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-2.5" style={{ minHeight: 0 }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '12px 12px', display: 'flex', flexDirection: 'column', gap: 10, minHeight: 0 }}>
             {messages.length === 0 && (
-              <div className="flex flex-col gap-3">
-                <div className="text-center pt-2">
-                  <div className="w-10 h-10 rounded-full mx-auto flex items-center justify-center mb-2" style={{ background: 'linear-gradient(135deg,#06b6d4,#7c3aed)' }}>
-                    <Bot className="w-5 h-5 text-white" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ textAlign: 'center', paddingTop: 8 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: C.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
+                    <Bot style={{ width: 20, height: 20, color: '#fff' }} />
                   </div>
-                  <p className="text-sm font-semibold text-white">Hey! I'm your LABRAT research guide.</p>
-                  <p className="text-xs text-slate-400 mt-1">Ask me anything about peptide protocols, mixing, dosing, or how to use the app.</p>
+                  <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: C.greetTitle }}>Hey! I'm your LABRAT research guide.</p>
+                  <p style={{ margin: '4px 0 0', fontSize: 11, color: C.greetSub }}>Ask me anything about peptide protocols, mixing, dosing, or how to use the app.</p>
                 </div>
-                <div className="flex flex-col gap-1.5 mt-1">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 4 }}>
                   {STARTERS.map(s => (
                     <button
                       key={s}
                       onClick={() => send(s)}
-                      className="text-left text-xs px-3 py-2 rounded-xl border border-cyan-500/20 text-cyan-300/80 hover:border-cyan-400/40 hover:text-cyan-200 hover:bg-cyan-500/5 transition-all"
+                      onMouseEnter={() => setHoveredStarter(s)}
+                      onMouseLeave={() => setHoveredStarter(null)}
+                      style={{
+                        textAlign: 'left', fontSize: 12, padding: '8px 12px',
+                        borderRadius: 12, cursor: 'pointer',
+                        border: `1px solid ${hoveredStarter === s ? 'rgba(6,182,212,0.5)' : C.starterBorder}`,
+                        background: hoveredStarter === s ? 'rgba(6,182,212,0.08)' : C.starterBg,
+                        color: hoveredStarter === s ? '#a5f3fc' : C.starterText,
+                        transition: 'all 0.15s',
+                      }}
                     >
                       {s}
                     </button>
@@ -121,65 +191,87 @@ export default function AiAssistant() {
             )}
 
             {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start', alignItems: 'flex-start', gap: 6 }}>
                 {m.role === 'assistant' && (
-                  <div className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center mr-1.5 mt-0.5 self-start" style={{ background: 'linear-gradient(135deg,#06b6d4,#7c3aed)' }}>
-                    <Bot className="w-3 h-3 text-white" />
+                  <div style={{ width: 20, height: 20, borderRadius: '50%', background: C.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
+                    <Bot style={{ width: 12, height: 12, color: '#fff' }} />
                   </div>
                 )}
-                <div
-                  className={`max-w-[82%] px-3 py-2 rounded-xl text-xs leading-relaxed whitespace-pre-wrap ${
-                    m.role === 'user'
-                      ? 'bg-cyan-500/15 border border-cyan-500/25 text-cyan-50'
-                      : 'bg-slate-800/70 border border-slate-700/50 text-slate-200'
-                  }`}
-                >
+                <div style={{
+                  maxWidth: '82%', padding: '8px 12px', borderRadius: 12,
+                  fontSize: 12, lineHeight: 1.5, whiteSpace: 'pre-wrap',
+                  ...(m.role === 'user' ? {
+                    background: C.userBubbleBg,
+                    border: `1px solid ${C.userBubbleBdr}`,
+                    color: C.userBubbleTxt,
+                  } : {
+                    background: C.aiBubbleBg,
+                    border: `1px solid ${C.aiBubbleBdr}`,
+                    color: C.aiBubbleTxt,
+                  }),
+                }}>
                   {m.content}
                 </div>
               </div>
             ))}
 
             {loading && (
-              <div className="flex items-center gap-1.5">
-                <div className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#06b6d4,#7c3aed)' }}>
-                  <Bot className="w-3 h-3 text-white" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ width: 20, height: 20, borderRadius: '50%', background: C.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Bot style={{ width: 12, height: 12, color: '#fff' }} />
                 </div>
-                <div className="px-3 py-2 bg-slate-800/70 border border-slate-700/50 rounded-xl flex items-center gap-1.5">
-                  <Loader2 className="w-3 h-3 text-cyan-400 animate-spin" />
-                  <span className="text-xs text-slate-400">Thinking…</span>
+                <div style={{ padding: '8px 12px', background: C.aiBubbleBg, border: `1px solid ${C.aiBubbleBdr}`, borderRadius: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Loader2 style={{ width: 12, height: 12, color: C.spinnerColor, animation: 'spin 1s linear infinite' }} />
+                  <span style={{ fontSize: 12, color: C.thinkingTxt }}>Thinking…</span>
                 </div>
               </div>
             )}
 
             {error && (
-              <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{error}</p>
+              <p style={{ margin: 0, fontSize: 12, color: C.errorTxt, background: C.errorBg, border: `1px solid ${C.errorBdr}`, borderRadius: 10, padding: '8px 12px' }}>{error}</p>
             )}
 
             <div ref={bottomRef} />
           </div>
 
-          {/* Input */}
-          <div className="px-3 py-2.5 border-t border-slate-800 flex items-center gap-2">
+          {/* Input row */}
+          <div style={{ padding: '10px 12px', borderTop: `1px solid ${C.divider}`, display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
             <input
               ref={inputRef}
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(input); } }}
               placeholder="Ask about dosing, mixing, the app…"
-              className="flex-1 bg-slate-800/60 border border-slate-700/60 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50 transition-colors"
+              style={{
+                flex: 1, background: C.inputBg, border: `1px solid ${C.inputBdr}`,
+                borderRadius: 12, padding: '8px 12px', fontSize: 12,
+                color: C.inputTxt, outline: 'none',
+              }}
+              onFocus={e => { e.currentTarget.style.borderColor = C.inputFocusBdr; }}
+              onBlur={e => { e.currentTarget.style.borderColor = C.inputBdr; }}
             />
             <button
               onClick={() => send(input)}
               disabled={!input.trim() || loading}
-              className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
-              style={{ background: 'linear-gradient(135deg,#06b6d4,#7c3aed)' }}
+              style={{
+                width: 34, height: 34, borderRadius: 10, border: 'none',
+                background: C.gradient, display: 'flex', alignItems: 'center',
+                justifyContent: 'center', flexShrink: 0, cursor: 'pointer',
+                opacity: (!input.trim() || loading) ? 0.35 : 1,
+                transition: 'opacity 0.15s',
+              }}
             >
-              <Send className="w-3.5 h-3.5 text-white" />
+              <Send style={{ width: 14, height: 14, color: '#fff' }} />
             </button>
           </div>
-          <p className="text-[9px] text-slate-600 text-center pb-2 px-2">For research purposes only · Not medical advice</p>
+          <p style={{ margin: '0 0 8px', fontSize: 9, color: C.footerTxt, textAlign: 'center', padding: '0 8px' }}>
+            For research purposes only · Not medical advice
+          </p>
         </div>
       )}
+
+      {/* keyframe for spinner */}
+      <style>{`@keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }`}</style>
     </>
   );
 }
