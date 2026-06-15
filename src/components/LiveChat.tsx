@@ -11,7 +11,7 @@ export const LiveChat: React.FC = () => {
       aria-label="Chat on Messenger"
       style={{
         position: 'fixed',
-        bottom: '24px',
+        bottom: '92px',
         right: '24px',
         width: '52px',
         height: '52px',
