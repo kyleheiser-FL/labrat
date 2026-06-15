@@ -298,7 +298,11 @@ export default function CycleDashboard({
           </div>
         </motion.div>
         <motion.div className="labrat-command-hero-art" aria-hidden="true" style={{ y: heroArtY }}>
-          <img src={labratTheme === 'neon' ? '/labrat_top_left_logo_transparent.png' : '/labrat_hero_rat_dark.png'} alt="" />
+          <img
+            src={labratTheme === 'neon' ? '/labrat_top_left_logo_transparent.png' : '/labrat_hero_rat_dark.png'}
+            alt=""
+            style={labratTheme === 'clinical' ? { filter: 'brightness(4) opacity(0.5)' } : undefined}
+          />
         </motion.div>
       </section>
 
