@@ -301,7 +301,7 @@ export default function CycleDashboard({
           <img
             src={labratTheme === 'neon' ? '/labrat_top_left_logo_transparent.png' : '/labrat_hero_rat_dark.png'}
             alt=""
-            style={labratTheme === 'clinical' ? { filter: 'brightness(4) opacity(0.5)' } : undefined}
+            style={labratTheme === 'clinical' ? { filter: 'brightness(4.4) opacity(0.55)' } : undefined}
           />
         </motion.div>
       </section>
