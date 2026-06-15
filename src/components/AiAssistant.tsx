@@ -86,7 +86,10 @@ export default function AiAssistant() {
         body: JSON.stringify({ messages: next }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Request failed');
+      if (!res.ok) {
+        const msg = typeof data.error === 'string' ? data.error : (data.error?.message || 'Something went wrong. Try again.');
+        throw new Error(msg);
+      }
       setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
     } catch (e: any) {
       setError(e.message || 'Something went wrong. Try again.');
