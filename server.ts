@@ -805,7 +805,7 @@ A: Norway-source peptides are shipped from European pharmaceutical-grade facilit
       }));
 
       const response = await client.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-1.5-flash',
         contents,
         config: {
           systemInstruction: LABRAT_SYSTEM_PROMPT,
@@ -916,7 +916,7 @@ Provide your response in a structured JSON schema matching our required output. 
       contents.push({ role: "user", parts: userParts });
 
       const response = await client.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-1.5-flash",
         contents,
         config: {
           responseMimeType: "application/json",
