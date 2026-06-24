@@ -11,6 +11,14 @@ interface AdministrationLedgerProps {
 export default function AdministrationLedger({ logs, onUndoDose }: AdministrationLedgerProps) {
   const [showCount, setShowCount] = useState(5);
 
+  // Sort ascending (true chronological: oldest → newest) then show the tail
+  // so the most-recently-logged entries are always visible by default.
+  const sorted = logs.slice().sort((a, b) =>
+    (`${a.date}T${a.time}`).localeCompare(`${b.date}T${b.time}`)
+  );
+  const visibleLogs = sorted.slice(Math.max(0, sorted.length - showCount));
+  const hasOlder = sorted.length > showCount;
+
   return (
     <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="administration-ledger-card">
       <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -31,6 +39,31 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
         </div>
       ) : (
         <div className="overflow-x-auto" id="ledger-scrolling-container">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] text-slate-500 font-mono">
+              Showing {visibleLogs.length} of {sorted.length} log{sorted.length !== 1 ? 's' : ''} · oldest → newest
+            </span>
+            <div className="flex items-center gap-2">
+              {showCount > 5 && (
+                <button
+                  type="button"
+                  onClick={() => setShowCount(5)}
+                  className="text-[10px] font-bold text-slate-400 hover:text-slate-300 bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700/40 px-3 py-1 rounded-lg transition cursor-pointer"
+                >
+                  Collapse
+                </button>
+              )}
+              {hasOlder && (
+                <button
+                  type="button"
+                  onClick={() => setShowCount(prev => prev + 5)}
+                  className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-lg transition cursor-pointer"
+                >
+                  Load 5 Older
+                </button>
+              )}
+            </div>
+          </div>
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="border-b border-[#1e293b]/80 text-[#475569] font-mono text-[10px] uppercase font-bold">
@@ -42,7 +75,7 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/40 text-slate-300 font-mono">
-              {logs.slice().sort((a, b) => (`${b.date}T${b.time}`).localeCompare(`${a.date}T${a.time}`)).slice(0, showCount).map((log) => (
+              {visibleLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-900/10">
                   <td className="py-2.5 px-2 text-slate-400">{log.date} at {formatTimeTo12Hour(log.time)}</td>
                   <td className="py-2.5 px-2 text-slate-200 font-semibold">{log.compoundName}</td>
@@ -67,31 +100,6 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
               ))}
             </tbody>
           </table>
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-800/40">
-            <span className="text-[10px] text-slate-500 font-mono">
-              Showing {Math.min(showCount, logs.length)} of {logs.length} log{logs.length !== 1 ? 's' : ''}
-            </span>
-            <div className="flex items-center gap-2">
-              {showCount > 5 && (
-                <button
-                  type="button"
-                  onClick={() => setShowCount(5)}
-                  className="text-[10px] font-bold text-slate-400 hover:text-slate-300 bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700/40 px-3 py-1 rounded-lg transition cursor-pointer"
-                >
-                  Show Less
-                </button>
-              )}
-              {logs.length > showCount && (
-                <button
-                  type="button"
-                  onClick={() => setShowCount(prev => prev + 5)}
-                  className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-lg transition cursor-pointer"
-                >
-                  Show 5 More
-                </button>
-              )}
-            </div>
-          </div>
         </div>
       )}
     </div>
