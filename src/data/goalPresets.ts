@@ -99,8 +99,17 @@ export const PEPTIDE_GOAL_PRESETS: Record<string, GoalPreset[]> = {
     { id: 'antiaging', label: 'Anti-Aging / Recomp', tagline: '200mcg nightly — peak GH response, fat loss', goalTag: 'Anti-Aging', goalColor: 'blue', doseAmount: '200', doseUnit: 'mcg', frequency: 'daily', durationWeeks: 16, vialSizeMg: '5', bacWaterMl: '2' },
   ],
   'ghk-cu': [
-    { id: 'skin', label: 'Skin & Collagen', tagline: 'Sub-Q daily for dermal regeneration and wrinkle reduction', goalTag: 'Anti-Aging', goalColor: 'blue', doseAmount: '2', doseUnit: 'mg', frequency: 'daily', durationWeeks: 8, vialSizeMg: '5', bacWaterMl: '2' },
-    { id: 'repair', label: 'Tissue Repair', tagline: 'Wound healing, angiogenesis and anti-inflammatory support', goalTag: 'Healing', goalColor: 'green', doseAmount: '1', doseUnit: 'mg', frequency: 'daily', durationWeeks: 12, vialSizeMg: '5', bacWaterMl: '2' },
+    { id: 'skin', label: 'Skin & Collagen', tagline: 'Sub-Q daily for dermal regeneration and wrinkle reduction', goalTag: 'Anti-Aging', goalColor: 'blue', doseAmount: '2', doseUnit: 'mg', frequency: 'daily', durationWeeks: 8, vialSizeMg: '50', bacWaterMl: '2' },
+    { id: 'repair', label: 'Tissue Repair', tagline: 'Wound healing, angiogenesis and anti-inflammatory support', goalTag: 'Healing', goalColor: 'green', doseAmount: '1', doseUnit: 'mg', frequency: 'daily', durationWeeks: 12, vialSizeMg: '50', bacWaterMl: '2' },
+    { id: 'bulk', label: 'Bulk Vial (100mg)', tagline: '100mg vial — economy reconstitution for extended protocols', goalTag: 'Anti-Aging', goalColor: 'cyan', doseAmount: '2', doseUnit: 'mg', frequency: 'daily', durationWeeks: 16, vialSizeMg: '100', bacWaterMl: '2' },
+  ],
+  'klow': [
+    { id: 'dermal', label: 'Dermal Repair', tagline: '1mg daily — blue copper peptide complex for skin & collagen remodelling', goalTag: 'Anti-Aging', goalColor: 'blue', doseAmount: '1', doseUnit: 'mg', frequency: 'daily', durationWeeks: 6, vialSizeMg: '80', bacWaterMl: '2' },
+    { id: 'intensive', label: 'Intensive Protocol', tagline: '2mg daily — accelerated wound healing and hair follicle restoration', goalTag: 'Healing', goalColor: 'green', doseAmount: '2', doseUnit: 'mg', frequency: 'daily', durationWeeks: 4, vialSizeMg: '80', bacWaterMl: '2' },
+  ],
+  'ghk-cu-epitalon-glow-blend': [
+    { id: 'glow50', label: 'Glow Protocol (50mg)', tagline: '1mg daily — GHK-Cu + Epitalon longevity & skin blend', goalTag: 'Anti-Aging', goalColor: 'blue', doseAmount: '1', doseUnit: 'mg', frequency: 'daily', durationWeeks: 8, vialSizeMg: '50', bacWaterMl: '2' },
+    { id: 'glow70', label: 'Glow Protocol (70mg)', tagline: '1.5mg daily — enhanced skin remodelling and telomere support', goalTag: 'Longevity', goalColor: 'violet', doseAmount: '1.5', doseUnit: 'mg', frequency: 'daily', durationWeeks: 8, vialSizeMg: '70', bacWaterMl: '2' },
   ],
   'human-growth-hormone': [
     { id: 'antiaging', label: 'Anti-Aging', tagline: '1–2 IU/day — cellular regeneration, skin, joint health', goalTag: 'Anti-Aging', goalColor: 'blue', doseAmount: '1', doseUnit: 'IU', frequency: 'daily', durationWeeks: 16 },

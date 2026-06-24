@@ -14,7 +14,7 @@ import ReconstitutionCalculator from './ReconstitutionCalculator';
 const PRESET_COLORS = ['#06b6d4', '#10b981', '#6366f1', '#f59e0b', '#ec4899', '#f43f5e', '#a855f7', '#84cc16'];
 
 // Common freeze-dried peptide vial sizes (mg) offered when applying a dosing protocol.
-const COMMON_VIAL_MG = ['2', '5', '10', '15', '20', '30'];
+const COMMON_VIAL_MG = ['2', '5', '10', '15', '20', '30', '40', '50', '60', '70', '80', '100'];
 
 function freqLabel(freq: string) {
   const map: Record<string, string> = { daily: 'daily', eod: 'EOD', twice_weekly: '2×/week', weekly: 'weekly', custom: 'as needed' };
