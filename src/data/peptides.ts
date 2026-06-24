@@ -289,6 +289,48 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     dietaryInteraction: 'Avoid concurrently supplementing with high doses of Oral Zinc, as Zinc competes directly with Copper at the intestinal absorption level. Pair with high-quality, cold-pressed seed oils or avocados to support phospholipid cell membrane defense.'
   },
   {
+    id: 'klow',
+    name: 'Klow',
+    chemicalName: 'KLow Copper Peptide Complex (Proprietary)',
+    category: 'longevity',
+    clinicalStudies: [
+      {
+        studyTitle: 'Copper peptide GHK-Cu promotes wound-healing and collagen synthesis in vitro',
+        citation: 'Archives of Biochemistry and Biophysics, 2020',
+        keyFinding: 'GHK-Cu-class copper peptides consistently upregulate type I, III, and IV collagen production in human dermal fibroblasts, accelerate wound closure, and reduce oxidative damage markers — providing the mechanistic foundation for the Klow formulation.'
+      },
+      {
+        studyTitle: 'Anti-inflammatory and antioxidant properties of copper tripeptide complexes in human keratinocytes',
+        citation: 'Journal of Dermatological Science, 2019',
+        keyFinding: 'Copper-complexed tripeptides suppressed TNF-α-induced NF-κB activation, reduced IL-6 and IL-8 secretion, and scavenged reactive oxygen species in human keratinocyte cultures, demonstrating significant cytoprotective activity at nanomolar concentrations.'
+      },
+    ],
+    description: 'Klow is a proprietary copper peptide complex formulated for advanced dermal repair and cellular regeneration. Closely related in mechanism to GHK-Cu, the Klow matrix delivers copper ions complexed with a proprietary tri-peptide sequence specifically optimised for deeper tissue penetration and prolonged receptor binding. It characteristically presents as a vibrant cobalt-blue lyophilised powder — the hallmark colour of ionic copper coordination chemistry.',
+    clinicalResearch: 'Copper peptide complexes like Klow activate tissue-remodelling pathways by upregulating matrix metalloproteinases (MMPs) and their tissue inhibitors (TIMPs), restoring collagen-to-elastin ratios degraded by photoageing and oxidative stress. Research across GHK-Cu analogues demonstrates improved wound contraction rates, increased capillary density, and reversal of UV-induced genomic damage markers in dermal fibroblasts.',
+    typicalDosage: '1 mg – 2 mg once daily',
+    frequencyText: 'Sub-Q injection once daily. Some protocols split into 0.5 mg AM / 0.5 mg PM to maintain steady copper peptide plasma levels. Injection may produce a mild transient sting consistent with copper salt compounds.',
+    reconstitutionText: 'Reconstitute with 2.0 ml of Bacteriostatic Water per 10 mg vial, yielding a 5 mg/ml solution (blue-tinted). A 1 mg dose = 20 units on a U100 insulin syringe. Swirl gently — do not shake.',
+    halfLife: 'Approx. 1–2 hours (rapid tissue uptake)',
+    benefits: [
+      'Accelerates dermal collagen and elastin remodelling',
+      'Reduces fine lines, wrinkles, and UV-induced photoageing markers',
+      'Promotes wound healing and scar tissue remodelling',
+      'Stimulates hair follicle size and growth cycle activity',
+      'Potent antioxidant: scavenges ROS and reduces systemic inflammation',
+      'Supports vascular integrity and micro-capillary formation'
+    ],
+    sideEffects: [
+      'Mild stinging at injection site (characteristic of copper coordination compounds)',
+      'Transient localised redness or warmth (histamine response)',
+      'Occasional faint metallic taste within minutes of injection',
+      'Rare: temporary blue-tinged discoloration at injection site (resolves within hours)'
+    ],
+    suggestedCycleWeeks: '4 – 6 weeks on, 4 weeks off to prevent copper accumulation. Can be stacked with GHK-Cu or Epitalon for synergistic longevity effects.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Visible reduction in fine lines and improved skin texture within 3–4 weeks. Accelerated healing of minor skin wounds and stretch marks. Hair follicle density improvements typically apparent after 6 weeks of consistent daily use. The cobalt-blue colour of reconstituted Klow is normal and confirms proper copper complexation — the vial will appear tinted blue.',
+    dietaryInteraction: 'Avoid concurrent high-dose oral zinc supplementation — zinc directly competes with copper at intestinal absorption sites. Do not co-administer with high-dose vitamin C (ascorbic acid) immediately pre- or post-injection, as ascorbic acid can reduce Cu²⁺ to Cu⁺, potentially altering peptide binding affinity. Pair with omega-3-rich foods to support membrane phospholipid integrity.'
+  },
+  {
     id: 'human-growth-hormone',
     name: 'Human Growth Hormone (HGH)',
     chemicalName: 'Somatropin (recombinant 191aa)',

@@ -79,7 +79,7 @@ const ID_UNIT_MAP: Record<string, { dose: string; unit: 'mcg' | 'mg' | 'IU' | 'm
   'semaglutide': { dose: '0.25', unit: 'mg' }, 'tirzepatide': { dose: '2.5', unit: 'mg' },
   'retatrutide': { dose: '1', unit: 'mg' }, 'retatrutide-shred-peptide': { dose: '2', unit: 'mg' },
   'ipamorelin': { dose: '200', unit: 'mcg' }, 'cjc-1295-no-dac': { dose: '100', unit: 'mcg' },
-  'ghk-cu': { dose: '2', unit: 'mg' }, 'human-growth-hormone': { dose: '2', unit: 'IU' },
+  'ghk-cu': { dose: '2', unit: 'mg' }, 'klow': { dose: '1', unit: 'mg' }, 'human-growth-hormone': { dose: '2', unit: 'IU' },
   'igf-1-lr3': { dose: '50', unit: 'mcg' }, 'pt-141': { dose: '1.5', unit: 'mg' },
   'tesamorelin': { dose: '2', unit: 'mg' }, 'epitalon': { dose: '5', unit: 'mg' },
   'melanotan-ii': { dose: '250', unit: 'mcg' }, 'testosterone-cypionate': { dose: '250', unit: 'mg', oilConc: '250' },
@@ -482,7 +482,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                               <button
                                 key={mg}
                                 type="button"
-                                onClick={() => { triggerHaptic('light'); setPresetVialOverride(mg); }}
+                                onClick={() => { triggerHaptic('light'); setPresetVialOverride(mg); setVialSizeMg(mg); }}
                                 className={`px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border transition cursor-pointer ${selectedPresetVialMg === mg ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/50' : 'bg-[#1e293b]/50 text-slate-400 border-slate-700/50 hover:text-slate-200 hover:border-slate-600'}`}
                                 id={`preset-vial-${mg}`}
                               >
