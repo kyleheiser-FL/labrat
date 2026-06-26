@@ -2,6 +2,7 @@ import { LiveChat } from './components/LiveChat';
 import AiAssistant from './components/AiAssistant';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AppHeader from './components/AppHeader';
+import UpdateBanner from './components/UpdateBanner';
 import ToastContainer from './components/ToastContainer';
 import LegalModal from './components/LegalModal';
 import AuthModal from './components/AuthModal';
@@ -1353,6 +1354,7 @@ export default function App() {
         );
       })()}
 
+      <UpdateBanner />
       <AppHeader
         activeTab={activeTab}
         onSetActiveTab={setActiveTab}

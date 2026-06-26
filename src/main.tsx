@@ -20,6 +20,14 @@ if ('serviceWorker' in navigator && !window.location.hostname.includes('localhos
   register().catch((err) => {
     console.error('[PWA] ServiceWorker registration failed: ', err);
   });
+
+  // Dispatch update-ready event when a new SW takes over (skip first install)
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (hadController) {
+      window.dispatchEvent(new CustomEvent('labrat-update-ready'));
+    }
+  });
 }
 
 createRoot(document.getElementById('root')!).render(
