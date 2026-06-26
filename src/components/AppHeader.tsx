@@ -61,8 +61,8 @@ export default function AppHeader({
       {badge != null && badge > 0 && (
         <span className={`absolute -top-1.5 -right-1 min-w-[17px] h-[17px] rounded-full flex items-center justify-center px-1 text-[9px] font-black leading-none shadow-md pointer-events-none ${
           activeTab === tab
-            ? 'bg-slate-950 text-rose-400'
-            : 'bg-rose-500 text-white'
+            ? 'bg-slate-950 text-cyan-400'
+            : 'bg-cyan-500 text-slate-950'
         }`}>
           {badge > 99 ? '99+' : badge}
         </span>
@@ -212,7 +212,7 @@ export default function AppHeader({
           }
           const gridColsClass = navTabs.length <= 1 ? 'grid-cols-1' : navTabs.length === 2 ? 'grid-cols-2' : navTabs.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
           return (
-            <nav className={`bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid ${gridColsClass} sm:flex sm:flex-row gap-1.5 w-full`} id="navigation-tabs-rail">
+            <nav className={`bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid ${gridColsClass} sm:flex sm:flex-row gap-1.5 w-full overflow-visible`} id="navigation-tabs-rail">
               {navTabs.map(({ tab, icon, label, badge }) => (
                 <React.Fragment key={tab}>{tabBtn(tab, icon, label, badge)}</React.Fragment>
               ))}
