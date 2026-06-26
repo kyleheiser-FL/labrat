@@ -239,25 +239,25 @@ export default function CycleDashboard({
     m => !dismissedMissedKeys.has(`${m.compound.id}-${m.date}`)
   ).length;
 
-  const handleAdministerDose = (comp: Compound) => {
-    if (logs.some(l => l.compoundId === comp.id && l.date === selectedDate)) return;
-
-    const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-
-    let calculatedQtyText: string | undefined;
+  const buildCalculatedQtyText = (comp: Compound): string | undefined => {
     if (comp.type === 'peptide' && comp.vialSizeMg && comp.bacWaterMl) {
       const doseInMcg = comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount;
       const units = Math.round((doseInMcg / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10;
-      calculatedQtyText = `${units} Units`;
+      return `${units} Units`;
     } else if (comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') {
       if (comp.steroidForm === 'pill' && comp.pillSizeMg) {
         const pills = Math.round((comp.doseAmount / comp.pillSizeMg) * 100) / 100;
-        calculatedQtyText = `${pills} ${pills === 1 ? 'pill' : 'pills'} (${comp.pillSizeMg}mg each)`;
+        return `${pills} ${pills === 1 ? 'pill' : 'pills'} (${comp.pillSizeMg}mg each)`;
       } else if (comp.steroidForm === 'oil' && comp.oilConcMgMl) {
-        calculatedQtyText = `${(comp.doseAmount / comp.oilConcMgMl).toFixed(2)} ml / cc (${comp.oilConcMgMl}mg/ml)`;
+        return `${(comp.doseAmount / comp.oilConcMgMl).toFixed(2)} ml / cc (${comp.oilConcMgMl}mg/ml)`;
       }
     }
+    return undefined;
+  };
 
+  const handleAdministerDose = (comp: Compound) => {
+    if (logs.some(l => l.compoundId === comp.id && l.date === selectedDate)) return;
+    const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
     onLogDose({
       id: crypto.randomUUID(),
       compoundId: comp.id,
@@ -271,8 +271,28 @@ export default function CycleDashboard({
         bacWaterMl: comp.bacWaterMl,
         syringeUnits: Math.round(((comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10
       } : undefined,
-      calculatedQtyText
+      calculatedQtyText: buildCalculatedQtyText(comp),
     });
+    triggerHaptic('success');
+  };
+
+  const handleLogMissedDose = (comp: Compound, date: string, key: string) => {
+    onLogDose({
+      id: crypto.randomUUID(),
+      compoundId: comp.id,
+      compoundName: comp.name,
+      date,
+      time: comp.reminderTime || '12:00',
+      doseAmount: comp.doseAmount,
+      doseUnit: comp.doseUnit,
+      reconstitutedRatio: comp.vialSizeMg && comp.bacWaterMl ? {
+        vialSizeMg: comp.vialSizeMg,
+        bacWaterMl: comp.bacWaterMl,
+        syringeUnits: Math.round(((comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount) / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10
+      } : undefined,
+      calculatedQtyText: buildCalculatedQtyText(comp),
+    });
+    dismissMissedKey(key);
     triggerHaptic('success');
   };
 
@@ -347,7 +367,7 @@ export default function CycleDashboard({
                         <span className="text-rose-400 font-mono text-[10px]">{dayLabel}</span>
                         <button
                           type="button"
-                          onClick={() => setSelectedDate(m.date)}
+                          onClick={() => handleLogMissedDose(m.compound, m.date, key)}
                           className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 bg-cyan-950/40 border border-cyan-500/25 hover:border-cyan-500/50 px-2 py-0.5 rounded-lg transition cursor-pointer"
                         >
                           Log It
