@@ -1,6 +1,6 @@
 import { LiveChat } from './components/LiveChat';
 import AiAssistant from './components/AiAssistant';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AppHeader from './components/AppHeader';
 import ToastContainer from './components/ToastContainer';
 import LegalModal from './components/LegalModal';
@@ -44,6 +44,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Compound, DoseLog, DailyMetric, LibraryItem, AppNotification, SegmentVisibility, DEFAULT_SEGMENT_VISIBILITY } from './types';
 import { triggerHaptic } from './lib/haptics';
 import { safeLocalStorage } from './lib/storage';
+import { getDoseScheduleForDate } from './lib/schedule';
 import CycleDashboard from './components/CycleDashboard';
 import CyclePlanner from './components/CyclePlanner';
 import PeptideLibrary from './components/PeptideLibrary';
@@ -1257,6 +1258,34 @@ export default function App() {
     navigateTab('planner');
   };
 
+  // Badge counts for tab nav — recomputed whenever compounds or logs change
+  const tabBadges = useMemo(() => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const active = compounds.filter(c => !c.isCompleted);
+
+    // Today's scheduled but not yet logged
+    const pendingToday = active.filter(comp => {
+      const { isDue } = getDoseScheduleForDate(comp, todayStr);
+      return isDue && !logs.some(l => l.compoundId === comp.id && l.date === todayStr);
+    }).length;
+
+    // Missed doses in the past 7 days (unlogged)
+    let missed = 0;
+    for (let d = 1; d <= 7; d++) {
+      const dt = new Date(todayStr + 'T00:00:00');
+      dt.setDate(dt.getDate() - d);
+      const dateStr = dt.toISOString().split('T')[0];
+      active.forEach(comp => {
+        const { isDue } = getDoseScheduleForDate(comp, dateStr);
+        if (isDue && !logs.some(l => l.compoundId === comp.id && l.date === dateStr)) missed++;
+      });
+    }
+
+    const unreadNotifs = notifications.filter(n => !n.isRead).length;
+
+    return { dashboard: pendingToday + missed, notifications: unreadNotifs };
+  }, [compounds, logs, notifications]);
+
   return (
     <div
       className={`min-h-screen bg-[#030712] text-slate-100 flex flex-col font-sans selection:bg-cyan-500/35 selection:text-cyan-200 labrat-theme-${labratTheme} labrat-brand-${labratBranding}`}
@@ -1336,6 +1365,7 @@ export default function App() {
         onSignInClick={() => openAuthModal('signin')}
         hideShop={hideShop}
         trackingEnabled={trackingEnabled}
+        tabBadges={tabBadges}
       />
 
       {/* Main Responsive Layout Wrapper */}

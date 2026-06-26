@@ -29,6 +29,7 @@ interface AppHeaderProps {
   onSignInClick: () => void;
   hideShop: boolean;
   trackingEnabled: boolean;
+  tabBadges?: { dashboard: number; notifications: number };
 }
 
 export default function AppHeader({
@@ -43,11 +44,12 @@ export default function AppHeader({
   onSignInClick,
   hideShop,
   trackingEnabled,
+  tabBadges,
 }: AppHeaderProps) {
-  const tabBtn = (tab: Tab, icon: React.ReactNode, label: React.ReactNode) => (
+  const tabBtn = (tab: Tab, icon: React.ReactNode, label: React.ReactNode, badge?: number) => (
     <button
       onClick={() => { triggerHaptic('light'); onSetActiveTab(tab); }}
-      className={`flex flex-col min-[480px]:flex-row items-center justify-center text-center gap-1 px-1 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer select-none truncate flex-1 justify-self-stretch ${
+      className={`relative flex flex-col min-[480px]:flex-row items-center justify-center text-center gap-1 px-1 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer select-none truncate flex-1 justify-self-stretch ${
         activeTab === tab
           ? 'bg-cyan-500 text-slate-950 font-bold shadow-[0_0_12px_rgba(34,211,238,0.25)]'
           : 'text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/55'
@@ -56,6 +58,15 @@ export default function AppHeader({
     >
       {icon}
       <span className="truncate">{label}</span>
+      {badge != null && badge > 0 && (
+        <span className={`absolute -top-1.5 -right-1 min-w-[17px] h-[17px] rounded-full flex items-center justify-center px-1 text-[9px] font-black leading-none shadow-md pointer-events-none ${
+          activeTab === tab
+            ? 'bg-slate-950 text-rose-400'
+            : 'bg-rose-500 text-white'
+        }`}>
+          {badge > 99 ? '99+' : badge}
+        </span>
+      )}
     </button>
   );
 
@@ -107,9 +118,11 @@ export default function AppHeader({
                 <UserProfileIcon className="w-4 h-4" />
               </button>
             )}
+
+            {/* Settings button with unread notification badge */}
             <button
               onClick={() => { triggerHaptic('light'); onSetActiveTab('settings'); }}
-              className={`flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
+              className={`relative flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
                 activeTab === 'settings'
                   ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
                   : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
@@ -118,6 +131,9 @@ export default function AppHeader({
               title="Settings"
             >
               <Settings className="w-4 h-4" />
+              {tabBadges && tabBadges.notifications > 0 && (
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-[#030712] animate-pulse" />
+              )}
             </button>
 
             {!isStandalone && (
@@ -185,9 +201,9 @@ export default function AppHeader({
 
         {/* Navigation Tab Rail — Shop-first for new visitors; tracking tabs unlock via Settings */}
         {(() => {
-          const navTabs: { tab: Tab; icon: React.ReactNode; label: React.ReactNode }[] = [];
+          const navTabs: { tab: Tab; icon: React.ReactNode; label: React.ReactNode; badge?: number }[] = [];
           if (trackingEnabled) {
-            navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Checklist</span></> });
+            navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Checklist</span></>, badge: tabBadges?.dashboard });
             navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Cycle <span className="hidden sm:inline">Architect</span></> });
             navTabs.push({ tab: 'library', icon: <BookOpen className="w-3.5 h-3.5 shrink-0" />, label: <>Compound <span className="hidden sm:inline">Encyclopedia</span></> });
           }
@@ -197,8 +213,8 @@ export default function AppHeader({
           const gridColsClass = navTabs.length <= 1 ? 'grid-cols-1' : navTabs.length === 2 ? 'grid-cols-2' : navTabs.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
           return (
             <nav className={`bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid ${gridColsClass} sm:flex sm:flex-row gap-1.5 w-full`} id="navigation-tabs-rail">
-              {navTabs.map(({ tab, icon, label }) => (
-                <React.Fragment key={tab}>{tabBtn(tab, icon, label)}</React.Fragment>
+              {navTabs.map(({ tab, icon, label, badge }) => (
+                <React.Fragment key={tab}>{tabBtn(tab, icon, label, badge)}</React.Fragment>
               ))}
             </nav>
           );
