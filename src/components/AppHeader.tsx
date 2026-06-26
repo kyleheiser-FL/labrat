@@ -59,7 +59,7 @@ export default function AppHeader({
       {icon}
       <span className="truncate">{label}</span>
       {badge != null && badge > 0 && (
-        <span className={`absolute -top-1.5 -right-1 min-w-[17px] h-[17px] rounded-full flex items-center justify-center px-1 text-[9px] font-black leading-none shadow-md pointer-events-none ${
+        <span className={`absolute top-0.5 right-0.5 min-w-[15px] h-[15px] rounded-full flex items-center justify-center px-1 text-[8px] font-black leading-none shadow-md pointer-events-none ${
           activeTab === tab
             ? 'bg-slate-950 text-cyan-400'
             : 'bg-cyan-500 text-slate-950'
