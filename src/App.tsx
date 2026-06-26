@@ -1264,27 +1264,15 @@ export default function App() {
     const todayStr = new Date().toISOString().split('T')[0];
     const active = compounds.filter(c => !c.isCompleted);
 
-    // Today's scheduled but not yet logged
+    // Only count today's scheduled-but-not-yet-logged doses
     const pendingToday = active.filter(comp => {
       const { isDue } = getDoseScheduleForDate(comp, todayStr);
       return isDue && !logs.some(l => l.compoundId === comp.id && l.date === todayStr);
     }).length;
 
-    // Missed doses in the past 7 days (unlogged)
-    let missed = 0;
-    for (let d = 1; d <= 7; d++) {
-      const dt = new Date(todayStr + 'T00:00:00');
-      dt.setDate(dt.getDate() - d);
-      const dateStr = dt.toISOString().split('T')[0];
-      active.forEach(comp => {
-        const { isDue } = getDoseScheduleForDate(comp, dateStr);
-        if (isDue && !logs.some(l => l.compoundId === comp.id && l.date === dateStr)) missed++;
-      });
-    }
-
     const unreadNotifs = notifications.filter(n => !n.isRead).length;
 
-    return { dashboard: pendingToday + missed, notifications: unreadNotifs };
+    return { dashboard: pendingToday, notifications: unreadNotifs };
   }, [compounds, logs, notifications]);
 
   return (
