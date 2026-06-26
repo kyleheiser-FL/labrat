@@ -27,7 +27,7 @@ export default function UpdateBanner() {
           onClick={() => window.location.reload()}
           className="bg-slate-950 text-cyan-400 hover:bg-slate-900 text-[11px] font-black px-3 py-1 rounded-lg transition cursor-pointer"
         >
-          Reload Now
+          Update
         </button>
         <button
           onClick={() => setVisible(false)}
