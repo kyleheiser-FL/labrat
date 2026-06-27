@@ -11,12 +11,27 @@ interface AdministrationLedgerProps {
 export default function AdministrationLedger({ logs, onUndoDose }: AdministrationLedgerProps) {
   const [showCount, setShowCount] = useState(5);
 
-  // Sort ascending (true chronological: oldest → newest) then show the tail
-  // so the most-recently-logged entries are always visible by default.
-  const sorted = logs.slice().sort((a, b) =>
-    (`${a.date}T${a.time}`).localeCompare(`${b.date}T${b.time}`)
-  );
-  const visibleLogs = sorted.slice(Math.max(0, sorted.length - showCount));
+  // Normalize a stored time to 24-hour "HH:MM" so sorting is reliable even
+  // when some logs persist "22:37" and others persist "10:37 PM".
+  const to24h = (t: string): string => {
+    if (!t) return '00:00';
+    const s = t.trim();
+    const ampm = s.match(/^(\d{1,2}):(\d{2})\s*([AaPp][Mm])$/);
+    if (ampm) {
+      let h = parseInt(ampm[1], 10) % 12;
+      if (ampm[3].toLowerCase() === 'pm') h += 12;
+      return `${h.toString().padStart(2, '0')}:${ampm[2]}`;
+    }
+    const m = s.match(/^(\d{1,2}):(\d{2})/);
+    if (m) return `${m[1].padStart(2, '0')}:${m[2]}`;
+    return '00:00';
+  };
+  const sortKey = (l: DoseLog) => `${l.date}T${to24h(l.time)}`;
+
+  // Sort newest → oldest so the dose you just logged is at the top, then show
+  // the head; "Load 5 Older" reveals progressively older entries beneath it.
+  const sorted = logs.slice().sort((a, b) => sortKey(b).localeCompare(sortKey(a)));
+  const visibleLogs = sorted.slice(0, showCount);
   const hasOlder = sorted.length > showCount;
 
   return (
@@ -41,7 +56,7 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
         <div className="overflow-x-auto" id="ledger-scrolling-container">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[10px] text-slate-500 font-mono">
-              Showing {visibleLogs.length} of {sorted.length} log{sorted.length !== 1 ? 's' : ''} · oldest → newest
+              Showing {visibleLogs.length} of {sorted.length} log{sorted.length !== 1 ? 's' : ''} · newest → oldest
             </span>
             <div className="flex items-center gap-2">
               {showCount > 5 && (
