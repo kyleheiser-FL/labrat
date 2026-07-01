@@ -1103,6 +1103,53 @@ export default function App() {
     navigateTab('shop');
   };
 
+  const findActiveCompoundByName = (name: string): Compound | undefined => {
+    const lower = (name || '').toLowerCase();
+    if (!lower) return undefined;
+    return compounds.find(c => !c.isCompleted && c.name.toLowerCase() === lower)
+      || compounds.find(c => !c.isCompleted && c.name.toLowerCase().includes(lower));
+  };
+
+  const handleAiLogDose = (name: string, date?: string): boolean => {
+    const comp = findActiveCompoundByName(name);
+    if (!comp) return false;
+    const dateStr = (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) ? date : new Date().toISOString().split('T')[0];
+    // Already logged that day — treat as a no-op success rather than a duplicate.
+    if (logs.some(l => l.compoundId === comp.id && l.date === dateStr)) return true;
+    const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    const doseInMcg = comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount;
+    handleLogDose({
+      id: crypto.randomUUID(),
+      compoundId: comp.id,
+      compoundName: comp.name,
+      date: dateStr,
+      time: timeStr,
+      doseAmount: comp.doseAmount,
+      doseUnit: comp.doseUnit,
+      reconstitutedRatio: comp.vialSizeMg && comp.bacWaterMl ? {
+        vialSizeMg: comp.vialSizeMg,
+        bacWaterMl: comp.bacWaterMl,
+        syringeUnits: Math.round((doseInMcg / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10,
+      } : undefined,
+    });
+    return true;
+  };
+
+  const handleAiUpdateCompound = (args: any): boolean => {
+    const comp = findActiveCompoundByName(args?.name);
+    if (!comp) return false;
+    const updated: Compound = { ...comp };
+    if (args.doseAmount != null && !isNaN(Number(args.doseAmount))) updated.doseAmount = Number(args.doseAmount);
+    if (['mcg', 'mg', 'IU', 'ml'].includes(args.doseUnit)) updated.doseUnit = args.doseUnit;
+    if (['daily', 'eod', 'twice_weekly', 'weekly', 'custom'].includes(args.frequency)) updated.frequency = args.frequency;
+    if (args.durationWeeks != null && !isNaN(Number(args.durationWeeks))) updated.durationWeeks = Number(args.durationWeeks);
+    if (args.vialSizeMg != null && !isNaN(Number(args.vialSizeMg))) updated.vialSizeMg = Number(args.vialSizeMg);
+    if (args.bacWaterMl != null && !isNaN(Number(args.bacWaterMl))) updated.bacWaterMl = Number(args.bacWaterMl);
+    if (args.customDays != null && !isNaN(Number(args.customDays))) updated.customDays = Number(args.customDays);
+    handleUpdateCompound(updated);
+    return true;
+  };
+
   const handleDeleteCompound = (id: string) => {
     const targetComp = compounds.find(c => c.id === id);
     const updated = compounds.filter(c => c.id !== id);
@@ -1537,6 +1584,8 @@ export default function App() {
         onAddCompound={handleAiAddCompound}
         onStopCompound={handleAiStopCompound}
         onOpenShop={handleAiOpenShop}
+        onLogDose={handleAiLogDose}
+        onUpdateCompound={handleAiUpdateCompound}
       />
     </div>
   );

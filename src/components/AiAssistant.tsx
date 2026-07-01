@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, Loader2, ChevronDown, Plus, Square, ShoppingBag, Check } from 'lucide-react';
+import { X, Send, Bot, Loader2, ChevronDown, Plus, Square, ShoppingBag, Check, Syringe, SlidersHorizontal } from 'lucide-react';
 
 interface PendingAction {
   name: string;
@@ -27,6 +27,8 @@ interface AiAssistantProps {
   onAddCompound?: (args: any) => void;
   onStopCompound?: (name: string) => boolean;
   onOpenShop?: (query?: string) => void;
+  onLogDose?: (name: string, date?: string) => boolean;
+  onUpdateCompound?: (args: any) => boolean;
 }
 
 const FREQ_LABEL: Record<string, string> = {
@@ -46,6 +48,15 @@ function actionSummary(a: PendingAction): string {
   }
   if (a.name === 'stop_compound') return `Mark ${g.name} as stopped`;
   if (a.name === 'recommend_product') return `Find ${g.productQuery} in the shop${g.reason ? ` — ${g.reason}` : ''}`;
+  if (a.name === 'log_dose') return `Log a dose of ${g.name}${g.date ? ` on ${g.date}` : ' today'}`;
+  if (a.name === 'update_compound') {
+    const parts: string[] = [];
+    if (g.doseAmount != null) parts.push(`${g.doseAmount}${g.doseUnit || ''}`);
+    if (g.frequency) parts.push(FREQ_LABEL[g.frequency] || g.frequency);
+    if (g.durationWeeks != null) parts.push(`${g.durationWeeks} weeks`);
+    if (g.vialSizeMg && g.bacWaterMl) parts.push(`${g.vialSizeMg}mg + ${g.bacWaterMl}ml BAC`);
+    return `Update ${g.name}${parts.length ? ` → ${parts.join(', ')}` : ''}`;
+  }
   return 'Perform this action';
 }
 
@@ -53,6 +64,8 @@ function actionCta(name: string): { label: string; icon: React.ReactNode } {
   if (name === 'add_compound_to_cycle') return { label: 'Add to Cycle', icon: <Plus style={{ width: 13, height: 13 }} /> };
   if (name === 'stop_compound') return { label: 'Stop It', icon: <Square style={{ width: 12, height: 12 }} /> };
   if (name === 'recommend_product') return { label: 'Open Shop', icon: <ShoppingBag style={{ width: 13, height: 13 }} /> };
+  if (name === 'log_dose') return { label: 'Log Dose', icon: <Syringe style={{ width: 13, height: 13 }} /> };
+  if (name === 'update_compound') return { label: 'Update', icon: <SlidersHorizontal style={{ width: 13, height: 13 }} /> };
   return { label: 'Confirm', icon: <Check style={{ width: 13, height: 13 }} /> };
 }
 
@@ -100,7 +113,7 @@ const STARTERS = [
   'How do I calculate syringe units?',
 ];
 
-export default function AiAssistant({ compounds, onAddCompound, onStopCompound, onOpenShop }: AiAssistantProps = {}) {
+export default function AiAssistant({ compounds, onAddCompound, onStopCompound, onOpenShop, onLogDose, onUpdateCompound }: AiAssistantProps = {}) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -168,6 +181,12 @@ export default function AiAssistant({ compounds, onAddCompound, onStopCompound, 
         if (ok === false) { setActionStatus(idx, 'failed'); return; }
       } else if (action.name === 'recommend_product') {
         onOpenShop?.(action.args?.productQuery);
+      } else if (action.name === 'log_dose') {
+        const ok = onLogDose?.(action.args?.name, action.args?.date);
+        if (ok === false) { setActionStatus(idx, 'failed'); return; }
+      } else if (action.name === 'update_compound') {
+        const ok = onUpdateCompound?.(action.args);
+        if (ok === false) { setActionStatus(idx, 'failed'); return; }
       }
       setActionStatus(idx, 'done');
     } catch {
@@ -301,6 +320,8 @@ export default function AiAssistant({ compounds, onAddCompound, onStopCompound, 
                     const cta = actionCta(a.name);
                     const doneLabel = a.name === 'add_compound_to_cycle' ? 'Added to your cycle'
                       : a.name === 'stop_compound' ? 'Marked as stopped'
+                      : a.name === 'log_dose' ? 'Dose logged'
+                      : a.name === 'update_compound' ? 'Cycle updated'
                       : 'Opened in shop';
                     return (
                       <div style={{

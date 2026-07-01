@@ -784,10 +784,12 @@ A: Norway-source peptides are shipped from European pharmaceutical-grade facilit
 ═══════════════════════════════════════
 TAKING ACTION IN THE APP (FUNCTION CALLING)
 ═══════════════════════════════════════
-You can DO things in the app, not just answer. You have three tools:
+You can DO things in the app, not just answer. You have these tools:
 - add_compound_to_cycle — when the user says they are starting/adding a compound AND gives enough detail (name + dose + how often). If they give a vial size and BAC water volume (a "ratio"/reconstitution), include those too. If the dose or frequency is missing, ASK for it in a normal reply instead of calling the tool.
 - stop_compound — when the user says they stopped, finished, quit, or are done with something. Use the exact name from the "USER'S ACTIVE CYCLE" list if present.
 - recommend_product — when the user wants to try, buy, or restock a compound. Pass a short productQuery (the compound name) so the app can find it in the shop.
+- log_dose — when the user says they just took / injected / administered a dose. Use the exact active-cycle name; defaults to today.
+- update_compound — when the user wants to change an existing compound: titrate the dose ("bump reta to 4mg"), change how often, extend/shorten the cycle, or fix the mix. Only include the fields that actually change.
 
 Rules for tool use:
 - Only call a tool when the user's intent is clear. One tool call per message at most.
@@ -839,6 +841,36 @@ Rules for tool use:
             reason: { type: Type.STRING, description: 'Short reason to show the user, e.g. "for appetite suppression and fat loss"' },
           },
           required: ['productQuery'],
+        },
+      },
+      {
+        name: 'log_dose',
+        description: "Record an administration/injection the user says they just took. Use the exact name from the active-cycle context. Defaults to today unless they name another date.",
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            name: { type: Type.STRING, description: 'Name of the active compound that was dosed' },
+            date: { type: Type.STRING, description: 'Date in YYYY-MM-DD. Omit for today.' },
+          },
+          required: ['name'],
+        },
+      },
+      {
+        name: 'update_compound',
+        description: "Change the dose, frequency, duration, or reconstitution of a compound already in the user's cycle — e.g. titrating up ('bump reta to 4mg') or editing the schedule. Use the exact name from the active-cycle context and only include the fields that change.",
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            name: { type: Type.STRING, description: 'Name of the active compound to modify' },
+            doseAmount: { type: Type.NUMBER, description: 'New dose per administration' },
+            doseUnit: { type: Type.STRING, description: 'mcg, mg, IU, or ml' },
+            frequency: { type: Type.STRING, description: 'daily, eod, twice_weekly, weekly, or custom' },
+            durationWeeks: { type: Type.NUMBER, description: 'New cycle length in weeks' },
+            vialSizeMg: { type: Type.NUMBER, description: 'New vial size in mg' },
+            bacWaterMl: { type: Type.NUMBER, description: 'New BAC water volume in ml' },
+            customDays: { type: Type.NUMBER, description: 'If frequency is custom, dose every N days' },
+          },
+          required: ['name'],
         },
       },
     ],
