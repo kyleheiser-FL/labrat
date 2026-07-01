@@ -46,7 +46,6 @@ import { Compound, DoseLog, DailyMetric, LibraryItem, AppNotification, SegmentVi
 import { triggerHaptic } from './lib/haptics';
 import { safeLocalStorage } from './lib/storage';
 import { getDoseScheduleForDate } from './lib/schedule';
-import { isAiPreviewMode } from './lib/previewMode';
 import CycleDashboard from './components/CycleDashboard';
 import CyclePlanner from './components/CyclePlanner';
 import PeptideLibrary from './components/PeptideLibrary';
@@ -165,8 +164,6 @@ type LabRatTheme = 'neon' | 'clinical' | 'clinical-light';
 type LabRatBranding = 'mascot' | 'wordmark' | 'lr';
 
 const getInitialTheme = (): LabRatTheme => {
-  // Guest AI preview always shows the neon flagship theme.
-  if (isAiPreviewMode()) return 'neon';
   const saved = safeLocalStorage.getItem('labrat_ui_theme');
   if (saved === 'clinical' || saved === 'neon' || saved === 'clinical-light') return saved;
   return 'neon';
@@ -221,8 +218,6 @@ export default function App() {
   const [labratTheme, setLabratTheme] = useState<LabRatTheme>(getInitialTheme);
   const [labratBranding, setLabratBranding] = useState<LabRatBranding>(getInitialBranding);
   const [showFirstBootThemePicker, setShowFirstBootThemePicker] = useState<boolean>(() => {
-    // Skip the first-boot theme picker in guest AI preview — neon is forced.
-    if (isAiPreviewMode()) return false;
     return safeLocalStorage.getItem('labrat_theme_selected') !== 'true';
   });
   const [showAppearanceModal, setShowAppearanceModal] = useState(false);

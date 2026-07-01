@@ -43,7 +43,6 @@ export { findShopProductMatch, getCleanDescription, getEstimatedDeliveryDate, ge
 import { getCleanDescription, getEstimatedDeliveryDate, getShippingOptions, getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, findShopProductMatch, getSecondaryBenefit, getSecondaryBenefitStyle, parseShippingAddress, getProductBaseAndSize } from '../lib/shopHelpers';
 import { fetchWholesaleBook, getProductCostPerVial, type WholesaleBook } from '../lib/wholesale';
 import { usePricingConfig } from '../lib/pricingConfig';
-import { isAiPreviewMode } from '../lib/previewMode';
 import ShopCartView from './shop/ShopCartView';
 import ShopCheckoutView from './shop/ShopCheckoutView';
 import ShopOrdersView from './shop/ShopOrdersView';
@@ -130,26 +129,6 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   }, []);
 
   const [memberProfile, setMemberProfile] = useState<MemberProfile | null>(null);
-
-  // AI / guest preview: expose the catalog with China per-vial pricing as an
-  // approved member would see it, with no login and no pending-approval
-  // lockdown, when the link carries the preview token. Ordering still requires
-  // a real account.
-  const aiPreview = isAiPreviewMode();
-  useEffect(() => {
-    if (aiPreview && !currentUser && !memberProfile) {
-      setMemberProfile({
-        id: 'ai-preview',
-        email: 'ai-preview@labrat.app',
-        displayName: 'AI Preview Guest',
-        status: 'chinavial',
-        shippingAddress: '',
-        phone: '',
-        createdAt: null,
-        updatedAt: null,
-      });
-    }
-  }, [aiPreview, currentUser, memberProfile]);
 
   const isAdminUser = currentUser?.email?.toLowerCase() === 'kyleheiser@gmail.com';
   const isViewingAsAdmin = isAdminUser && !isAdminPreviewCustomer;
@@ -1395,7 +1374,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           <Loader2 className="w-10 h-10 text-cyan-400 animate-spin mb-3" />
           <p className="text-slate-400 text-sm">Synchronizing membership credentials...</p>
         </div>
-      ) : !currentUser && !aiPreview ? (
+      ) : !currentUser ? (
         /* Display auth prompt if user not logged in */
         <div className="bg-[#0a0f1d] border border-red-500/20 rounded-2xl p-8 text-center flex flex-col items-center py-16" id="unauthenticated-shop-state">
           <div className="p-4 bg-red-500/10 text-red-400 rounded-full mb-4">
