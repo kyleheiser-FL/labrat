@@ -301,7 +301,15 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   // Search and filter states
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(() => {
+    // Deep-link seed set by the AI assistant's "recommend product" action.
+    const seed = safeLocalStorage.getItem('labrat_shop_search_seed');
+    if (seed) {
+      safeLocalStorage.removeItem('labrat_shop_search_seed');
+      return seed;
+    }
+    return '';
+  });
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showShopSuggestions, setShowShopSuggestions] = useState(false);
 

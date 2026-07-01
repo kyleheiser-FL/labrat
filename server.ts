@@ -779,7 +779,70 @@ Q: How long is a reconstituted peptide good for?
 A: 28–30 days refrigerated at 2–8°C. Keep dry powder frozen at -20°C until ready to use.
 
 Q: What's the difference between Norway and China sourcing?
-A: Norway-source peptides are shipped from European pharmaceutical-grade facilities with 3–7 day delivery. China-source offers lower per-unit cost with longer shipping (2–4 weeks). Kit pricing (10-vial packs) gives additional discounts on either source. Contact support to discuss tier options.`;
+A: Norway-source peptides are shipped from European pharmaceutical-grade facilities with 3–7 day delivery. China-source offers lower per-unit cost with longer shipping (2–4 weeks). Kit pricing (10-vial packs) gives additional discounts on either source. Contact support to discuss tier options.
+
+═══════════════════════════════════════
+TAKING ACTION IN THE APP (FUNCTION CALLING)
+═══════════════════════════════════════
+You can DO things in the app, not just answer. You have three tools:
+- add_compound_to_cycle — when the user says they are starting/adding a compound AND gives enough detail (name + dose + how often). If they give a vial size and BAC water volume (a "ratio"/reconstitution), include those too. If the dose or frequency is missing, ASK for it in a normal reply instead of calling the tool.
+- stop_compound — when the user says they stopped, finished, quit, or are done with something. Use the exact name from the "USER'S ACTIVE CYCLE" list if present.
+- recommend_product — when the user wants to try, buy, or restock a compound. Pass a short productQuery (the compound name) so the app can find it in the shop.
+
+Rules for tool use:
+- Only call a tool when the user's intent is clear. One tool call per message at most.
+- Always ALSO write a short, friendly natural-language reply confirming what you're about to do (the app shows the user a Confirm button before anything actually changes — nothing happens without their tap).
+- Never invent doses the user didn't ask for. If you fill a sensible default (e.g. 8-week duration), say so.
+- The research-purposes-only disclaimer is not required on short action confirmations.`;
+
+  // Agentic tools the chat assistant can invoke. The client renders a Confirm
+  // card for any returned action — nothing mutates until the user taps it.
+  const LABRAT_CHAT_TOOLS = [{
+    functionDeclarations: [
+      {
+        name: 'add_compound_to_cycle',
+        description: "Add a new compound/peptide to the user's active cycle when they say they're starting something and provide a dose and how often. Include vial size and BAC water if they gave a reconstitution ratio.",
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            name: { type: Type.STRING, description: 'Compound name, e.g. "Retatrutide"' },
+            type: { type: Type.STRING, description: 'peptide, steroid, supplement, or compound. Default peptide.' },
+            doseAmount: { type: Type.NUMBER, description: 'Numeric dose per administration, e.g. 3' },
+            doseUnit: { type: Type.STRING, description: 'mcg, mg, IU, or ml' },
+            frequency: { type: Type.STRING, description: 'daily, eod, twice_weekly, weekly, or custom' },
+            durationWeeks: { type: Type.NUMBER, description: 'Cycle length in weeks. Default 8 if not given.' },
+            vialSizeMg: { type: Type.NUMBER, description: 'For peptides: vial size in mg, e.g. 10' },
+            bacWaterMl: { type: Type.NUMBER, description: 'For peptides: BAC water volume in ml used to reconstitute, e.g. 2' },
+            customDays: { type: Type.NUMBER, description: 'If frequency is custom, dose every N days' },
+          },
+          required: ['name', 'doseAmount', 'doseUnit', 'frequency'],
+        },
+      },
+      {
+        name: 'stop_compound',
+        description: "Mark a compound in the user's active cycle as stopped/completed when they say they stopped, finished, or quit it. Use the exact name from the active-cycle context.",
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            name: { type: Type.STRING, description: 'Name of the active compound to stop' },
+          },
+          required: ['name'],
+        },
+      },
+      {
+        name: 'recommend_product',
+        description: 'Link the user to a product in the shop when they want to try, buy, or restock a compound.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            productQuery: { type: Type.STRING, description: 'Search term that finds the product, e.g. "Retatrutide"' },
+            reason: { type: Type.STRING, description: 'Short reason to show the user, e.g. "for appetite suppression and fat loss"' },
+          },
+          required: ['productQuery'],
+        },
+      },
+    ],
+  }];
 
   app.post('/api/chat', async (req, res) => {
     // Rate limit by IP (chat usable before auth on some pages)
@@ -796,6 +859,12 @@ A: Norway-source peptides are shipped from European pharmaceutical-grade facilit
       return res.status(400).json({ error: 'No message provided' });
     }
 
+    // Optional context: the user's active cycle, so the assistant can stop or
+    // reference existing compounds by name.
+    const activeCompounds = Array.isArray(req.body?.context?.activeCompounds)
+      ? req.body.context.activeCompounds.slice(0, 40)
+      : [];
+
     try {
       const client = getGeminiClient();
       // Build Gemini contents from conversation history
@@ -804,18 +873,32 @@ A: Norway-source peptides are shipped from European pharmaceutical-grade facilit
         parts: [{ text: m.content }],
       }));
 
+      let systemInstruction = LABRAT_SYSTEM_PROMPT;
+      if (activeCompounds.length) {
+        const list = activeCompounds
+          .map((c: any) => `- ${c.name} (${c.doseAmount ?? '?'}${c.doseUnit ?? ''}, ${c.frequency ?? '?'})`)
+          .join('\n');
+        systemInstruction += `\n\n═══ USER'S ACTIVE CYCLE (reference for stop_compound) ═══\n${list}`;
+      }
+
       const response = await client.models.generateContent({
         model: 'gemini-2.5-flash',
         contents,
         config: {
-          systemInstruction: LABRAT_SYSTEM_PROMPT,
-          maxOutputTokens: 600,
+          systemInstruction,
+          tools: LABRAT_CHAT_TOOLS,
+          maxOutputTokens: 800,
           temperature: 0.4,
         },
       });
 
-      const reply = response.text?.trim() || 'Sorry, I couldn\'t generate a response. Please try again.';
-      res.json({ reply });
+      const calls = response.functionCalls || [];
+      const action = calls.length ? { name: calls[0].name, args: calls[0].args || {} } : null;
+      const text = response.text?.trim() || '';
+      // When the model returns only an action with no prose, the client renders
+      // a default confirmation summary from the args.
+      const reply = text || (action ? '' : "Sorry, I couldn't generate a response. Please try again.");
+      res.json({ reply, action });
     } catch (err: any) {
       const { status, message } = handleGeminiError(err, 'Chat API');
       res.status(status).json({ error: message });

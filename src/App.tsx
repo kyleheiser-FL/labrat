@@ -1060,6 +1060,49 @@ export default function App() {
     triggerNotification('Schedule Parameter Adjustment', `Modified dosing schedule parameters for ${updatedComp.name}.`, 'info');
   };
 
+  // ── AI assistant actions ─────────────────────────────────────────────
+  // The assistant proposes these; the user confirms them in the chat card
+  // before they run, so these execute an already-approved intent.
+  const AI_COMPOUND_COLORS = ['#06b6d4', '#10b981', '#a855f7', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899'];
+
+  const handleAiAddCompound = (args: any) => {
+    const type = ['peptide', 'steroid', 'supplement', 'compound'].includes(args?.type) ? args.type : 'peptide';
+    const doseUnit = ['mcg', 'mg', 'IU', 'ml'].includes(args?.doseUnit) ? args.doseUnit : 'mg';
+    const frequency = ['daily', 'eod', 'twice_weekly', 'weekly', 'custom'].includes(args?.frequency) ? args.frequency : 'daily';
+    const comp: Compound = {
+      id: crypto.randomUUID(),
+      name: String(args?.name || 'New Compound').slice(0, 80),
+      type,
+      doseAmount: Number(args?.doseAmount) || 0,
+      doseUnit,
+      frequency,
+      customDays: args?.customDays ? Number(args.customDays) : undefined,
+      startDate: new Date().toISOString().split('T')[0],
+      durationWeeks: Number(args?.durationWeeks) || 8,
+      color: AI_COMPOUND_COLORS[compounds.length % AI_COMPOUND_COLORS.length],
+      vialSizeMg: args?.vialSizeMg ? Number(args.vialSizeMg) : undefined,
+      bacWaterMl: args?.bacWaterMl ? Number(args.bacWaterMl) : undefined,
+      isCompleted: false,
+    };
+    handleAddCompound(comp);
+    navigateTab('dashboard');
+  };
+
+  const handleAiStopCompound = (name: string): boolean => {
+    if (!name) return false;
+    const lower = name.toLowerCase();
+    const target = compounds.find(c => !c.isCompleted && c.name.toLowerCase() === lower)
+      || compounds.find(c => !c.isCompleted && c.name.toLowerCase().includes(lower));
+    if (!target) return false;
+    handleUpdateCompound({ ...target, isCompleted: true });
+    return true;
+  };
+
+  const handleAiOpenShop = (query?: string) => {
+    if (query) safeLocalStorage.setItem('labrat_shop_search_seed', query);
+    navigateTab('shop');
+  };
+
   const handleDeleteCompound = (id: string) => {
     const targetComp = compounds.find(c => c.id === id);
     const updated = compounds.filter(c => c.id !== id);
@@ -1489,7 +1532,12 @@ export default function App() {
       <AppearanceModal open={showAppearanceModal} onClose={() => setShowAppearanceModal(false)} currentTheme={labratTheme} onSelectTheme={applyThemeSelection} />
       <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} onNotification={triggerNotification} onSignUpSuccess={(u) => setUser(u as any)} initialMode={authModalMode} />
       {activeTab === 'shop' && <LiveChat />}
-      <AiAssistant />
+      <AiAssistant
+        compounds={compounds}
+        onAddCompound={handleAiAddCompound}
+        onStopCompound={handleAiStopCompound}
+        onOpenShop={handleAiOpenShop}
+      />
     </div>
   );
 }

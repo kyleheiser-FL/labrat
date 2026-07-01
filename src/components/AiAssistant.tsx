@@ -1,9 +1,59 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, Loader2, ChevronDown } from 'lucide-react';
+import { X, Send, Bot, Loader2, ChevronDown, Plus, Square, ShoppingBag, Check } from 'lucide-react';
+
+interface PendingAction {
+  name: string;
+  args: any;
+  status: 'pending' | 'done' | 'cancelled' | 'failed';
+}
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  action?: PendingAction;
+}
+
+interface AiCompound {
+  id: string;
+  name: string;
+  doseAmount: number;
+  doseUnit: string;
+  frequency: string;
+  isCompleted?: boolean;
+}
+
+interface AiAssistantProps {
+  compounds?: AiCompound[];
+  onAddCompound?: (args: any) => void;
+  onStopCompound?: (name: string) => boolean;
+  onOpenShop?: (query?: string) => void;
+}
+
+const FREQ_LABEL: Record<string, string> = {
+  daily: 'daily',
+  eod: 'every other day',
+  twice_weekly: 'twice weekly',
+  weekly: 'weekly',
+  custom: 'custom schedule',
+};
+
+function actionSummary(a: PendingAction): string {
+  const g = a.args || {};
+  if (a.name === 'add_compound_to_cycle') {
+    const ratio = g.vialSizeMg && g.bacWaterMl ? ` · ${g.vialSizeMg}mg vial + ${g.bacWaterMl}ml BAC` : '';
+    const dur = g.durationWeeks ? ` for ${g.durationWeeks} weeks` : '';
+    return `${g.name} — ${g.doseAmount}${g.doseUnit} ${FREQ_LABEL[g.frequency] || g.frequency}${dur}${ratio}`;
+  }
+  if (a.name === 'stop_compound') return `Mark ${g.name} as stopped`;
+  if (a.name === 'recommend_product') return `Find ${g.productQuery} in the shop${g.reason ? ` — ${g.reason}` : ''}`;
+  return 'Perform this action';
+}
+
+function actionCta(name: string): { label: string; icon: React.ReactNode } {
+  if (name === 'add_compound_to_cycle') return { label: 'Add to Cycle', icon: <Plus style={{ width: 13, height: 13 }} /> };
+  if (name === 'stop_compound') return { label: 'Stop It', icon: <Square style={{ width: 12, height: 12 }} /> };
+  if (name === 'recommend_product') return { label: 'Open Shop', icon: <ShoppingBag style={{ width: 13, height: 13 }} /> };
+  return { label: 'Confirm', icon: <Check style={{ width: 13, height: 13 }} /> };
 }
 
 // All colors hardcoded as inline styles so the light theme CSS variables
@@ -50,7 +100,7 @@ const STARTERS = [
   'How do I calculate syringe units?',
 ];
 
-export default function AiAssistant() {
+export default function AiAssistant({ compounds, onAddCompound, onStopCompound, onOpenShop }: AiAssistantProps = {}) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -80,21 +130,48 @@ export default function AiAssistant() {
     setMessages(next);
     setLoading(true);
     try {
+      const activeCompounds = (compounds || [])
+        .filter(c => !c.isCompleted)
+        .map(c => ({ name: c.name, doseAmount: c.doseAmount, doseUnit: c.doseUnit, frequency: c.frequency }));
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({ messages: next, context: { activeCompounds } }),
       });
       const data = await res.json();
       if (!res.ok) {
         const msg = typeof data.error === 'string' ? data.error : (data.error?.message || 'Something went wrong. Try again.');
         throw new Error(msg);
       }
-      setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+      const action: PendingAction | undefined = data.action
+        ? { name: data.action.name, args: data.action.args || {}, status: 'pending' }
+        : undefined;
+      const content = data.reply || (action ? `Want me to ${actionSummary(action).charAt(0).toLowerCase()}${actionSummary(action).slice(1)}?` : '');
+      setMessages(prev => [...prev, { role: 'assistant', content, action }]);
     } catch (e: any) {
       setError(e.message || 'Something went wrong. Try again.');
     } finally {
       setLoading(false);
+    }
+  }
+
+  function setActionStatus(idx: number, status: PendingAction['status']) {
+    setMessages(prev => prev.map((m, i) => (i === idx && m.action ? { ...m, action: { ...m.action, status } } : m)));
+  }
+
+  function confirmAction(idx: number, action: PendingAction) {
+    try {
+      if (action.name === 'add_compound_to_cycle') {
+        onAddCompound?.(action.args);
+      } else if (action.name === 'stop_compound') {
+        const ok = onStopCompound?.(action.args?.name);
+        if (ok === false) { setActionStatus(idx, 'failed'); return; }
+      } else if (action.name === 'recommend_product') {
+        onOpenShop?.(action.args?.productQuery);
+      }
+      setActionStatus(idx, 'done');
+    } catch {
+      setActionStatus(idx, 'failed');
     }
   }
 
@@ -200,20 +277,77 @@ export default function AiAssistant() {
                     <Bot style={{ width: 12, height: 12, color: '#fff' }} />
                   </div>
                 )}
-                <div style={{
-                  maxWidth: '82%', padding: '8px 12px', borderRadius: 12,
-                  fontSize: 12, lineHeight: 1.5, whiteSpace: 'pre-wrap',
-                  ...(m.role === 'user' ? {
-                    background: C.userBubbleBg,
-                    border: `1px solid ${C.userBubbleBdr}`,
-                    color: C.userBubbleTxt,
-                  } : {
-                    background: C.aiBubbleBg,
-                    border: `1px solid ${C.aiBubbleBdr}`,
-                    color: C.aiBubbleTxt,
-                  }),
-                }}>
-                  {m.content}
+                <div style={{ maxWidth: '82%', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
+                  {m.content && (
+                    <div style={{
+                      padding: '8px 12px', borderRadius: 12,
+                      fontSize: 12, lineHeight: 1.5, whiteSpace: 'pre-wrap',
+                      ...(m.role === 'user' ? {
+                        background: C.userBubbleBg,
+                        border: `1px solid ${C.userBubbleBdr}`,
+                        color: C.userBubbleTxt,
+                      } : {
+                        background: C.aiBubbleBg,
+                        border: `1px solid ${C.aiBubbleBdr}`,
+                        color: C.aiBubbleTxt,
+                      }),
+                    }}>
+                      {m.content}
+                    </div>
+                  )}
+
+                  {m.action && (() => {
+                    const a = m.action!;
+                    const cta = actionCta(a.name);
+                    const doneLabel = a.name === 'add_compound_to_cycle' ? 'Added to your cycle'
+                      : a.name === 'stop_compound' ? 'Marked as stopped'
+                      : 'Opened in shop';
+                    return (
+                      <div style={{
+                        width: '100%', borderRadius: 12, padding: 10,
+                        background: 'rgba(6,182,212,0.06)',
+                        border: '1px solid rgba(6,182,212,0.28)',
+                        display: 'flex', flexDirection: 'column', gap: 8,
+                      }}>
+                        <div style={{ fontSize: 11, color: '#a5f3fc', fontWeight: 700, lineHeight: 1.4 }}>
+                          {actionSummary(a)}
+                        </div>
+                        {a.status === 'pending' ? (
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <button
+                              onClick={() => confirmAction(i, a)}
+                              style={{
+                                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+                                padding: '7px 10px', borderRadius: 9, border: 'none', cursor: 'pointer',
+                                background: C.gradient, color: '#fff', fontSize: 11, fontWeight: 800,
+                              }}
+                            >
+                              {cta.icon}{cta.label}
+                            </button>
+                            <button
+                              onClick={() => setActionStatus(i, 'cancelled')}
+                              style={{
+                                padding: '7px 12px', borderRadius: 9, cursor: 'pointer',
+                                background: 'transparent', border: '1px solid #334155',
+                                color: '#94a3b8', fontSize: 11, fontWeight: 700,
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <div style={{
+                            fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 5,
+                            color: a.status === 'done' ? '#34d399' : a.status === 'failed' ? C.errorTxt : '#64748b',
+                          }}>
+                            {a.status === 'done' && <><Check style={{ width: 13, height: 13 }} />{doneLabel}</>}
+                            {a.status === 'cancelled' && <>Cancelled</>}
+                            {a.status === 'failed' && <>Couldn't find that in your active cycle</>}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             ))}
