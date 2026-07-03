@@ -23,7 +23,9 @@ jobs:
     steps:
       - name: Trigger send-reminders
         run: |
-          code=$(curl -sS -m 60 -o /tmp/body.txt -w "%{http_code}" \
+          # -L --location-trusted: the apex domain 307-redirects (e.g. to www);
+          # follow it and re-send the Authorization header to our own domain.
+          code=$(curl -sSL --location-trusted -m 60 -o /tmp/body.txt -w "%{http_code}" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             https://labratapp.app/api/send-reminders)
           echo "HTTP $code"
