@@ -218,6 +218,13 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
     const nowUtcMinutes = nowUtc.getUTCHours() * 60 + nowUtc.getUTCMinutes();
     const todayStr = nowUtc.toISOString().split('T')[0];
 
+    // Match window around each reminder time. Free cron schedulers (GitHub
+    // Actions especially) can run several minutes late under load — a narrow
+    // window would silently skip that day's reminder. The per-day pushGuard
+    // dedupes, so a wide window can never double-send; worst case a reminder
+    // arrives a few minutes late instead of not at all.
+    const REMINDER_WINDOW_MIN = 10;
+
     let sent = 0;
     let errors = 0;
 
@@ -241,7 +248,7 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
           const [rh, rm] = reminderTime.split(':').map(Number);
           const targetMinutes = rh * 60 + rm;
           const diff = Math.abs(userLocalMinutes - targetMinutes);
-          if (diff < 5) {
+          if (diff < REMINDER_WINDOW_MIN) {
             const guardId = `${uid}_daily_${todayStr}`;
             const guardRef = firestore.collection('pushGuards').doc(guardId);
             const guardSnap = await guardRef.get();
@@ -271,7 +278,7 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
           const [ch, cm] = comp.reminderTime.split(':').map(Number);
           const compTarget = ch * 60 + cm;
           const compDiff = Math.abs(userLocalMinutes - compTarget);
-          if (compDiff < 5) {
+          if (compDiff < REMINDER_WINDOW_MIN) {
             const guardId = `${uid}_comp_${comp.id}_${todayStr}`;
             const guardRef = firestore.collection('pushGuards').doc(guardId);
             const guardSnap = await guardRef.get();
