@@ -1,0 +1,33 @@
+name: Dose Reminder Cron
+
+# Vercel Hobby plan caps crons at once/day, so we poll the reminder endpoint
+# from GitHub Actions instead. /api/send-reminders is idempotent — it only
+# sends inside each user's ±5-minute window and writes a per-day pushGuard so
+# a reminder is delivered at most once per day no matter how often we poll.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # every 5 minutes (UTC); GitHub's minimum granularity
+  workflow_dispatch: {} # allow manual runs for testing
+
+# Don't let a slow run stack on top of the next scheduled tick.
+concurrency:
+  group: dose-reminders
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger send-reminders
+        run: |
+          code=$(curl -sS -m 60 -o /tmp/body.txt -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            https://labratapp.app/api/send-reminders)
+          echo "HTTP $code"
+          cat /tmp/body.txt || true
+          echo
+          if [ "$code" != "200" ]; then
+            echo "::error::send-reminders returned HTTP $code"
+            exit 1
+          fi
