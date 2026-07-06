@@ -231,7 +231,10 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
     let errors = 0;
 
     try {
-      const profilesSnap = await firestore.collection('pushProfiles').where('reminderEnabled', '==', true).get();
+      // Fetch ALL profiles: per-compound reminders should fire even when the
+      // master daily-reminder toggle is off — that toggle only gates the
+      // generic daily nudge below.
+      const profilesSnap = await firestore.collection('pushProfiles').get();
 
       for (const profileDoc of profilesSnap.docs) {
         const uid = profileDoc.id;
@@ -244,9 +247,9 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
         const offset: number = typeof profile.timezoneOffset === 'number' ? profile.timezoneOffset : 0;
         const userLocalMinutes = ((nowUtcMinutes - offset) % 1440 + 1440) % 1440;
 
-        // Check daily reminder time
+        // Check daily reminder time (only when the master toggle is on)
         const reminderTime: string = profile.reminderTime || '';
-        if (reminderTime && /^\d{1,2}:\d{2}$/.test(reminderTime)) {
+        if (profile.reminderEnabled && reminderTime && /^\d{1,2}:\d{2}$/.test(reminderTime)) {
           const [rh, rm] = reminderTime.split(':').map(Number);
           const targetMinutes = rh * 60 + rm;
           const diff = userLocalMinutes - targetMinutes;

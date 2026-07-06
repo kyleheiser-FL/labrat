@@ -459,6 +459,15 @@ export default function App() {
     } else { startTestCountdown(); }
   };
 
+  // Register the FCM device token whenever permission is granted. Sign-in
+  // alone isn't enough: permission may be granted later via the settings
+  // toggle, and without this the profile never gets a token and background
+  // push silently never delivers.
+  useEffect(() => {
+    if (!user || notificationPermission !== 'granted') return;
+    registerFCMToken(user.uid).catch(e => console.warn('[push] FCM token registration failed — push notifications disabled:', e));
+  }, [user, notificationPermission]);
+
   // Sync push profile to Firestore whenever reminder settings or compounds change
   useEffect(() => {
     if (!user) return;
