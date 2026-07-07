@@ -21,6 +21,10 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
+      - name: Check server config health
+        run: |
+          curl -sSL -m 30 -H "Accept: application/json" https://labratapp.app/api/health || true
+          echo
       - name: Trigger send-reminders
         run: |
           # -L --location-trusted: the apex domain 307-redirects (e.g. to www);
