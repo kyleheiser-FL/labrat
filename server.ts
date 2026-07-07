@@ -137,6 +137,7 @@ app.use(express.json());
       adminCredsPresent,
       adminReady: !!getAdminApp(),
       cronSecretSet: !!process.env.CRON_SECRET,
+      vapidKeySet: !!process.env.VITE_FCM_VAPID_KEY,
     };
 
     // Browsers get a readable status page; API callers get JSON
@@ -182,6 +183,9 @@ ${row('AI Features (Gemini)', checks.apiReady,
 ${row('Dose Reminder Cron', checks.cronSecretSet,
   'CRON_SECRET configured — scheduled reminders can run.',
   'CRON_SECRET is not set. Scheduled dose reminders are disabled until it is added.')}
+${row('Push Registration (VAPID)', checks.vapidKeySet,
+  'VITE_FCM_VAPID_KEY configured — devices can register for background push.',
+  'VITE_FCM_VAPID_KEY is not set. No device can register a push token, so background notifications never deliver. Get the key from Firebase Console → Project settings → Cloud Messaging → Web Push certificates, add it in Vercel env vars, and redeploy.')}
 <div class="ts">Checked ${new Date().toISOString()}</div>
 </body>
 </html>`);
