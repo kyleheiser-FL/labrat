@@ -229,6 +229,9 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
 
     let sent = 0;
     let errors = 0;
+    // Diagnostics returned to the (authenticated) cron caller so delivery
+    // problems are visible in the workflow logs instead of a silent sent:0.
+    const diag: any[] = [];
 
     try {
       // Fetch ALL profiles: per-compound reminders should fire even when the
@@ -240,12 +243,23 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
         const uid = profileDoc.id;
         const profile = profileDoc.data();
         const tokens: string[] = profile.fcmTokens || [];
-        if (tokens.length === 0) continue;
 
         // Compute user's local minute-of-day from UTC + their stored offset
         // timezoneOffset = getTimezoneOffset() — positive means WEST of UTC
         const offset: number = typeof profile.timezoneOffset === 'number' ? profile.timezoneOffset : 0;
         const userLocalMinutes = ((nowUtcMinutes - offset) % 1440 + 1440) % 1440;
+
+        diag.push({
+          uid: uid.slice(0, 6),
+          tokens: tokens.length,
+          reminderEnabled: !!profile.reminderEnabled,
+          reminderTime: profile.reminderTime || null,
+          tzOffset: offset,
+          userLocalTime: `${String(Math.floor(userLocalMinutes / 60)).padStart(2, '0')}:${String(userLocalMinutes % 60).padStart(2, '0')}`,
+          compounds: (profile.compounds || []).map((c: any) => ({ name: c.name, time: c.reminderTime })),
+        });
+
+        if (tokens.length === 0) continue;
 
         // Check daily reminder time (only when the master toggle is on)
         const reminderTime: string = profile.reminderTime || '';
@@ -307,7 +321,7 @@ ${row('Dose Reminder Cron', checks.cronSecretSet,
         }
       }
 
-      res.json({ ok: true, sent, errors, checkedAt: nowUtc.toISOString() });
+      res.json({ ok: true, sent, errors, checkedAt: nowUtc.toISOString(), profiles: diag });
     } catch (err: any) {
       console.error('[send-reminders] Error:', err);
       res.status(500).json({ error: err?.message || 'Internal error' });
