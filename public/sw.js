@@ -33,7 +33,12 @@ _messaging.onBackgroundMessage((payload) => {
   });
 });
 
-const CACHE_NAME = "labrat-pwa-v10";
+/* Stamped with a unique id at build time (scripts/stamp-sw.mjs) so every
+   deploy changes this file's bytes — that's what makes the browser install
+   the new service worker, fire controllerchange, and show the Update banner.
+   It also rotates the cache name so stale assets are purged on activate. */
+const SW_BUILD = "__SW_BUILD__";
+const CACHE_NAME = "labrat-pwa-" + SW_BUILD;
 const APP_SHELL = [
   "/",
   "/index.html",

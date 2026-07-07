@@ -17,7 +17,16 @@ if ('serviceWorker' in navigator && !window.location.hostname.includes('localhos
     navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' })
   );
 
-  register().catch((err) => {
+  register().then((reg) => {
+    if (!reg) return;
+    // Nudge the browser to re-check sw.js when the app regains focus and
+    // hourly while open, so long-lived PWA sessions notice new deploys.
+    const check = () => { reg.update().catch(() => {}); };
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') check();
+    });
+    setInterval(check, 60 * 60 * 1000);
+  }).catch((err) => {
     console.error('[PWA] ServiceWorker registration failed: ', err);
   });
 
