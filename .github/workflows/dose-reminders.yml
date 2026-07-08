@@ -9,7 +9,11 @@ name: Dose Reminder Cron
 
 on:
   schedule:
-    - cron: '11 * * * *' # hourly at :11 — off-peak minute; :00 runs get delayed most
+    # Every 10 minutes at off-peak minutes. GitHub's scheduler is best-effort
+    # and routinely skips individual ticks (observed gaps of 2-4h on an hourly
+    # schedule) — dense ticks ensure one lands inside the 90-minute send
+    # grace. The repo is public, so Actions minutes are free/unlimited.
+    - cron: '3,13,23,33,43,53 * * * *'
   workflow_dispatch: {} # allow manual runs for testing
 
 # Don't let a slow run stack on top of the next scheduled tick.
