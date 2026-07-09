@@ -249,6 +249,48 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     dietaryInteraction: 'Subject to strict fasting protocols identical to other GHRHs. Any bump in blood glucose prior to injection recruits Somatostatin, the body’s endogenous "growth hormone inhibiting hormone", which fully blunts the therapeutic potential.'
   },
   {
+    id: 'cjc-1295-ipamorelin',
+    name: 'CJC-1295 (No DAC) + Ipamorelin',
+    chemicalName: 'Modified GRF 1-29 + Ipamorelin (GHRH/GHRP Blend)',
+    category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'Ipamorelin, the first selective growth hormone secretagogue',
+        citation: 'European Journal of Endocrinology, 1998',
+        keyFinding: 'Ipamorelin selectively stimulated growth hormone release without meaningfully raising cortisol, prolactin, or ACTH — establishing the "clean" GHRP profile that makes it ideal for pairing with a GHRH like CJC-1295.'
+      },
+      {
+        studyTitle: 'Synergistic GH release from combined GHRH + GHRP administration',
+        citation: 'Journal of Clinical Endocrinology & Metabolism (GHRH/GHRP synergy literature)',
+        keyFinding: 'Co-administering a GHRH analog with a GHRP produces a growth hormone pulse substantially larger than the sum of either compound alone — the mechanistic basis for stacking CJC-1295 and Ipamorelin in a single injection.'
+      },
+    ],
+    description: 'A synergistic growth hormone-releasing blend combining CJC-1295 (Without DAC / Modified GRF 1-29), a GHRH analog, with Ipamorelin, a selective GHRP. CJC-1295 amplifies the size of each natural GH pulse while Ipamorelin triggers a clean, selective pulse without spiking cortisol or prolactin — together they multiply the body’s own pulsatile GH output rather than replacing it.',
+    clinicalResearch: 'The GHRH + GHRP pairing is one of the most researched synergistic mechanisms in peptide science: the two act on separate pituitary receptors, so co-administration magnifies the GH pulse up to ~5-fold versus either peptide alone. The "No DAC" version keeps pulses short and physiological (mimicking the body’s natural nocturnal rhythm) rather than elevating GH continuously.',
+    typicalDosage: '100 mcg of each peptide (≈200 mcg combined) per dose, 1–3× daily',
+    frequencyText: 'Injected sub-Q, both peptides drawn together in the same syringe. Most protocols dose once at bedtime on an empty stomach; advanced users add a post-workout and/or morning dose. Keep a ~2 hour fasted window around each injection.',
+    reconstitutionText: 'A common blend vial is 10 mg total (5 mg CJC-1295 + 5 mg Ipamorelin). Add 2.0 ml of Bacteriostatic Water, yielding 5 mg/ml. A saturation dose (≈200 mcg combined) is drawn to 4 units (0.04 ml) on a U100 insulin syringe. Swirl gently — never shake.',
+    halfLife: 'CJC-1295 (No DAC) ~30 min; Ipamorelin ~2 hours',
+    benefits: [
+      'Multiplies natural GH pulses up to ~5x versus either peptide alone',
+      'Promotes lean muscle growth, fat loss, and faster recovery',
+      'Improves sleep depth and quality (GH pulses at night)',
+      'Enhances skin, connective tissue, and joint repair',
+      'Selective GH release — Ipamorelin avoids cortisol/prolactin spikes'
+    ],
+    sideEffects: [
+      'Transient head rush, flushing, or tingling minutes after injection',
+      'Mild injection-site itching or bump (temporary histamine response)',
+      'Water retention or numb/tingling hands early in a cycle',
+      'Increased hunger (Ipamorelin has mild ghrelin-receptor activity)',
+      'Daytime lethargy if dosed outside a fasted window'
+    ],
+    suggestedCycleWeeks: '12 - 24 weeks of consistent use; GH secretagogues reward long, uninterrupted cycles.',
+    deliveryForm: 'peptide',
+    realisticGains: 'Stacked, the pair delivers a 4x–5x increase in circulating GH pulses. Expect deeper sleep within the first week, gradual improvements in body composition (leaner, drier look), faster recovery between training sessions, and easing of morning joint stiffness over an 8–12 week run. Effects build slowly — this is a physiological amplifier, not exogenous HGH.',
+    dietaryInteraction: 'Follow the same strict fasting discipline as any GHRH: any rise in blood glucose before injection recruits Somatostatin (the body’s GH-inhibiting hormone) and blunts the pulse. Avoid carbs and fats for ~2 hours around each dose. Bedtime dosing on an empty stomach aligns with the body’s natural nocturnal GH release.'
+  },
+  {
     id: 'ghk-cu',
     name: 'GHK-Cu',
     chemicalName: 'Copper Tripeptide-1',
