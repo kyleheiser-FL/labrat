@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   Plus, Trash2, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
   Info, Activity, Shield, Apple, Sun, Heart, CheckSquare, History, Clock,
-  Layers, X
+  Layers, X, Wrench
 } from 'lucide-react';
 import { Compound, LibraryItem, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
@@ -59,6 +59,9 @@ export default function CyclePlanner({
   const [importError, setImportError] = useState('');
   const [importSuccess, setImportSuccess] = useState(false);
   const [copiedData, setCopiedData] = useState(false);
+  // Keep the Cycle tab simple by default: PCT, supplement/mitigation presets
+  // and the history timeline are tucked behind a "Helpers" toggle.
+  const [showHelperTools, setShowHelperTools] = useState(false);
 
   // Cycle Templates
   const [showTemplates, setShowTemplates] = useState(false);
@@ -178,48 +181,30 @@ export default function CyclePlanner({
     <div className="space-y-6" id="planner-main-container">
       {/* Top action bar */}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <h3 className="text-base font-semibold text-slate-100">Cycle Administration Architecture</h3>
+        <h3 className="text-base font-semibold text-slate-100">Your Cycle</h3>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-[#1e293b]/40 text-slate-400 border border-slate-700/40">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
-            {compounds.length} Compounds Actioned
-          </span>
-          <button onClick={() => setShowTemplates(!showTemplates)}
-            className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border cursor-pointer transition-all ${showTemplates ? 'bg-purple-500/10 text-purple-300 border-purple-500/30' : 'bg-[#1e293b] hover:bg-slate-800 text-slate-300 border-slate-700/50'}`}>
-            <Layers className="w-3.5 h-3.5" /> Templates
-          </button>
-          <button
-            onClick={() => {
-              triggerHaptic('light');
-              window.print();
-            }}
-            className="p-2 bg-[#1e293b] hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700/50 cursor-pointer"
-            title="Export cycle summary as PDF"
-          >
-            <FileDown className="w-3.5 h-3.5" /> PDF
-          </button>
-          <button onClick={() => setShowDataControls(!showDataControls)}
-            className="p-2 bg-[#1e293b] hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700/50 cursor-pointer"
-            id="toggle-data-mgmt">
-            <ArrowLeftRight className="w-3.5 h-3.5" /> Direct Data Sync
+          <button onClick={() => setShowHelperTools(v => !v)}
+            className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border cursor-pointer transition-all ${showHelperTools ? 'bg-purple-500/10 text-purple-300 border-purple-500/30' : 'bg-[#1e293b] hover:bg-slate-800 text-slate-300 border-slate-700/50'}`}
+            title="Templates, support presets, PCT and data tools">
+            <Wrench className="w-3.5 h-3.5" /> Helpers
           </button>
           <button onClick={openFormNew}
-            className="py-2 px-4 bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-lg shadow-cyan-500/10"
+            className="py-2.5 px-5 bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-black rounded-xl text-sm flex items-center gap-1.5 cursor-pointer shadow-lg shadow-cyan-500/10"
             id="new-formulate-btn">
-            <Plus className="w-4 h-4 text-slate-950" strokeWidth={3} /> Formulate Compound
+            <Plus className="w-4 h-4 text-slate-950" strokeWidth={3} /> Add Compound
           </button>
         </div>
       </div>
 
       {/* Cycle Templates Panel */}
-      {showTemplates && (
+      {showHelperTools && (
         <div className="bg-[#0f172a]/70 border border-purple-500/20 rounded-2xl p-5 shadow-xl backdrop-blur-md space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Layers className="w-4 h-4 text-purple-400" />
               <h4 className="text-sm font-bold text-slate-200">Cycle Templates</h4>
             </div>
-            <button onClick={() => setShowTemplates(false)} className="p-1 text-slate-500 hover:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
+            <button onClick={() => setShowHelperTools(false)} className="p-1 text-slate-500 hover:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
           </div>
 
           {compounds.length > 0 && (
@@ -269,7 +254,7 @@ export default function CyclePlanner({
       )}
 
       {/* Data Import/Export */}
-      {visibility.dataControls && showDataControls && (
+      {visibility.dataControls && showHelperTools && (
         <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="data-controls-panel">
           <div className="flex items-center justify-between border-b border-[#1e293b]/60 pb-3">
             <h4 className="text-sm font-semibold text-slate-200">Local Cycle Syncing & Backup Data</h4>
@@ -328,7 +313,7 @@ export default function CyclePlanner({
       </div>
 
       {/* Cycle History Timeline */}
-      {(() => {
+      {showHelperTools && (() => {
         const completed = compounds.filter(c => c.isCompleted);
         if (completed.length === 0) return null;
         return (
@@ -371,7 +356,7 @@ export default function CyclePlanner({
       })()}
 
       {/* PCT Section */}
-      {visibility.pct && (() => {
+      {showHelperTools && visibility.pct && (() => {
         if (suppressiveCompounds.length === 0) return null;
         return (
           <div className="bg-gradient-to-br from-[#0f172a] to-[#1e1b4b]/30 border border-indigo-500/20 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="pct-suggestion-dashboard">
@@ -442,6 +427,7 @@ export default function CyclePlanner({
       })()}
 
       {/* Mitigations & Supplement Presets */}
+      {showHelperTools && (
       <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="cycle-mitigations-panel">
         <div className="border-b border-[#1e293b]/60 pb-3">
           <span className="text-xs text-indigo-400 font-mono tracking-wider font-semibold uppercase">Auto-Mitigation Protocol Engine</span>
@@ -543,6 +529,7 @@ export default function CyclePlanner({
           );
         })()}
       </div>
+      )}
 
       <CompoundFormModal
         open={showForm}
