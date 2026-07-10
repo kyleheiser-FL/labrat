@@ -29,6 +29,11 @@ interface AiAssistantProps {
   onOpenShop?: (query?: string) => void;
   onLogDose?: (name: string, date?: string) => boolean;
   onUpdateCompound?: (args: any) => boolean;
+  /** Controlled open state (when the launcher lives outside, e.g. the header). */
+  externalOpen?: boolean;
+  onExternalOpenChange?: (open: boolean) => void;
+  /** Hide the built-in floating bubble (used when the header hosts the launcher). */
+  hideLauncher?: boolean;
 }
 
 const FREQ_LABEL: Record<string, string> = {
@@ -113,8 +118,14 @@ const STARTERS = [
   'How do I calculate syringe units?',
 ];
 
-export default function AiAssistant({ compounds, onAddCompound, onStopCompound, onOpenShop, onLogDose, onUpdateCompound }: AiAssistantProps = {}) {
-  const [open, setOpen] = useState(false);
+export default function AiAssistant({ compounds, onAddCompound, onStopCompound, onOpenShop, onLogDose, onUpdateCompound, externalOpen, onExternalOpenChange, hideLauncher }: AiAssistantProps = {}) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+  const setOpen = (v: boolean | ((o: boolean) => boolean)) => {
+    const next = typeof v === 'function' ? v(open) : v;
+    if (onExternalOpenChange) onExternalOpenChange(next);
+    else setInternalOpen(next);
+  };
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -197,6 +208,7 @@ export default function AiAssistant({ compounds, onAddCompound, onStopCompound, 
   return (
     <>
       {/* Floating bubble */}
+      {!hideLauncher && (
       <button
         onClick={() => setOpen(o => !o)}
         aria-label="Open LABRAT AI Assistant"
@@ -222,6 +234,7 @@ export default function AiAssistant({ compounds, onAddCompound, onStopCompound, 
           }} />
         )}
       </button>
+      )}
 
       {/* Chat panel */}
       {open && (

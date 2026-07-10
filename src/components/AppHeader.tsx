@@ -12,7 +12,7 @@ import {
   Loader2,
   Sparkles,
   BarChart3,
-  User as UserProfileIcon,
+  Bot,
 } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { triggerHaptic } from '../lib/haptics';
@@ -33,6 +33,7 @@ interface AppHeaderProps {
   trackingEnabled: boolean;
   tabBadges?: { dashboard: number; notifications: number };
   experienceMode?: 'expert' | 'guided' | 'store' | null;
+  onOpenAi?: () => void;
 }
 
 export default function AppHeader({
@@ -49,6 +50,7 @@ export default function AppHeader({
   trackingEnabled,
   tabBadges,
   experienceMode,
+  onOpenAi,
 }: AppHeaderProps) {
   const tabBtn = (tab: Tab, icon: React.ReactNode, label: React.ReactNode, badge?: number) => (
     <button
@@ -107,19 +109,16 @@ export default function AppHeader({
           {/* Right side controls */}
           <div className="flex items-center gap-1.5 sm:gap-2" id="header-indicators-bar">
 
-            {/* Me icon button — only meaningful once tracking features are unlocked (hidden in guided mode) */}
-            {trackingEnabled && experienceMode !== 'guided' && (
+            {/* LABRAT AI assistant — small launcher in the header */}
+            {onOpenAi && (
               <button
-                onClick={() => { triggerHaptic('light'); onSetActiveTab('blood'); }}
-                className={`flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
-                  activeTab === 'blood'
-                    ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
-                    : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
-                }`}
-                aria-label="Me"
-                title="Me"
+                onClick={() => { triggerHaptic('light'); onOpenAi(); }}
+                className="relative flex items-center justify-center p-2 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
+                aria-label="LABRAT AI"
+                title="LABRAT AI Assistant"
               >
-                <UserProfileIcon className="w-4 h-4" />
+                <Bot className="w-4 h-4" />
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-400 border border-[#030712]" />
               </button>
             )}
 

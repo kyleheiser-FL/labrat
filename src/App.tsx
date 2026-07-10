@@ -199,6 +199,7 @@ export default function App() {
     () => (getInitialTrackingEnabled() ? 'dashboard' : 'shop')
   );
   const [trackingEnabled, setTrackingEnabled] = useState<boolean>(getInitialTrackingEnabled);
+  const [aiOpen, setAiOpen] = useState(false);
 
   // Experience mode — expert (full app) | guided (hand-holding) | store (shop only).
   // Null means the gate hasn't been answered for this release yet.
@@ -278,8 +279,6 @@ export default function App() {
           setActiveTab('library');
         } else if (lowerTab === 'shop' || lowerTab === 'store') {
           setActiveTab('shop');
-        } else if (lowerTab === 'blood' || lowerTab === 'me') {
-          setActiveTab('blood');
         } else if (lowerTab === 'dashboard' || lowerTab === 'checklist') {
           setActiveTab('dashboard');
         }
@@ -1519,6 +1518,7 @@ export default function App() {
         trackingEnabled={trackingEnabled}
         tabBadges={tabBadges}
         experienceMode={experienceMode}
+        onOpenAi={() => setAiOpen(true)}
       />
 
       {/* Main Responsive Layout Wrapper */}
@@ -1583,20 +1583,6 @@ export default function App() {
                   onNavigateToTab={navigateTab}
                   labratTheme={labratTheme}
                   visibility={segmentVisibility.planner}
-                />
-              )}
-
-              {activeTab === 'blood' && (
-                <BloodAnalyzer
-                  compounds={compounds}
-                  hideShop={hideShop}
-                  onToggleHideShop={isHardcompiledAppStore ? undefined : handleToggleHideShop}
-                  currentUserEmail={user?.email || null}
-                  onOpenAppearance={() => setActiveTab('settings')}
-                  metrics={metrics}
-                  onSaveMetrics={handleAddOrUpdateMetrics}
-                  onDeleteMetric={handleDeleteMetric}
-                  visibility={segmentVisibility.blood}
                 />
               )}
 
@@ -1679,6 +1665,9 @@ export default function App() {
         onOpenShop={handleAiOpenShop}
         onLogDose={handleAiLogDose}
         onUpdateCompound={handleAiUpdateCompound}
+        externalOpen={aiOpen}
+        onExternalOpenChange={setAiOpen}
+        hideLauncher
       />
     </div>
   );
