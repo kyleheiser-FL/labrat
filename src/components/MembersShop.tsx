@@ -1362,47 +1362,23 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
               💰 Pricing
             </button>
           </div>
-          {/* Row 2: view toggle pill — always fully visible */}
+          {/* Row 2: view toggle — Admin management vs the single customer view */}
           <div className="flex flex-wrap items-center gap-1 bg-slate-900/60 border border-slate-800 rounded-xl p-0.5 self-start">
             <button
               onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(false); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(false); navigateView('admin_members'); }}
-              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+              className={`px-3 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
                 !isAdminPreviewCustomer ? 'bg-red-500/20 text-red-300' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
               Admin
             </button>
             <button
-              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(false); navigateView('catalog'); }}
-              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              🇳🇴 Vial
-            </button>
-            <button
-              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(true); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(false); navigateView('catalog'); }}
-              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                isAdminPreviewKit ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              🇳🇴 Kit
-            </button>
-            <button
               onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(false); setIsAdminPreviewChinaVial(true); navigateView('catalog'); }}
-              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                isAdminPreviewChinaVial ? 'bg-orange-500/20 text-orange-300' : 'text-slate-500 hover:text-slate-300'
+              className={`px-3 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                isAdminPreviewCustomer ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              🇨🇳 Vial
-            </button>
-            <button
-              onClick={() => { triggerHaptic('light'); setIsAdminPreviewCustomer(true); setIsAdminPreviewKit(false); setIsAdminPreviewChinaKit(true); setIsAdminPreviewChinaVial(false); navigateView('catalog'); }}
-              className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                isAdminPreviewChinaKit ? 'bg-red-500/20 text-red-300' : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              🇨🇳 Kit
+              Customer view
             </button>
           </div>
         </div>
