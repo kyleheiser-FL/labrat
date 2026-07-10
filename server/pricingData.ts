@@ -22,7 +22,7 @@ export interface PriceOverride {
 }
 
 export const DEFAULT_MARKUPS: PricingMarkups = {
-  norKitPct: 15, chnKitPct: 65, chnVialUSPct: 65, chnVialDirPct: 65,
+  norKitPct: 15, chnKitPct: 65, chnVialUSPct: 65, chnVialDirPct: 1525,
 };
 
 // Returns the raw Kaos Labs kit cost (10 vials, no shipping). 0 = unrecognised product.

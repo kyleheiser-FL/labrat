@@ -130,9 +130,22 @@ export default function AdminPricingPanel() {
     setDirty(true); setSaved(false);
   }
 
+  // Reset to a flat 1525% markup for the whole catalog, but KEEP the Quick Ship
+  // (US warehouse) prices as-is and pin BAC water to $7. Clears every other
+  // per-product override so pricing scales cleanly with cost (no more "higher
+  // mg is cheaper"). Admin still needs to hit Save to push it live.
   function resetAll() {
-    setOverrides({});
-    setVialPct(DEFAULT_PRICING.markups.chnVialDirPct);
+    setOverrides(prev => {
+      const kept: Record<string, PriceOverride> = {};
+      for (const [name, o] of Object.entries(prev)) {
+        if (/us warehouse/i.test(name)) kept[name] = o; // keep Quick Ship prices
+      }
+      for (const p of SAMPLE_INVENTORY) {
+        if (/bac water/i.test(p.name)) kept[p.name] = { ...(kept[p.name] || {}), chnVial: 7 };
+      }
+      return kept;
+    });
+    setVialPct(1525);
     setDirty(true); setSaved(false);
   }
 
@@ -185,12 +198,11 @@ export default function AdminPricingPanel() {
             </div>
           )}
           {dirty && !saved && <span className="text-[10px] text-amber-400 font-semibold">● Unsaved changes</span>}
-          {overrideCount > 0 && (
-            <button onClick={resetAll}
-              className="px-3 py-1.5 text-[10px] font-bold border border-slate-700 text-slate-400 rounded-lg hover:text-red-400 hover:border-red-500/40 transition-all">
-              Reset All
-            </button>
-          )}
+          <button onClick={resetAll}
+            title="Set 1525% markup for the whole catalog, keep Quick Ship prices, pin BAC water to $7"
+            className="px-3 py-1.5 text-[10px] font-bold border border-slate-700 text-slate-400 rounded-lg hover:text-red-400 hover:border-red-500/40 transition-all">
+            Reset → 1525%
+          </button>
           {saveError && <span className="text-[10px] text-red-400 font-semibold">{saveError}</span>}
           <button
             onClick={handleSave}

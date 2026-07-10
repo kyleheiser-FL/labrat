@@ -37,7 +37,7 @@ export interface PricingConfig {
 }
 
 export const DEFAULT_PRICING: PricingConfig = {
-  markups: { norKitPct: 15, chnKitPct: 65, chnVialUSPct: 65, chnVialDirPct: 65 },
+  markups: { norKitPct: 15, chnKitPct: 65, chnVialUSPct: 65, chnVialDirPct: 1525 },
   overrides: {},
 };
 
