@@ -96,7 +96,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
   })();
 
   return (
-    <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-lg relative flex flex-col justify-between animate-fadeIn" id={`compound-card-${comp.id}`}>
+    <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-lg relative flex flex-col justify-between animate-fadeIn min-w-0 overflow-hidden" id={`compound-card-${comp.id}`}>
       <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-2xl" style={{ backgroundColor: comp.color }} />
 
       <div className="space-y-4">
@@ -119,20 +119,19 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
                 className="px-2 py-1 bg-[#1e293b] hover:bg-slate-800 active:scale-[0.95] text-slate-300 border border-slate-700/50 rounded text-[9px] font-bold uppercase transition">No</button>
             </div>
           ) : (
-            <div className="flex gap-1 shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0">
               <button onClick={() => { triggerHaptic('light'); onUpdateCompound({ ...comp, isCompleted: !comp.isCompleted }); }}
-                className={`p-1.5 transition rounded-lg border cursor-pointer ${comp.isCompleted ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-[#1e293b]/30 border-transparent text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/5'}`}
-                title={comp.isCompleted ? 'Mark schedule as running and active' : 'Mark schedule as successfully completed'}
+                className={`px-2.5 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-wide transition cursor-pointer ${comp.isCompleted ? 'bg-emerald-500/12 border-emerald-500/30 text-emerald-400' : 'bg-[#1e293b]/40 border-slate-700/50 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30'}`}
                 id={`toggle-complete-comp-${comp.id}`}>
-                <CheckSquare className="w-3.5 h-3.5" />
+                {comp.isCompleted ? 'Reopen' : 'Mark done'}
               </button>
               <button onClick={() => { triggerHaptic('light'); onEdit(comp); }}
-                className="p-1.5 text-slate-400 hover:text-cyan-400 transition" title="Edit compound features" id={`edit-comp-${comp.id}`}>
-                <Edit className="w-3.5 h-3.5" />
+                className="px-2.5 py-1.5 rounded-lg border border-slate-700/50 bg-[#1e293b]/40 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 text-[10px] font-bold uppercase tracking-wide transition cursor-pointer" id={`edit-comp-${comp.id}`}>
+                Edit
               </button>
               <button onClick={() => { triggerHaptic('warning'); setIsConfirmingDelete(true); }}
-                className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/5 rounded transition" title="Terminate compound" id={`delete-comp-${comp.id}`}>
-                <Trash2 className="w-3.5 h-3.5" />
+                className="px-2.5 py-1.5 rounded-lg border border-slate-700/50 bg-[#1e293b]/40 text-slate-400 hover:text-rose-400 hover:border-rose-500/30 text-[10px] font-bold uppercase tracking-wide transition cursor-pointer" id={`delete-comp-${comp.id}`}>
+                Delete
               </button>
             </div>
           )}

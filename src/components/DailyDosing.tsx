@@ -35,6 +35,8 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
   const [date, setDate] = useState(iso(new Date()));
   const [showManual, setShowManual] = useState(false);
   const [manualId, setManualId] = useState('');
+  const [manualDose, setManualDose] = useState('');
+  const [manualUnit, setManualUnit] = useState<'mcg' | 'mg' | 'IU' | 'ml'>('mg');
 
   const active = compounds.filter(c => !c.isCompleted);
   const due = active.filter(c => getDoseScheduleForDate(c, date).isDue);
@@ -46,9 +48,17 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
     const d = new Date(date + 'T00:00:00'); d.setDate(d.getDate() + n); setDate(iso(d)); triggerHaptic('light');
   };
 
-  const logDose = (c: Compound) => {
+  const unitsFor = (dose: number, unit: string, vialMg?: number, bacMl?: number): number | undefined => {
+    if (!vialMg || !bacMl) return undefined;
+    const mcg = unit === 'mg' ? dose * 1000 : dose;
+    return Math.round((mcg / ((vialMg * 1000) / (bacMl * 100))) * 10) / 10;
+  };
+
+  const logDose = (c: Compound, doseOverride?: number, unitOverride?: 'mcg' | 'mg' | 'IU' | 'ml') => {
     triggerHaptic('success');
-    const units = syringeUnits(c);
+    const doseAmount = doseOverride != null && !isNaN(doseOverride) ? doseOverride : c.doseAmount;
+    const doseUnit = unitOverride || c.doseUnit;
+    const units = unitsFor(doseAmount, doseUnit, c.vialSizeMg, c.bacWaterMl);
     const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
     onLogDose({
       id: crypto.randomUUID(),
@@ -56,8 +66,8 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
       compoundName: c.name,
       date,
       time,
-      doseAmount: c.doseAmount,
-      doseUnit: c.doseUnit,
+      doseAmount,
+      doseUnit,
       reconstitutedRatio: c.vialSizeMg && c.bacWaterMl && units != null
         ? { vialSizeMg: c.vialSizeMg, bacWaterMl: c.bacWaterMl, syringeUnits: units } : undefined,
     });
@@ -95,13 +105,13 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
 
   return (
     <div className="relative max-w-2xl mx-auto pb-8" id="daily-dosing">
-      {/* labrat mascot watermark */}
+      {/* labrat mascot — bold, top-left */}
       <img
         src="/labrat_hero_rat_dark.png"
         alt=""
         aria-hidden="true"
-        className="pointer-events-none select-none absolute -top-6 -right-4 w-48 sm:w-64 opacity-[0.07] z-0"
-        style={{ WebkitMaskImage: 'radial-gradient(circle at 70% 30%, #000 30%, transparent 72%)', maskImage: 'radial-gradient(circle at 70% 30%, #000 30%, transparent 72%)' }}
+        className="pointer-events-none select-none absolute -top-10 -left-10 w-52 sm:w-64 opacity-30 z-0 drop-shadow-[0_0_24px_rgba(34,211,238,0.25)]"
+        style={{ WebkitMaskImage: 'radial-gradient(circle at 35% 35%, #000 55%, transparent 82%)', maskImage: 'radial-gradient(circle at 35% 35%, #000 55%, transparent 82%)' }}
       />
 
       <div className="relative z-10 flex flex-col gap-5">
@@ -132,27 +142,44 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
       {/* manual / unscheduled dose */}
       {active.length > 0 && (
         !showManual ? (
-          <button onClick={() => { setShowManual(true); setManualId(active[0]?.id || ''); }}
+          <button onClick={() => { const c = active[0]; setShowManual(true); setManualId(c?.id || ''); setManualDose(c ? String(c.doseAmount) : ''); setManualUnit((c?.doseUnit as any) || 'mg'); }}
             className="self-start inline-flex items-center gap-1.5 text-[13px] font-bold text-slate-400 hover:text-cyan-300 bg-[#0f172a]/50 hover:bg-[#0f172a]/80 border border-[#1e293b]/70 px-4 py-2.5 rounded-xl transition cursor-pointer">
             <Plus className="w-4 h-4" /> Log an unscheduled dose
           </button>
-        ) : (
+        ) : (() => {
+          const selected = active.find(x => x.id === manualId);
+          const previewUnits = selected ? unitsFor(parseFloat(manualDose), manualUnit, selected.vialSizeMg, selected.bacWaterMl) : undefined;
+          return (
           <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <span className="text-[13px] font-bold text-slate-200">Log an unscheduled dose</span>
               <button onClick={() => setShowManual(false)} className="p-1 text-slate-500 hover:text-slate-200 cursor-pointer"><X className="w-4 h-4" /></button>
             </div>
-            <select value={manualId} onChange={e => setManualId(e.target.value)}
+            <select value={manualId}
+              onChange={e => { const c = active.find(x => x.id === e.target.value); setManualId(e.target.value); if (c) { setManualDose(String(c.doseAmount)); setManualUnit(c.doseUnit as any); } }}
               className="bg-[#0b1222] border border-[#1e293b] rounded-xl px-3 py-2.5 text-sm text-slate-100 outline-none focus:border-cyan-500/50">
-              {active.map(c => <option key={c.id} value={c.id}>{c.name} — {c.doseAmount} {c.doseUnit}</option>)}
+              {active.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
+            <div className="flex gap-2">
+              <input type="number" step="any" value={manualDose} onChange={e => setManualDose(e.target.value)} placeholder="Dose"
+                className="flex-1 min-w-0 bg-[#0b1222] border border-[#1e293b] rounded-xl px-3 py-2.5 text-sm text-slate-100 outline-none focus:border-cyan-500/50" />
+              <select value={manualUnit} onChange={e => setManualUnit(e.target.value as any)}
+                className="bg-[#0b1222] border border-[#1e293b] rounded-xl px-3 py-2.5 text-sm text-slate-100 outline-none focus:border-cyan-500/50">
+                <option value="mcg">mcg</option><option value="mg">mg</option><option value="IU">IU</option><option value="ml">ml</option>
+              </select>
+            </div>
+            {previewUnits != null && (
+              <p className="text-[12px] text-cyan-400 font-mono">≈ draw {previewUnits} units on the syringe</p>
+            )}
             <button
-              onClick={() => { const c = active.find(x => x.id === manualId); if (c) { logDose(c); setShowManual(false); } }}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 transition cursor-pointer">
+              onClick={() => { if (selected) { logDose(selected, parseFloat(manualDose), manualUnit); setShowManual(false); } }}
+              disabled={!manualDose || isNaN(parseFloat(manualDose))}
+              className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer">
               Log dose
             </button>
           </div>
-        )
+          );
+        })()
       )}
       </div>
     </div>
