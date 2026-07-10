@@ -223,19 +223,19 @@ export default function AdminPricingPanel() {
 
       {/* Table */}
       <div className="overflow-auto rounded-xl border border-slate-800/80" style={{ maxHeight: 'calc(100vh - 320px)' }}>
-        <table className="w-full text-xs" style={{ minWidth: 520, borderCollapse: 'separate', borderSpacing: 0 }}>
+        <table className="w-full text-xs" style={{ minWidth: 340, borderCollapse: 'separate', borderSpacing: 0 }}>
           <thead>
             <tr>
-              <th className="sticky top-0 left-0 z-30 bg-[#0c1322] border-b border-r border-slate-800 px-4 py-3 text-left text-[9px] text-slate-400 font-semibold uppercase tracking-wider" style={{ minWidth: 220 }}>
+              <th className="sticky top-0 left-0 z-30 bg-[#0c1322] border-b border-r border-slate-800 px-2.5 py-3 text-left text-[9px] text-slate-400 font-semibold uppercase tracking-wider" style={{ minWidth: 116 }}>
                 Product
               </th>
-              <th className="sticky top-0 z-10 bg-[#0c1322] border-b border-slate-800 px-4 py-3 text-right text-[9px] font-semibold uppercase tracking-wider whitespace-nowrap">
+              <th className="sticky top-0 z-10 bg-[#0c1322] border-b border-slate-800 px-2.5 py-3 text-right text-[9px] font-semibold uppercase tracking-wider whitespace-nowrap">
                 <span className="text-amber-500/60">Supply cost</span>
-                <div className="text-[8px] text-slate-600 font-normal normal-case mt-0.5">kit &amp; per-vial · hidden from customers</div>
+                <div className="text-[8px] text-slate-600 font-normal normal-case mt-0.5">kit &amp; per-vial</div>
               </th>
-              <th className="sticky top-0 z-10 bg-[#0c1322] border-b border-slate-800 px-4 py-3 text-right whitespace-nowrap">
-                <span className="text-[9px] font-bold text-cyan-300 uppercase tracking-wider">Customer price</span>
-                <div className="text-[8px] text-cyan-400/50 font-normal normal-case mt-0.5">per vial · click to edit</div>
+              <th className="sticky top-0 z-10 bg-[#0c1322] border-b border-slate-800 px-2.5 py-3 text-right whitespace-nowrap">
+                <span className="text-[9px] font-bold text-cyan-300 uppercase tracking-wider">Customer</span>
+                <div className="text-[8px] text-cyan-400/50 font-normal normal-case mt-0.5">per vial · tap to edit</div>
               </th>
             </tr>
           </thead>
@@ -258,13 +258,13 @@ export default function AdminPricingPanel() {
 
                   return (
                     <tr key={p.id} className="border-b border-slate-800/20 hover:bg-slate-800/15 transition-colors group/row">
-                      <td className="sticky left-0 z-10 bg-[#070d1a] group-hover/row:bg-[#0c1628] transition-colors border-r border-slate-800/40 px-4 py-3" style={{ minWidth: 220 }}>
-                        <div className="text-slate-200 font-semibold text-xs leading-tight">{p.name.replace(/ \(.*?\)$/, '')}</div>
+                      <td className="sticky left-0 z-10 bg-[#070d1a] group-hover/row:bg-[#0c1628] transition-colors border-r border-slate-800/40 px-2.5 py-3" style={{ minWidth: 116 }}>
+                        <div className="text-slate-200 font-semibold text-[11px] leading-tight">{p.name.replace(/ \(.*?\)$/, '')}</div>
                         {p.name.match(/\(([^)]+)\)$/) && (
                           <div className="text-slate-500 text-[9px] font-mono mt-0.5">{p.name.match(/\(([^)]+)\)$/)?.[1]}</div>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-2.5 py-3 text-right">
                         {c.cost ? (
                           <div className="flex flex-col items-end leading-tight">
                             <span className="text-xs font-mono text-amber-400/80 font-semibold">${c.cost} <span className="text-[8px] text-slate-500">kit</span></span>
