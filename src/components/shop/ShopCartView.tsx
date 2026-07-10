@@ -97,7 +97,7 @@ export default function ShopCartView({
                     )}
                     {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && (
                       <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
-                        {item.product.category === 'Reconstitution Solvents' ? '30ml Volume' : '3ml Volume'}
+                        {item.product.category === 'Reconstitution Solvents' ? '10ml Volume' : '3ml Volume'}
                       </span>
                     )}
                   </div>
@@ -143,7 +143,7 @@ export default function ShopCartView({
       {/* CHECKOUT PRICING SUMMARY */}
       <div className="lg:col-span-1">
         {cart.length > 0 && (() => {
-          const nonBacItems = cart.filter(item => item.product.id !== 'prod_bac_water_30ml');
+          const nonBacItems = cart.filter(item => item.product.id !== 'prod_bac_water_10ml');
           const nonBacSubtotal = nonBacItems.reduce((sum, item) => sum + (effectivePrice(item) * item.quantity), 0);
           const isFreeShippingEligible = nonBacSubtotal >= 100;
           const isFlorida = shippingForm.state.trim().toLowerCase() === 'fl' || shippingForm.state.trim().toLowerCase() === 'florida';
@@ -220,7 +220,7 @@ export default function ShopCartView({
                 <div className="text-[9px] font-bold text-cyan-400/80 uppercase tracking-widest font-mono mb-2">Checkout Add-On</div>
                 <div className="flex items-center justify-between gap-2">
                   <div className="text-left">
-                    <div className="text-xs font-bold text-slate-200 leading-tight">BAC Water (30ml)</div>
+                    <div className="text-xs font-bold text-slate-200 leading-tight">BAC Water (10ml)</div>
                     <div className="text-[10px] text-slate-400">$7.00 per vial</div>
                   </div>
                   <div className="flex items-center gap-0.5 bg-slate-950 p-0.5 rounded-lg border border-slate-800 shrink-0">

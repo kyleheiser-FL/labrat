@@ -162,7 +162,7 @@ export default function ProductDrawerModal({
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                   <span className="flex items-center gap-1 bg-amber-500/10 text-amber-300 px-2 py-1 rounded border border-amber-500/20 font-black">
-                    {selectedParentProductGroup.category === 'Reconstitution Solvents' ? 'Volume: 30ml Bottle' : 'Volume: 3ml Vial'}
+                    {selectedParentProductGroup.category === 'Reconstitution Solvents' ? 'Volume: 10ml Bottle' : 'Volume: 3ml Vial'}
                   </span>
                   <span className="flex items-center gap-1 bg-[#0b1329] px-2 py-1 rounded border border-slate-800">
                     Purity: 99%+

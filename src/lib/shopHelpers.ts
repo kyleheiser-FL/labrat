@@ -446,7 +446,7 @@ export const getShippingOptions = (zip: string, totalVials: number, cart: CartIt
   const totalWeightOz = 4 + (totalVials * 1.5);
   const weightLbs = Math.round((totalWeightOz / 16) * 10) / 10;
 
-  const nonBacItems = cart.filter(item => item.product.id !== 'prod_bac_water_30ml');
+  const nonBacItems = cart.filter(item => item.product.id !== 'prod_bac_water_10ml');
   const nonBacVialsCount = nonBacItems.reduce((sum, item) => sum + item.quantity, 0);
   const nonBacSubtotal = nonBacItems.reduce((sum, item) => sum + (getSalePrice(item.product.price) * item.quantity), 0);
   const isFreeShipping = nonBacSubtotal >= 100;

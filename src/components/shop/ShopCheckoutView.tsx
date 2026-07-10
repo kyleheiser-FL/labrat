@@ -400,7 +400,7 @@ export default function ShopCheckoutView({
               <div className="text-[9px] font-bold text-cyan-400/80 uppercase tracking-widest font-mono mb-1.5">Checkout Add-On</div>
               <div className="flex items-center justify-between gap-2">
                 <div className="text-left">
-                  <div className="text-xs font-bold text-slate-200 leading-tight">BAC Water (30ml)</div>
+                  <div className="text-xs font-bold text-slate-200 leading-tight">BAC Water (10ml)</div>
                   <div className="text-[10px] text-slate-400">$7.00 per vial</div>
                 </div>
                 <div className="flex items-center gap-0.5 bg-slate-950 p-0.5 rounded-lg border border-slate-800 shrink-0">
