@@ -213,22 +213,22 @@ export default function AdminPricingPanel() {
           <span className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">Vial markup on supply cost</span>
           <div className="flex items-center gap-1 bg-slate-800/80 rounded-lg px-2 py-1 border border-cyan-500/25">
             <input
-              type="number" value={vialPct} step={1} min={0} max={500}
+              type="number" value={vialPct} step={5} min={0} max={5000}
               onChange={e => { setVialPct(parseFloat(e.target.value) || 0); setDirty(true); setSaved(false); }}
-              className="w-14 bg-transparent text-base font-black text-right focus:outline-none text-cyan-300"
+              className="w-20 bg-transparent text-base font-black text-right focus:outline-none text-cyan-300"
             />
             <span className="text-[10px] text-slate-500 font-bold">%</span>
           </div>
         </div>
         <input
-          type="range" min={0} max={500} step={1} value={vialPct}
+          type="range" min={0} max={5000} step={5} value={vialPct}
           onChange={e => { setVialPct(parseFloat(e.target.value)); setDirty(true); setSaved(false); }}
           className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-slate-700/80"
           style={{ accentColor: '#22d3ee' }}
         />
         <div className="flex justify-between text-[9px] text-slate-600">
           <span>customer pays ×{(1 + vialPct / 100).toFixed(2)} of per-vial cost</span>
-          <span className="text-slate-700">max 500%</span>
+          <span className="text-slate-700">max 5000%</span>
         </div>
       </div>
 
