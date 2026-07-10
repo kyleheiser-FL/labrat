@@ -216,14 +216,14 @@ export default function ShopCatalogView({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-cyan-400" />
-              Per-Vial Pricing: <span className="text-cyan-300 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">$25 Flat Shipping</span>
+              Per-Vial Pricing: <span className="text-emerald-300 bg-emerald-950/65 px-2 py-0.5 rounded border border-emerald-500/20 text-xs font-black">Free Shipping</span>
             </h3>
             <div className="text-[9px] uppercase font-black tracking-widest text-cyan-300 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
               Per-Vial Rate
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Every listed price represents exactly one (1) individual research vial. All orders ship at a flat <strong className="text-cyan-300">$25.00</strong> rate. <strong className="text-emerald-400">Quick Ship</strong> items below ship free.
+            Every listed price represents exactly one (1) individual research vial. <strong className="text-emerald-400">Free shipping on every order</strong> — no minimum, no shipping charges.
           </p>
         </div>
       ) : isApprovedVialPricing ? (
@@ -253,7 +253,7 @@ export default function ShopCatalogView({
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            <strong className="text-cyan-300 font-bold">Every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed. Orders of <strong className="text-emerald-400">$100+</strong> qualify for free domestic shipping.
+            <strong className="text-cyan-300 font-bold">Every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed. <strong className="text-emerald-400">Free shipping on every order.</strong>
           </p>
         </div>
       )}

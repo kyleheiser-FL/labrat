@@ -1233,6 +1233,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           ? 'bg-slate-200 text-slate-600 border-slate-400/60'
           : 'bg-slate-700/60 text-slate-200 border-slate-500/50';
         const pills = [
+          { label: '🚚 Free Shipping', cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30', certKey: undefined as string | undefined },
           { label: 'Authorized Lab Supply', cls: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/25', certKey: 'authorized_supply' },
           { label: '🔬 Research Use Only',  cls: 'bg-amber-500/20 text-amber-300 border-amber-500/25', certKey: 'research_only' },
           { label: '✓ 99% Purity',          cls: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20', certKey: '99_purity' },
