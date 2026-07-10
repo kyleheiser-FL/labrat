@@ -59,9 +59,11 @@ export default function CyclePlanner({
   const [importError, setImportError] = useState('');
   const [importSuccess, setImportSuccess] = useState(false);
   const [copiedData, setCopiedData] = useState(false);
-  // Keep the Cycle tab simple by default: PCT, supplement/mitigation presets
-  // and the history timeline are tucked behind a "Helpers" toggle.
+  // The header button now reveals only the Import / Export data panel.
   const [showHelperTools, setShowHelperTools] = useState(false);
+  // Legacy helper panels (templates, PCT, mitigation presets, cycle history)
+  // are kept in the code but hidden to keep the Cycle tab simple.
+  const showLegacyHelpers = false;
 
   // Cycle Templates
   const [showTemplates, setShowTemplates] = useState(false);
@@ -184,9 +186,9 @@ export default function CyclePlanner({
         <h3 className="text-base font-semibold text-slate-100">Your Cycle</h3>
         <div className="flex flex-wrap items-center gap-2">
           <button onClick={() => setShowHelperTools(v => !v)}
-            className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border cursor-pointer transition-all ${showHelperTools ? 'bg-purple-500/10 text-purple-300 border-purple-500/30' : 'bg-[#1e293b] hover:bg-slate-800 text-slate-300 border-slate-700/50'}`}
-            title="Templates, support presets, PCT and data tools">
-            <Wrench className="w-3.5 h-3.5" /> Helpers
+            className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border cursor-pointer transition-all ${showHelperTools ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30' : 'bg-[#1e293b] hover:bg-slate-800 text-slate-300 border-slate-700/50'}`}
+            title="Back up or restore your cycle data">
+            <ArrowLeftRight className="w-3.5 h-3.5" /> Import / Export
           </button>
           <button onClick={openFormNew}
             className="py-2.5 px-5 bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-black rounded-xl text-sm flex items-center gap-1.5 cursor-pointer shadow-lg shadow-cyan-500/10"
@@ -197,7 +199,7 @@ export default function CyclePlanner({
       </div>
 
       {/* Cycle Templates Panel */}
-      {showHelperTools && (
+      {showLegacyHelpers && (
         <div className="bg-[#0f172a]/70 border border-purple-500/20 rounded-2xl p-5 shadow-xl backdrop-blur-md space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -333,7 +335,7 @@ export default function CyclePlanner({
       )}
 
       {/* Cycle History Timeline */}
-      {showHelperTools && (() => {
+      {showLegacyHelpers && (() => {
         const completed = compounds.filter(c => c.isCompleted);
         if (completed.length === 0) return null;
         return (
@@ -376,7 +378,7 @@ export default function CyclePlanner({
       })()}
 
       {/* PCT Section */}
-      {showHelperTools && visibility.pct && (() => {
+      {showLegacyHelpers && visibility.pct && (() => {
         if (suppressiveCompounds.length === 0) return null;
         return (
           <div className="bg-gradient-to-br from-[#0f172a] to-[#1e1b4b]/30 border border-indigo-500/20 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="pct-suggestion-dashboard">
@@ -447,7 +449,7 @@ export default function CyclePlanner({
       })()}
 
       {/* Mitigations & Supplement Presets */}
-      {showHelperTools && (
+      {showLegacyHelpers && (
       <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="cycle-mitigations-panel">
         <div className="border-b border-[#1e293b]/60 pb-3">
           <span className="text-xs text-indigo-400 font-mono tracking-wider font-semibold uppercase">Auto-Mitigation Protocol Engine</span>

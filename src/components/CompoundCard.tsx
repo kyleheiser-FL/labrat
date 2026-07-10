@@ -175,28 +175,6 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
           </div>
         )}
 
-        {peptideSupply && (
-          <div className={`p-2.5 rounded-xl text-[10px] border flex flex-col gap-1.5 ${peptideSupply.lowSupply ? 'bg-red-500/5 border-red-500/20 text-red-300' : 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400'}`}>
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-[11px] flex items-center gap-1">
-                {peptideSupply.lowSupply ? <AlertTriangle className="w-3.5 h-3.5" /> : <Activity className="w-3.5 h-3.5" />}
-                Current Vial Supply
-              </span>
-              <span className="font-mono">{peptideSupply.remainingMg.toFixed(2)} / {comp.vialSizeMg} mg left</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full bg-slate-700/50 overflow-hidden">
-              <div className="h-full rounded-full transition-all" style={{ width: `${peptideSupply.pctUsed}%`, backgroundColor: peptideSupply.lowSupply ? '#f87171' : '#22d3ee' }} />
-            </div>
-            <span>{peptideSupply.dosesRemaining} dose{peptideSupply.dosesRemaining === 1 ? '' : 's'} remaining (~{peptideSupply.dosesPerVial.toFixed(1)} per vial){peptideSupply.lowSupply ? ' — running low, consider reordering' : ''}</span>
-            {peptideSupply.lowSupply && onNavigateToTab && findShopProductMatch(comp.name, comp.vialSizeMg) && (
-              <button type="button" onClick={() => { triggerHaptic('medium'); onNavigateToTab('shop'); }}
-                className="mt-0.5 self-start bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-200 font-semibold rounded-lg px-2.5 py-1 text-[10px] transition-all cursor-pointer">
-                Reorder in Shop →
-              </button>
-            )}
-          </div>
-        )}
-
         {(comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm && (
           <div className="bg-cyan-500/5 border border-cyan-500/10 p-2.5 rounded-xl text-[10px] text-cyan-400 flex items-start gap-1.5">
             <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
@@ -211,22 +189,6 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
                 <span>Dose requires drawing <span className="font-bold underline">{(comp.doseAmount / comp.oilConcMgMl).toFixed(2)} ml / cc</span> per administration ({comp.oilConcMgMl}mg/ml).</span>
               )}
             </div>
-          </div>
-        )}
-
-        {oilSupply && (
-          <div className={`p-2.5 rounded-xl text-[10px] border flex flex-col gap-1.5 ${oilSupply.lowSupply ? 'bg-red-500/5 border-red-500/20 text-red-300' : 'bg-cyan-500/5 border-cyan-500/10 text-cyan-400'}`}>
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-[11px] flex items-center gap-1">
-                {oilSupply.lowSupply ? <AlertTriangle className="w-3.5 h-3.5" /> : <Activity className="w-3.5 h-3.5" />}
-                Current Vial Supply
-              </span>
-              <span className="font-mono">{oilSupply.remainingMg.toFixed(0)} / {oilSupply.totalVialMg.toFixed(0)} mg left</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full bg-slate-700/50 overflow-hidden">
-              <div className="h-full rounded-full transition-all" style={{ width: `${oilSupply.pctUsed}%`, backgroundColor: oilSupply.lowSupply ? '#f87171' : '#22d3ee' }} />
-            </div>
-            <span>{oilSupply.dosesRemaining} dose{oilSupply.dosesRemaining === 1 ? '' : 's'} remaining (~{oilSupply.dosesPerVial.toFixed(1)} per {oilSupply.vialMl}ml vial){oilSupply.lowSupply ? ' — running low, consider reordering' : ''}</span>
           </div>
         )}
 

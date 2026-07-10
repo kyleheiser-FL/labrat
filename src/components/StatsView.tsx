@@ -18,10 +18,10 @@ export default function StatsView({ compounds, logs, onUndoDose, onUpdateCompoun
   const active = compounds.filter(c => !c.isCompleted);
   const totalLogged = logs.length;
 
-  const stat = (label: string, value: string | number) => (
-    <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl px-4 py-3.5 text-center">
-      <p className="text-2xl font-black tracking-tight text-slate-100 tabular-nums">{value}</p>
-      <p className="font-mono text-[9.5px] tracking-[0.16em] uppercase text-slate-500 mt-1">{label}</p>
+  const stat = (label: string, value: number) => (
+    <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl px-3 py-4 flex flex-col items-center justify-center text-center min-w-0">
+      <p className="text-3xl font-black tracking-tight text-cyan-300 tabular-nums leading-none">{value}</p>
+      <p className="font-mono text-[9px] tracking-[0.14em] uppercase text-slate-500 mt-2 leading-tight">{label}</p>
     </div>
   );
 
@@ -35,9 +35,9 @@ export default function StatsView({ compounds, logs, onUndoDose, onUpdateCompoun
 
       {/* quick stats */}
       <div className="grid grid-cols-3 gap-3">
-        {stat('Active compounds', active.length)}
+        {stat('Active', active.length)}
         {stat('Doses logged', totalLogged)}
-        {stat('On protocol', active.filter(c => c.type === 'peptide').length + ' peptides')}
+        {stat('Peptides', active.filter(c => c.type === 'peptide').length)}
       </div>
 
       {/* per-compound progress / levels / supply */}
