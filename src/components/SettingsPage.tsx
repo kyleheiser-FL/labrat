@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Palette, Bell, BellRing, Layout, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X, Unlock } from 'lucide-react';
-import { SegmentVisibility, AppNotification } from '../types';
+import { Palette, Bell, BellRing, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X, Sparkles, Layers, ShoppingBag } from 'lucide-react';
+import { AppNotification } from '../types';
+import { ExperienceMode } from '../lib/experience';
 import { triggerHaptic } from '../lib/haptics';
 
 interface SettingsPageProps {
@@ -9,11 +10,8 @@ interface SettingsPageProps {
   user: any; // Firebase User
   hideShop: boolean;
   onToggleHideShop: (hide: boolean) => void;
-  trackingEnabled: boolean;
-  onToggleTracking: (enabled: boolean) => void;
-  onChangeExperience?: () => void;
-  segmentVisibility: SegmentVisibility;
-  onSegmentChange: (page: keyof SegmentVisibility, segment: string, value: boolean) => void;
+  experienceMode?: ExperienceMode | null;
+  onSelectExperience?: (mode: ExperienceMode) => void;
   // Notifications (state/functions lifted from CycleDashboard, live in App.tsx)
   notificationPermission: string;
   onRequestPermission: () => void;
@@ -30,33 +28,11 @@ interface SettingsPageProps {
   onMarkNotificationRead: (id: string) => void;
 }
 
-type PageTab = 'dashboard' | 'planner' | 'library' | 'blood';
-
-const PAGE_TABS: { key: PageTab; label: string }[] = [
-  { key: 'dashboard', label: 'Daily' },
-  { key: 'planner', label: 'Cycle' },
-  { key: 'library', label: 'Library' },
-  { key: 'blood', label: 'Me' },
+const EXPERIENCES: { mode: ExperienceMode; label: string; desc: string; icon: typeof Sparkles; accent: string; ring: string }[] = [
+  { mode: 'guided', label: 'Guided', desc: 'Simple, hand-held dosing. Best for beginners.', icon: Sparkles, accent: 'text-emerald-300', ring: 'border-emerald-500/60 bg-emerald-500/10 shadow-[0_0_16px_rgba(16,185,129,0.12)]' },
+  { mode: 'expert', label: 'Expert', desc: 'Full app — cycles, stats, and controls.', icon: Layers, accent: 'text-cyan-300', ring: 'border-cyan-500/60 bg-cyan-500/10 shadow-[0_0_16px_rgba(34,211,238,0.12)]' },
+  { mode: 'store', label: 'Store Only', desc: 'Just browse and order. No tracking.', icon: ShoppingBag, accent: 'text-amber-300', ring: 'border-amber-500/60 bg-amber-500/10 shadow-[0_0_16px_rgba(245,158,11,0.12)]' },
 ];
-
-const SEGMENT_CONFIG: Record<PageTab, { key: string; label: string }[]> = {
-  dashboard: [
-    { key: 'schedule', label: 'Dose Schedule' },
-    { key: 'history', label: 'Admin Ledger' },
-  ],
-  planner: [
-    { key: 'pct', label: 'PCT Advisor' },
-    { key: 'dataControls', label: 'Data Controls' },
-  ],
-  library: [
-    { key: 'filters', label: 'Category Filters' },
-  ],
-  blood: [
-    { key: 'dossier', label: 'Health Dossier' },
-    { key: 'upload', label: 'Lab Ingestor' },
-    { key: 'wellness', label: 'Wellness & Biomarkers' },
-  ],
-};
 
 function ToggleSwitch({ enabled, onToggle }: { enabled: boolean; onToggle: () => void }) {
   return (
@@ -82,11 +58,8 @@ export default function SettingsPage({
   user,
   hideShop,
   onToggleHideShop,
-  trackingEnabled,
-  onToggleTracking,
-  onChangeExperience,
-  segmentVisibility,
-  onSegmentChange,
+  experienceMode,
+  onSelectExperience,
   notificationPermission,
   onRequestPermission,
   reminderEnabled,
@@ -100,8 +73,6 @@ export default function SettingsPage({
   onClearAllNotifications,
   onMarkNotificationRead,
 }: SettingsPageProps) {
-  const [activePageTab, setActivePageTab] = useState<PageTab>('dashboard');
-
   const isAdmin = user?.email?.toLowerCase() === 'kyleheiser@gmail.com';
 
   return (
@@ -207,99 +178,43 @@ export default function SettingsPage({
         </div>
       </div>
 
-      {/* Section: Tracking Feature Access */}
-      <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
-        <div className="flex items-center gap-2 mb-1">
-          <Unlock className="w-4 h-4 text-cyan-400" />
-          <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Feature Access</span>
-        </div>
-        <h3 className="text-base font-bold text-slate-100 mb-4">Tracking & Cycle Tools</h3>
-
-        <div className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-slate-800/30 transition">
-          <div className="text-left space-y-0.5 pr-4">
-            <span className="text-xs font-bold text-slate-200">Enable Tracking Features</span>
-            <span className="text-[10px] text-slate-500 block font-mono leading-relaxed">
-              Unlocks the Daily Checklist, Cycle Architect, Compound Encyclopedia, and Me dossier — plus their tabs in the navigation bar.
-            </span>
+      {/* Section: Experience */}
+      {onSelectExperience && (
+        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles className="w-4 h-4 text-cyan-400" />
+            <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Experience</span>
           </div>
-          <ToggleSwitch
-            enabled={trackingEnabled}
-            onToggle={() => onToggleTracking(!trackingEnabled)}
-          />
-        </div>
+          <h3 className="text-base font-bold text-slate-100 mb-4">How you use LabRat</h3>
 
-        {!trackingEnabled && (
-          <p className="text-[10.5px] text-slate-500 leading-relaxed mt-2 px-3">
-            New here? You're currently in shop-only mode. Flip this on whenever you're ready to start tracking cycles, doses, and biomarkers.
-          </p>
-        )}
-
-        {onChangeExperience && (
-          <div className="flex items-center justify-between py-2.5 px-3 mt-1 rounded-xl hover:bg-slate-800/30 transition">
-            <div className="text-left space-y-0.5 pr-4">
-              <span className="text-xs font-bold text-slate-200">Change Experience Mode</span>
-              <span className="text-[10px] text-slate-500 block font-mono leading-relaxed">
-                Switch between Guided, Expert, or Store-only. Re-opens the experience picker.
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => { triggerHaptic('light'); onChangeExperience(); }}
-              className="shrink-0 text-[11px] font-bold font-mono uppercase tracking-wide text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 px-4 py-2 rounded-lg transition cursor-pointer"
-            >
-              Change
-            </button>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {EXPERIENCES.map(({ mode, label, desc, icon: Icon, accent, ring }) => {
+              const selected = experienceMode === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => { triggerHaptic('light'); onSelectExperience(mode); }}
+                  className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                    selected ? ring : 'border-slate-700/50 bg-[#030712]/50 hover:border-slate-600'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <Icon className={`w-5 h-5 ${accent}`} />
+                    {selected && (
+                      <span className="w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-slate-950" strokeWidth={3} />
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-sm font-bold text-slate-100">{label}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">{desc}</div>
+                </button>
+              );
+            })}
           </div>
-        )}
-      </div>
-
-      {/* Section 2: Page Sections (Segment Visibility) */}
-      <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
-        <div className="flex items-center gap-2 mb-1">
-          <Layout className="w-4 h-4 text-cyan-400" />
-          <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Page Layout</span>
         </div>
-        <h3 className="text-base font-bold text-slate-100 mb-4">Page Sections</h3>
-
-        {/* Tab Row */}
-        <div className="flex gap-1 mb-4 flex-wrap">
-          {PAGE_TABS.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => { triggerHaptic('light'); setActivePageTab(tab.key); }}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold font-mono transition cursor-pointer ${
-                activePageTab === tab.key
-                  ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/35'
-                  : 'bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:text-slate-200 hover:bg-slate-700/50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Toggle rows for active tab */}
-        <div className="space-y-1">
-          {SEGMENT_CONFIG[activePageTab].map((seg) => {
-            const pageVisibility = segmentVisibility[activePageTab] as Record<string, boolean>;
-            const isEnabled = pageVisibility[seg.key] ?? true;
-
-            return (
-              <div
-                key={seg.key}
-                className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-slate-800/30 transition"
-              >
-                <span className="text-xs text-slate-300 font-mono">{seg.label}</span>
-                <ToggleSwitch
-                  enabled={isEnabled}
-                  onToggle={() => { triggerHaptic('light'); onSegmentChange(activePageTab, seg.key, !isEnabled); }}
-                />
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      )}
 
       {/* Section 3: Notifications */}
       <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">

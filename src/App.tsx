@@ -1620,11 +1620,8 @@ export default function App() {
                   user={user}
                   hideShop={hideShop}
                   onToggleHideShop={handleToggleHideShop}
-                  trackingEnabled={trackingEnabled}
-                  onToggleTracking={handleToggleTracking}
-                  onChangeExperience={() => { navigateTab('dashboard'); setExperienceMode(null); }}
-                  segmentVisibility={segmentVisibility}
-                  onSegmentChange={handleSegmentChange}
+                  experienceMode={experienceMode}
+                  onSelectExperience={handleSelectExperience}
                   notificationPermission={notificationPermission}
                   onRequestPermission={requestNotificationPermission}
                   reminderEnabled={reminderEnabled}
