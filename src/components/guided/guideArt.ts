@@ -1,7 +1,8 @@
 // Realistic, theme-aware SVG art for the guided how-to walkthroughs.
-// Scenes are built as SVG strings (validated in a preview harness) and injected
-// via dangerouslySetInnerHTML. Colors come from CSS custom properties so the
-// same art works on neon, clinical (dark) and clinical-light.
+// Scenes are built as SVG strings (designed + validated in a preview harness)
+// and injected via dangerouslySetInnerHTML. All colors come from CSS custom
+// properties so the same art renders correctly on neon, clinical (dark) and
+// clinical-light.
 
 export type LabTheme = 'neon' | 'clinical' | 'clinical-light';
 
@@ -9,133 +10,134 @@ export function guideThemeVars(theme: LabTheme, accent: string): React.CSSProper
   const light = theme === 'clinical-light';
   const v: Record<string, string> = light
     ? {
-        '--surface': '#ffffff', '--panel': '#eef2f7', '--text': '#0f172a', '--muted': '#516079',
-        '--line': '#c2ccd8', '--glass': 'rgba(15,23,42,.05)', '--metal': '#9aa7b8', '--metalD': '#64748b',
-        '--stopper': '#8b98ab', '--plunger': '#7c8aa0', '--liquid': '#0ea5e9',
-        '--skin': '#eab993', '--skin2': '#d6a578', '--fat': '#f6ddb0', '--muscle': '#c77c88',
+        '--surface': '#ffffff', '--panel': '#eef2f7', '--text': '#0f172a', '--muted': '#516079', '--line': '#c2ccd8',
+        '--glass': '#e6ecf3', '--metal': '#aab6c6', '--metalHi': '#ffffff', '--metalD': '#7c8aa0',
+        '--stopper': '#9aa7b8', '--plunger': '#8996a8', '--plungerD': '#5f6b7d',
+        '--liquid': '#22a7dd', '--liquidHi': '#8fd6f2',
+        '--skin': '#eab98f', '--skin2': '#d6a06f', '--fat': '#f4dca6', '--fatHi': '#fbedc8', '--muscle': '#c56b7e', '--muscleHi': '#d68595',
       }
     : {
-        '--surface': '#0b1222', '--panel': '#0f172a', '--text': '#e8eefb', '--muted': '#93a7c4',
-        '--line': '#3a4a63', '--glass': 'rgba(148,180,214,.10)', '--metal': '#cbd5e1', '--metalD': '#64748b',
-        '--stopper': '#7c8aa3', '--plunger': '#526176', '--liquid': '#38bdf8',
-        '--skin': '#e6b48c', '--skin2': '#caa176', '--fat': '#f4d9a8', '--muscle': '#c76b7a',
+        '--surface': '#0b1222', '--panel': '#0f172a', '--text': '#e8eefb', '--muted': '#93a7c4', '--line': '#3a4a63',
+        '--glass': '#141f36', '--metal': '#d5dce6', '--metalHi': '#f4f7fb', '--metalD': '#6b7a92',
+        '--stopper': '#8b98ab', '--plunger': '#4a586e', '--plungerD': '#2f3b4e',
+        '--liquid': '#2fb6e6', '--liquidHi': '#7fd8f5',
+        '--skin': '#e8b98f', '--skin2': '#d19b6f', '--fat': '#f2d59e', '--fatHi': '#f8e6c2', '--muscle': '#b5566a', '--muscleHi': '#c96f82',
       };
   v['--accent'] = accent;
   return v as React.CSSProperties;
 }
 
 export const GUIDE_KEYFRAMES = `
-@keyframes lrg-pulse{0%,100%{opacity:.4}50%{opacity:1}}
 @keyframes lrg-swirl{to{transform:rotate(360deg)}}
 @keyframes lrg-attach{0%,100%{transform:translateY(-15px)}55%{transform:translateY(0)}}
 @keyframes lrg-rise{0%{transform:translateY(9px);opacity:0}40%{opacity:1}100%{transform:translateY(-14px);opacity:0}}
 @keyframes lrg-blink{0%,100%{opacity:.3}50%{opacity:1}}
-@keyframes lrg-plunge{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
 @media (prefers-reduced-motion:reduce){[class^="lrg-"],[class*=" lrg-"]{animation:none!important}}
 `;
 
 // ── parts ───────────────────────────────────────────────────────────────────
-// Syringe pointing DOWN; origin at needle tip. plunger 0..1 = liquid fraction.
-function syringe(plunger = 0.4, withNeedle = true, tx = 0, ty = 0, s = 1): string {
-  const h = plunger * 100;
-  const sealY = -48 - h;
-  const thumbY = -150 - 6 - plunger * 44;
-  let grads = '';
-  for (let y = -58; y >= -144; y -= 11) grads += `<line x1="7" y1="${y}" x2="11" y2="${y}" stroke="var(--metalD)" stroke-width="1"/>`;
-  const needle = withNeedle
-    ? `<rect x="-1" y="-30" width="2" height="30" fill="var(--metal)"/><path d="M-1 -1 L1 -1 L0 2.5 Z" fill="var(--metal)"/><path d="M-4 -30 L4 -30 L7 -42 L-7 -42 Z" fill="var(--metalD)"/>`
-    : '';
-  return `<g transform="translate(${tx} ${ty}) scale(${s})">${needle}
-    <rect x="-9" y="-48" width="18" height="7" rx="2" fill="var(--metal)"/>
-    <rect x="-11" y="-47" width="2" height="5" fill="var(--metalD)"/><rect x="9" y="-47" width="2" height="5" fill="var(--metalD)"/>
-    <rect x="-12" y="-150" width="24" height="102" rx="4" fill="var(--glass)" stroke="var(--line)" stroke-width="1.5"/>${grads}
-    <rect x="-10" y="${sealY}" width="20" height="${h}" rx="2" fill="var(--liquid)" opacity="0.5"/>
-    <rect x="-11" y="${sealY - 3}" width="22" height="6" rx="1.5" fill="var(--plunger)"/>
-    <rect x="-2.5" y="${thumbY}" width="5" height="${(sealY - 3) - thumbY}" fill="var(--plunger)"/>
-    <rect x="-16" y="${thumbY - 5}" width="32" height="6" rx="2" fill="var(--plunger)"/>
-    <rect x="-22" y="-151" width="10" height="5" rx="2" fill="var(--plunger)"/><rect x="12" y="-151" width="10" height="5" rx="2" fill="var(--plunger)"/></g>`;
+function grads(): string {
+  let s = ''; let n = 0;
+  for (let y = -58; y >= -150; y -= 9) { const maj = n % 2 === 0; s += `<line x1="${maj ? 5 : 7.5}" y1="${y}" x2="10.5" y2="${y}" stroke="var(--metalD)" stroke-width="${maj ? 1.1 : 0.8}" opacity="${maj ? 0.85 : 0.5}"/>`; n++; }
+  return s;
 }
-// Vial. origin at center. flip=true → inverted (cap down, liquid pooled at stopper).
-let vialUid = 0;
-function vial(liquid = 0.55, flip = false, tx = 0, ty = 0, s = 1): string {
-  const lh = liquid * 66;
-  const id = `vc${vialUid++}`;
-  const inner = `
-    <path d="M-18 -30 Q-18 -34 -14 -36 L14 -36 Q18 -34 18 -30 L18 40 Q18 46 12 46 L-12 46 Q-18 46 -18 40 Z" fill="var(--glass)" stroke="var(--line)" stroke-width="1.5"/>
-    <clipPath id="${id}"><path d="M-18 -30 Q-18 -34 -14 -36 L14 -36 Q18 -34 18 -30 L18 40 Q18 46 12 46 L-12 46 Q-18 46 -18 40 Z"/></clipPath>
-    <g clip-path="url(#${id})"><rect x="-18" y="${46 - lh}" width="36" height="${lh}" fill="var(--liquid)" opacity="0.5"/><ellipse cx="0" cy="${46 - lh}" rx="18" ry="2.5" fill="var(--liquid)" opacity="0.7"/></g>
-    <rect x="-18" y="6" width="36" height="22" rx="2" fill="var(--panel)" opacity="0.92"/>
-    <rect x="-13" y="11" width="26" height="2.4" rx="1" fill="var(--accent)" opacity=".85"/>
-    <rect x="-13" y="16" width="18" height="2" rx="1" fill="var(--muted)" opacity=".5"/>
-    <rect x="-13" y="20" width="22" height="2" rx="1" fill="var(--muted)" opacity=".5"/>
-    <rect x="-11" y="-44" width="22" height="10" fill="var(--glass)" stroke="var(--line)" stroke-width="1.2"/>
-    <rect x="-11" y="-50" width="22" height="7" rx="1" fill="var(--stopper)"/>
-    <rect x="-3.5" y="-49.5" width="7" height="3" rx="1" fill="var(--metalD)"/>
-    <rect x="-14" y="-58" width="28" height="10" rx="2" fill="var(--metal)"/>
-    <rect x="-14" y="-54" width="28" height="2" fill="var(--metalD)" opacity=".5"/>
-    <ellipse cx="0" cy="-58" rx="5.5" ry="2.4" fill="var(--metalD)"/>`;
-  return `<g transform="translate(${tx} ${ty}) scale(${s}) ${flip ? 'rotate(180)' : ''}">${inner}</g>`;
+// Luer-lock syringe pointing DOWN; origin at needle tip. plunger 0..1 = fill.
+function syringe(plunger = 0.4, withNeedle = true, tx = 0, ty = 0, s = 1): string {
+  const bTop = -150, bBot = -52;
+  const lh = plunger * 94; const sealY = bBot - lh;
+  const thumbY = bTop - 6 - plunger * 30;
+  const needle = withNeedle
+    ? `<rect x="-1.2" y="-34" width="2.4" height="34" rx="1.2" fill="var(--metalD)"/><rect x="-1.2" y="-34" width="1.1" height="34" rx="1" fill="var(--metalHi)" opacity=".7"/><path d="M-1.2 -2 L1.2 -2 L0 2.2 Z" fill="var(--metalHi)"/>`
+    : '';
+  const hub = `<path d="M-4.5 -34 L4.5 -34 L7 -47 L-7 -47 Z" fill="var(--metalD)"/><path d="M-4.5 -34 L-1.5 -34 L-4 -47 L-7 -47 Z" fill="var(--metalHi)" opacity=".28"/>`;
+  const collar = `<rect x="-9.5" y="-53" width="19" height="8" rx="2.5" fill="var(--metal)"/><rect x="-9.5" y="-53" width="19" height="2.4" rx="2" fill="var(--metalHi)" opacity=".55"/><rect x="-12" y="-51.5" width="3" height="5" rx="1.4" fill="var(--metalD)"/><rect x="9" y="-51.5" width="3" height="5" rx="1.4" fill="var(--metalD)"/>`;
+  return `<g transform="translate(${tx} ${ty}) scale(${s})">${needle}${hub}${collar}
+    <rect x="-12.5" y="${bTop}" width="25" height="${bBot - bTop}" rx="6" fill="var(--glass)" stroke="var(--line)" stroke-width="1.4"/>
+    <rect x="-11" y="${bTop + 3}" width="4.5" height="${bBot - bTop - 6}" rx="2.2" fill="var(--metalHi)" opacity=".10"/>
+    <rect x="8" y="${bTop + 3}" width="3.4" height="${bBot - bTop - 6}" rx="2" fill="#000" opacity=".14"/>${grads()}
+    <rect x="-10.5" y="${sealY}" width="21" height="${lh}" rx="2.5" fill="var(--liquid)" opacity=".62"/>
+    <rect x="-10.5" y="${sealY}" width="4.5" height="${lh}" rx="2.5" fill="var(--liquidHi)" opacity=".5"/>
+    <rect x="-10.5" y="${sealY}" width="21" height="3.5" rx="2" fill="var(--liquidHi)" opacity=".65"/>
+    <rect x="-10.8" y="${sealY - 7}" width="21.6" height="8" rx="3" fill="var(--plunger)"/>
+    <rect x="-10.8" y="${sealY - 7}" width="21.6" height="2.2" rx="2.4" fill="var(--metalHi)" opacity=".14"/>
+    <rect x="-10.8" y="${sealY - 3.6}" width="21.6" height="1.5" fill="var(--plungerD)"/>
+    <rect x="-2" y="${thumbY}" width="4" height="${(sealY - 7) - thumbY}" fill="var(--plunger)"/>
+    <rect x="-0.6" y="${thumbY}" width="1.3" height="${(sealY - 7) - thumbY}" fill="var(--metalHi)" opacity=".22"/>
+    <ellipse cx="0" cy="${thumbY}" rx="16" ry="5" fill="var(--plunger)"/>
+    <ellipse cx="0" cy="${thumbY - 1.4}" rx="16" ry="3.6" fill="var(--metalHi)" opacity=".16"/>
+    <path d="M-12.5 ${bTop + 2} L-22 ${bTop + 5} L-22 ${bTop + 10} L-12.5 ${bTop + 7} Z" fill="var(--plunger)"/>
+    <path d="M12.5 ${bTop + 2} L22 ${bTop + 5} L22 ${bTop + 10} L12.5 ${bTop + 7} Z" fill="var(--plunger)"/></g>`;
+}
+let vu = 0;
+// Upright vial, origin at center.
+function vial(liquid = 0.55, tx = 0, ty = 0, s = 1): string {
+  const id = 'v' + (vu++); const lh = liquid * 60;
+  return `<g transform="translate(${tx} ${ty}) scale(${s})">
+    <path d="M-17 -26 Q-17 -33 -12 -35 L12 -35 Q17 -33 17 -26 L17 40 Q17 46 11 46 L-11 46 Q-17 46 -17 40 Z" fill="var(--glass)" stroke="var(--line)" stroke-width="1.4"/>
+    <clipPath id="${id}"><path d="M-17 -26 Q-17 -33 -12 -35 L12 -35 Q17 -33 17 -26 L17 40 Q17 46 11 46 L-11 46 Q-17 46 -17 40 Z"/></clipPath>
+    <g clip-path="url(#${id})"><rect x="-17" y="${46 - lh}" width="34" height="${lh}" fill="var(--liquid)" opacity=".58"/><rect x="-17" y="${46 - lh}" width="34" height="3.5" fill="var(--liquidHi)" opacity=".6"/><ellipse cx="0" cy="${46 - lh}" rx="17" ry="2.6" fill="var(--liquidHi)" opacity=".55"/><rect x="-15" y="-33" width="4.5" height="76" rx="2" fill="var(--metalHi)" opacity=".09"/><rect x="12" y="-33" width="3.5" height="76" rx="2" fill="#000" opacity=".12"/></g>
+    <rect x="-17" y="4" width="34" height="24" rx="2.5" fill="var(--panel)"/><rect x="-17" y="4" width="34" height="24" rx="2.5" fill="none" stroke="var(--line)" stroke-width=".8"/>
+    <rect x="-12" y="9" width="24" height="2.6" rx="1.3" fill="var(--accent)"/><rect x="-12" y="14.5" width="17" height="2" rx="1" fill="var(--muted)" opacity=".55"/><rect x="-12" y="19" width="21" height="2" rx="1" fill="var(--muted)" opacity=".55"/>
+    <rect x="-10.5" y="-42" width="21" height="9" fill="var(--glass)" stroke="var(--line)" stroke-width="1"/>
+    <rect x="-11" y="-49" width="22" height="8" rx="1.5" fill="var(--stopper)"/><rect x="-11" y="-49" width="22" height="2.4" rx="1.5" fill="var(--metalHi)" opacity=".18"/><rect x="-4" y="-49" width="8" height="3" rx="1.2" fill="var(--plungerD)" opacity=".5"/>
+    <rect x="-13.5" y="-58" width="27" height="10" rx="2.5" fill="var(--metal)"/><rect x="-13.5" y="-58" width="27" height="2.6" rx="2.5" fill="var(--metalHi)" opacity=".5"/><rect x="-13.5" y="-52.5" width="27" height="1.4" fill="var(--metalD)" opacity=".55"/>
+    <ellipse cx="0" cy="-58" rx="6" ry="2.6" fill="var(--accent)"/><ellipse cx="0" cy="-58.6" rx="6" ry="1.6" fill="var(--metalHi)" opacity=".35"/></g>`;
+}
+// Inverted vial (cap + stopper at the bottom), liquid pooled at the stopper.
+function vialInv(liquid = 0.55, tx = 120, s = 1): string {
+  const id = 'vi' + (vu++); const lh = liquid * 46;
+  return `<g transform="translate(${tx} 0) scale(${s})">
+    <path d="M-17 12 Q-17 6 -11 6 L11 6 Q17 6 17 12 L17 66 Q17 72 12 74 L-12 74 Q-17 72 -17 66 Z" fill="var(--glass)" stroke="var(--line)" stroke-width="1.4"/>
+    <clipPath id="${id}"><path d="M-17 12 Q-17 6 -11 6 L11 6 Q17 6 17 12 L17 66 Q17 72 12 74 L-12 74 Q-17 72 -17 66 Z"/></clipPath>
+    <g clip-path="url(#${id})"><rect x="-17" y="${74 - lh}" width="34" height="${lh}" fill="var(--liquid)" opacity=".58"/><rect x="-17" y="${74 - lh}" width="34" height="3.5" fill="var(--liquidHi)" opacity=".55"/><ellipse cx="0" cy="${74 - lh}" rx="17" ry="2.6" fill="var(--liquidHi)" opacity=".5"/><rect x="-15" y="8" width="4.5" height="64" rx="2" fill="var(--metalHi)" opacity=".09"/></g>
+    <rect x="-17" y="18" width="34" height="18" rx="2.5" fill="var(--panel)"/><rect x="-12" y="23" width="24" height="2.4" rx="1.2" fill="var(--accent)"/><rect x="-12" y="28" width="16" height="2" rx="1" fill="var(--muted)" opacity=".55"/>
+    <rect x="-10.5" y="74" width="21" height="9" fill="var(--glass)" stroke="var(--line)" stroke-width="1"/>
+    <rect x="-11" y="83" width="22" height="8" rx="1.5" fill="var(--stopper)"/>
+    <rect x="-13.5" y="89" width="27" height="9" rx="2.5" fill="var(--metal)"/><rect x="-13.5" y="95.5" width="27" height="1.4" fill="var(--metalD)" opacity=".55"/>
+    <ellipse cx="0" cy="98" rx="6" ry="2.6" fill="var(--accent)"/></g>`;
 }
 function skinBlock(): string {
-  return `
-    <path d="M20 78 Q80 60 120 74 Q160 88 220 78 L220 132 L20 132 Z" fill="var(--muscle)" opacity=".55"/>
-    <path d="M20 66 Q80 44 120 60 Q160 76 220 66 L220 92 Q160 100 120 88 Q80 74 20 92 Z" fill="var(--fat)" opacity=".9"/>
-    <path d="M20 60 Q80 38 120 54 Q160 70 220 60 L220 66 Q160 76 120 60 Q80 44 20 66 Z" fill="var(--skin2)"/>
-    <path d="M20 58 Q80 36 120 52 Q160 68 220 58 L220 61 Q160 71 120 55 Q80 39 20 63 Z" fill="var(--skin)"/>`;
+  return `<path d="M18 82 Q78 62 120 76 Q162 90 222 80 L222 134 L18 134 Z" fill="var(--muscle)"/>
+    <path d="M18 80 Q78 60 120 74 Q162 88 222 78 L222 84 Q162 94 120 80 Q78 66 18 86 Z" fill="var(--muscleHi)" opacity=".5"/>
+    <path d="M18 66 Q78 44 120 60 Q162 76 222 66 L222 92 Q162 100 120 88 Q78 74 18 92 Z" fill="var(--fat)"/>
+    <path d="M18 64 Q78 42 120 58 Q162 74 222 64 L222 70 Q162 80 120 64 Q78 48 18 70 Z" fill="var(--fatHi)" opacity=".7"/>
+    <path d="M18 60 Q78 38 120 54 Q162 70 222 60 L222 66 Q162 76 120 60 Q78 44 18 66 Z" fill="var(--skin2)"/>
+    <path d="M18 58 Q78 36 120 52 Q162 68 222 58 L222 61 Q162 71 120 55 Q78 39 18 63 Z" fill="var(--skin)"/>`;
 }
 
 // ── scenes ──────────────────────────────────────────────────────────────────
 export interface SceneOpts { ml?: number; units?: number | null; }
 
 export function sceneSvg(kind: string, o: SceneOpts = {}): string {
-  vialUid = 0; // deterministic clip ids per render
-  void o; // opts reserved for future per-scene detail
+  vu = 0; void o;
   switch (kind) {
     // mixing
-    case 'swab':
-      return `${vial(0, false, 150, 96, 1)}<g class="lrg-a" style="animation:lrg-pulse 1.6s infinite"><rect x="66" y="40" width="40" height="14" rx="3" fill="var(--plunger)"/><rect x="100" y="36" width="20" height="22" rx="3" fill="var(--accent)"/></g>`;
     case 'draw':
-      return `${syringe(0.72, true, 120, 150)}`;
+      return syringe(0.66, true, 120, 152, 0.78);
     case 'pour':
-      return `${vial(0.15, false, 150, 104, 1)}${syringe(0.2, true, 150, 54, 0.62)}`;
+      return `${vial(0.16, 120, 108, 1)}${syringe(0.22, true, 120, 58, 0.56)}`;
     case 'swirl':
-      return `<g class="lrg-a" style="transform-origin:150px 96px;animation:lrg-swirl 2.4s linear infinite">${vial(0.55, false, 150, 96, 1)}</g>`;
+      return `<g class="lrg-a" style="transform-origin:120px 92px;animation:lrg-swirl 2.4s linear infinite">${vial(0.5, 120, 92, 1)}</g>`;
     case 'store':
-      return `<rect x="92" y="26" width="70" height="104" rx="10" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/><line x1="127" y1="30" x2="127" y2="126" stroke="var(--line)" stroke-width="2"/>${vial(0.5, false, 148, 92, 0.62)}`;
+      return `<rect x="86" y="20" width="68" height="118" rx="12" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/><line x1="120" y1="24" x2="120" y2="134" stroke="var(--line)" stroke-width="2"/><rect x="112" y="46" width="5" height="18" rx="2.5" fill="var(--metalD)"/>${vial(0.5, 132, 86, 0.6)}`;
 
     // injection
     case 'attach':
-      return `${syringe(0.3, false, 120, 150)}<g class="lrg-a" style="animation:lrg-attach 1.8s ease-in-out infinite"><rect x="118" y="118" width="4" height="26" fill="var(--metal)"/><path d="M116 118 L124 118 L127 108 L113 108 Z" fill="var(--metalD)"/><path d="M119 144 L121 144 L120 148 Z" fill="var(--metal)"/></g>`;
+      return `${syringe(0.3, false, 120, 150, 0.78)}<g class="lrg-a" style="animation:lrg-attach 1.9s ease-in-out infinite"><path d="M112 96 L128 96 L131 84 L109 84 Z" fill="var(--metalD)"/><rect x="118.8" y="96" width="2.4" height="30" rx="1.2" fill="var(--metalD)"/><rect x="118.8" y="96" width="1.1" height="30" fill="var(--metalHi)" opacity=".7"/></g>`;
     case 'air':
-      return `${syringe(0.28, true, 120, 150)}`;
+      return syringe(0.3, true, 120, 152, 0.78);
     case 'pushair':
-      return `${vial(0.62, false, 150, 118, 0.92)}<g class="lrg-a" style="transform-origin:150px 74px;animation:lrg-plunge 1.9s ease-in-out infinite">${syringe(0.05, true, 150, 74, 0.6)}</g>`;
-    case 'invert': {
-      // Inverted vial on top (cap + exposed stopper at the bottom), syringe
-      // directly below with the needle pointing UP through the stopper into
-      // the pooled liquid. Bodies stay separated — no overlap.
-      return `
-        <path d="M102 12 Q102 8 106 6 L134 6 Q138 8 138 12 L138 66 Q138 72 132 72 L108 72 Q102 72 102 66 Z" fill="var(--glass)" stroke="var(--line)" stroke-width="1.5"/>
-        <clipPath id="ivc"><path d="M102 12 Q102 8 106 6 L134 6 Q138 8 138 12 L138 66 Q138 72 132 72 L108 72 Q102 72 102 66 Z"/></clipPath>
-        <g clip-path="url(#ivc)"><rect x="102" y="44" width="36" height="28" fill="var(--liquid)" opacity="0.5"/><ellipse cx="120" cy="44" rx="18" ry="2.5" fill="var(--liquid)" opacity="0.7"/></g>
-        <rect x="102" y="18" width="36" height="16" rx="2" fill="var(--panel)" opacity="0.9"/>
-        <rect x="107" y="22" width="26" height="2.2" rx="1" fill="var(--accent)" opacity=".8"/>
-        <rect x="107" y="27" width="17" height="2" rx="1" fill="var(--muted)" opacity=".5"/>
-        <rect x="110" y="72" width="20" height="8" fill="var(--glass)" stroke="var(--line)" stroke-width="1.2"/>
-        <rect x="110" y="80" width="20" height="7" rx="1" fill="var(--stopper)"/>
-        <rect x="107" y="87" width="26" height="8" rx="2" fill="var(--metal)"/>
-        <rect x="107" y="91" width="26" height="1.6" fill="var(--metalD)" opacity=".5"/>
-        <ellipse cx="120" cy="95" rx="5" ry="2" fill="var(--stopper)"/>
-        <g transform="rotate(180 120 58)">${syringe(0.55, true, 120, 58, 0.62)}</g>`;
-    }
+      return `${vial(0.6, 120, 112, 0.98)}${syringe(0.06, true, 120, 60, 0.62)}`;
+    case 'invert':
+      return `${vialInv(0.6, 120, 0.92)}<g transform="rotate(180 120 58)">${syringe(0.55, true, 120, 58, 0.64)}</g>`;
     case 'bubbles':
-      return `<g transform="rotate(180 120 82)">${syringe(0.55, true, 120, 150)}</g><g class="lrg-a" style="animation:lrg-rise 1.3s infinite"><circle cx="120" cy="60" r="3" fill="var(--text)" opacity=".7"/></g>`;
+      return `<g transform="rotate(180 120 88)">${syringe(0.55, true, 120, 150, 0.78)}</g><g class="lrg-a" style="animation:lrg-rise 1.3s infinite"><circle cx="120" cy="66" r="3" fill="var(--liquidHi)" opacity=".8"/></g>`;
     case 'sites':
-      return `<path d="M108 18 q22 -8 44 0 l8 44 q4 44 -8 74 l-44 0 q-12 -30 -8 -74 z" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/><circle cx="130" cy="78" r="3" fill="var(--muted)"/>${[[112, 92], [148, 92], [120, 112], [140, 112], [130, 128]].map(([x, y], n) => `<circle cx="${x}" cy="${y}" r="6" fill="none" stroke="var(--accent)" stroke-width="2" class="lrg-a" style="animation:lrg-blink 1.6s ${n * 0.2}s infinite"/>`).join('')}`;
+      return `<path d="M104 20 q26 -9 52 0 l9 46 q5 46 -9 78 l-52 0 q-14 -32 -9 -78 z" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/><ellipse cx="130" cy="78" rx="3.5" ry="4" fill="none" stroke="var(--muted)" stroke-width="1.4"/>${[[112, 94], [148, 94], [120, 116], [140, 116], [130, 134]].map(([x, y], n) => `<circle cx="${x}" cy="${y}" r="6.5" fill="var(--accent)" opacity=".18"/><circle cx="${x}" cy="${y}" r="6.5" fill="none" stroke="var(--accent)" stroke-width="2" class="lrg-a" style="animation:lrg-blink 1.6s ${n * 0.2}s infinite"/>`).join('')}`;
     case 'inject':
-      return `${skinBlock()}<g transform="rotate(-38 120 58)">${syringe(0.5, true, 120, 58, 0.6)}</g>`;
+      return `${skinBlock()}<g transform="rotate(-40 120 60)">${syringe(0.45, true, 120, 60, 0.62)}</g>`;
     case 'dispose':
-      return `<rect x="96" y="52" width="64" height="78" rx="6" fill="#b91c1c" opacity=".85"/><rect x="96" y="52" width="64" height="16" rx="6" fill="#7f1d1d"/><rect x="118" y="44" width="20" height="12" rx="3" fill="var(--panel)"/><text x="128" y="100" text-anchor="middle" fill="#fff" font-size="9" font-family="monospace">SHARPS</text>`;
+      return `<rect x="90" y="46" width="60" height="88" rx="8" fill="#c0392b"/><rect x="90" y="46" width="60" height="18" rx="8" fill="#8e2b20"/><rect x="90" y="60" width="60" height="4" fill="#7a2018"/><rect x="112" y="36" width="16" height="12" rx="3" fill="var(--panel)"/><text x="120" y="98" text-anchor="middle" fill="#fff" font-size="10" font-family="monospace" opacity=".9">SHARPS</text>`;
     default:
       return '';
   }
