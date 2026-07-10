@@ -1528,8 +1528,10 @@ export default function App() {
               compounds={compounds}
               logs={logs}
               purchasedItems={purchasedItems}
+              theme={labratTheme}
               onAddProtocols={handleAddProtocols}
               onLogDose={handleLogDose}
+              onDeleteCompound={handleDeleteCompound}
               onOpenShop={() => navigateTab('shop')}
               onOpenSettings={() => navigateTab('settings')}
             />

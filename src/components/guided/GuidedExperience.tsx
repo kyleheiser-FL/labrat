@@ -1,13 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import {
   Sparkles, Plus, Check, Search, ShoppingBag, Settings as SettingsIcon,
-  Droplets, Syringe as SyringeIcon, CalendarCheck, GraduationCap, ChevronRight, X,
+  Droplets, Syringe as SyringeIcon, CalendarCheck, GraduationCap, ChevronRight, X, Trash2,
 } from 'lucide-react';
 import { Compound, DoseLog } from '../../types';
 import { LibraryItem } from '../../types';
 import { PEPTIDE_LIBRARY } from '../../data/peptides';
 import { getDoseScheduleForDate } from '../../lib/schedule';
 import { deriveProtocol, INTENSITY_TIERS, Intensity } from '../../lib/experience';
+import { LabTheme } from './guideArt';
 import { triggerHaptic } from '../../lib/haptics';
 import MixingGuide from './MixingGuide';
 import InjectionGuide from './InjectionGuide';
@@ -16,8 +17,10 @@ interface GuidedExperienceProps {
   compounds: Compound[];
   logs: DoseLog[];
   purchasedItems: LibraryItem[];
+  theme: LabTheme;
   onAddProtocols: (comps: Compound[]) => void;
   onLogDose: (log: DoseLog) => void;
+  onDeleteCompound: (id: string) => void;
   onOpenShop: () => void;
   onOpenSettings: () => void;
 }
@@ -35,7 +38,7 @@ const FREQ_LABEL: Record<string, string> = {
 };
 
 export default function GuidedExperience({
-  compounds, logs, purchasedItems, onAddProtocols, onLogDose, onOpenShop, onOpenSettings,
+  compounds, logs, purchasedItems, theme, onAddProtocols, onLogDose, onDeleteCompound, onOpenShop, onOpenSettings,
 }: GuidedExperienceProps) {
   const active = compounds.filter(c => !c.isCompleted);
   const [view, setView] = useState<'home' | 'setup'>(active.length === 0 ? 'setup' : 'home');
@@ -56,6 +59,7 @@ export default function GuidedExperience({
           compounds={active}
           logs={logs}
           onLogDose={onLogDose}
+          onDeleteCompound={onDeleteCompound}
           onAddMore={() => setView('setup')}
           onOpenShop={onOpenShop}
           onOpenSettings={onOpenSettings}
@@ -64,10 +68,10 @@ export default function GuidedExperience({
       )}
 
       {guide?.kind === 'mix' && (
-        <MixingGuide compoundName={guide.comp.name} vialSizeMg={guide.comp.vialSizeMg} bacWaterMl={guide.comp.bacWaterMl} onClose={() => setGuide(null)} />
+        <MixingGuide compoundName={guide.comp.name} vialSizeMg={guide.comp.vialSizeMg} bacWaterMl={guide.comp.bacWaterMl} theme={theme} onClose={() => setGuide(null)} />
       )}
       {guide?.kind === 'inject' && (
-        <InjectionGuide compoundName={guide.comp.name} doseUnits={syringeUnits(guide.comp)} onClose={() => setGuide(null)} />
+        <InjectionGuide compoundName={guide.comp.name} doseUnits={syringeUnits(guide.comp)} theme={theme} onClose={() => setGuide(null)} />
       )}
     </div>
   );
@@ -231,16 +235,18 @@ function SetupFlow({
 
 /* ─────────────────────────── HOME ─────────────────────────── */
 function Home({
-  compounds, logs, onLogDose, onAddMore, onOpenShop, onOpenSettings, onGuide,
+  compounds, logs, onLogDose, onDeleteCompound, onAddMore, onOpenShop, onOpenSettings, onGuide,
 }: {
   compounds: Compound[];
   logs: DoseLog[];
   onLogDose: (log: DoseLog) => void;
+  onDeleteCompound: (id: string) => void;
   onAddMore: () => void;
   onOpenShop: () => void;
   onOpenSettings: () => void;
   onGuide: (kind: 'mix' | 'inject', comp: Compound) => void;
 }) {
+  const [confirmDel, setConfirmDel] = useState<string | null>(null);
   const today = todayStr();
   const dueToday = compounds.filter(c => getDoseScheduleForDate(c, today).isDue);
   const isLogged = (c: Compound) => logs.some(l => l.compoundId === c.id && l.date === today);
@@ -341,7 +347,29 @@ function Home({
                 <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: c.color }} />
                 <span className="truncate">{c.name}</span>
               </p>
-              <p className="text-[12.5px] text-slate-400 shrink-0">{c.doseAmount} {c.doseUnit} · {FREQ_LABEL[c.frequency] || c.frequency}</p>
+              <div className="flex items-center gap-3 shrink-0">
+                <p className="text-[12.5px] text-slate-400">{c.doseAmount} {c.doseUnit} · {FREQ_LABEL[c.frequency] || c.frequency}</p>
+                {confirmDel === c.id ? (
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => { triggerHaptic('warning'); onDeleteCompound(c.id); setConfirmDel(null); }}
+                      className="text-[11px] font-black uppercase tracking-wide text-white bg-rose-500 hover:bg-rose-400 px-2.5 py-1 rounded-lg transition cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                    <button onClick={() => setConfirmDel(null)} className="text-[11px] font-bold text-slate-400 hover:text-slate-200 px-1.5 py-1 cursor-pointer">Cancel</button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => { triggerHaptic('light'); setConfirmDel(c.id); }}
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+                    aria-label={`Remove ${c.name}`}
+                    title="Remove from cycle"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
