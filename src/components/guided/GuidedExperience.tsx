@@ -42,7 +42,9 @@ export default function GuidedExperience({
   compounds, logs, purchasedItems, theme, onAddProtocols, onLogDose, onUndoDose, onDeleteCompound, onOpenShop, onOpenSettings,
 }: GuidedExperienceProps) {
   const active = compounds.filter(c => !c.isCompleted);
-  const [view, setView] = useState<'home' | 'setup'>(active.length === 0 ? 'setup' : 'home');
+  // Always land on Home — even empty. The home shows an "Add peptide" button
+  // rather than dropping the user straight into the add flow.
+  const [view, setView] = useState<'home' | 'setup'>('home');
   const [guide, setGuide] = useState<{ kind: 'mix' | 'inject'; comp: Compound } | null>(null);
 
   return (
@@ -52,7 +54,7 @@ export default function GuidedExperience({
           purchasedItems={purchasedItems}
           existing={active}
           onDone={(comps) => { onAddProtocols(comps); setView('home'); }}
-          onSkipToHome={active.length > 0 ? () => setView('home') : undefined}
+          onSkipToHome={() => setView('home')}
           onOpenShop={onOpenShop}
         />
       ) : (
@@ -278,6 +280,29 @@ function Home({
 
   const remaining = dueToday.filter(c => !isLogged(c)).length;
 
+  if (compounds.length === 0) {
+    return (
+      <div className="flex flex-col gap-6 pb-8">
+        <div className="flex items-center justify-end gap-1.5">
+          <button onClick={onOpenShop} title="Store" className="p-2.5 rounded-xl bg-[#0f172a]/60 border border-[#1e293b] text-slate-400 hover:text-cyan-300 transition cursor-pointer"><ShoppingBag className="w-4 h-4" /></button>
+          <button onClick={onOpenSettings} title="Settings" className="p-2.5 rounded-xl bg-[#0f172a]/60 border border-[#1e293b] text-slate-400 hover:text-cyan-300 transition cursor-pointer"><SettingsIcon className="w-4 h-4" /></button>
+        </div>
+        <div className="bg-[#0b1222] border border-[#1e293b]/80 rounded-2xl px-6 py-12 text-center flex flex-col items-center gap-4">
+          <span className="flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/12 text-cyan-400"><Sparkles className="w-7 h-7" /></span>
+          <div>
+            <h1 className="text-xl font-black tracking-tight">Let's start your protocol</h1>
+            <p className="text-sm text-slate-400 mt-1.5 max-w-xs mx-auto">Add a peptide you have on hand and we'll build the doses, schedule and how-to for you.</p>
+          </div>
+          <button onClick={onAddMore}
+            className="flex items-center gap-2 font-black uppercase tracking-wider text-sm px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_14px_30px_-14px_rgba(34,211,238,0.7)] transition cursor-pointer">
+            <Plus className="w-4 h-4" /> Add peptide
+          </button>
+          <button onClick={onOpenShop} className="text-xs font-semibold text-slate-500 hover:text-cyan-300 transition cursor-pointer">Don't have any yet? Browse the store →</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6 pb-8">
       {/* header */}
@@ -355,7 +380,7 @@ function Home({
           <h2 className="flex items-center gap-2 text-sm font-bold text-slate-300 uppercase tracking-wider">
             <GraduationCap className="w-4 h-4 text-cyan-400" /> Your compounds
           </h2>
-          <button onClick={onAddMore} className="inline-flex items-center gap-1 text-xs font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer"><Plus className="w-3.5 h-3.5" /> Add</button>
+          <button onClick={onAddMore} className="inline-flex items-center gap-1 text-xs font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer"><Plus className="w-3.5 h-3.5" /> Add peptide</button>
         </div>
         <div className="flex flex-col gap-2">
           {compounds.map(c => (

@@ -209,8 +209,8 @@ export default function AppHeader({
             // Minimal, hand-holding rail — the guided surface lives on 'dashboard'.
             navTabs.push({ tab: 'dashboard', icon: <Sparkles className="w-3.5 h-3.5 shrink-0" />, label: <>My <span className="hidden sm:inline">Protocol</span></>, badge: tabBadges?.dashboard });
           } else if (trackingEnabled) {
-            navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Checklist</span></>, badge: tabBadges?.dashboard });
-            navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Cycle <span className="hidden sm:inline">Architect</span></> });
+            navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Dosing</span></>, badge: tabBadges?.dashboard });
+            navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Cycle</> });
             navTabs.push({ tab: 'library', icon: <BookOpen className="w-3.5 h-3.5 shrink-0" />, label: <>Compound <span className="hidden sm:inline">Encyclopedia</span></> });
           }
           if (!hideShop) {
