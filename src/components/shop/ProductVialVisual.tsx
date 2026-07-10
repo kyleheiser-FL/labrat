@@ -129,7 +129,7 @@ function RealisticVial({ name, category, flags, light }: {
   const uid = (name + category).replace(/[^a-z0-9]/gi, '').slice(0, 12).toLowerCase() || 'vial';
 
   // Contents color — research: copper peptides (GHK-Cu / KLOW) are blue, the rest white/clear.
-  const isCopper = /\bghk\b|\bahk\b|klow|copper/i.test(name);
+  const isCopper = /\bghk\b|\bahk\b|klow|glow|copper/i.test(name);
   const powderTop  = isCopper ? '#93c5fd' : '#fdfdfd';
   const powderBot  = isCopper ? '#1e40af' : '#9aa6b8';
   const powderSurf = isCopper ? '#dbeafe' : '#ffffff';
@@ -354,7 +354,7 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
 
   // Contents color follows the chemistry: copper peptides (GHK-Cu / KLOW) carry
   // a vivid blue lyophilized powder; every other peptide is white powder.
-  const isCopper = /\bghk\b|\bahk\b|klow|copper/i.test(name);
+  const isCopper = /\bghk\b|\bahk\b|klow|glow|copper/i.test(name);
 
   // Photo resolution: exact per-product photo → compound cutout (transparent
   // background, used on every theme so the vial sits directly on the card) →
