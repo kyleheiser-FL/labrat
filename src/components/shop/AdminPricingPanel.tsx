@@ -231,7 +231,7 @@ export default function AdminPricingPanel() {
               </th>
               <th className="sticky top-0 z-10 bg-[#0c1322] border-b border-slate-800 px-4 py-3 text-right text-[9px] font-semibold uppercase tracking-wider whitespace-nowrap">
                 <span className="text-amber-500/60">Supply cost</span>
-                <div className="text-[8px] text-slate-600 font-normal normal-case mt-0.5">kit of 10 · hidden from customers</div>
+                <div className="text-[8px] text-slate-600 font-normal normal-case mt-0.5">kit &amp; per-vial · hidden from customers</div>
               </th>
               <th className="sticky top-0 z-10 bg-[#0c1322] border-b border-slate-800 px-4 py-3 text-right whitespace-nowrap">
                 <span className="text-[9px] font-bold text-cyan-300 uppercase tracking-wider">Customer price</span>
@@ -265,7 +265,12 @@ export default function AdminPricingPanel() {
                         )}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        {c.cost ? <span className="text-xs font-mono text-amber-400/70 font-semibold">${c.cost}</span> : <span className="text-slate-800 text-xs">—</span>}
+                        {c.cost ? (
+                          <div className="flex flex-col items-end leading-tight">
+                            <span className="text-xs font-mono text-amber-400/80 font-semibold">${c.cost} <span className="text-[8px] text-slate-500">kit</span></span>
+                            <span className="text-[10px] font-mono text-amber-400/40">${(c.cost / 10).toFixed(2)} <span className="text-[8px] text-slate-600">/vial</span></span>
+                          </div>
+                        ) : <span className="text-slate-800 text-xs">—</span>}
                       </td>
                       {isActive ? (
                         <td className="px-2 py-1.5" onClick={e => e.stopPropagation()}>
