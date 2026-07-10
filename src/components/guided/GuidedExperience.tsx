@@ -326,20 +326,22 @@ function Home({
         )}
       </section>
 
-      {/* full protocol */}
+      {/* simple compound list — plain English, no jargon */}
       <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="flex items-center gap-2 text-sm font-bold text-slate-300 uppercase tracking-wider">
-            <GraduationCap className="w-4 h-4 text-cyan-400" /> Full plan
+            <GraduationCap className="w-4 h-4 text-cyan-400" /> Your compounds
           </h2>
-          <button onClick={onAddMore} className="inline-flex items-center gap-1 text-xs font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer"><Plus className="w-3.5 h-3.5" /> Add compound</button>
+          <button onClick={onAddMore} className="inline-flex items-center gap-1 text-xs font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer"><Plus className="w-3.5 h-3.5" /> Add</button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
           {compounds.map(c => (
-            <div key={c.id} className="bg-[#0b1222] border border-[#1e293b]/80 rounded-2xl p-4">
-              <p className="font-bold text-[14px] text-slate-100 flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{ background: c.color }} />{c.name}</p>
-              <p className="text-[12.5px] text-slate-400 mt-1.5">{c.doseAmount} {c.doseUnit} · {FREQ_LABEL[c.frequency] || c.frequency}</p>
-              <p className="text-[11px] text-slate-600 mt-0.5 font-mono">{c.durationWeeks}-week plan{c.vialSizeMg && c.bacWaterMl ? ` · ${c.vialSizeMg}mg + ${c.bacWaterMl}ml` : ''}</p>
+            <div key={c.id} className="bg-[#0b1222] border border-[#1e293b]/80 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+              <p className="font-bold text-[14px] text-slate-100 flex items-center gap-2 min-w-0">
+                <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: c.color }} />
+                <span className="truncate">{c.name}</span>
+              </p>
+              <p className="text-[12.5px] text-slate-400 shrink-0">{c.doseAmount} {c.doseUnit} · {FREQ_LABEL[c.frequency] || c.frequency}</p>
             </div>
           ))}
         </div>

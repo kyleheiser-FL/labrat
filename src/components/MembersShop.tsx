@@ -133,10 +133,13 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   const isAdminUser = currentUser?.email?.toLowerCase() === 'kyleheiser@gmail.com';
   const isViewingAsAdmin = isAdminUser && !isAdminPreviewCustomer;
 
-  // Each status tier is locked to its own pricing — no cross-source toggle
+  // Each status tier is locked to its own pricing — no cross-source toggle.
+  // Anyone without an explicit tier (guest, no profile yet, or pending) now
+  // defaults to China per-vial pricing so they can browse real prices first.
+  const hasExplicitTier = !!memberProfile && ['approved', 'kit', 'chinakit', 'chinavial'].includes(memberProfile.status);
   const isKitPricing = (memberProfile?.status === 'kit' && !isAdminUser) || (isAdminUser && isAdminPreviewKit);
   const isChinaKitPricing = (memberProfile?.status === 'chinakit' && !isAdminUser) || (isAdminUser && isAdminPreviewChinaKit);
-  const isChinaVialPricing = (memberProfile?.status === 'chinavial' && !isAdminUser) || (isAdminUser && isAdminPreviewChinaVial);
+  const isChinaVialPricing = (memberProfile?.status === 'chinavial' && !isAdminUser) || (isAdminUser && isAdminPreviewChinaVial) || (!isAdminUser && !hasExplicitTier);
   const isApprovedVialPricing = (memberProfile?.status === 'approved' && !isAdminUser) || (isAdminUser && isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial);
 
   // Application Layout Views
@@ -593,10 +596,10 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   };
 
   useEffect(() => {
-    const isAccessGranted = memberProfile?.status === 'approved' || memberProfile?.status === 'kit' || memberProfile?.status === 'chinakit' || memberProfile?.status === 'chinavial';
-    if (isAdminUser || (memberProfile && isAccessGranted)) {
-      fetchProducts();
-    }
+    // Catalog is now visible to everyone (China-vial pricing by default), so
+    // always load it — falls back to SAMPLE_INVENTORY if Firestore is denied.
+    fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [memberProfile, isAdminUser]);
 
   // Fetch User's Orders history
@@ -1024,7 +1027,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
   // server-side (/api/create-order) so a tampered client can't alter them.
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser) return;
+    // Browsing is open to everyone; completing an order needs a free account.
+    if (!currentUser) { triggerHaptic('medium'); onRequestAuth?.('signup'); return; }
     if (cart.length === 0) return;
 
     triggerHaptic('heavy');
@@ -1051,6 +1055,29 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         throw new Error(body.error || `Order failed (server error ${res.status})`);
       }
       const orderPayload: OrderDetail = (await res.json()).order;
+
+      // Capture registration from the checkout details — a buyer's first order
+      // auto-registers them (China-vial tier) so there's no separate signup.
+      if (!memberProfile && currentUser) {
+        try {
+          const sf = shippingForm;
+          const addr = [sf.addressLine1, sf.city, `${sf.state} ${sf.zipCode}`.trim()].filter(Boolean).join(', ');
+          const prof: MemberProfile = {
+            id: currentUser.uid,
+            email: currentUser.email || '',
+            displayName: sf.fullName || currentUser.displayName || 'labrat Member',
+            status: 'chinavial',
+            shippingAddress: addr,
+            phone: sf.phone || '',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          await setDoc(doc(db, 'members', currentUser.uid), prof, { merge: true });
+          setMemberProfile(prof);
+        } catch (err) {
+          console.error('[shop] auto-register from checkout failed', err);
+        }
+      }
 
       // Update global orders state to recalculate inventory instantly
       setAllOrdersGlobal(prev => [orderPayload, ...prev]);
@@ -1381,59 +1408,6 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         <div className="flex flex-col items-center justify-center py-20 bg-[#0b1329] border border-[#1e293b]/70 rounded-2xl min-h-[60vh]" id="loading-spinner-wrapper">
           <Loader2 className="w-10 h-10 text-cyan-400 animate-spin mb-3" />
           <p className="text-slate-400 text-sm">Synchronizing membership credentials...</p>
-        </div>
-      ) : !currentUser ? (
-        /* Display auth prompt if user not logged in */
-        <div className="bg-[#0a0f1d] border border-red-500/20 rounded-2xl p-8 text-center flex flex-col items-center py-16" id="unauthenticated-shop-state">
-          <div className="p-4 bg-red-500/10 text-red-400 rounded-full mb-4">
-            <ShieldAlert className="w-10 h-10" />
-          </div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Login Credentials Required</h2>
-          <p className="text-slate-400 text-sm mt-2 max-w-sm mx-auto">
-            Viewing and placing chemical requests on the LabRat network requires a free labrat account. New here? Registration takes less than a minute.
-          </p>
-          <div className="flex flex-col xs:flex-row items-stretch gap-2.5 mt-6 w-full max-w-xs mx-auto">
-            <button
-              onClick={() => { triggerHaptic('medium'); onRequestAuth?.('signup'); }}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-[0_0_20px_rgba(6,182,212,0.25)] cursor-pointer uppercase tracking-wider"
-              id="shop-cta-create-account"
-            >
-              <UserPlus className="w-3.5 h-3.5" />
-              <span>Create Free Account</span>
-            </button>
-            <button
-              onClick={() => { triggerHaptic('light'); onRequestAuth?.('signin'); }}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#1e293b] hover:bg-[#334155] text-slate-200 font-bold rounded-xl text-xs transition-all cursor-pointer uppercase tracking-wider border border-slate-700/60"
-              id="shop-cta-sign-in"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In</span>
-            </button>
-          </div>
-        </div>
-      ) : !isAdminUser && !memberProfile ? (
-        /* PROFILE NOT REQUESTED YET: SHOW REGISTER SHEET */
-        <ShopRegistrationView
-          email={currentUser.email || ''}
-          joinForm={joinForm}
-          onSetJoinForm={setJoinForm}
-          registrationProductGroups={registrationProductGroups}
-          actionLoading={actionLoading}
-          onSubmit={handleJoinWaitlist}
-        />
-      ) : !isAdminUser && memberProfile && memberProfile.status === 'pending' ? (
-        /* PENDING APPROVAL SCREEN */
-        <div className="bg-[#0b1329] border border-cyan-500/25 rounded-2xl p-8 text-center flex flex-col items-center py-16" id="pending-waitlist-lobby">
-          <div className="p-4 bg-cyan-500/10 text-cyan-400 rounded-full mb-4 animate-pulse">
-            <Clock className="w-10 h-10" />
-          </div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Account Application Pending</h2>
-          <p className="text-slate-400 text-sm mt-3 max-w-sm leading-relaxed">
-            Your laboratory access request under <span className="text-slate-200 font-semibold">{currentUser.email}</span> is currently queued in the pending registry.
-          </p>
-          <p className="text-xs text-slate-500 mt-4 leading-normal max-w-xs">
-            Review cycles occur daily. The administrator will contact you at your registered email address or authorize your account directly on the dashboard shortly.
-          </p>
         </div>
       ) : !isAdminUser && memberProfile && memberProfile.status === 'blocked' ? (
         /* ACCESS BLOCKED SCREEN */
