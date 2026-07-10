@@ -52,10 +52,20 @@ export default function GuideShell({
           <div className="h-full transition-[width] duration-300" style={{ width: `${pct}%`, background: accent }} />
         </div>
 
-        {/* art */}
-        <div className="px-5 pt-6 flex justify-center">
-          <svg viewBox="0 0 240 160" className="w-full max-w-[280px] h-[158px]" aria-hidden="true"
-            dangerouslySetInnerHTML={{ __html: sceneSvg(step.art, sceneOpts) }} />
+        {/* art on a designed stage */}
+        <div className="px-5 pt-5">
+          <div
+            className="rounded-2xl border overflow-hidden flex justify-center"
+            style={{
+              borderColor: 'var(--line)',
+              background: theme === 'clinical-light'
+                ? 'radial-gradient(120% 100% at 50% 0%, rgba(15,23,42,0.05), rgba(15,23,42,0.015))'
+                : 'radial-gradient(120% 100% at 50% 0%, rgba(148,180,214,0.07), rgba(148,180,214,0.02))',
+            }}
+          >
+            <svg viewBox="0 0 240 160" className="w-full max-w-[300px] h-[168px]" aria-hidden="true"
+              dangerouslySetInnerHTML={{ __html: sceneSvg(step.art, sceneOpts) }} />
+          </div>
         </div>
 
         {/* copy */}

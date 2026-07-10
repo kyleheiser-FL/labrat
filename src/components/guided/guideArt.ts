@@ -89,7 +89,7 @@ export interface SceneOpts { ml?: number; units?: number | null; }
 
 export function sceneSvg(kind: string, o: SceneOpts = {}): string {
   vialUid = 0; // deterministic clip ids per render
-  const u = o.units ?? null;
+  void o; // opts reserved for future per-scene detail
   switch (kind) {
     // mixing
     case 'swab':
@@ -107,11 +107,27 @@ export function sceneSvg(kind: string, o: SceneOpts = {}): string {
     case 'attach':
       return `${syringe(0.3, false, 120, 150)}<g class="lrg-a" style="animation:lrg-attach 1.8s ease-in-out infinite"><rect x="118" y="118" width="4" height="26" fill="var(--metal)"/><path d="M116 118 L124 118 L127 108 L113 108 Z" fill="var(--metalD)"/><path d="M119 144 L121 144 L120 148 Z" fill="var(--metal)"/></g>`;
     case 'air':
-      return `${syringe(0.28, true, 120, 150)}${u ? `<text x="150" y="150" text-anchor="middle" fill="var(--muted)" font-size="11" font-family="monospace">${u} units air</text>` : ''}`;
+      return `${syringe(0.28, true, 120, 150)}`;
     case 'pushair':
       return `${vial(0.62, false, 150, 118, 0.92)}<g class="lrg-a" style="transform-origin:150px 74px;animation:lrg-plunge 1.9s ease-in-out infinite">${syringe(0.05, true, 150, 74, 0.6)}</g>`;
-    case 'invert':
-      return `${vial(0.55, true, 150, 52, 0.9)}${syringe(0.6, true, 150, 150, 0.62)}${u ? `<text x="150" y="150" text-anchor="middle" fill="var(--muted)" font-size="11" font-family="monospace">${u} units</text>` : ''}`;
+    case 'invert': {
+      // Inverted vial on top (cap + exposed stopper at the bottom), syringe
+      // directly below with the needle pointing UP through the stopper into
+      // the pooled liquid. Bodies stay separated — no overlap.
+      return `
+        <path d="M102 12 Q102 8 106 6 L134 6 Q138 8 138 12 L138 66 Q138 72 132 72 L108 72 Q102 72 102 66 Z" fill="var(--glass)" stroke="var(--line)" stroke-width="1.5"/>
+        <clipPath id="ivc"><path d="M102 12 Q102 8 106 6 L134 6 Q138 8 138 12 L138 66 Q138 72 132 72 L108 72 Q102 72 102 66 Z"/></clipPath>
+        <g clip-path="url(#ivc)"><rect x="102" y="44" width="36" height="28" fill="var(--liquid)" opacity="0.5"/><ellipse cx="120" cy="44" rx="18" ry="2.5" fill="var(--liquid)" opacity="0.7"/></g>
+        <rect x="102" y="18" width="36" height="16" rx="2" fill="var(--panel)" opacity="0.9"/>
+        <rect x="107" y="22" width="26" height="2.2" rx="1" fill="var(--accent)" opacity=".8"/>
+        <rect x="107" y="27" width="17" height="2" rx="1" fill="var(--muted)" opacity=".5"/>
+        <rect x="110" y="72" width="20" height="8" fill="var(--glass)" stroke="var(--line)" stroke-width="1.2"/>
+        <rect x="110" y="80" width="20" height="7" rx="1" fill="var(--stopper)"/>
+        <rect x="107" y="87" width="26" height="8" rx="2" fill="var(--metal)"/>
+        <rect x="107" y="91" width="26" height="1.6" fill="var(--metalD)" opacity=".5"/>
+        <ellipse cx="120" cy="95" rx="5" ry="2" fill="var(--stopper)"/>
+        <g transform="rotate(180 120 58)">${syringe(0.55, true, 120, 58, 0.62)}</g>`;
+    }
     case 'bubbles':
       return `<g transform="rotate(180 120 82)">${syringe(0.55, true, 120, 150)}</g><g class="lrg-a" style="animation:lrg-rise 1.3s infinite"><circle cx="120" cy="60" r="3" fill="var(--text)" opacity=".7"/></g>`;
     case 'sites':
