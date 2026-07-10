@@ -376,12 +376,9 @@ function Home({
 
       {/* simple compound list — plain English, no jargon */}
       <section>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-slate-300 uppercase tracking-wider">
-            <GraduationCap className="w-4 h-4 text-cyan-400" /> Your compounds
-          </h2>
-          <button onClick={onAddMore} className="inline-flex items-center gap-1 text-xs font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer"><Plus className="w-3.5 h-3.5" /> Add peptide</button>
-        </div>
+        <h2 className="flex items-center gap-2 text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">
+          <GraduationCap className="w-4 h-4 text-cyan-400" /> Your compounds
+        </h2>
         <div className="flex flex-col gap-2">
           {compounds.map(c => (
             <div key={c.id} className="bg-[#0b1222] border border-[#1e293b]/80 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
@@ -415,6 +412,10 @@ function Home({
             </div>
           ))}
         </div>
+        <button onClick={onAddMore}
+          className="mt-3 w-full flex items-center justify-center gap-2 font-black uppercase tracking-wider text-sm py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_14px_30px_-14px_rgba(34,211,238,0.7)] transition cursor-pointer">
+          <Plus className="w-5 h-5" /> Add peptide
+        </button>
       </section>
 
       <p className="text-center font-mono text-[10px] tracking-[0.14em] uppercase text-slate-600">Research use only · Not medical advice</p>
