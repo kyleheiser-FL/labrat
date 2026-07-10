@@ -22,7 +22,6 @@ function marginColor(p: number | null) {
 // single price. Kit/Norway/US tiers are retired — there is one list now.
 export default function AdminPricingPanel() {
   const savedConfig = usePricingConfig();
-  const initialized = useRef(false);
 
   const [vialPct,   setVialPct]   = useState(DEFAULT_PRICING.markups.chnVialDirPct);
   // Retained (not shown) so the saved config keeps working server-side.
@@ -49,10 +48,27 @@ export default function AdminPricingPanel() {
       .catch(e => console.error('[pricing] Failed to load wholesale costs:', e));
   }, []);
 
-  // Load saved config from Firestore
+  // Recover any unsaved draft first — survives the Firestore load race and
+  // brings back in-progress pricing if the page reloaded mid-edit.
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
+    try {
+      const raw = localStorage.getItem('labrat_pricing_draft');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed?.overrides && Object.keys(parsed.overrides).length > 0) {
+        setOverrides(parsed.overrides);
+        if (parsed.markups?.chnVialDirPct !== undefined) setVialPct(parsed.markups.chnVialDirPct);
+        if (parsed.markups) otherMarkups.current = { ...otherMarkups.current, ...parsed.markups };
+        setDirty(true);
+      }
+    } catch { /* ignore corrupt draft */ }
+  }, []);
+
+  // Sync from the saved Firestore config whenever there are NO unsaved edits.
+  // Runs on every savedConfig change (not once) so the real config always wins
+  // over the initial defaults — and never clobbers the admin's live edits.
+  useEffect(() => {
+    if (dirty) return;
     const { markups, overrides: o } = savedConfig;
     setVialPct(markups.chnVialDirPct);
     otherMarkups.current = {
@@ -62,7 +78,15 @@ export default function AdminPricingPanel() {
       chnVialUSPct: markups.chnVialUSPct,
     };
     setOverrides(o);
-  }, [savedConfig]);
+  }, [savedConfig, dirty]);
+
+  // Persist unsaved edits locally so a reload/crash can't lose pricing work.
+  useEffect(() => {
+    if (!dirty) return;
+    try {
+      localStorage.setItem('labrat_pricing_draft', JSON.stringify({ markups: buildMarkups(), overrides }));
+    } catch { /* storage full / blocked */ }
+  }, [overrides, vialPct, dirty]);
 
   function buildMarkups(): PricingMarkups {
     return { ...otherMarkups.current, chnVialDirPct: vialPct };
@@ -115,6 +139,7 @@ export default function AdminPricingPanel() {
     setSaving(true); setSaveError('');
     try {
       await savePricingConfig({ markups: buildMarkups(), overrides });
+      try { localStorage.removeItem('labrat_pricing_draft'); } catch { /* ignore */ }
       setSaved(true); setDirty(false);
       setTimeout(() => setSaved(false), 4000);
     } catch (err: unknown) {
