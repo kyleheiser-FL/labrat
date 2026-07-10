@@ -496,6 +496,15 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     return Math.max(0, stock);
   }
 
+  // Catalog display filter: BAC / bacteriostatic water is only offered in 10ml.
+  const catalogFilter = (list: ShopProduct[]): ShopProduct[] => list.filter(p => {
+    const n = (p.name || '').toLowerCase();
+    const isWater = n.includes('bac water') || n.includes('bacteriostatic');
+    if (!isWater) return true;
+    const size = getProductBaseAndSize(p.name).size.toLowerCase().replace(/\s/g, '');
+    return size === '' || size === '10ml';
+  });
+
   // Load Inventory Catalog
   const fetchProducts = async () => {
     setCatalogLoading(true);
@@ -585,11 +594,11 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
       }
 
       // Display list is already filtered to SAMPLE_INVENTORY ids (seeded above)
-      setProducts(displayList);
+      setProducts(catalogFilter(displayList));
     } catch (e) {
       console.error('Failed fetching shop inventory', e);
       // Fall back to local inventory so the catalog is never blank
-      setProducts([...SAMPLE_INVENTORY]);
+      setProducts(catalogFilter([...SAMPLE_INVENTORY]));
       handleFirestoreError(e, OperationType.LIST, 'shopItems');
     } finally {
       setCatalogLoading(false);

@@ -22,6 +22,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
   const [phaseExpanded, setPhaseExpanded] = useState(false);
+  const loggedCount = logs.filter(l => l.compoundId === comp.id).length;
   const isLightTheme = typeof document !== 'undefined' && document.documentElement.getAttribute('data-labrat-theme') === 'clinical-light';
 
   const start = new Date(comp.startDate + 'T00:00:00');
@@ -142,6 +143,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
           <div><span className="text-slate-500 block">Administration</span><span className="font-semibold text-slate-300 capitalize">{comp.frequency.replace('_', ' ')}</span></div>
           <div><span className="text-slate-500 block">Course Duration</span><span className="font-mono font-semibold text-slate-300">{comp.durationWeeks} Weeks</span></div>
           <div><span className="text-slate-500 block">Sequence Start</span><span className="font-mono font-semibold text-slate-300">{comp.startDate}</span></div>
+          <div className="col-span-2 pt-2 mt-0.5 border-t border-slate-800/60"><span className="text-slate-500 block">Doses Logged</span><span className="font-mono font-semibold text-emerald-400">{loggedCount} dose{loggedCount === 1 ? '' : 's'} recorded</span></div>
         </div>
 
         {!compact && (<>

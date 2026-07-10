@@ -122,8 +122,12 @@ export function sceneSvg(kind: string, o: SceneOpts = {}): string {
       return `<rect x="86" y="20" width="68" height="118" rx="12" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/><line x1="120" y1="24" x2="120" y2="134" stroke="var(--line)" stroke-width="2"/><rect x="112" y="46" width="5" height="18" rx="2.5" fill="var(--metalD)"/>${vial(0.5, 132, 86, 0.6)}`;
 
     // injection
-    case 'attach':
-      return `${syringe(0.3, false, 120, 150, 0.78)}<g class="lrg-a" style="animation:lrg-attach 1.9s ease-in-out infinite"><path d="M112 96 L128 96 L131 84 L109 84 Z" fill="var(--metalD)"/><rect x="118.8" y="96" width="2.4" height="30" rx="1.2" fill="var(--metalD)"/><rect x="118.8" y="96" width="1.1" height="30" fill="var(--metalHi)" opacity=".7"/></g>`;
+    case 'attach': {
+      // Syringe (no needle) with the collar exposed; a fresh needle rises up to
+      // lock onto it, with a small spark to signal "click".
+      const nd = `<g><path d="M-4.5 0 L4.5 0 L7 -12 L-7 -12 Z" fill="var(--metalD)"/><rect x="-1.2" y="0" width="2.4" height="30" rx="1.2" fill="var(--metalD)"/><rect x="-1.2" y="0" width="1.1" height="30" fill="var(--metalHi)" opacity=".7"/><path d="M-1.2 30 L1.2 30 L0 33 Z" fill="var(--metalHi)"/></g>`;
+      return `${syringe(0.3, false, 120, 148, 0.78)}<g class="lrg-a" transform="translate(120 108)" style="animation:lrg-attach 1.9s ease-in-out infinite">${nd}</g><path d="M136 104 l5 -5 M139 99 l-5 5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" class="lrg-a" style="animation:lrg-blink 1.9s ease-in-out infinite"/>`;
+    }
     case 'air':
       return syringe(0.3, true, 120, 152, 0.78);
     case 'pushair':

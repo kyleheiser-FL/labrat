@@ -203,18 +203,18 @@ export default function ShopCatalogView({
           </p>
         </div>
       ) : isChinaVialPricing ? (
-        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-orange-950/30 via-[#0a0f1d] to-orange-950/30 border border-orange-500/30 rounded-xl p-3 sm:p-4 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-orange-900/50 pb-2 mb-2">
+        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-cyan-950/30 via-[#0a0f1d] to-cyan-950/30 border border-cyan-500/30 rounded-xl p-3 sm:p-4 text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
             <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-orange-400" />
-              🇨🇳 China Vial Member: <span className="text-orange-300 bg-orange-950/65 px-2 py-0.5 rounded border border-orange-500/20 text-xs font-black">$25 Flat Shipping</span>
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              Per-Vial Pricing: <span className="text-cyan-300 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">$25 Flat Shipping</span>
             </h3>
-            <div className="text-[9px] uppercase font-black tracking-widest text-orange-300 bg-orange-950/45 px-2.5 py-0.5 rounded border border-orange-500/20 self-start sm:self-center">
+            <div className="text-[9px] uppercase font-black tracking-widest text-cyan-300 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
               Per-Vial Rate
             </div>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            You are enrolled in <strong className="text-orange-300 font-bold">China vial pricing</strong>. Every listed price represents exactly one (1) individual research vial sourced from our China lab partners. All China orders ship at a flat <strong className="text-orange-300">$25.00</strong> rate. <strong className="text-emerald-400">USA Fast Ship</strong> items below ship free.
+            Every listed price represents exactly one (1) individual research vial. All orders ship at a flat <strong className="text-cyan-300">$25.00</strong> rate. <strong className="text-emerald-400">Quick Ship</strong> items below ship free.
           </p>
         </div>
       ) : isApprovedVialPricing ? (
@@ -302,43 +302,6 @@ export default function ShopCatalogView({
           </div>
         );
       })()}
-
-      {/* Norway & Switzerland Heritage Banner — hidden for China-sourced pricing tiers */}
-      {!isChinaKitPricing && !isChinaVialPricing && (
-      <div
-        id="norway-heritage-banner"
-        onClick={() => { triggerHaptic('medium'); onSetShowNorwayModal(true); }}
-        className="bg-gradient-to-r from-cyan-950/20 via-slate-900 to-indigo-950/20 border border-cyan-800/20 hover:border-cyan-400/40 rounded-xl p-3 sm:p-4 text-left cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.06)] group/norway-banner relative overflow-hidden focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-400"
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { triggerHaptic('medium'); onSetShowNorwayModal(true); } }}
-      >
-        <div className="absolute top-0 right-0 p-4 opacity-5 text-cyan-300 pointer-events-none transform translate-x-4 -translate-y-4 group-hover/norway-banner:scale-110 transition-transform duration-500">
-          <Sparkles className="w-24 h-24" />
-        </div>
-
-        {/* Visual border pulse highlight */}
-        <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-cyan-500/10 via-sky-500/20 to-indigo-500/10 opacity-75 group-hover/norway-banner:from-cyan-400 group-hover/norway-banner:via-sky-400 group-hover/norway-banner:to-indigo-400 transition-all duration-300" />
-
-        <div className="flex items-center gap-3 relative z-10">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 border border-cyan-500/20 flex items-center justify-center text-xl shrink-0 shadow-inner group-hover/norway-banner:scale-105 transition-transform duration-300 select-none">
-            🇳🇴
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-[8px] uppercase font-black tracking-widest text-cyan-400 bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-500/20 select-none">SCANDINAVIAN HERITAGE</span>
-              <span className="text-[8px] uppercase font-black tracking-widest text-[#a05eff] bg-[#1e0f35]/60 px-1.5 py-0.5 rounded border border-[#a05eff]/20 select-none">SWISS GMP</span>
-            </div>
-            <h4 className="text-xs sm:text-sm font-black text-white group-hover:text-cyan-400 transition-colors flex items-center gap-1.5">
-              What sets Norway-sourced peptides apart?
-              <span className="text-xs text-slate-500 group-hover:translate-x-1.5 transition-transform inline-block">→</span>
-            </h4>
-            <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed max-w-2xl">
-              Produced under Swiss GMP standards with Norwegian glacial meltwater (below 1 ppm dissolved solids), every batch is HPLC-verified for sequence accuracy and endotoxin counts — accountability that bulk industrial suppliers rarely match. <span className="text-cyan-400 font-bold group-hover:underline">View sourcing standards.</span>
-            </p>
-          </div>
-        </div>
-      </div>
-      )}
 
       {/* Product Filtering and Search actions */}
       <div className="space-y-4">
