@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   Sparkles, Plus, Check, Search, ShoppingBag, Settings as SettingsIcon,
-  Droplets, Syringe as SyringeIcon, CalendarCheck, GraduationCap, ChevronRight, X, Trash2, RotateCcw, History,
+  Droplets, Syringe as SyringeIcon, CalendarCheck, GraduationCap, ChevronLeft, ChevronRight, X, Trash2, RotateCcw, History,
 } from 'lucide-react';
 import { Compound, DoseLog, formatTimeTo12Hour } from '../../types';
 import { LibraryItem } from '../../types';
@@ -252,14 +252,24 @@ function Home({
   onGuide: (kind: 'mix' | 'inject', comp: Compound) => void;
 }) {
   const [confirmDel, setConfirmDel] = useState<string | null>(null);
-  const today = todayStr();
+  const [date, setDate] = useState(todayStr());
+  const isTodaySel = date === todayStr();
+  const shiftDay = (n: number) => {
+    const d = new Date(date + 'T00:00:00'); d.setDate(d.getDate() + n); setDate(d.toISOString().split('T')[0]); triggerHaptic('light');
+  };
+  const dayLabel = (() => {
+    if (isTodaySel) return 'Today';
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    if (date === y.toISOString().split('T')[0]) return 'Yesterday';
+    return new Date(date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  })();
 
   const undoToday = (c: Compound) => {
-    const log = logs.find(l => l.compoundId === c.id && l.date === today);
+    const log = logs.find(l => l.compoundId === c.id && l.date === date);
     if (log) { triggerHaptic('warning'); onUndoDose(log.id); }
   };
-  const dueToday = compounds.filter(c => getDoseScheduleForDate(c, today).isDue);
-  const isLogged = (c: Compound) => logs.some(l => l.compoundId === c.id && l.date === today);
+  const dueToday = compounds.filter(c => getDoseScheduleForDate(c, date).isDue);
+  const isLogged = (c: Compound) => logs.some(l => l.compoundId === c.id && l.date === date);
 
   const quickLog = (c: Compound) => {
     triggerHaptic('success');
@@ -269,7 +279,7 @@ function Home({
       id: crypto.randomUUID(),
       compoundId: c.id,
       compoundName: c.name,
-      date: today,
+      date,
       time,
       doseAmount: c.doseAmount,
       doseUnit: c.doseUnit,
@@ -310,7 +320,9 @@ function Home({
         <div>
           <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Your protocol</span>
           <h1 className="text-2xl font-black tracking-tight mt-1">
-            {remaining === 0 ? "You're all caught up 🎉" : `${remaining} dose${remaining === 1 ? '' : 's'} to go today`}
+            {remaining === 0
+              ? (dueToday.length ? (isTodaySel ? 'All done ✓' : 'All logged ✓') : 'Nothing due')
+              : `${remaining} dose${remaining === 1 ? '' : 's'} to log`}
           </h1>
         </div>
         <div className="flex gap-1.5">
@@ -319,13 +331,20 @@ function Home({
         </div>
       </div>
 
+      {/* day navigator — go back a day to log a missed dose */}
+      <div className="flex items-center justify-center gap-1 bg-[#0f172a]/60 border border-[#1e293b]/80 rounded-xl p-1 self-center">
+        <button onClick={() => shiftDay(-1)} className="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/60 transition cursor-pointer" aria-label="Previous day"><ChevronLeft className="w-4 h-4" /></button>
+        <span className="px-3 text-[13px] font-bold text-slate-200 min-w-[110px] text-center flex items-center gap-1.5 justify-center"><CalendarCheck className="w-3.5 h-3.5 text-cyan-400" />{dayLabel}</span>
+        <button onClick={() => shiftDay(1)} disabled={isTodaySel} className="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/60 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer" aria-label="Next day"><ChevronRight className="w-4 h-4" /></button>
+      </div>
+
       {/* today */}
       <section>
         <h2 className="flex items-center gap-2 text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">
-          <CalendarCheck className="w-4 h-4 text-cyan-400" /> Today
+          <CalendarCheck className="w-4 h-4 text-cyan-400" /> {isTodaySel ? 'Today' : dayLabel}
         </h2>
         {dueToday.length === 0 ? (
-          <div className="bg-[#0b1222] border border-[#1e293b]/80 rounded-2xl p-6 text-center text-sm text-slate-400">Nothing scheduled for today. Enjoy the rest day.</div>
+          <div className="bg-[#0b1222] border border-[#1e293b]/80 rounded-2xl p-6 text-center text-sm text-slate-400">Nothing scheduled for this day.</div>
         ) : (
           <div className="flex flex-col gap-3">
             {dueToday.map(c => {
@@ -374,14 +393,14 @@ function Home({
         )}
       </section>
 
-      {/* Logged today */}
+      {/* Logged */}
       {(() => {
-        const dayLogs = logs.filter(l => l.date === today).slice().sort((a, b) => b.time.localeCompare(a.time));
+        const dayLogs = logs.filter(l => l.date === date).slice().sort((a, b) => b.time.localeCompare(a.time));
         if (dayLogs.length === 0) return null;
         return (
           <section>
             <h2 className="flex items-center gap-2 text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">
-              <History className="w-4 h-4 text-cyan-400" /> Logged today
+              <History className="w-4 h-4 text-cyan-400" /> Logged {isTodaySel ? 'today' : dayLabel.toLowerCase()}
             </h2>
             <div className="flex flex-col gap-2">
               {dayLogs.map(l => (
