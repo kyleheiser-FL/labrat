@@ -276,11 +276,11 @@ export default function ShopCatalogView({
             </div>
             <div className="grid grid-cols-3 gap-2">
               {usaProducts.map(p => {
-                const displayPrice = isChinaVialPricing
-                  ? (getChinaVialSellPrice(p.name, pc) || p.price)
-                  : isChinaKitPricing
+                // Always show the real customer per-vial price (admin overrides +
+                // markup, applied server-side) — never the raw inventory fallback.
+                const displayPrice = isChinaKitPricing
                   ? (getChinaKitSellPrice(p.name, pc) || p.price)
-                  : p.price;
+                  : (getChinaVialSellPrice(p.name, pc) || p.price);
                 const { size } = getProductBaseAndSize(p.name);
                 return (
                   <button
