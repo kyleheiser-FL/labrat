@@ -11,12 +11,13 @@ import {
   ShoppingBag,
   Loader2,
   Sparkles,
+  BarChart3,
   User as UserProfileIcon,
 } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { triggerHaptic } from '../lib/haptics';
 
-type Tab = 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings';
+type Tab = 'dashboard' | 'planner' | 'blood' | 'library' | 'stats' | 'shop' | 'settings';
 
 interface AppHeaderProps {
   activeTab: Tab;
@@ -211,7 +212,7 @@ export default function AppHeader({
           } else if (trackingEnabled) {
             navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Dosing</span></>, badge: tabBadges?.dashboard });
             navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Cycle</> });
-            navTabs.push({ tab: 'library', icon: <BookOpen className="w-3.5 h-3.5 shrink-0" />, label: <>Compound <span className="hidden sm:inline">Encyclopedia</span></> });
+            navTabs.push({ tab: 'stats', icon: <BarChart3 className="w-3.5 h-3.5 shrink-0" />, label: <>Stats</> });
           }
           if (!hideShop) {
             navTabs.push({ tab: 'shop', icon: <ShoppingBag className="w-3.5 h-3.5 shrink-0" />, label: 'Shop' });

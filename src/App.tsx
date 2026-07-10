@@ -46,7 +46,8 @@ import { Compound, DoseLog, DailyMetric, LibraryItem, AppNotification, SegmentVi
 import { triggerHaptic } from './lib/haptics';
 import { safeLocalStorage } from './lib/storage';
 import { getDoseScheduleForDate } from './lib/schedule';
-import CycleDashboard from './components/CycleDashboard';
+import DailyDosing from './components/DailyDosing';
+import StatsView from './components/StatsView';
 import CyclePlanner from './components/CyclePlanner';
 import PeptideLibrary from './components/PeptideLibrary';
 import BloodAnalyzer from './components/BloodAnalyzer';
@@ -194,7 +195,7 @@ const getInitialTrackingEnabled = (): boolean => {
 };
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings'>(
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'stats' | 'shop' | 'settings'>(
     () => (getInitialTrackingEnabled() ? 'dashboard' : 'shop')
   );
   const [trackingEnabled, setTrackingEnabled] = useState<boolean>(getInitialTrackingEnabled);
@@ -225,7 +226,7 @@ export default function App() {
   }, []);
 
   // Push a history entry so the hardware/gesture back button navigates between tabs
-  const navigateTab = useCallback((tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => {
+  const navigateTab = useCallback((tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'stats' | 'shop' | 'settings') => {
     window.history.pushState({ tab }, '');
     setActiveTab(tab);
   }, []);
@@ -1547,14 +1548,20 @@ export default function App() {
               className="h-full"
             >
               {activeTab === 'dashboard' && (
-                <CycleDashboard
+                <DailyDosing
                   compounds={compounds}
                   logs={logs}
                   onLogDose={handleLogDose}
                   onUndoDose={handleUndoDose}
-                  onUpdateCompoundDose={handleUpdateCompoundDose}
-                  labratTheme={labratTheme}
-                  visibility={segmentVisibility.dashboard}
+                />
+              )}
+
+              {activeTab === 'stats' && (
+                <StatsView
+                  compounds={compounds}
+                  logs={logs}
+                  onUndoDose={handleUndoDose}
+                  onOpenEncyclopedia={() => navigateTab('library')}
                 />
               )}
 
