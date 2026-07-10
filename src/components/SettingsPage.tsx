@@ -11,6 +11,7 @@ interface SettingsPageProps {
   onToggleHideShop: (hide: boolean) => void;
   trackingEnabled: boolean;
   onToggleTracking: (enabled: boolean) => void;
+  onChangeExperience?: () => void;
   segmentVisibility: SegmentVisibility;
   onSegmentChange: (page: keyof SegmentVisibility, segment: string, value: boolean) => void;
   // Notifications (state/functions lifted from CycleDashboard, live in App.tsx)
@@ -83,6 +84,7 @@ export default function SettingsPage({
   onToggleHideShop,
   trackingEnabled,
   onToggleTracking,
+  onChangeExperience,
   segmentVisibility,
   onSegmentChange,
   notificationPermission,
@@ -230,6 +232,24 @@ export default function SettingsPage({
           <p className="text-[10.5px] text-slate-500 leading-relaxed mt-2 px-3">
             New here? You're currently in shop-only mode. Flip this on whenever you're ready to start tracking cycles, doses, and biomarkers.
           </p>
+        )}
+
+        {onChangeExperience && (
+          <div className="flex items-center justify-between py-2.5 px-3 mt-1 rounded-xl hover:bg-slate-800/30 transition">
+            <div className="text-left space-y-0.5 pr-4">
+              <span className="text-xs font-bold text-slate-200">Change Experience Mode</span>
+              <span className="text-[10px] text-slate-500 block font-mono leading-relaxed">
+                Switch between Guided, Expert, or Store-only. Re-opens the experience picker.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => { triggerHaptic('light'); onChangeExperience(); }}
+              className="shrink-0 text-[11px] font-bold font-mono uppercase tracking-wide text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 px-4 py-2 rounded-lg transition cursor-pointer"
+            >
+              Change
+            </button>
+          </div>
         )}
       </div>
 

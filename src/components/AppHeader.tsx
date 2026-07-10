@@ -10,6 +10,7 @@ import {
   FlaskConical,
   ShoppingBag,
   Loader2,
+  Sparkles,
   User as UserProfileIcon,
 } from 'lucide-react';
 import { User } from 'firebase/auth';
@@ -30,6 +31,7 @@ interface AppHeaderProps {
   hideShop: boolean;
   trackingEnabled: boolean;
   tabBadges?: { dashboard: number; notifications: number };
+  experienceMode?: 'expert' | 'guided' | 'store' | null;
 }
 
 export default function AppHeader({
@@ -45,6 +47,7 @@ export default function AppHeader({
   hideShop,
   trackingEnabled,
   tabBadges,
+  experienceMode,
 }: AppHeaderProps) {
   const tabBtn = (tab: Tab, icon: React.ReactNode, label: React.ReactNode, badge?: number) => (
     <button
@@ -103,8 +106,8 @@ export default function AppHeader({
           {/* Right side controls */}
           <div className="flex items-center gap-1.5 sm:gap-2" id="header-indicators-bar">
 
-            {/* Me icon button — only meaningful once tracking features are unlocked */}
-            {trackingEnabled && (
+            {/* Me icon button — only meaningful once tracking features are unlocked (hidden in guided mode) */}
+            {trackingEnabled && experienceMode !== 'guided' && (
               <button
                 onClick={() => { triggerHaptic('light'); onSetActiveTab('blood'); }}
                 className={`flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
@@ -202,7 +205,10 @@ export default function AppHeader({
         {/* Navigation Tab Rail — Shop-first for new visitors; tracking tabs unlock via Settings */}
         {(() => {
           const navTabs: { tab: Tab; icon: React.ReactNode; label: React.ReactNode; badge?: number }[] = [];
-          if (trackingEnabled) {
+          if (experienceMode === 'guided') {
+            // Minimal, hand-holding rail — the guided surface lives on 'dashboard'.
+            navTabs.push({ tab: 'dashboard', icon: <Sparkles className="w-3.5 h-3.5 shrink-0" />, label: <>My <span className="hidden sm:inline">Protocol</span></>, badge: tabBadges?.dashboard });
+          } else if (trackingEnabled) {
             navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Checklist</span></>, badge: tabBadges?.dashboard });
             navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Cycle <span className="hidden sm:inline">Architect</span></> });
             navTabs.push({ tab: 'library', icon: <BookOpen className="w-3.5 h-3.5 shrink-0" />, label: <>Compound <span className="hidden sm:inline">Encyclopedia</span></> });

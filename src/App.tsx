@@ -53,6 +53,13 @@ import BloodAnalyzer from './components/BloodAnalyzer';
 import MembersShop from './components/MembersShop';
 import { PricingProvider } from './lib/pricingConfig';
 import SettingsPage from './components/SettingsPage';
+import ExperienceGate from './components/ExperienceGate';
+import GuidedExperience from './components/guided/GuidedExperience';
+import {
+  ExperienceMode, getStoredExperienceMode, setStoredExperienceMode,
+  matchLibraryItemsToProductNames,
+} from './lib/experience';
+import { LibraryItem } from './types';
 
 // Firebase Setup
 import { auth, db } from './firebase';
@@ -66,7 +73,7 @@ import {
   updateProfile,
   sendPasswordResetEmail
 } from 'firebase/auth';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { 
   fetchUserCompounds, 
   saveUserCompound, 
@@ -191,6 +198,25 @@ export default function App() {
     () => (getInitialTrackingEnabled() ? 'dashboard' : 'shop')
   );
   const [trackingEnabled, setTrackingEnabled] = useState<boolean>(getInitialTrackingEnabled);
+
+  // Experience mode — expert (full app) | guided (hand-holding) | store (shop only).
+  // Null means the gate hasn't been answered for this release yet.
+  const [experienceMode, setExperienceMode] = useState<ExperienceMode | null>(() => getStoredExperienceMode());
+  const [purchasedItems, setPurchasedItems] = useState<LibraryItem[]>([]);
+
+  const handleSelectExperience = useCallback((mode: ExperienceMode) => {
+    setStoredExperienceMode(mode);
+    setExperienceMode(mode);
+    if (mode === 'store') {
+      setTrackingEnabled(false);
+      safeLocalStorage.setItem('labrat_tracking_enabled', 'false');
+      setActiveTab('shop');
+    } else {
+      setTrackingEnabled(true);
+      safeLocalStorage.setItem('labrat_tracking_enabled', 'true');
+      setActiveTab('dashboard');
+    }
+  }, []);
 
   const handleToggleTracking = useCallback((enabled: boolean) => {
     setTrackingEnabled(enabled);
@@ -481,6 +507,27 @@ export default function App() {
       compounds: compoundReminders,
     }).catch(e => console.error('[push] Failed to sync push profile — reminders may not fire:', e));
   }, [user, reminderEnabled, reminderTime, compounds]);
+
+  // Guided mode: pull the user's order history and map purchased products to
+  // library compounds so we can pre-fill their protocol.
+  useEffect(() => {
+    if (experienceMode !== 'guided' || !user) { return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const snap = await getDocs(query(collection(db, 'orders'), where('userId', '==', user.uid)));
+        const names: string[] = [];
+        snap.forEach(d => {
+          const items = (d.data() as any)?.items || [];
+          items.forEach((it: any) => { if (it?.name) names.push(it.name); });
+        });
+        if (!cancelled) setPurchasedItems(matchLibraryItemsToProductNames(names));
+      } catch (e) {
+        console.warn('[guided] could not load purchases:', e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [experienceMode, user]);
 
   // Handle foreground FCM messages (app is open)
   useEffect(() => {
@@ -1056,6 +1103,18 @@ export default function App() {
     triggerNotification('Compound Scheduled', `Scheduled target parameters for ${comp.name}.`, 'success');
   };
 
+  // Batch add — used by the guided experience when generating a protocol.
+  const handleAddProtocols = (comps: Compound[]) => {
+    if (comps.length === 0) return;
+    const updated = [...compounds, ...comps];
+    setCompounds(updated);
+    safeLocalStorage.setItem('labrat_compounds', JSON.stringify(updated));
+    if (user) {
+      comps.forEach(c => saveUserCompound(user.uid, c).catch(e => console.error('[guided] save failed', e)));
+    }
+    triggerNotification('Protocol Built', `Added ${comps.length} compound${comps.length === 1 ? '' : 's'} to your plan.`, 'success');
+  };
+
   const handleUpdateCompound = (updatedComp: Compound) => {
     const updatedList = compounds.map(c => c.id === updatedComp.id ? updatedComp : c);
     setCompounds(updatedList);
@@ -1384,6 +1443,9 @@ export default function App() {
 
       <ToastContainer toasts={activeToasts} />
 
+      {/* Experience gate — everyone answers after each release before using the app */}
+      {experienceMode === null && <ExperienceGate onSelect={handleSelectExperience} />}
+
       {/* Missed Dose Modal */}
       {missedDosePrompts.length > 0 && missedDoseIdx < missedDosePrompts.length && (() => {
         const { compound, date } = missedDosePrompts[missedDoseIdx];
@@ -1455,11 +1517,23 @@ export default function App() {
         hideShop={hideShop}
         trackingEnabled={trackingEnabled}
         tabBadges={tabBadges}
+        experienceMode={experienceMode}
       />
 
       {/* Main Responsive Layout Wrapper */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 z-10 flex flex-col gap-6 overflow-hidden">
         <div className="flex-1 min-h-[300px]">
+          {experienceMode === 'guided' && activeTab !== 'shop' && activeTab !== 'settings' ? (
+            <GuidedExperience
+              compounds={compounds}
+              logs={logs}
+              purchasedItems={purchasedItems}
+              onAddProtocols={handleAddProtocols}
+              onLogDose={handleLogDose}
+              onOpenShop={() => navigateTab('shop')}
+              onOpenSettings={() => navigateTab('settings')}
+            />
+          ) : (
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -1537,6 +1611,7 @@ export default function App() {
                   onToggleHideShop={handleToggleHideShop}
                   trackingEnabled={trackingEnabled}
                   onToggleTracking={handleToggleTracking}
+                  onChangeExperience={() => { navigateTab('dashboard'); setExperienceMode(null); }}
                   segmentVisibility={segmentVisibility}
                   onSegmentChange={handleSegmentChange}
                   notificationPermission={notificationPermission}
@@ -1555,6 +1630,7 @@ export default function App() {
               )}
             </motion.div>
           </AnimatePresence>
+          )}
         </div>
       </main>
 
