@@ -207,7 +207,7 @@ export default function AppHeader({
           const navTabs: { tab: Tab; icon: React.ReactNode; label: React.ReactNode; badge?: number }[] = [];
           if (experienceMode === 'guided') {
             // Minimal, hand-holding rail — the guided surface lives on 'dashboard'.
-            navTabs.push({ tab: 'dashboard', icon: <Sparkles className="w-3.5 h-3.5 shrink-0" />, label: <>My <span className="hidden sm:inline">Protocol</span></>, badge: tabBadges?.dashboard });
+            navTabs.push({ tab: 'dashboard', icon: <Sparkles className="w-3.5 h-3.5 shrink-0" />, label: <>Home</>, badge: tabBadges?.dashboard });
           } else if (trackingEnabled) {
             navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Dosing</span></>, badge: tabBadges?.dashboard });
             navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Cycle</> });
