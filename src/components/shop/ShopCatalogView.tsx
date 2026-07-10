@@ -259,13 +259,15 @@ export default function ShopCatalogView({
         if (usaProducts.length === 0) return null;
         return (
           <div className="bg-gradient-to-r from-slate-900 via-[#0d1220] to-slate-900 border border-amber-500/25 rounded-2xl p-4 text-left">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex flex-col gap-2 mb-3">
               <div className="flex items-center gap-2">
-                <span className="text-base">⚡</span>
+                <span className="text-base shrink-0">⚡</span>
                 <span className="text-xs font-black text-white uppercase tracking-wider">Quick Ship — Retatrutide</span>
-                <span className="text-[9px] font-black text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">Same-Week Dispatch</span>
               </div>
-              <span className="text-[10px] text-slate-500">Ships same week</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[9px] font-black text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">Delivered within a week</span>
+                <span className="text-[10px] text-slate-500">No international transit wait</span>
+              </div>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {usaProducts.map(p => {

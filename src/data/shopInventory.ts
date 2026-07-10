@@ -858,7 +858,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
   {
     id: 'prod_retat_usa_10mg',
     name: "Retatrutide US Warehouse (10mg)",
-    description: "Triple GIP/GLP-1/glucagon receptor agonist. Ships from our domestic fulfillment warehouse — same-week dispatch with no international transit delays.",
+    description: "Triple GIP/GLP-1/glucagon receptor agonist. Delivered within a week from our domestic fulfillment warehouse — no international transit wait.",
     category: "USA Fast Ship",
     price: 18,
     inventory: 999
@@ -866,7 +866,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
   {
     id: 'prod_retat_usa_20mg',
     name: "Retatrutide US Warehouse (20mg)",
-    description: "Triple GIP/GLP-1/glucagon receptor agonist. Ships from our domestic fulfillment warehouse — same-week dispatch with no international transit delays.",
+    description: "Triple GIP/GLP-1/glucagon receptor agonist. Delivered within a week from our domestic fulfillment warehouse — no international transit wait.",
     category: "USA Fast Ship",
     price: 28,
     inventory: 999
@@ -874,7 +874,7 @@ export const SAMPLE_INVENTORY: ShopProduct[] = [
   {
     id: 'prod_retat_usa_30mg',
     name: "Retatrutide US Warehouse (30mg)",
-    description: "Triple GIP/GLP-1/glucagon receptor agonist. Ships from our domestic fulfillment warehouse — same-week dispatch with no international transit delays.",
+    description: "Triple GIP/GLP-1/glucagon receptor agonist. Delivered within a week from our domestic fulfillment warehouse — no international transit wait.",
     category: "USA Fast Ship",
     price: 35,
     inventory: 999
