@@ -94,7 +94,17 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
   };
 
   return (
-    <div className="max-w-2xl mx-auto flex flex-col gap-5 pb-8" id="daily-dosing">
+    <div className="relative max-w-2xl mx-auto pb-8" id="daily-dosing">
+      {/* labrat mascot watermark */}
+      <img
+        src="/labrat_hero_rat_dark.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none select-none absolute -top-6 -right-4 w-48 sm:w-64 opacity-[0.07] z-0"
+        style={{ WebkitMaskImage: 'radial-gradient(circle at 70% 30%, #000 30%, transparent 72%)', maskImage: 'radial-gradient(circle at 70% 30%, #000 30%, transparent 72%)' }}
+      />
+
+      <div className="relative z-10 flex flex-col gap-5">
       {/* header + date nav */}
       <div className="flex items-center justify-between gap-3">
         <div>
@@ -144,6 +154,7 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
           </div>
         )
       )}
+      </div>
     </div>
   );
 }
