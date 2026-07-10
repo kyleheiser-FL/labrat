@@ -224,7 +224,7 @@ export default function ProductDrawerModal({
                             <span className="text-[8px] text-orange-400 font-bold uppercase">per vial</span>
                             <span className="text-xs text-cyan-400 font-bold">${getChinaVialSellPrice(opt.name, pc) || opt.price}</span>
                             {hasUsWarehouseShipping(opt.name) && (
-                              <span className="text-[7px] font-bold mt-0.5 leading-none">🇺🇸 USA Stock</span>
+                              <span className="text-[7px] font-bold mt-0.5 leading-none">⚡ Quick Ship</span>
                             )}
                           </>
                         ) : (

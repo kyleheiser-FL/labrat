@@ -14,7 +14,8 @@ import {
   BadgeCheck,
   Search,
   UserPlus,
-  LogIn
+  LogIn,
+  Truck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, auth } from '../firebase';
@@ -1229,7 +1230,6 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           { label: '✓ Certified Source',    cls: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', certKey: 'certified_source' },
           { label: 'COAs Available',         cls: 'bg-blue-500/10 text-blue-400 border-blue-500/20', certKey: 'coas_available' },
           { label: 'SOP Verified',           cls: 'bg-purple-500/10 text-purple-300 border-purple-500/20', certKey: 'sop_verified' },
-          { label: '🇳🇴 Norway Sourced',    cls: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20' },
           { label: 'ISO 17025',              cls: darkPill, certKey: 'iso_17025' },
           { label: 'ISO 9001',               cls: darkPill, certKey: 'iso_9001' },
           { label: 'EU GMP Annex 1',         cls: darkPill, certKey: 'eu_gmp' },
@@ -1424,35 +1424,18 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         /* FULL SHOPPING MODULE - VISIBLE TO APPROVED MEMBERS OR ADMINS */
         <div className="flex flex-col gap-6" id="active-shop-interface">
           
-          {/* CHINA CUSTOMER BANNER */}
+          {/* SHIPPING INFO BANNER */}
           {(isChinaKitPricing || isChinaVialPricing) && view === 'catalog' && (
-            <div className="bg-orange-950/20 border border-orange-500/20 rounded-xl px-4 py-3 flex items-center gap-3">
-              <span className="text-2xl shrink-0">🇨🇳</span>
+            <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl px-4 py-3 flex items-center gap-3">
+              <Truck className="w-5 h-5 text-cyan-300 shrink-0" />
               <div>
-                <p className="text-xs font-bold text-orange-300">
-                  {isChinaKitPricing ? 'China Kit Pricing — 10-Vial Kits' : 'China Per-Vial Pricing'}
+                <p className="text-xs font-bold text-cyan-300">
+                  {isChinaKitPricing ? 'Kit Pricing — 10-Vial Kits' : 'Per-Vial Pricing'}
                 </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   {isChinaKitPricing
-                    ? 'Products priced per 10-vial kit. Flat rate $25 international shipping. USA warehouse items ship free.'
-                    : 'Per-vial pricing sourced from China. Flat rate $25 international shipping. USA Fast Ship items ship free.'}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* NORWAY CUSTOMER BANNER */}
-          {(isKitPricing || isApprovedVialPricing) && view === 'catalog' && (
-            <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl px-4 py-3 flex items-center gap-3">
-              <span className="text-2xl shrink-0">🇳🇴</span>
-              <div>
-                <p className="text-xs font-bold text-cyan-300">
-                  {isKitPricing ? 'Norway Kit Pricing — 10-Vial Kits' : 'Norway Per-Vial Pricing'}
-                </p>
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  {isKitPricing
-                    ? 'Products priced per 10-vial kit, sourced under Swiss GMP standards. Flat rate $30 international shipping on every order.'
-                    : 'Per-vial pricing sourced from Norway under Swiss GMP standards. Free shipping on orders of $100+, otherwise calculated at checkout.'}
+                    ? 'Products priced per 10-vial kit. Flat rate $25 international shipping. Quick Ship items ship free.'
+                    : 'Flat rate $25 international shipping. Quick Ship items ship free.'}
                 </p>
               </div>
             </div>
@@ -1463,7 +1446,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
             <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-bold text-cyan-300">Interested in Kit Pricing?</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">Order 10 vials at a time at a reduced rate, shipped directly from our Norway warehouse.</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">Order 10 vials at a time at a reduced rate, shipped directly from our warehouse.</p>
               </div>
               {!isAdminPreviewCustomer && memberProfile?.kitUpgradeRequested ? (
                 <span className="shrink-0 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-bold rounded-lg">

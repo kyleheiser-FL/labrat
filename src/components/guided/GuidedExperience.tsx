@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   Sparkles, Plus, Check, Search, ShoppingBag, Settings as SettingsIcon,
-  Droplets, Syringe as SyringeIcon, CalendarCheck, GraduationCap, ChevronRight, X, Trash2,
+  Droplets, Syringe as SyringeIcon, CalendarCheck, GraduationCap, ChevronRight, X, Trash2, RotateCcw,
 } from 'lucide-react';
 import { Compound, DoseLog } from '../../types';
 import { LibraryItem } from '../../types';
@@ -20,6 +20,7 @@ interface GuidedExperienceProps {
   theme: LabTheme;
   onAddProtocols: (comps: Compound[]) => void;
   onLogDose: (log: DoseLog) => void;
+  onUndoDose: (logId: string) => void;
   onDeleteCompound: (id: string) => void;
   onOpenShop: () => void;
   onOpenSettings: () => void;
@@ -38,7 +39,7 @@ const FREQ_LABEL: Record<string, string> = {
 };
 
 export default function GuidedExperience({
-  compounds, logs, purchasedItems, theme, onAddProtocols, onLogDose, onDeleteCompound, onOpenShop, onOpenSettings,
+  compounds, logs, purchasedItems, theme, onAddProtocols, onLogDose, onUndoDose, onDeleteCompound, onOpenShop, onOpenSettings,
 }: GuidedExperienceProps) {
   const active = compounds.filter(c => !c.isCompleted);
   const [view, setView] = useState<'home' | 'setup'>(active.length === 0 ? 'setup' : 'home');
@@ -59,6 +60,7 @@ export default function GuidedExperience({
           compounds={active}
           logs={logs}
           onLogDose={onLogDose}
+          onUndoDose={onUndoDose}
           onDeleteCompound={onDeleteCompound}
           onAddMore={() => setView('setup')}
           onOpenShop={onOpenShop}
@@ -235,11 +237,12 @@ function SetupFlow({
 
 /* ─────────────────────────── HOME ─────────────────────────── */
 function Home({
-  compounds, logs, onLogDose, onDeleteCompound, onAddMore, onOpenShop, onOpenSettings, onGuide,
+  compounds, logs, onLogDose, onUndoDose, onDeleteCompound, onAddMore, onOpenShop, onOpenSettings, onGuide,
 }: {
   compounds: Compound[];
   logs: DoseLog[];
   onLogDose: (log: DoseLog) => void;
+  onUndoDose: (logId: string) => void;
   onDeleteCompound: (id: string) => void;
   onAddMore: () => void;
   onOpenShop: () => void;
@@ -248,6 +251,11 @@ function Home({
 }) {
   const [confirmDel, setConfirmDel] = useState<string | null>(null);
   const today = todayStr();
+
+  const undoToday = (c: Compound) => {
+    const log = logs.find(l => l.compoundId === c.id && l.date === today);
+    if (log) { triggerHaptic('warning'); onUndoDose(log.id); }
+  };
   const dueToday = compounds.filter(c => getDoseScheduleForDate(c, today).isDue);
   const isLogged = (c: Compound) => logs.some(l => l.compoundId === c.id && l.date === today);
 
@@ -309,11 +317,20 @@ function Home({
                         {c.doseAmount} {c.doseUnit}{units != null ? ` · draw ${units} units` : ''}
                       </p>
                     </div>
-                    <button onClick={() => quickLog(c)} disabled={logged}
-                      className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-black uppercase tracking-wide transition cursor-pointer ${
-                        logged ? 'bg-emerald-500/15 text-emerald-400 cursor-default' : 'bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110'}`}>
-                      {logged ? <><Check className="w-4 h-4" /> Done</> : 'Log dose'}
-                    </button>
+                    {logged ? (
+                      <button onClick={() => undoToday(c)} title="Tap to undo"
+                        className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-black uppercase tracking-wide bg-emerald-500/15 text-emerald-400 hover:bg-rose-500/15 hover:text-rose-300 transition cursor-pointer group">
+                        <Check className="w-4 h-4 group-hover:hidden" />
+                        <RotateCcw className="w-4 h-4 hidden group-hover:inline" />
+                        <span className="group-hover:hidden">Done</span>
+                        <span className="hidden group-hover:inline">Undo</span>
+                      </button>
+                    ) : (
+                      <button onClick={() => quickLog(c)}
+                        className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 transition cursor-pointer">
+                        Log dose
+                      </button>
+                    )}
                   </div>
                   <div className="flex gap-2">
                     {c.type === 'peptide' && (

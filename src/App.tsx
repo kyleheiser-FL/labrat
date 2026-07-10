@@ -1531,6 +1531,7 @@ export default function App() {
               theme={labratTheme}
               onAddProtocols={handleAddProtocols}
               onLogDose={handleLogDose}
+              onUndoDose={handleUndoDose}
               onDeleteCompound={handleDeleteCompound}
               onOpenShop={() => navigateTab('shop')}
               onOpenSettings={() => navigateTab('settings')}

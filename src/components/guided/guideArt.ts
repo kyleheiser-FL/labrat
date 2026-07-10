@@ -132,6 +132,15 @@ export function sceneSvg(kind: string, o: SceneOpts = {}): string {
       return `${vialInv(0.6, 120, 0.92)}<g transform="rotate(180 120 58)">${syringe(0.55, true, 120, 58, 0.64)}</g>`;
     case 'bubbles':
       return `<g transform="rotate(180 120 88)">${syringe(0.55, true, 120, 150, 0.78)}</g><g class="lrg-a" style="animation:lrg-rise 1.3s infinite"><circle cx="120" cy="66" r="3" fill="var(--liquidHi)" opacity=".8"/></g>`;
+    case 'swap': {
+      // Syringe (dose drawn, no needle) in the centre; the used draw-needle
+      // detaching to the left, a fresh needle locking on from the right.
+      const needle = (tx: number, ty: number, rot: number, used: boolean) => `<g transform="translate(${tx} ${ty}) rotate(${rot})" opacity="${used ? 0.55 : 1}"><path d="M-4.5 0 L4.5 0 L7 -12 L-7 -12 Z" fill="var(--metalD)"/><rect x="-1.2" y="0" width="2.4" height="30" rx="1.2" fill="var(--metalD)"/><rect x="-1.2" y="0" width="1.1" height="30" fill="var(--metalHi)" opacity=".7"/><path d="M-1.2 30 L1.2 30 L0 33 Z" fill="var(--metalHi)"/></g>`;
+      return `${syringe(0.55, false, 120, 120, 0.74)}
+        <g class="lrg-a" style="transform-origin:70px 118px;animation:lrg-rise 2s ease-in-out infinite">${needle(70, 108, -28, true)}</g>
+        <path d="M84 118 q-10 4 -18 -2" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end=""/><path d="M66 116 l-3 0 l1.5 3 Z" fill="var(--muted)"/>
+        <g class="lrg-a" style="transform-origin:170px 118px;animation:lrg-attach 1.9s ease-in-out infinite">${needle(170, 106, 26, false)}<path d="M162 96 l4 -4 M164 92 l-4 4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/></g>`;
+    }
     case 'sites':
       return `<path d="M104 20 q26 -9 52 0 l9 46 q5 46 -9 78 l-52 0 q-14 -32 -9 -78 z" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/><ellipse cx="130" cy="78" rx="3.5" ry="4" fill="none" stroke="var(--muted)" stroke-width="1.4"/>${[[112, 94], [148, 94], [120, 116], [140, 116], [130, 134]].map(([x, y], n) => `<circle cx="${x}" cy="${y}" r="6.5" fill="var(--accent)" opacity=".18"/><circle cx="${x}" cy="${y}" r="6.5" fill="none" stroke="var(--accent)" stroke-width="2" class="lrg-a" style="animation:lrg-blink 1.6s ${n * 0.2}s infinite"/>`).join('')}`;
     case 'inject':

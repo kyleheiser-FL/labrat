@@ -338,23 +338,7 @@ function SourceBadge({ flags, light }: { flags: VialFlags; light: boolean }) {
   );
   return (
     <div className="absolute top-3 left-3 z-10 flex items-center gap-1">
-      {isUsaWarehouse ? (
-        <>
-          <span className="text-sm leading-none">🇨🇳</span>
-          <span className="text-sm leading-none">🇺🇸</span>
-          {chip('USA Shipped', light ? 'text-amber-800 bg-amber-50 border-amber-300' : 'text-amber-300 bg-amber-950/60 border-amber-500/30')}
-        </>
-      ) : isChina ? (
-        <>
-          <span className="text-sm leading-none">🇨🇳</span>
-          {chip('China Source', light ? 'text-red-800 bg-red-50 border-red-300' : 'text-red-300 bg-red-950/60 border-red-500/30')}
-        </>
-      ) : (
-        <>
-          <span className="text-sm leading-none">🇳🇴</span>
-          {chip('Norway Source', light ? 'text-blue-800 bg-blue-50 border-blue-300' : 'text-blue-300 bg-blue-950/60 border-blue-500/30')}
-        </>
-      )}
+      {isUsaWarehouse && chip('⚡ Quick Ship', light ? 'text-amber-800 bg-amber-50 border-amber-300' : 'text-amber-300 bg-amber-950/60 border-amber-500/30')}
     </div>
   );
 }
