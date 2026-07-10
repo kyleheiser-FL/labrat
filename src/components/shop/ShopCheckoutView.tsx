@@ -2,7 +2,7 @@ import React from 'react';
 import { MapPin, Truck, Loader2, Send, BadgeCheck, Minus, Plus } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem, ShippingOption } from '../../lib/shopTypes';
-import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getShippingOptions, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING } from '../../lib/shopHelpers';
+import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getShippingOptions, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING, cleanProductName } from '../../lib/shopHelpers';
 import { usePricingConfig } from '../../lib/pricingConfig';
 
 interface ShippingFormState {
@@ -376,7 +376,7 @@ export default function ShopCheckoutView({
               <div key={item.product.id} className="py-2.5 flex justify-between text-xs text-left">
                 <div className="text-slate-400">
                   <span className="font-extrabold text-[#22d3ee] mr-1">{item.quantity}x</span>
-                  {item.product.name}
+                  {cleanProductName(item.product.name)}
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="font-bold text-slate-200">

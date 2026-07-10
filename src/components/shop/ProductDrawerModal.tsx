@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { ShopProduct, CartItem, OrderDetail } from '../../lib/shopTypes';
-import { getSalePrice, getCleanDescription, getSecondaryBenefit, getSecondaryBenefitStyle, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, hasUsWarehouseShipping } from '../../lib/shopHelpers';
+import { getSalePrice, getCleanDescription, cleanProductName, getSecondaryBenefit, getSecondaryBenefitStyle, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, hasUsWarehouseShipping } from '../../lib/shopHelpers';
 import { fetchWholesaleBook, getProductCostPerVial, getChinaVialCost, getChineseKitWholesaleCost, type WholesaleBook } from '../../lib/wholesale';
 import { usePricingConfig } from '../../lib/pricingConfig';
 import ProductVialVisual from './ProductVialVisual';
@@ -135,7 +135,7 @@ export default function ProductDrawerModal({
                 })()}
               </div>
               <h3 className="text-lg font-black text-white leading-tight tracking-tight text-left">
-                {selectedParentProductGroup.baseName} Options
+                {cleanProductName(selectedParentProductGroup.baseName)} Options
               </h3>
             </div>
             <button
@@ -216,7 +216,7 @@ export default function ProductDrawerModal({
                             <span className="text-[8px] text-orange-400 font-bold uppercase">kit · 10 vials</span>
                             <span className="text-xs text-cyan-400 font-bold">${getChinaKitSellPrice(opt.name, pc) || opt.price}</span>
                             <span className="text-[7px] font-bold mt-0.5 leading-none">
-                              {hasUsWarehouseShipping(opt.name) ? '🇺🇸 USA Stock' : '🇨🇳 China Direct'}
+                              {hasUsWarehouseShipping(opt.name) ? '⚡ Quick Ship' : 'Ships in 2–4 wks'}
                             </span>
                           </>
                         ) : isChinaVialPricing ? (

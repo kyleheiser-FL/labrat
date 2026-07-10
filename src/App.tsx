@@ -1561,6 +1561,7 @@ export default function App() {
                   compounds={compounds}
                   logs={logs}
                   onUndoDose={handleUndoDose}
+                  onUpdateCompound={handleUpdateCompound}
                   onOpenEncyclopedia={() => navigateTab('library')}
                 />
               )}

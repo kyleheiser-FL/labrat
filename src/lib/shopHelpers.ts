@@ -353,11 +353,30 @@ export function getCategoryBadgeStyle(category: string): string {
   return CATEGORY_BADGE_STYLES[category] || 'bg-[#1e293b] text-slate-300 border-slate-700/50';
 }
 
+// Strip country-of-origin wording from a product's DISPLAY name. The raw
+// `name` is a pricing key, so never mutate it — only what the user sees.
+export function cleanProductName(name: string): string {
+  if (!name) return '';
+  return name
+    .replace(/\s*\b(china|norway)\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+\(/g, ' (')
+    .replace(/\(\s+/g, '(')
+    .trim();
+}
+
 export function getCleanDescription(desc: string): string {
   if (!desc) return '';
   let clean = desc
     .replace(/Supplied in a professional 10 vials\/kit box\./gi, 'Supplied as 1 individual high-purity 3ml research vial (price is per single vial).')
-    .replace(/Supplied as an exclusive beauty and skin radiance regulatory peptide engineered in premium 80mg kits/gi, 'Supplied as 1 individual high-purity 3ml research vial (price is per single vial).');
+    .replace(/Supplied as an exclusive beauty and skin radiance regulatory peptide engineered in premium 80mg kits/gi, 'Supplied as 1 individual high-purity 3ml research vial (price is per single vial).')
+    // Remove country-of-origin sourcing wording.
+    .replace(/\s*Sourced from certified (china|norway)[^.]*\./gi, '')
+    .replace(/\s*Ships internationally from (china|norway)[^.]*\./gi, ' Ships internationally.')
+    .replace(/\b(china|norway)\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+\./g, '.')
+    .trim();
 
   if (!clean.includes('vial') && !clean.includes('Vial') && !clean.includes('Reconstitution Solvent')) {
     clean += ' Supplied as 1 individual high-purity 3ml research vial.';

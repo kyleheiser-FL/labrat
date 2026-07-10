@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem } from '../../lib/shopTypes';
-import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING } from '../../lib/shopHelpers';
+import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING, cleanProductName } from '../../lib/shopHelpers';
 import { usePricingConfig } from '../../lib/pricingConfig';
 
 interface ShopCartViewProps {
@@ -81,7 +81,7 @@ export default function ShopCartView({
               <div key={item.product.id} className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="max-w-xs text-left">
                   <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{item.product.category}</span>
-                  <h4 className="text-sm font-bold text-white tracking-tight mt-0.5">{item.product.name}</h4>
+                  <h4 className="text-sm font-bold text-white tracking-tight mt-0.5">{cleanProductName(item.product.name)}</h4>
                   <div className="flex items-center gap-1.5 mt-1 sm:mt-0.5 flex-wrap">
                     <span className="text-xs text-cyan-400 font-semibold inline-block mt-0.5">
                       ${effectivePrice(item)}.00 {(isKitPricing || isChinaKitPricing) ? 'per kit · 10 vials' : 'per vial'}

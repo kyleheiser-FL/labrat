@@ -29,6 +29,7 @@ import {
   getChinaVialSellPrice,
   getCleanDescription,
   getCategoryBadgeStyle,
+  cleanProductName,
 } from '../../lib/shopHelpers';
 import { usePricingConfig } from '../../lib/pricingConfig';
 import { rankSearch, SearchFields } from '../../lib/search';
@@ -399,7 +400,7 @@ export default function ShopCatalogView({
                         >
                           <div className="flex-1 min-w-0 text-left">
                             <div className="font-bold text-[11px] text-white group-hover/shop-suggest:text-cyan-400 transition-colors truncate">
-                              {prod.name}
+                              {cleanProductName(prod.name)}
                             </div>
                             <div className="text-[9px] text-slate-400 truncate mt-0.5 max-w-[180px] sm:max-w-[200px]">
                               {prod.description}
@@ -714,7 +715,7 @@ export default function ShopCatalogView({
                         </div>
 
                         <h4 className="text-base font-extrabold text-slate-100 tracking-tight group-hover:text-cyan-400 transition-colors">
-                          {group.baseName}
+                          {cleanProductName(group.baseName)}
                         </h4>
 
                         <p className="text-xs text-slate-400 mt-2 leading-normal min-h-[54px] line-clamp-3">

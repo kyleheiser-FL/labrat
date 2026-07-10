@@ -295,22 +295,42 @@ export default function CyclePlanner({
         </div>
       )}
 
-      {/* Gantt Chart */}
       {/* Compound Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="compounds-list-grid">
-        {compounds.map((comp) => (
-          <CompoundCard
-            key={comp.id}
-            compound={comp}
-            logs={logs}
-            onEdit={openFormEdit}
-            onDelete={onDeleteCompound}
-            onUpdateCompound={onUpdateCompound}
-            onOpenRetroLog={handleOpenRetroLog}
-            onNavigateToTab={onNavigateToTab}
-          />
-        ))}
-      </div>
+      {compounds.length === 0 ? (
+        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl px-6 py-12 text-center flex flex-col items-center gap-4">
+          <span className="flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/12 text-cyan-400"><Plus className="w-7 h-7" /></span>
+          <div>
+            <h4 className="text-lg font-black tracking-tight text-slate-100">Build your cycle</h4>
+            <p className="text-sm text-slate-400 mt-1.5 max-w-xs mx-auto">Add your first compound — just a name, dose and how often.</p>
+          </div>
+          <button onClick={openFormNew}
+            className="flex items-center gap-2 font-black uppercase tracking-wider text-sm px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_14px_30px_-14px_rgba(34,211,238,0.7)] transition cursor-pointer">
+            <Plus className="w-4 h-4" /> Add Compound
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="compounds-list-grid">
+            {compounds.map((comp) => (
+              <CompoundCard
+                key={comp.id}
+                compound={comp}
+                logs={logs}
+                onEdit={openFormEdit}
+                onDelete={onDeleteCompound}
+                onUpdateCompound={onUpdateCompound}
+                onOpenRetroLog={handleOpenRetroLog}
+                onNavigateToTab={onNavigateToTab}
+                compact
+              />
+            ))}
+          </div>
+          <button onClick={openFormNew}
+            className="w-full flex items-center justify-center gap-2 font-black uppercase tracking-wider text-sm py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_14px_30px_-14px_rgba(34,211,238,0.7)] transition cursor-pointer">
+            <Plus className="w-5 h-5" /> Add Compound
+          </button>
+        </>
+      )}
 
       {/* Cycle History Timeline */}
       {showHelperTools && (() => {

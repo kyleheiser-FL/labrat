@@ -1,19 +1,20 @@
 import React from 'react';
 import { BarChart3, Activity, History, BookOpen, ChevronRight } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
-import CycleProgressCard from './CycleProgressCard';
+import CompoundCard from './CompoundCard';
 import AdministrationLedger from './AdministrationLedger';
 
 interface StatsViewProps {
   compounds: Compound[];
   logs: DoseLog[];
   onUndoDose: (id: string) => void;
+  onUpdateCompound: (compound: Compound) => void;
   onOpenEncyclopedia: () => void;
 }
 
 // The "drill down" tab — everything moved out of Daily & Cycle: active-level
 // curves, cycle progress, vial supply (per CycleProgressCard) and full history.
-export default function StatsView({ compounds, logs, onUndoDose, onOpenEncyclopedia }: StatsViewProps) {
+export default function StatsView({ compounds, logs, onUndoDose, onUpdateCompound, onOpenEncyclopedia }: StatsViewProps) {
   const active = compounds.filter(c => !c.isCompleted);
   const totalLogged = logs.length;
 
@@ -51,7 +52,18 @@ export default function StatsView({ compounds, logs, onUndoDose, onOpenEncyclope
           </div>
         ) : (
           <div className="grid gap-4 lg:grid-cols-2">
-            {active.map(c => <CycleProgressCard key={`stat-${c.id}`} comp={c} />)}
+            {active.map(c => (
+              <CompoundCard
+                key={`stat-${c.id}`}
+                compound={c}
+                logs={logs}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onUpdateCompound={onUpdateCompound}
+                onOpenRetroLog={() => {}}
+                hideActions
+              />
+            ))}
           </div>
         )}
       </section>

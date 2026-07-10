@@ -125,6 +125,9 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
   const [vialMl, setVialMl] = useState(DEFAULT_FORM.vialMl);
   const [reminderTime, setReminderTime] = useState('');
   const [showCalcModal, setShowCalcModal] = useState(false);
+  // Peptide mix / reconstitution tools are hidden behind a button to keep the
+  // add-compound form simple. Auto-open when editing something that has them.
+  const [showMixTools, setShowMixTools] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(-1);
   const [showAddSuccessPrompt, setShowAddSuccessPrompt] = useState(false);
@@ -146,6 +149,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       setNotes(f.notes); setColor(f.color); setSteroidForm(f.steroidForm as any);
       setPillSizeMg(f.pillSizeMg); setOilConcMgMl(f.oilConcMgMl); setVialMl(f.vialMl);
       setReminderTime(editingCompound.reminderTime || '');
+      setShowMixTools(!!f.vialSizeMg);
     } else if (prefill && open) {
       setName(prefill.name ?? ''); setNameFromLibrary(true); setNameError('');
       setType((prefill.type ?? 'compound') as any);
@@ -162,7 +166,9 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       setPillSizeMg(prefill.pillSizeMg ? prefill.pillSizeMg.toString() : '10');
       setOilConcMgMl(prefill.oilConcMgMl ? prefill.oilConcMgMl.toString() : '250');
       setVialMl(prefill.vialMl ? prefill.vialMl.toString() : '10');
+      setShowMixTools(!!prefill.vialSizeMg);
     } else {
+      setShowMixTools(false);
       setName(''); setNameFromLibrary(false); setNameError(''); setType('peptide');
       setVialSizeMg(''); setBacWaterMl(''); setDoseAmount('1'); setDoseUnit('mg');
       setFrequency('daily'); setCustomDays('3'); setStartDate(new Date().toISOString().split('T')[0]);
@@ -396,9 +402,9 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                   <div>
                     <h4 className="text-lg font-bold text-slate-100 flex items-center gap-1.5">
                       <Sparkles className="w-5 h-5 text-cyan-400" />
-                      {editingCompound ? 'Refine Active Compound Specification' : 'Formulate New Enhancer Sequence'}
+                      {editingCompound ? 'Edit Compound' : 'Add Compound'}
                     </h4>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Define standard dosages, scheduling matrices, and chemical details.</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Name it, set the dose and how often. That's it — mix tools are optional.</p>
                   </div>
                   <button type="button" onClick={onClose}
                     className="p-1 px-2 border border-[#1e293b] hover:border-slate-700 bg-[#1e293b]/45 text-slate-400 hover:text-slate-200 text-xs font-semibold rounded-lg transition"
@@ -408,7 +414,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                 <form onSubmit={handleFormSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5 col-span-2 relative">
-                      <label className="text-xs font-semibold text-slate-300">Name of Compound (e.g., Semaglutide, BPC-157)</label>
+                      <label className="text-xs font-semibold text-slate-300">Compound name (e.g. Semaglutide, BPC-157)</label>
                       <input type="text" required value={name}
                         onChange={(e) => { setName(e.target.value); setNameFromLibrary(false); setNameError(''); setShowSuggestions(true); setFocusedSuggestionIndex(-1); }}
                         onKeyDown={(e) => {
@@ -524,9 +530,20 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                     </div>
                   )}
 
-                  {type === 'peptide' && (
+                  {type === 'peptide' && !showMixTools && (
+                    <button type="button" onClick={() => { triggerHaptic('light'); setShowMixTools(true); }}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-cyan-500/8 border border-cyan-500/25 hover:bg-cyan-500/15 text-cyan-300 font-bold text-sm transition cursor-pointer"
+                      id="form-open-mix-tools">
+                      <Sparkles className="w-4 h-4" /> Peptide mix &amp; reconstitution tools
+                    </button>
+                  )}
+
+                  {type === 'peptide' && showMixTools && (
                     <div className="bg-cyan-500/5 border border-cyan-500/15 p-4 rounded-xl space-y-3.5">
-                      <span className="text-[10px] uppercase font-mono tracking-wider text-cyan-400 font-bold block">Optional Reconstitution Mapping</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] uppercase font-mono tracking-wider text-cyan-400 font-bold block">Optional Reconstitution Mapping</span>
+                        <button type="button" onClick={() => setShowMixTools(false)} className="text-[10px] text-slate-500 hover:text-slate-300 font-mono cursor-pointer">Hide</button>
+                      </div>
                       {matchedSolvent && matchedSolvent !== 'bac_water' && (
                         <div className={`rounded-xl border px-3.5 py-2.5 flex items-start gap-2.5 ${matchedSolvent === 'acetic_acid' ? 'bg-amber-950/30 border-amber-500/30' : 'bg-blue-950/30 border-blue-500/25'}`}>
                           <span className="text-base leading-none mt-0.5 shrink-0">{matchedSolvent === 'acetic_acid' ? '⚠️' : 'ℹ️'}</span>
@@ -619,7 +636,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                           </button>
                         )}
                       </div>
-                      <div className={`relative transition-all duration-300 rounded-xl ${type === 'peptide' ? 'border border-dashed border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-500/50 hover:bg-cyan-500/10 p-1' : ''}`}>
+                      <div className={`relative transition-all duration-300 rounded-xl ${type === 'peptide' && showMixTools ? 'border border-dashed border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-500/50 hover:bg-cyan-500/10 p-1' : ''}`}>
                         <div className="flex gap-1 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl pr-2 items-center">
                           <input type="number" required step="any" value={doseAmount} onChange={(e) => setDoseAmount(e.target.value)} placeholder="e.g. 250"
                             className="w-full bg-transparent border-0 rounded-l-xl py-2 px-3 text-sm text-slate-200 focus:outline-none" id="form-dose-amount-input" />
@@ -629,12 +646,12 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                           </select>
                         </div>
                       </div>
-                      {type === 'peptide' && (
+                      {type === 'peptide' && showMixTools && (
                         <button
                           type="button"
                           onClick={() => { triggerHaptic('medium'); setShowCalcModal(true); }}
                           id="form-open-recalc-helper"
-                          className="mt-2 w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/50 hover:bg-cyan-500/20 hover:border-cyan-400 text-cyan-300 hover:text-cyan-200 transition-all cursor-pointer shadow-[0_0_18px_rgba(34,211,238,0.18)] animate-pulse hover:animate-none"
+                          className="mt-2 w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/50 hover:bg-cyan-500/20 hover:border-cyan-400 text-cyan-300 hover:text-cyan-200 transition-all cursor-pointer shadow-[0_0_18px_rgba(34,211,238,0.18)]"
                         >
                           <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
                           <span className="text-xs font-bold font-mono tracking-wide">Open Peptide Mix Helper</span>

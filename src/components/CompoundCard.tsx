@@ -13,10 +13,12 @@ interface CompoundCardProps {
   onDelete: (id: string) => void;
   onUpdateCompound: (compound: Compound) => void;
   onOpenRetroLog: (compoundId: string) => void;
-  onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => void;
+  onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'stats' | 'shop' | 'settings') => void;
+  compact?: boolean;
+  hideActions?: boolean;
 }
 
-export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, onUpdateCompound, onOpenRetroLog, onNavigateToTab }: CompoundCardProps) {
+export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, onUpdateCompound, onOpenRetroLog, onNavigateToTab, compact = false, hideActions = false }: CompoundCardProps) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
   const [phaseExpanded, setPhaseExpanded] = useState(false);
@@ -108,7 +110,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
             </h4>
             <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-slate-500">{comp.type}</span>
           </div>
-          {isConfirmingDelete ? (
+          {hideActions ? null : isConfirmingDelete ? (
             <div className="flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/20 p-1.5 rounded-xl text-[10px] select-none shrink-0" id={`confirm-delete-actions-${comp.id}`}>
               <span className="text-rose-400 font-bold font-mono uppercase tracking-widest text-[9px]">Delete?</span>
               <button type="button" onClick={() => { triggerHaptic('warning'); onDelete(comp.id); setIsConfirmingDelete(false); }}
@@ -143,6 +145,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
           <div><span className="text-slate-500 block">Sequence Start</span><span className="font-mono font-semibold text-slate-300">{comp.startDate}</span></div>
         </div>
 
+        {!compact && (<>
         <div className="space-y-1.5" id={`card-progress-bar-container-${comp.id}`}>
           <div className="flex justify-between items-center text-[10px] font-mono">
             <span className="text-slate-500">Cycle Duration Progress</span>
@@ -362,6 +365,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
           );
         })()}
 
+        {!hideActions && (
         <div className="pt-2.5 border-t border-slate-800/40 mt-1 flex justify-end">
           <button type="button" onClick={() => { triggerHaptic('light'); onOpenRetroLog(comp.id); }}
             className="w-full py-2 px-3 bg-[#1e293b]/55 hover:bg-[#1e293b]/90 text-slate-300 hover:text-cyan-400 border border-slate-800 hover:border-cyan-500/30 text-[10.5px] font-extrabold uppercase tracking-wide font-mono rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
@@ -370,6 +374,8 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
             <span>Retroactive Dose Sync</span>
           </button>
         </div>
+        )}
+        </>)}
       </div>
     </div>
   );
