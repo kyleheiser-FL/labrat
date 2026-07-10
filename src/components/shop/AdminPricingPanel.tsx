@@ -69,7 +69,8 @@ export default function AdminPricingPanel() {
   // over the initial defaults — and never clobbers the admin's live edits.
   useEffect(() => {
     if (dirty) return;
-    const { markups, overrides: o } = savedConfig;
+    const markups = { ...DEFAULT_PRICING.markups, ...(savedConfig.markups || {}) };
+    const o = savedConfig.overrides || {};
     setVialPct(markups.chnVialDirPct);
     otherMarkups.current = {
       norKitPct: markups.norKitPct,
