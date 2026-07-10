@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>labrat · Ad Downloads</title>
+<style>
+  :root{--ink:#030712;--panel:#0b1222;--line:rgba(148,180,214,.16);--text:#e8eefb;--muted:#93a7c4;--cyan:#00d9ff;--blue:#1e88ff;--green:#39ff14;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:32px 18px 64px}
+  h1{font-weight:900;letter-spacing:-.03em;text-transform:uppercase;font-size:clamp(30px,7vw,52px);margin:0;
+    background:linear-gradient(100deg,#00e5ff,#2b8bff 50%,#4dff5a);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);margin:10px 0 4px}
+  .hint{color:var(--muted);font-size:14px;line-height:1.6;margin:18px 0 26px;max-width:60ch}
+  .all{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink);background:linear-gradient(120deg,var(--cyan),var(--green));padding:13px 20px;border-radius:12px;margin-bottom:28px;
+    box-shadow:0 14px 30px -14px var(--cyan)}
+  .grid{display:flex;flex-direction:column;gap:18px}
+  .card{border:1px solid var(--line);background:var(--panel);border-radius:18px;overflow:hidden}
+  .card img{width:100%;display:block;background:#060b16}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;flex-wrap:wrap}
+  .name{font-family:var(--mono);font-size:13px;color:var(--text);letter-spacing:.03em}
+  .name span{color:var(--muted)}
+  .dl{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-weight:700;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink);background:var(--cyan);padding:11px 18px;border-radius:11px;text-decoration:none;transition:transform .15s ease,filter .15s ease}
+  .dl:hover{transform:translateY(-1px);filter:brightness(1.08)}
+  .foot{color:#5f7595;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-top:30px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="sub">labrat · marketing</p>
+    <h1>Ad Downloads</h1>
+    <p class="hint">Tap <b>Download</b> under any ad to save the full-resolution PNG (2× retina). On a phone the file saves straight to your device — no long-press needed.</p>
+    <a class="all" href="labrat-ads.zip" download>⬇ Download all 5 (.zip)</a>
+
+    <div class="grid">
+      <div class="card">
+        <img src="labrat-ad-1-brand.png" alt="labrat brand ad" loading="lazy">
+        <div class="bar"><span class="name">01 · Brand hero <span>— labrat-ad-1-brand.png</span></span>
+          <a class="dl" href="labrat-ad-1-brand.png" download>⬇ Download</a></div>
+      </div>
+      <div class="card">
+        <img src="labrat-ad-2-retatrutide.png" alt="Retatrutide ad" loading="lazy">
+        <div class="bar"><span class="name">02 · Retatrutide <span>— labrat-ad-2-retatrutide.png</span></span>
+          <a class="dl" href="labrat-ad-2-retatrutide.png" download>⬇ Download</a></div>
+      </div>
+      <div class="card">
+        <img src="labrat-ad-3-klow.png" alt="Klow ad" loading="lazy">
+        <div class="bar"><span class="name">03 · Klow <span>— labrat-ad-3-klow.png</span></span>
+          <a class="dl" href="labrat-ad-3-klow.png" download>⬇ Download</a></div>
+      </div>
+      <div class="card">
+        <img src="labrat-ad-4-tirzepatide.png" alt="Tirzepatide ad" loading="lazy">
+        <div class="bar"><span class="name">04 · Tirzepatide <span>— labrat-ad-4-tirzepatide.png</span></span>
+          <a class="dl" href="labrat-ad-4-tirzepatide.png" download>⬇ Download</a></div>
+      </div>
+      <div class="card">
+        <img src="labrat-ad-5-cta.png" alt="labrat CTA ad" loading="lazy">
+        <div class="bar"><span class="name">05 · Call to action <span>— labrat-ad-5-cta.png</span></span>
+          <a class="dl" href="labrat-ad-5-cta.png" download>⬇ Download</a></div>
+      </div>
+    </div>
+
+    <p class="foot">labrat · research use only</p>
+  </div>
+</body>
+</html>
