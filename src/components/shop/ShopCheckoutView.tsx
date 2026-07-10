@@ -184,12 +184,12 @@ export default function ShopCheckoutView({
                 <div className="text-left font-sans">
                   <span className="text-[9px] uppercase font-black text-slate-500 font-mono tracking-widest block">Dispatch Hub Origin</span>
                   <span className="font-extrabold text-slate-200">
-                    {isKitPricing ? 'Oslo, Norway' : isChinaKitPricing ? 'Beijing, China' : 'Greater Tampa Bay'}
+                    Greater Tampa Bay
                   </span>
                 </div>
               </div>
               <span className="text-[9.5px] font-bold text-cyan-400 bg-cyan-950/40 border border-cyan-500/15 px-2.5 py-1 rounded-md font-mono select-none uppercase tracking-wide shrink-0">
-                {isKitPricing ? '🇳🇴 Norway Warehouse' : isChinaKitPricing ? '🇨🇳 China Warehouse' : '📍 USA Shipping Facility'}
+                📍 USA Shipping Facility
               </span>
             </div>
 
@@ -211,8 +211,8 @@ export default function ShopCheckoutView({
                     </>
                   ) : isChinaPricing ? (
                     <>
-                      <span className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest block font-mono">China — Flat Rate Shipping</span>
-                      <p className="text-xs text-slate-300 mt-0.5">A flat <span className="text-cyan-400 font-black">$25.00</span> international shipping fee applies. Orders containing only USA-warehouse items ship free.</p>
+                      <span className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest block font-mono">Flat Rate Shipping</span>
+                      <p className="text-xs text-slate-300 mt-0.5">A flat <span className="text-cyan-400 font-black">$25.00</span> shipping fee applies. Orders containing only Quick Ship items ship free.</p>
                     </>
                   ) : (
                     <>

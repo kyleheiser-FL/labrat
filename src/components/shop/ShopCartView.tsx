@@ -86,20 +86,6 @@ export default function ShopCartView({
                     <span className="text-xs text-cyan-400 font-semibold inline-block mt-0.5">
                       ${effectivePrice(item)}.00 {(isKitPricing || isChinaKitPricing) ? 'per kit · 10 vials' : 'per vial'}
                     </span>
-                    {isKitPricing && (
-                      <span className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">🇳🇴 Norway Kit</span>
-                    )}
-                    {isChinaKitPricing && (
-                      <span className="bg-red-500/10 text-red-300 border border-red-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">🇨🇳 China Kit</span>
-                    )}
-                    {isChinaVialPricing && (
-                      <span className="bg-orange-500/10 text-orange-300 border border-orange-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">🇨🇳 China Vial</span>
-                    )}
-                    {!isKitPricing && !isChinaKitPricing && !isChinaVialPricing && (
-                      <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">
-                        {item.product.category === 'Reconstitution Solvents' ? '10ml Volume' : '3ml Volume'}
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -175,12 +161,9 @@ export default function ShopCartView({
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-400 leading-normal">
-                    {isChinaOrder
-                      ? (flatShipping === 0
-                        ? 'Every item in this order ships from our USA warehouse — free shipping.'
-                        : <>China orders ship for a flat <span className="text-cyan-400 font-semibold">$25.00</span> international rate. Orders containing only USA-warehouse items ship free.</>)
-                      : <>Norway kit orders ship for a flat <span className="text-cyan-400 font-semibold">$30.00</span> regardless of order size. Carrier and method selected at dispatch.</>
-                    }
+                    {flatShipping === 0
+                      ? 'Orders containing only Quick Ship items ship free.'
+                      : <>Orders ship for a flat <span className="text-cyan-400 font-semibold">$25.00</span> rate. Orders containing only Quick Ship items ship free.</>}
                   </p>
                 </div>
               ) : (
