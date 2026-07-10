@@ -199,9 +199,7 @@ export default function ShopCartView({
                   )}
                   <div className="flex justify-between text-slate-400">
                     <span>Shipping</span>
-                    <span className={`font-semibold ${isFreeShippingEligible && !knownShipping ? 'text-emerald-400' : knownShipping ? 'text-slate-200' : 'text-slate-500 italic'}`}>
-                      {shippingDisplay}
-                    </span>
+                    <span className="font-semibold text-emerald-400">{shippingDisplay}</span>
                   </div>
                   {isFlorida ? (
                     <div className="flex justify-between text-slate-400">
