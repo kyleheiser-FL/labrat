@@ -134,9 +134,13 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
   const [addedCompoundId, setAddedCompoundId] = useState<string | null>(null);
   const [addedCompoundName, setAddedCompoundName] = useState<string | null>(null);
   const [presetVialOverride, setPresetVialOverride] = useState<string | null>(null);
+  // Q&A wizard step (0=name, 1=dose, 2=schedule, 3=optional details)
+  const [step, setStep] = useState(0);
+  const TOTAL_STEPS = 4;
 
   useEffect(() => {
     if (!open) { setShowAddSuccessPrompt(false); setAddedCompoundName(null); }
+    if (open) setStep(0);
   }, [open]);
 
   useEffect(() => {
@@ -253,6 +257,11 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // In the wizard, Enter/submit on a non-final step just advances.
+    if (step < TOTAL_STEPS - 1) {
+      if (step === 0 && !name.trim()) { setNameError('Enter a compound name first.'); return; }
+      triggerHaptic('light'); setStep(s => s + 1); return;
+    }
     if (!name.trim()) return;
 
     let finalName = name.trim();
@@ -348,6 +357,19 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
     setType('peptide'); setShowCalcModal(false); triggerHaptic('success');
   };
 
+  const goNext = () => {
+    if (step === 0 && !name.trim()) { setNameError('Enter a compound name first.'); triggerHaptic('error'); return; }
+    triggerHaptic('light'); setStep(s => Math.min(TOTAL_STEPS - 1, s + 1));
+  };
+  const goBack = () => { triggerHaptic('light'); setStep(s => Math.max(0, s - 1)); };
+
+  const STEP_META = [
+    { title: 'What are you adding?', hint: 'Type a name and pick it from the list.' },
+    { title: 'Set the dose', hint: 'How much do you take each time?' },
+    { title: 'Schedule it', hint: 'How often, and for how long?' },
+    { title: 'Finishing touches', hint: 'All optional — you can skip these.' },
+  ];
+
   if (!open || typeof window === 'undefined') return null;
 
   return (
@@ -404,18 +426,32 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                       <Sparkles className="w-5 h-5 text-cyan-400" />
                       {editingCompound ? 'Edit Compound' : 'Add Compound'}
                     </h4>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Name it, set the dose and how often. That's it — mix tools are optional.</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">One question at a time. Step {step + 1} of {TOTAL_STEPS}.</p>
                   </div>
                   <button type="button" onClick={onClose}
                     className="p-1 px-2 border border-[#1e293b] hover:border-slate-700 bg-[#1e293b]/45 text-slate-400 hover:text-slate-200 text-xs font-semibold rounded-lg transition"
                     id="close-form-btn">Close</button>
                 </div>
 
+                {/* Progress dots */}
+                <div className="flex items-center gap-1.5">
+                  {STEP_META.map((_, i) => (
+                    <div key={i} className={`h-1.5 rounded-full transition-all ${i === step ? 'w-8 bg-cyan-400' : i < step ? 'w-4 bg-cyan-600/60' : 'w-4 bg-slate-700/60'}`} />
+                  ))}
+                </div>
+
+                {/* Step heading */}
+                <div>
+                  <h5 className="text-base font-bold text-slate-100">{STEP_META[step].title}</h5>
+                  <p className="text-[11px] text-slate-400 mt-0.5">{STEP_META[step].hint}</p>
+                </div>
+
                 <form onSubmit={handleFormSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5 col-span-2 relative">
+                  {/* ── STEP 0: Name + category ── */}
+                  <div className={step === 0 ? 'space-y-4' : 'hidden'}>
+                    <div className="space-y-1.5 relative">
                       <label className="text-xs font-semibold text-slate-300">Compound name (e.g. Semaglutide, BPC-157)</label>
-                      <input type="text" required value={name}
+                      <input type="text" value={name}
                         onChange={(e) => { setName(e.target.value); setNameFromLibrary(false); setNameError(''); setShowSuggestions(true); setFocusedSuggestionIndex(-1); }}
                         onKeyDown={(e) => {
                           if (!showSuggestions || suggestions.length === 0) return;
@@ -458,19 +494,10 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                       </select>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-slate-300">Color Code (Visualizer Identity)</label>
-                      <div className="flex gap-1.5 items-center bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-2.5 h-10">
-                        <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-7 h-7 bg-transparent border-0 cursor-pointer overflow-hidden rounded shrink-0" id="form-color-picker" />
-                        <div className="flex flex-wrap gap-1 max-w-[140px] items-center">
-                          {PRESET_COLORS.map(c => (
-                            <button key={c} type="button" onClick={() => setColor(c)} className="w-3.5 h-3.5 rounded-full border border-black/40 inline-block transition hover:scale-110 cursor-pointer" style={{ backgroundColor: c }} />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
                   </div>
 
+                  {/* ── STEP 1: Dose ── */}
+                  <div className={step === 1 ? 'space-y-4' : 'hidden'}>
                   {activePresets.length > 0 && (
                     <div className="border border-[#1e293b] rounded-xl overflow-hidden" id="goal-preset-panel">
                       <div className="px-3.5 py-2.5 bg-[#0d1422]/80 border-b border-[#1e293b]/70 flex items-center justify-between">
@@ -638,7 +665,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                       </div>
                       <div className={`relative transition-all duration-300 rounded-xl ${type === 'peptide' && showMixTools ? 'border border-dashed border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-500/50 hover:bg-cyan-500/10 p-1' : ''}`}>
                         <div className="flex gap-1 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl pr-2 items-center">
-                          <input type="number" required step="any" value={doseAmount} onChange={(e) => setDoseAmount(e.target.value)} placeholder="e.g. 250"
+                          <input type="number" step="any" value={doseAmount} onChange={(e) => setDoseAmount(e.target.value)} placeholder="e.g. 250"
                             className="w-full bg-transparent border-0 rounded-l-xl py-2 px-3 text-sm text-slate-200 focus:outline-none" id="form-dose-amount-input" />
                           <select value={doseUnit} onChange={(e) => setDoseUnit(e.target.value as any)}
                             className="bg-[#1e293b] border border-slate-700/60 rounded-lg text-xs py-1 px-2 my-1 text-slate-300 focus:outline-none" id="form-dose-unit-select">
@@ -659,7 +686,12 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                         </button>
                       )}
                     </div>
+                  </div>
+                  </div>
 
+                  {/* ── STEP 2: Schedule ── */}
+                  <div className={step === 2 ? 'space-y-4' : 'hidden'}>
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Administration Frequency</label>
                       <select value={frequency} onChange={(e) => setFrequency(e.target.value as any)}
@@ -682,41 +714,65 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Cycle Active Start Date</label>
-                      <input type="date" required value={startDate} onChange={(e) => setStartDate(e.target.value)}
+                      <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
                         className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-start-date-input" />
                     </div>
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Active Duration (Weeks)</label>
-                      <input type="number" required min="1" max="52" value={durationWeeks} onChange={(e) => setDurationWeeks(parseInt(e.target.value))}
+                      <input type="number" min="1" max="52" value={durationWeeks} onChange={(e) => setDurationWeeks(parseInt(e.target.value))}
                         className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-duration-weeks-input" />
                     </div>
                   </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                      Dose Reminder Time <span className="text-[10px] text-slate-500 font-normal">(optional daily push notification)</span>
-                    </label>
-                    <input
-                      type="time"
-                      value={reminderTime}
-                      onChange={e => setReminderTime(e.target.value)}
-                      className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80"
-                    />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300">Physiological Annotations & Laboratory Notes</label>
-                    <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Insert injection guidance, site selection, titration plan..."
-                      className="w-full h-18 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/80" id="form-notes-textarea" />
+                  {/* ── STEP 3: Optional details ── */}
+                  <div className={step === 3 ? 'space-y-4' : 'hidden'}>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                        Dose reminder time <span className="text-[10px] text-slate-500 font-normal">(optional daily push)</span>
+                      </label>
+                      <input type="time" value={reminderTime} onChange={e => setReminderTime(e.target.value)}
+                        className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">Color tag</label>
+                      <div className="flex gap-1.5 items-center bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-2.5 h-10">
+                        <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-7 h-7 bg-transparent border-0 cursor-pointer overflow-hidden rounded shrink-0" id="form-color-picker" />
+                        <div className="flex flex-wrap gap-1 items-center">
+                          {PRESET_COLORS.map(c => (
+                            <button key={c} type="button" onClick={() => setColor(c)} className="w-3.5 h-3.5 rounded-full border border-black/40 inline-block transition hover:scale-110 cursor-pointer" style={{ backgroundColor: c }} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">Notes <span className="text-[10px] text-slate-500 font-normal">(optional)</span></label>
+                      <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Injection site, titration plan, anything to remember..."
+                        className="w-full h-18 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/80" id="form-notes-textarea" />
+                    </div>
                   </div>
 
-                  <div className="pt-4 border-t border-[#1e293b] flex gap-3.5 justify-end">
-                    <button type="button" onClick={onClose} className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200" id="cancel-form">Cancel</button>
-                    <button type="submit" className="px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1 cursor-pointer transition shadow-lg shadow-cyan-500/10" id="submit-form">
-                      <Save className="w-4 h-4 text-slate-950" />
-                      {editingCompound ? 'Refine Formulation' : 'Record Compound'}
+                  {/* ── Wizard navigation ── */}
+                  <div className="pt-4 border-t border-[#1e293b] flex gap-3 justify-between items-center">
+                    <button type="button" onClick={step === 0 ? onClose : goBack}
+                      className="px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-slate-200 cursor-pointer" id="wizard-back">
+                      {step === 0 ? 'Cancel' : '← Back'}
                     </button>
+                    {step < TOTAL_STEPS - 1 ? (
+                      <button type="button" onClick={goNext}
+                        className="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-sm flex items-center gap-1.5 cursor-pointer transition shadow-lg shadow-cyan-500/10" id="wizard-next">
+                        Next →
+                      </button>
+                    ) : (
+                      <button type="submit"
+                        className="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-sm flex items-center gap-1.5 cursor-pointer transition shadow-lg shadow-cyan-500/10" id="submit-form">
+                        <Save className="w-4 h-4 text-slate-950" />
+                        {editingCompound ? 'Save changes' : 'Add to cycle'}
+                      </button>
+                    )}
                   </div>
                 </form>
               </>
