@@ -141,7 +141,9 @@ export default function ShopCatalogView({
 }: ShopCatalogViewProps) {
   const pc = usePricingConfig();
   const isUnlimitedStockTier = isKitPricing || isChinaKitPricing || isChinaVialPricing || isApprovedVialPricing;
-  const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
+  // BAC water / solvents are offered only as a checkout add-on, never in the
+  // main catalog grid or category chips.
+  const categories = ['All', ...Array.from(new Set(products.map(p => p.category).filter(c => c !== 'Reconstitution Solvents')))];
 
   const isChinaTier = isChinaKitPricing || isChinaVialPricing;
 
@@ -156,6 +158,9 @@ export default function ShopCatalogView({
     // Quick Ship (Retatrutide, US warehouse) lives only in the featured strip
     // above — never in the main store grid, so it never shows twice.
     if (p.category === 'USA Fast Ship') return false;
+
+    // BAC water / solvents are a checkout add-on only, not a catalog product.
+    if (p.category === 'Reconstitution Solvents') return false;
 
     // Source restriction: China members can't see Norway-only, Norway members can't see China-only
     if (!isViewingAsAdmin) {
@@ -436,7 +441,9 @@ export default function ShopCatalogView({
             <div className="flex items-center gap-2.5 overflow-x-auto pb-1 select-none scrollbar-none">
               {categories.map(cat => {
                 const isActive = selectedCategory === cat;
-                const count = cat === 'All' ? products.length : products.filter(p => p.category === cat).length;
+                const count = cat === 'All'
+                  ? products.filter(p => p.category !== 'USA Fast Ship' && p.category !== 'Reconstitution Solvents').length
+                  : products.filter(p => p.category === cat).length;
 
                 // Icon mapping
                 let IconComponent = ShoppingBag;
