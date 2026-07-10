@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X } from 'lucide-react';
-import { Compound, DoseLog } from '../types';
+import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History } from 'lucide-react';
+import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
 import { getDoseScheduleForDate } from '../lib/schedule';
 import { triggerHaptic } from '../lib/haptics';
 
@@ -105,13 +105,13 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
 
   return (
     <div className="relative max-w-2xl mx-auto pb-8" id="daily-dosing">
-      {/* labrat mascot — bold, top-left */}
+      {/* labrat mascot — big, bold, behind the doses */}
       <img
         src="/labrat_hero_rat_dark.png"
         alt=""
         aria-hidden="true"
-        className="pointer-events-none select-none absolute -top-10 -left-10 w-52 sm:w-64 opacity-30 z-0 drop-shadow-[0_0_24px_rgba(34,211,238,0.25)]"
-        style={{ WebkitMaskImage: 'radial-gradient(circle at 35% 35%, #000 55%, transparent 82%)', maskImage: 'radial-gradient(circle at 35% 35%, #000 55%, transparent 82%)' }}
+        className="pointer-events-none select-none absolute -top-8 left-1/2 -translate-x-1/2 w-[135%] max-w-[560px] opacity-40 z-0"
+        style={{ WebkitMaskImage: 'linear-gradient(to bottom, #000 45%, transparent 92%)', maskImage: 'linear-gradient(to bottom, #000 45%, transparent 92%)' }}
       />
 
       <div className="relative z-10 flex flex-col gap-5">
@@ -181,6 +181,33 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
           );
         })()
       )}
+
+      {/* Logged today */}
+      {(() => {
+        const dayLogs = logs.filter(l => l.date === date).slice().sort((a, b) => b.time.localeCompare(a.time));
+        if (dayLogs.length === 0) return null;
+        return (
+          <section className="mt-2">
+            <h2 className="flex items-center gap-2 text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">
+              <History className="w-4 h-4 text-cyan-400" /> Logged {isToday ? 'today' : prettyDate(date).toLowerCase()}
+            </h2>
+            <div className="flex flex-col gap-2">
+              {dayLogs.map(l => (
+                <div key={l.id} className="bg-[#0f172a]/50 border border-[#1e293b]/70 rounded-xl px-4 py-2.5 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[13.5px] font-semibold text-slate-200 truncate">{l.compoundName}</p>
+                    <p className="text-[11.5px] text-slate-500 font-mono">{l.doseAmount} {l.doseUnit}{l.reconstitutedRatio ? ` · ${l.reconstitutedRatio.syringeUnits} units` : ''} · {formatTimeTo12Hour(l.time)}</p>
+                  </div>
+                  <button onClick={() => { triggerHaptic('warning'); onUndoDose(l.id); }}
+                    className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-rose-400 px-2 py-1 rounded-lg hover:bg-rose-500/10 transition cursor-pointer">
+                    <RotateCcw className="w-3.5 h-3.5" /> Undo
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
       </div>
     </div>
   );
