@@ -360,12 +360,14 @@ export default function ProductVialVisual({ name, category, theme = 'neon' }: { 
   // background, used on every theme so the vial sits directly on the card) →
   // compound studio shot → type archetype (copper → blue, normal → white,
   // solvent → clear) → procedural render.
-  const archetype = isSolvent ? ARCHETYPE_PHOTOS.solvent : isCopper ? ARCHETYPE_PHOTOS.copper : ARCHETYPE_PHOTOS.white;
   const cSlug = compoundPhotoSlug(name);
+  // Only use a *compound-specific* photo. When one doesn't exist we render the
+  // procedural vial (which draws the compound's own name + correct powder color)
+  // rather than a generic archetype photo that looks identical across products.
   const photo = PRODUCT_PHOTOS[productPhotoSlug(name)]
     || PRODUCT_PHOTOS[`_compound-${cSlug}-cutout`]
     || PRODUCT_PHOTOS[`_compound-${cSlug}`]
-    || archetype;
+    || null;
 
   const glowClass = isSolvent ? 'labrat-real-vial-visual--solvent'
     : isChina ? 'labrat-real-vial-visual--china'

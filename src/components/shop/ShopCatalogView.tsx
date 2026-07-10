@@ -153,6 +153,10 @@ export default function ShopCatalogView({
     const matchesSearch = !searchMatchIds || searchMatchIds.has(p.id);
     if (!matchesCategory || !matchesSearch) return false;
 
+    // Quick Ship (Retatrutide, US warehouse) lives only in the featured strip
+    // above — never in the main store grid, so it never shows twice.
+    if (p.category === 'USA Fast Ship') return false;
+
     // Source restriction: China members can't see Norway-only, Norway members can't see China-only
     if (!isViewingAsAdmin) {
       if (isChinaTier && p.sourceRestriction === 'norway') return false;
@@ -249,8 +253,8 @@ export default function ShopCatalogView({
         </div>
       )}
 
-      {/* USA Fast Ship — featured strip for China tier members */}
-      {(isChinaVialPricing || isChinaKitPricing) && (() => {
+      {/* Quick Ship — featured strip (all members + admin) */}
+      {(isChinaVialPricing || isChinaKitPricing || isViewingAsAdmin) && (() => {
         const usaProducts = products.filter(p => p.category === 'USA Fast Ship');
         if (usaProducts.length === 0) return null;
         return (
