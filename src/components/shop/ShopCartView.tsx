@@ -42,8 +42,8 @@ export default function ShopCartView({
   const effectivePrice = (item: CartItem) =>
     isKitPricing ? (getKitSellPrice(item.product.name, pc) || item.product.price) :
     isChinaKitPricing ? (getChinaKitSellPrice(item.product.name, pc) || item.product.price) :
-    isChinaVialPricing ? (getChinaVialSellPrice(item.product.name, pc) || getSalePrice(item.product.price, item.product.name, pc)) :
-    getSalePrice(item.product.price, item.product.name, pc);
+    // Everyone else (customers + admin) is on the single per-vial price.
+    (getChinaVialSellPrice(item.product.name, pc) || getSalePrice(item.product.price, item.product.name, pc));
   return (
     <div id="shop-cart-view" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

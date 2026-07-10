@@ -262,9 +262,7 @@ export default function ShopCheckoutView({
                       ? (getKitSellPrice(item.product.name, pc) || item.product.price)
                       : isChinaKitPricing
                       ? (getChinaKitSellPrice(item.product.name, pc) || item.product.price)
-                      : isChinaVialPricing
-                      ? (getChinaVialSellPrice(item.product.name, pc) || getSalePrice(item.product.price, item.product.name, pc))
-                      : getSalePrice(item.product.price, item.product.name, pc)) * item.quantity}
+                      : (getChinaVialSellPrice(item.product.name, pc) || getSalePrice(item.product.price, item.product.name, pc))) * item.quantity}
                   </span>
                 </div>
               </div>

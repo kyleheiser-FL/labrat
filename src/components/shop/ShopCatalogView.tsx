@@ -747,23 +747,15 @@ export default function ShopCatalogView({
                               {(isKitPricing || isChinaKitPricing) ? `Kit Price · 10 vials (${getProductBaseAndSize(activeProduct.name).size || 'each'})` : `Research Price (${getProductBaseAndSize(activeProduct.name).size || 'each'})`}
                             </span>
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              {isKitPricing ? (
-                                <span className="text-sm font-black text-cyan-400">
-                                  ${getKitSellPrice(activeProduct.name, pc) || activeProduct.price}.00
-                                </span>
-                              ) : isChinaKitPricing ? (
-                                <span className="text-sm font-black text-cyan-400">
-                                  ${getChinaKitSellPrice(activeProduct.name, pc) || activeProduct.price}.00
-                                </span>
-                              ) : isChinaVialPricing ? (
-                                <span className="text-sm font-black text-cyan-400">
-                                  ${getChinaVialSellPrice(activeProduct.name, pc) || activeProduct.price}.00
-                                </span>
-                              ) : (
-                                <span className="text-sm font-black text-cyan-400">
-                                  ${getSalePrice(activeProduct.price, activeProduct.name, pc)}.00
-                                </span>
-                              )}
+                              {/* Single price model: kit tiers use kit sell price, everyone
+                                  else (customers + admin) shows the customer per-vial price. */}
+                              <span className="text-sm font-black text-cyan-400">
+                                ${(isKitPricing
+                                    ? getKitSellPrice(activeProduct.name, pc)
+                                    : isChinaKitPricing
+                                    ? getChinaKitSellPrice(activeProduct.name, pc)
+                                    : getChinaVialSellPrice(activeProduct.name, pc)) || activeProduct.price}.00
+                              </span>
                             </div>
                           </div>
 

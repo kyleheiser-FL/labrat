@@ -1025,9 +1025,7 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
         ? (getKitSellPrice(item.product.name, pricingConfig) || item.product.price)
         : isChinaKitPricing
         ? (getChinaKitSellPrice(item.product.name, pricingConfig) || item.product.price)
-        : isChinaVialPricing
-        ? (getChinaVialSellPrice(item.product.name, pricingConfig) || getSalePrice(item.product.price, item.product.name, pricingConfig))
-        : getSalePrice(item.product.price, item.product.name, pricingConfig);
+        : (getChinaVialSellPrice(item.product.name, pricingConfig) || getSalePrice(item.product.price, item.product.name, pricingConfig));
       return acc + price * item.quantity;
     }, 0);
     return { totalQty, subtotal };

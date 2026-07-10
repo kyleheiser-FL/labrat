@@ -219,17 +219,13 @@ export default function ProductDrawerModal({
                               {hasUsWarehouseShipping(opt.name) ? '⚡ Quick Ship' : 'Ships in 2–4 wks'}
                             </span>
                           </>
-                        ) : isChinaVialPricing ? (
+                        ) : (
                           <>
                             <span className="text-[8px] text-orange-400 font-bold uppercase">per vial</span>
                             <span className="text-xs text-cyan-400 font-bold">${getChinaVialSellPrice(opt.name, pc) || opt.price}</span>
                             {hasUsWarehouseShipping(opt.name) && (
                               <span className="text-[7px] font-bold mt-0.5 leading-none">⚡ Quick Ship</span>
                             )}
-                          </>
-                        ) : (
-                          <>
-                            <span className="text-xs text-cyan-400 font-bold">${getSalePrice(opt.price, opt.name, pc)}</span>
                           </>
                         )}
                       </div>
@@ -350,9 +346,7 @@ export default function ProductDrawerModal({
                 ? (getKitSellPrice(activeOpt.name, pc) || activeOpt.price)
                 : isChinaKitPricing
                 ? (getChinaKitSellPrice(activeOpt.name, pc) || activeOpt.price)
-                : isChinaVialPricing
-                ? (getChinaVialSellPrice(activeOpt.name, pc) || activeOpt.price)
-                : getSalePrice(activeOpt.price, activeOpt.name, pc);
+                : (getChinaVialSellPrice(activeOpt.name, pc) || activeOpt.price);
               const totalSum = activePrice * drawerQuantity;
               const canAdd = true;
               const totalLabel = 'Estimated Total (Research Price)';
