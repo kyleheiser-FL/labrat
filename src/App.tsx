@@ -1,4 +1,3 @@
-import { LiveChat } from './components/LiveChat';
 import AiAssistant from './components/AiAssistant';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AppHeader from './components/AppHeader';
@@ -1657,7 +1656,6 @@ export default function App() {
       <FirstBootThemePicker open={showFirstBootThemePicker} onSelectTheme={applyThemeSelection} />
       <AppearanceModal open={showAppearanceModal} onClose={() => setShowAppearanceModal(false)} currentTheme={labratTheme} onSelectTheme={applyThemeSelection} />
       <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} onNotification={triggerNotification} onSignUpSuccess={(u) => setUser(u as any)} initialMode={authModalMode} />
-      {activeTab === 'shop' && <LiveChat />}
       <AiAssistant
         compounds={compounds}
         onAddCompound={handleAiAddCompound}

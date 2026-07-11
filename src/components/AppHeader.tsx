@@ -122,6 +122,19 @@ export default function AppHeader({
               </button>
             )}
 
+            {/* Messenger chat — always available in the header (was a floating bubble) */}
+            <button
+              onClick={() => { triggerHaptic('light'); window.location.href = 'https://m.me/1188568744330200'; }}
+              className="flex items-center justify-center p-2 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
+              aria-label="Chat on Messenger"
+              title="Chat on Messenger"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2C7.373 2 2 7.101 2 13.4c0 3.426 1.466 6.497 3.845 8.663a.93.93 0 0 1 .308.654l.062 2.04c.02.65.697 1.074 1.283.8l2.273-1.006a.93.93 0 0 1 .622-.044A13.44 13.44 0 0 0 14 24.8c6.627 0 12-5.101 12-11.4C26 7.101 20.627 2 14 2z" fill="#0099FF" />
+                <path d="M7.6 16.8 11.3 11.1l3.3 2.4 3.5-2.4 3.7 5.7-3.7-2.4-3.5 2.5-3.3-2.5z" fill="#fff" />
+              </svg>
+            </button>
+
             {/* Settings button with unread notification badge */}
             <button
               onClick={() => { triggerHaptic('light'); onSetActiveTab('settings'); }}
