@@ -2311,9 +2311,14 @@ html[data-labrat-theme="clinical-light"] #experience-gate .border-\[\#1e293b\]\/
 
 /* Dark panel backgrounds → light */
 html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/30,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/40,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/50,
 html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/60,
 html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/70,
 html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/75,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/80,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0f172a\]\/95,
 html[data-labrat-theme="clinical-light"] .bg-\[\#0b1329\],
 html[data-labrat-theme="clinical-light"] .bg-\[\#0f1624\],
 html[data-labrat-theme="clinical-light"] .bg-\[\#030712\]\/50,
@@ -2325,6 +2330,22 @@ html[data-labrat-theme="clinical-light"] .bg-slate-900\/50,
 html[data-labrat-theme="clinical-light"] .bg-slate-800,
 html[data-labrat-theme="clinical-light"] .bg-slate-800\/30,
 html[data-labrat-theme="clinical-light"] .bg-slate-800\/70 {
+  background-color: rgba(241, 245, 249, 0.90) !important;
+}
+
+/* Remaining dark panel/card surfaces + opacity variants → light so nothing
+   stays dark-on-light across the app. */
+html[data-labrat-theme="clinical-light"] .bg-\[\#0b1329\]\/40,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0b1329\]\/70,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0b1329\]\/95,
+html[data-labrat-theme="clinical-light"] .bg-\[\#030712\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#030712\]\/60,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0c1322\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#0d1422\]\/40,
+html[data-labrat-theme="clinical-light"] .bg-\[\#0d1422\]\/80,
+html[data-labrat-theme="clinical-light"] .bg-\[\#070d1a\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#070d19\],
+html[data-labrat-theme="clinical-light"] .bg-\[\#0b1222\]\/70 {
   background-color: rgba(241, 245, 249, 0.90) !important;
 }
 
