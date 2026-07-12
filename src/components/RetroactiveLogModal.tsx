@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { localDateISO } from '../lib/date';
 import { createPortal } from 'react-dom';
 import { History, Info, Clock, Trash2 } from 'lucide-react';
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
@@ -22,7 +23,7 @@ function getDatesForFrequency(start: string, end: string, freq: 'daily' | 'eod' 
   if (curr > last) return [];
   let count = 0;
   while (curr <= last && count < 200) {
-    dates.push(curr.toISOString().split('T')[0]);
+    dates.push(localDateISO(curr));
     count++;
     if (freq === 'daily') curr.setDate(curr.getDate() + 1);
     else if (freq === 'eod') curr.setDate(curr.getDate() + 2);
@@ -50,16 +51,16 @@ function calcQtyText(comp: Compound): string | undefined {
 
 export default function RetroactiveLogModal({ compound, logs, onLogDose, onBatchLogDoses, onUndoDose, onUpdateCompound, onClose }: RetroactiveLogModalProps) {
   const [retroTab, setRetroTab] = useState<'single' | 'batch'>('single');
-  const [retroSingleDate, setRetroSingleDate] = useState(new Date().toISOString().split('T')[0]);
+  const [retroSingleDate, setRetroSingleDate] = useState(localDateISO());
   const [retroSingleTime, setRetroSingleTime] = useState('08:00');
   const [retroSingleAmount, setRetroSingleAmount] = useState('');
   const [retroSingleUnits, setRetroSingleUnits] = useState('');
   const [retroBatchStart, setRetroBatchStart] = useState(() => {
     const d = new Date();
     d.setDate(d.getDate() - 7);
-    return d.toISOString().split('T')[0];
+    return localDateISO(d);
   });
-  const [retroBatchEnd, setRetroBatchEnd] = useState(new Date().toISOString().split('T')[0]);
+  const [retroBatchEnd, setRetroBatchEnd] = useState(localDateISO());
   const [retroBatchFreq, setRetroBatchFreq] = useState<'daily' | 'eod' | 'twice_weekly' | 'weekly'>('daily');
 
   useEffect(() => {

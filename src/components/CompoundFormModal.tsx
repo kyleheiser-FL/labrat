@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { localDateISO } from '../lib/date';
 import { createPortal } from 'react-dom';
 import { Plus, Save, Sparkles, CheckCircle, History, ArrowLeftRight, Zap } from 'lucide-react';
 import { Compound, LibraryItem } from '../types';
@@ -52,7 +53,7 @@ const DEFAULT_FORM = {
   vialSizeMg: '', bacWaterMl: '',
   doseAmount: '1', doseUnit: 'mg' as 'mcg' | 'mg' | 'IU' | 'ml',
   frequency: 'daily' as 'daily' | 'eod' | 'twice_weekly' | 'weekly' | 'custom',
-  customDays: '3', startDate: new Date().toISOString().split('T')[0],
+  customDays: '3', startDate: localDateISO(),
   durationWeeks: 8, notes: '', color: PRESET_COLORS[0],
   steroidForm: 'oil' as 'oil' | 'pill', pillSizeMg: '10', oilConcMgMl: '250', vialMl: '10',
 };
@@ -164,7 +165,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       setDoseUnit((prefill.doseUnit ?? 'mg') as any);
       setFrequency((prefill.frequency ?? 'daily') as any);
       setCustomDays(prefill.customDays ? prefill.customDays.toString() : '3');
-      setStartDate(prefill.startDate ?? new Date().toISOString().split('T')[0]);
+      setStartDate(prefill.startDate ?? localDateISO());
       setDurationWeeks(prefill.durationWeeks ?? 8);
       setNotes(prefill.notes ?? ''); setColor(prefill.color ?? PRESET_COLORS[0]);
       setSteroidForm((prefill.steroidForm ?? 'oil') as any);
@@ -176,7 +177,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
       setShowMixTools(false);
       setName(''); setNameFromLibrary(false); setNameError(''); setType('peptide');
       setVialSizeMg(''); setBacWaterMl(''); setDoseAmount('1'); setDoseUnit('mg');
-      setFrequency('daily'); setCustomDays('3'); setStartDate(new Date().toISOString().split('T')[0]);
+      setFrequency('daily'); setCustomDays('3'); setStartDate(localDateISO());
       setDurationWeeks(8); setNotes(''); setColor(PRESET_COLORS[0]);
       setSteroidForm('oil'); setPillSizeMg('10'); setOilConcMgMl('250'); setVialMl('10');
       setReminderTime('');
@@ -251,7 +252,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
   const resetForm = () => {
     setName(''); setNameFromLibrary(false); setNameError(''); setType('peptide');
     setVialSizeMg(''); setBacWaterMl(''); setDoseAmount('1'); setDoseUnit('mg');
-    setFrequency('daily'); setCustomDays('3'); setStartDate(new Date().toISOString().split('T')[0]);
+    setFrequency('daily'); setCustomDays('3'); setStartDate(localDateISO());
     setDurationWeeks(8); setNotes(''); setColor(PRESET_COLORS[0]);
     setSteroidForm('oil'); setPillSizeMg('10'); setOilConcMgMl('250'); setVialMl('10');
   };

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { localDateISO } from '../lib/date';
 import {
   Plus, Trash2, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
   Info, Activity, Shield, Apple, Sun, Heart, CheckSquare, History, Clock,
@@ -83,7 +84,7 @@ export default function CyclePlanner({
   };
 
   const applyTemplate = (t: { name: string; compounds: Compound[] }) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = localDateISO();
     t.compounds.forEach(c => {
       onAddCompound({ ...c, id: `tmpl-${Date.now()}-${Math.random().toString(36).slice(2)}`, startDate: today, isCompleted: false });
     });
@@ -363,7 +364,7 @@ export default function CyclePlanner({
                         <div className="flex gap-3 mt-1 text-[10px] font-mono text-slate-500">
                           <span>{c.startDate}</span>
                           <span>→</span>
-                          <span>{end.toISOString().split('T')[0]}</span>
+                          <span>{localDateISO(end)}</span>
                           <span className="text-slate-600">·</span>
                           <span>{c.durationWeeks}wk · {c.doseAmount}{c.doseUnit} {c.frequency.replace('_', ' ')}</span>
                         </div>
@@ -408,7 +409,7 @@ export default function CyclePlanner({
                 <div className="space-y-3">
                   {pctCandidates.map((comp) => {
                     const endDate = getEndDate(comp.startDate, comp.durationWeeks);
-                    const endDateStr = endDate ? endDate.toISOString().split('T')[0] : comp.startDate;
+                    const endDateStr = endDate ? localDateISO(endDate) : comp.startDate;
                     return (
                       <div key={`pct-sugg-${comp.id}`} className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 hover:border-indigo-500/30 transition-colors" id={`pct-row-container-${comp.id}`}>
                         <div className="space-y-1">
@@ -497,7 +498,7 @@ export default function CyclePlanner({
                     <div className="space-y-1 flex-1 text-left">
                       <span className={`text-[9px] font-mono font-bold tracking-wider uppercase block ${suite.themeColorText}`}>{suite.category}</span>
                       <span className="text-xs font-extrabold text-slate-200 block">{suite.title}</span>
-                      <button type="button" onClick={() => onAddCompound({ id: `supp-${suite.id}-${Date.now()}`, ...suite.compoundPreset, startDate: new Date().toISOString().split('T')[0] } as any)}
+                      <button type="button" onClick={() => onAddCompound({ id: `supp-${suite.id}-${Date.now()}`, ...suite.compoundPreset, startDate: localDateISO() } as any)}
                         className={`text-[10px] px-2.5 py-0.5 rounded-lg border font-bold transition cursor-pointer inline-block ${suite.themeColorBtn}`}
                         id={`add-preset-${suite.id}-btn`}>+ Add Preset</button>
                     </div>

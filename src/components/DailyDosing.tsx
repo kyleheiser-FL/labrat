@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { localDateISO } from '../lib/date';
 import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History } from 'lucide-react';
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
 import { getDoseScheduleForDate } from '../lib/schedule';
@@ -20,7 +21,7 @@ function syringeUnits(c: Compound): number | undefined {
   const mcg = c.doseUnit === 'mg' ? c.doseAmount * 1000 : c.doseAmount;
   return Math.round((mcg / ((c.vialSizeMg * 1000) / (c.bacWaterMl * 100))) * 10) / 10;
 }
-const iso = (d: Date) => d.toISOString().split('T')[0];
+const iso = (d: Date) => localDateISO(d);
 const prettyDate = (s: string) => {
   const today = iso(new Date());
   if (s === today) return 'Today';

@@ -7,6 +7,7 @@
 //   'guided' → the hand-holding experience (auto protocols + how-to guides)
 //   'store'  → shop only, no tracking
 import { PEPTIDE_LIBRARY } from '../data/peptides';
+import { localDateISO } from './date';
 import { PEPTIDE_GOAL_PRESETS, STEROID_GOAL_PRESETS, GoalPreset } from '../data/goalPresets';
 import { LibraryItem, Compound } from '../types';
 import { safeLocalStorage } from './storage';
@@ -95,7 +96,7 @@ export interface GeneratedProtocol {
 export function deriveProtocol(item: LibraryItem, intensity: Intensity, index = 0): GeneratedProtocol {
   const tier = INTENSITY_TIERS.find(t => t.key === intensity) || INTENSITY_TIERS[1];
   const preset = baselinePreset(item);
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateISO();
   const type: Compound['type'] = item.deliveryForm === 'oil' ? 'steroid' : item.deliveryForm === 'pill' ? 'supplement' : 'peptide';
 
   if (preset) {

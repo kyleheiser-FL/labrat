@@ -1,4 +1,5 @@
 import AiAssistant from './components/AiAssistant';
+import { localDateISO } from './lib/date';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AppHeader from './components/AppHeader';
 import UpdateBanner from './components/UpdateBanner';
@@ -101,7 +102,7 @@ const SEED_COMPOUNDS: Compound[] = [
     doseAmount: 250,
     doseUnit: 'mcg',
     frequency: 'daily',
-    startDate: new Date().toISOString().split('T')[0],
+    startDate: localDateISO(),
     durationWeeks: 8,
     color: '#06b6d4',
     notes: 'Primary healing peptide for high structural tendon repair. Morning dosage injection systemically.',
@@ -116,7 +117,7 @@ const SEED_COMPOUNDS: Compound[] = [
     doseAmount: 2.5,
     doseUnit: 'mg',
     frequency: 'twice_weekly',
-    startDate: new Date().toISOString().split('T')[0],
+    startDate: localDateISO(),
     durationWeeks: 6,
     color: '#10b981',
     notes: 'Copper peptide formulation to promote deep cellular vitality and hair growth multipliers.',
@@ -554,7 +555,7 @@ export default function App() {
     const schedule = () => {
       timerId = setTimeout(() => {
         try {
-          const todayStr = new Date().toISOString().split('T')[0];
+          const todayStr = localDateISO();
           const guardKey = `labrat_reminder_fired_${todayStr}`;
           if (safeLocalStorage.getItem(guardKey) !== 'true') {
             firePhysicalNotification();
@@ -582,7 +583,7 @@ export default function App() {
       if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
       const delay = next.getTime() - now.getTime();
       const t = setTimeout(() => {
-        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStr = localDateISO();
         const guardKey = `labrat_comp_reminder_${comp.id}_${todayStr}`;
         if (safeLocalStorage.getItem(guardKey) === 'true') return;
         fireOSNotification(
@@ -602,7 +603,7 @@ export default function App() {
   const [missedDoseIdx, setMissedDoseIdx] = useState(0);
 
   useEffect(() => {
-    const checkKey = 'labrat_missed_check_' + new Date().toISOString().split('T')[0];
+    const checkKey = 'labrat_missed_check_' + localDateISO();
     if (safeLocalStorage.getItem(checkKey) === 'true') return;
     const today = new Date();
     const prompts: { compound: Compound; date: string }[] = [];
@@ -611,7 +612,7 @@ export default function App() {
       for (let d = 1; d <= 3; d++) {
         const checkDate = new Date(today);
         checkDate.setDate(today.getDate() - d);
-        const dateStr = checkDate.toISOString().split('T')[0];
+        const dateStr = localDateISO(checkDate);
         const startDate = new Date(comp.startDate + 'T00:00:00');
         if (checkDate < startDate) continue;
         const endDate = new Date(startDate);
@@ -1025,7 +1026,7 @@ export default function App() {
       const timeNow = `${currentHour}:${currentMin}`;
 
       if (timeNow >= reminderTimeStr) {
-        const todayStr = now.toISOString().split('T')[0];
+        const todayStr = localDateISO(now);
         const lastAlerted = safeLocalStorage.getItem('labrat_last_alert_date');
 
         if (lastAlerted !== todayStr) {
@@ -1144,7 +1145,7 @@ export default function App() {
       doseUnit,
       frequency,
       customDays: args?.customDays ? Number(args.customDays) : undefined,
-      startDate: new Date().toISOString().split('T')[0],
+      startDate: localDateISO(),
       durationWeeks: Number(args?.durationWeeks) || 8,
       color: AI_COMPOUND_COLORS[compounds.length % AI_COMPOUND_COLORS.length],
       vialSizeMg: args?.vialSizeMg ? Number(args.vialSizeMg) : undefined,
@@ -1180,7 +1181,7 @@ export default function App() {
   const handleAiLogDose = (name: string, date?: string): boolean => {
     const comp = findActiveCompoundByName(name);
     if (!comp) return false;
-    const dateStr = (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) ? date : new Date().toISOString().split('T')[0];
+    const dateStr = (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) ? date : localDateISO();
     // Already logged that day — treat as a no-op success rather than a duplicate.
     if (logs.some(l => l.compoundId === comp.id && l.date === dateStr)) return true;
     const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -1418,7 +1419,7 @@ export default function App() {
 
   // Badge counts for tab nav — recomputed whenever compounds or logs change
   const tabBadges = useMemo(() => {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = localDateISO();
     const active = compounds.filter(c => !c.isCompleted);
 
     // Only count today's scheduled-but-not-yet-logged doses

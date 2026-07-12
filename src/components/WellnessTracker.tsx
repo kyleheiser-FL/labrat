@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { localDateISO } from '../lib/date';
 import { Activity, History, Weight, Trash2, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { DailyMetric } from '../types';
 import { triggerHaptic } from '../lib/haptics';
@@ -10,7 +11,7 @@ interface WellnessTrackerProps {
 }
 
 export default function WellnessTracker({ metrics, onSaveMetrics, onDeleteMetric }: WellnessTrackerProps) {
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = localDateISO();
   const [wellnessDate, setWellnessDate] = useState(todayStr);
   const [weight, setWeight] = useState('');
   const [mood, setMood] = useState(3);

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { localDateISO } from '../../lib/date';
 import {
   Sparkles, Plus, Check, Search, ShoppingBag, Settings as SettingsIcon,
   Droplets, Syringe as SyringeIcon, CalendarCheck, GraduationCap, ChevronLeft, ChevronRight, X, Trash2, RotateCcw, History,
@@ -26,7 +27,7 @@ interface GuidedExperienceProps {
   onOpenSettings: () => void;
 }
 
-const todayStr = () => new Date().toISOString().split('T')[0];
+const todayStr = () => localDateISO();
 
 function syringeUnits(c: Compound): number | undefined {
   if (!c.vialSizeMg || !c.bacWaterMl) return undefined;
@@ -255,12 +256,12 @@ function Home({
   const [date, setDate] = useState(todayStr());
   const isTodaySel = date === todayStr();
   const shiftDay = (n: number) => {
-    const d = new Date(date + 'T00:00:00'); d.setDate(d.getDate() + n); setDate(d.toISOString().split('T')[0]); triggerHaptic('light');
+    const d = new Date(date + 'T00:00:00'); d.setDate(d.getDate() + n); setDate(localDateISO(d)); triggerHaptic('light');
   };
   const dayLabel = (() => {
     if (isTodaySel) return 'Today';
     const y = new Date(); y.setDate(y.getDate() - 1);
-    if (date === y.toISOString().split('T')[0]) return 'Yesterday';
+    if (date === localDateISO(y)) return 'Yesterday';
     return new Date(date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
   })();
 

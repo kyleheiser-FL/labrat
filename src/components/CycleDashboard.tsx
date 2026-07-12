@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { localDateISO } from '../lib/date';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Activity, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
@@ -35,7 +36,7 @@ export default function CycleDashboard({
   labratTheme = 'neon',
   visibility = { schedule: true, history: true }
 }: CycleDashboardProps) {
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = localDateISO();
   const [selectedDate, setSelectedDate] = useState(todayStr);
 
   const [showManualLog, setShowManualLog] = useState(false);
@@ -204,7 +205,7 @@ export default function CycleDashboard({
     for (let d = 1; d <= 7; d++) {
       const dt = new Date(todayStr + 'T00:00:00');
       dt.setDate(dt.getDate() - d);
-      const dateStr = dt.toISOString().split('T')[0];
+      const dateStr = localDateISO(dt);
       compounds.filter(c => !c.isCompleted).forEach(comp => {
         const { isDue, weekNo } = getDoseScheduleForDate(comp, dateStr);
         if (isDue && !logs.some(l => l.compoundId === comp.id && l.date === dateStr)) {
@@ -426,7 +427,7 @@ export default function CycleDashboard({
                     onClick={() => {
                       const prev = new Date(selectedDate + 'T00:00:00');
                       prev.setDate(prev.getDate() - 1);
-                      setSelectedDate(prev.toISOString().split('T')[0]);
+                      setSelectedDate(localDateISO(prev));
                     }}
                     className="py-1.5 px-3 bg-[#1e293b] hover:bg-slate-800 border border-slate-700/60 rounded-xl text-xs font-semibold text-slate-300 transition cursor-pointer"
                     id="prev-day-btn"
@@ -444,7 +445,7 @@ export default function CycleDashboard({
                     onClick={() => {
                       const next = new Date(selectedDate + 'T00:00:00');
                       next.setDate(next.getDate() + 1);
-                      setSelectedDate(next.toISOString().split('T')[0]);
+                      setSelectedDate(localDateISO(next));
                     }}
                     className="py-1.5 px-3 bg-[#1e293b] hover:bg-slate-800 border border-slate-700/60 rounded-xl text-xs font-semibold text-slate-300 transition cursor-pointer"
                     id="next-day-btn"
