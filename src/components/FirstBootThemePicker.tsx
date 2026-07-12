@@ -31,7 +31,7 @@ export default function FirstBootThemePicker({ open, onSelectTheme }: FirstBootT
               </div>
               <h2 className="text-2xl font-black tracking-tight">Welcome to labrat</h2>
               <p className="text-sm text-slate-400">
-                Choose your preferred experience. You can change this anytime under Me → Appearance.
+                Choose your preferred experience. You can change this anytime in Settings.
               </p>
             </div>
 

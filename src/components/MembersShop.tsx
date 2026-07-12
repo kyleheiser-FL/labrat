@@ -1418,8 +1418,8 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
                 </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   {isChinaKitPricing
-                    ? 'Products priced per 10-vial kit. Flat rate $25 international shipping. Quick Ship items ship free.'
-                    : 'Flat rate $25 international shipping. Quick Ship items ship free.'}
+                    ? 'Products priced per 10-vial kit. Free shipping on every order.'
+                    : 'Free shipping on every order — no minimum, no shipping charges.'}
                 </p>
               </div>
             </div>
