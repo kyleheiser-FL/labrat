@@ -2,19 +2,20 @@ name: Dose Reminder Cron
 
 # Vercel Hobby plan caps crons at once/day, so we poll the reminder endpoint
 # from GitHub Actions instead. /api/send-reminders uses catch-up semantics:
-# it sends once a user's reminder time has passed (within a grace period) and
-# a per-day pushGuard dedupes — so hourly polling delivers every reminder
-# exactly once, at most ~an hour late. Hourly also stays well inside the free
-# GitHub Actions minutes budget.
+# it sends once a user's reminder time has passed (within a 90-minute grace)
+# and a per-day pushGuard dedupes — so periodic polling delivers every reminder
+# exactly once. Every 15 minutes stays comfortably inside the grace even when
+# GitHub's best-effort scheduler skips a couple of ticks, while generating far
+# fewer runs/logs than the old every-10-minute schedule.
 
 on:
   schedule:
-    # Every 10 minutes at off-peak minutes. GitHub's scheduler is best-effort
-    # and routinely skips individual ticks (observed gaps of 2-4h on an hourly
-    # schedule) — dense ticks ensure one lands inside the 90-minute send
-    # grace. The repo is public, so Actions minutes are free/unlimited.
-    - cron: '3,13,23,33,43,53 * * * *'
+    - cron: '5,20,35,50 * * * *'
   workflow_dispatch: {} # allow manual runs for testing
+
+# Least privilege — the job only makes outbound HTTP calls.
+permissions:
+  contents: read
 
 # Don't let a slow run stack on top of the next scheduled tick.
 concurrency:
@@ -25,10 +26,6 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Check server config health
-        run: |
-          curl -sSL -m 30 -H "Accept: application/json" https://labratapp.app/api/health || true
-          echo
       - name: Trigger send-reminders
         run: |
           # -L --location-trusted: the apex domain 307-redirects (e.g. to www);
@@ -37,9 +34,8 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             https://labratapp.app/api/send-reminders)
           echo "HTTP $code"
-          cat /tmp/body.txt || true
-          echo
           if [ "$code" != "200" ]; then
             echo "::error::send-reminders returned HTTP $code"
+            cat /tmp/body.txt || true
             exit 1
           fi
