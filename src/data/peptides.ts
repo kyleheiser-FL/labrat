@@ -698,6 +698,44 @@ export const PEPTIDE_LIBRARY: LibraryItem[] = [
     dietaryInteraction: 'Since fluid retention is naturally low with short esters, dietary sodium does not need to be heavily restricted, but a high fluid base remains vital. Highly compatible with ketogenic, carb-cycling, or low-calorie diets, as fast-acting androgens help preserve skeletal fibers during heavy energy deficits.'
   },
   {
+    id: 'supertest',
+    name: 'Supertest',
+    chemicalName: 'Testosterone Blend — Multi-Ester (Oil)',
+    category: 'muscle',
+    clinicalStudies: [
+      {
+        studyTitle: 'The Effects of Supraphysiologic Doses of Testosterone on Muscle Size and Strength in Normal Men',
+        citation: 'New England Journal of Medicine, 1996 (Bhasin et al.)',
+        keyFinding: 'Supraphysiologic testosterone (600 mg/week, 10 weeks) increased fat-free mass, muscle size, and strength beyond training alone. A multi-ester blend delivers the same parent hormone with layered release kinetics.'
+      },
+      {
+        studyTitle: 'Testosterone dose-response relationships in healthy young men',
+        citation: 'Am J Physiol Endocrinol Metab, 2001 (Bhasin et al.)',
+        keyFinding: 'Graded weekly testosterone doses (25-600 mg) produced dose-dependent gains in lean mass, muscle size, and strength, with dose-dependent HDL reductions. Applies to any testosterone ester blend.'
+      },
+    ],
+    description: 'A high-concentration multi-ester testosterone blend suspended in oil — fast, medium, and long esters combined so a single injection delivers an immediate spike plus a sustained release. A one-vial cornerstone for bulking and TRT-style bases.',
+    clinicalResearch: 'Binds high-affinity androgen receptors to drive nitrogen retention and myofibrillar protein synthesis. The staggered esters (e.g. propionate + phenylpropionate + isocaproate + decanoate) smooth serum peaks and troughs versus a single-ester product.',
+    typicalDosage: '250 mg - 500 mg weekly',
+    frequencyText: 'Injected intramuscularly once or twice weekly (the short esters reward twice-weekly to keep levels stable).',
+    halfLife: 'Blended — short esters ~1 day up to long esters ~7-8 days',
+    benefits: [
+      'Strong, reliable skeletal muscle hypertrophy and mass gain',
+      'Immediate strength and recovery boost from the fast esters, sustained by the long esters',
+      'One vial covers both the fast kick-in and the steady base',
+      'Improved training capacity, bone density, and drive'
+    ],
+    sideEffects: [
+      'Suppresses the natural hypothalamic-pituitary-gonadal (HPG) axis',
+      'Aromatizes to estrogen — risk of water retention, raised blood pressure, or gynecomastia if unmanaged',
+      'Can raise hematocrit and modestly shift LDL/HDL; post-injection soreness from the short esters'
+    ],
+    suggestedCycleWeeks: '10 - 16 weeks, with an aromatase-inhibitor on hand and a proper PCT or TRT maintenance afterward.',
+    deliveryForm: 'oil',
+    realisticGains: 'Fast, dense mass and power. Over a 12-week base at 300-500 mg/week, expect roughly 8-13 lbs of contractile muscle plus 3-6 lbs of reversible water/glycogen, with bench/squat outputs up 15-25%. The fast esters make the kick-in noticeable within the first week.',
+    dietaryInteraction: 'Feed the growth with a 300-500 kcal surplus and 0.9-1.2 g protein per lb bodyweight. Keep sodium moderate and potassium high with 4+ L water daily to blunt fluid retention from the long esters.'
+  },
+  {
     id: 'deca-durabolin',
     name: 'Deca-Durabolin',
     chemicalName: 'Nandrolone Decanoate (Oil)',

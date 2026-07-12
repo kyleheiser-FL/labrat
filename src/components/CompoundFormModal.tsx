@@ -84,6 +84,7 @@ const ID_UNIT_MAP: Record<string, { dose: string; unit: 'mcg' | 'mg' | 'IU' | 'm
   'tesamorelin': { dose: '2', unit: 'mg' }, 'epitalon': { dose: '5', unit: 'mg' },
   'melanotan-ii': { dose: '250', unit: 'mcg' }, 'testosterone-cypionate': { dose: '250', unit: 'mg', oilConc: '250' },
   'testosterone-enanthate': { dose: '250', unit: 'mg', oilConc: '250' }, 'testosterone-propionate': { dose: '100', unit: 'mg', oilConc: '100' },
+  'supertest': { dose: '250', unit: 'mg', oilConc: '400' },
   'deca-durabolin': { dose: '200', unit: 'mg', oilConc: '250' }, 'trenbolone-acetate': { dose: '100', unit: 'mg', oilConc: '100' },
   'primobolan-enanthate': { dose: '100', unit: 'mg', oilConc: '100' }, 'masteron-propionate': { dose: '100', unit: 'mg', oilConc: '100' },
   'masteron-prop': { dose: '100', unit: 'mg', oilConc: '100' }, 'anavar-oxandrolone': { dose: '20', unit: 'mg', pillSize: '10' },
