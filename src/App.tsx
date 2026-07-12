@@ -194,6 +194,43 @@ const getInitialTrackingEnabled = (): boolean => {
   return safeLocalStorage.getItem('labrat_compounds_initialized') === 'true';
 };
 
+// ── One-time repair for dose logs mis-dated by the old UTC date bug ──────────
+// Before the New-York-time fix, a log's date came from `toISOString()` (UTC),
+// so a late-evening Eastern dose was stamped with the *next* calendar day. The
+// log's `time` was stored in Eastern wall-clock, so we can detect it: if the
+// time is at/after the hour NY crosses UTC midnight (20:00 EDT / 19:00 EST),
+// the stored date is one day ahead — shift it back to the correct NY day.
+function easternOffsetHours(dateStr: string): number {
+  try {
+    const d = new Date(dateStr + 'T12:00:00Z');
+    const name = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', timeZoneName: 'short' })
+      .formatToParts(d).find(p => p.type === 'timeZoneName')?.value;
+    return name === 'EST' ? 5 : 4;
+  } catch { return 4; }
+}
+function dateMinusOneDay(dateStr: string): string {
+  const [y, m, dd] = dateStr.split('-').map(Number);
+  const d = new Date(Date.UTC(y, (m || 1) - 1, dd || 1));
+  d.setUTCDate(d.getUTCDate() - 1);
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+}
+function repairTzLogs(logs: DoseLog[]): { logs: DoseLog[]; changed: DoseLog[] } {
+  const changed: DoseLog[] = [];
+  const out = logs.map(l => {
+    const t = /^(\d{1,2}):(\d{2})/.exec(l.time || '');
+    if (!t || !/^\d{4}-\d{2}-\d{2}$/.test(l.date || '')) return l;
+    const mins = parseInt(t[1], 10) * 60 + parseInt(t[2], 10);
+    if (mins >= (24 - easternOffsetHours(l.date)) * 60) {
+      const nl = { ...l, date: dateMinusOneDay(l.date) };
+      changed.push(nl);
+      return nl;
+    }
+    return l;
+  });
+  return { logs: out, changed };
+}
+const TZ_FIX_KEY = 'labrat_tz_fix_v1';
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'stats' | 'shop' | 'settings'>(
     () => (getInitialTrackingEnabled() ? 'dashboard' : 'shop')
@@ -947,8 +984,20 @@ export default function App() {
             }
           }
 
+          // One-time timezone repair on the authoritative (cloud-merged) logs.
+          let logsForState = finalLogs;
+          if (safeLocalStorage.getItem(TZ_FIX_KEY) !== 'done') {
+            const { logs: repaired, changed } = repairTzLogs(finalLogs);
+            logsForState = repaired;
+            changed.forEach(l => saveUserLog(currentUser.uid, l).catch(e => console.error('[tz-fix] save failed:', e)));
+            safeLocalStorage.setItem(TZ_FIX_KEY, 'done');
+            if (changed.length) {
+              setTimeout(() => triggerNotification('Dates corrected', `Moved ${changed.length} late-night dose${changed.length === 1 ? '' : 's'} to the correct day (New York time).`, 'info', false), 1200);
+            }
+          }
+
           setCompounds(finalCompounds);
-          setLogs(finalLogs);
+          setLogs(logsForState);
           setMetrics(migrateMetricsLegacyWeight(finalMetrics));
           setNotifications(filterTransientNotifs(finalNotifs).sort((a,b) => b.timestamp.localeCompare(a.timestamp)));
 
@@ -956,7 +1005,7 @@ export default function App() {
           registerFCMToken(currentUser.uid).catch(e => console.warn('[push] FCM token registration failed — push notifications disabled:', e));
 
           safeLocalStorage.setItem('labrat_compounds', JSON.stringify(finalCompounds));
-          safeLocalStorage.setItem('labrat_logs', JSON.stringify(finalLogs));
+          safeLocalStorage.setItem('labrat_logs', JSON.stringify(logsForState));
           safeLocalStorage.setItem('labrat_metrics', JSON.stringify(finalMetrics));
           safeLocalStorage.setItem('labrat_notifications', JSON.stringify(finalNotifs));
         } catch (err) {
