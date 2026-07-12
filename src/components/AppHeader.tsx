@@ -80,44 +80,32 @@ export default function AppHeader({
     <header className="sticky top-0 bg-[#030712] backdrop-blur-md border-b border-[#1e293b]/70 py-2.5 px-4 sm:px-6 shrink-0 z-40 shadow-lg" id="app-header">
       <div className="max-w-7xl mx-auto flex flex-col gap-2.5">
 
-        <div className="flex flex-row items-center justify-between gap-3">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
+        <div className="flex flex-row items-center justify-between gap-2 min-w-0">
+          {/* Logo — fixed px so it doesn't scale with the phone's text-size setting */}
+          <div className="flex items-center shrink-0">
             <img
               src={labratTheme === 'neon' ? '/pwa-icons/lr-neon-192.png' : '/pwa-icons/lr-clinical-192.png'}
               alt="labrat logo"
-              className={`h-10 w-10 sm:h-12 sm:w-12 object-contain rounded-xl ${
+              className={`h-[clamp(34px,9vw,46px)] w-[clamp(34px,9vw,46px)] shrink-0 object-contain rounded-xl ${
                 labratTheme === 'neon'
                   ? 'drop-shadow-[0_0_16px_rgba(34,211,238,0.55)]'
                   : 'drop-shadow-[0_0_10px_rgba(148,163,184,0.18)]'
               }`}
             />
-            <span
-              className={`labrat-brand-wordmark text-2xl sm:text-3xl font-black tracking-tighter font-sans uppercase ${
-                labratTheme === 'neon'
-                  ? 'bg-gradient-to-r from-[#00d9ff] via-[#1e88ff] to-[#39ff14] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(34,211,238,0.25)]'
-                  : 'text-slate-100'
-              }`}
-            >
-              labrat
-            </span>
-            <span className="bg-slate-800/80 border border-slate-700/60 text-slate-400 text-[10px] font-mono px-2 py-0.5 rounded-md shadow-[0_0_10px_rgba(34,211,238,0.1)] hidden xs:inline-block">
-              V2.5
-            </span>
           </div>
 
-          {/* Right side controls */}
-          <div className="flex items-center gap-1.5 sm:gap-2" id="header-indicators-bar">
+          {/* Right side controls — fixed px sizing so they don't scale with the phone's text-size setting */}
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0" id="header-indicators-bar">
 
             {/* LABRAT AI assistant — small launcher in the header */}
             {onOpenAi && (
               <button
                 onClick={() => { triggerHaptic('light'); onOpenAi(); }}
-                className="relative flex items-center justify-center p-2 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
+                className="relative flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
                 aria-label="LABRAT AI"
                 title="LABRAT AI Assistant"
               >
-                <Bot className="w-4 h-4" />
+                <Bot className="w-[18px] h-[18px]" />
                 <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-400 border border-[#030712]" />
               </button>
             )}
@@ -125,11 +113,11 @@ export default function AppHeader({
             {/* Messenger chat — always available in the header (was a floating bubble) */}
             <button
               onClick={() => { triggerHaptic('light'); window.location.href = 'https://m.me/1188568744330200'; }}
-              className="flex items-center justify-center p-2 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
+              className="flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
               aria-label="Chat on Messenger"
               title="Chat on Messenger"
             >
-              <svg className="w-4 h-4" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-[18px] h-[18px]" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M14 2C7.373 2 2 7.101 2 13.4c0 3.426 1.466 6.497 3.845 8.663a.93.93 0 0 1 .308.654l.062 2.04c.02.65.697 1.074 1.283.8l2.273-1.006a.93.93 0 0 1 .622-.044A13.44 13.44 0 0 0 14 24.8c6.627 0 12-5.101 12-11.4C26 7.101 20.627 2 14 2z" fill="#0099FF" />
                 <path d="M7.6 16.8 11.3 11.1l3.3 2.4 3.5-2.4 3.7 5.7-3.7-2.4-3.5 2.5-3.3-2.5z" fill="#fff" />
               </svg>
@@ -138,7 +126,7 @@ export default function AppHeader({
             {/* Settings button with unread notification badge */}
             <button
               onClick={() => { triggerHaptic('light'); onSetActiveTab('settings'); }}
-              className={`relative flex items-center justify-center p-2 rounded-xl border transition-all cursor-pointer ${
+              className={`relative flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border transition-all cursor-pointer ${
                 activeTab === 'settings'
                   ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
                   : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
@@ -146,7 +134,7 @@ export default function AppHeader({
               aria-label="Settings"
               title="Settings"
             >
-              <Settings className="w-4 h-4" />
+              <Settings className="w-[18px] h-[18px]" />
               {tabBadges && tabBadges.notifications > 0 && (
                 <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-[#030712] animate-pulse" />
               )}
@@ -159,7 +147,7 @@ export default function AppHeader({
                 id="pwa-install-header-btn"
                 title="Install labrat application"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-[15px] h-[15px] shrink-0" />
                 <span className="hidden md:inline">Install</span>
               </button>
             )}
@@ -171,12 +159,12 @@ export default function AppHeader({
                 <span className="hidden sm:inline">Loading...</span>
               </div>
             ) : user ? (
-              <div className="flex items-center gap-1.5 bg-[#0f172a]/75 border border-[#1e293b]/80 p-1 pl-2 rounded-xl text-xs font-mono">
-                <div className="w-7 h-7 rounded-lg overflow-hidden border border-cyan-500/25 bg-cyan-950/45 flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.1)]">
+              <div className="flex items-center gap-1.5 bg-[#0f172a]/75 border border-[#1e293b]/80 p-1 pl-2 rounded-xl text-xs font-mono shrink-0">
+                <div className="w-[30px] h-[30px] rounded-lg overflow-hidden border border-cyan-500/25 bg-cyan-950/45 flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.1)]">
                   {user.photoURL ? (
                     <img src={user.photoURL} alt="User Profile" className="w-full h-full object-cover select-none" referrerPolicy="no-referrer" />
                   ) : (
-                    <FlaskConical className="w-3.5 h-3.5 text-cyan-400 rotate-12" />
+                    <FlaskConical className="w-[15px] h-[15px] text-cyan-400 rotate-12" />
                   )}
                 </div>
                 <div className="hidden sm:flex flex-col text-left">
@@ -187,11 +175,12 @@ export default function AppHeader({
                 </div>
                 <button
                   onClick={onSignOut}
-                  className="flex items-center gap-1 bg-[#1e293b] hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-slate-700/60 hover:border-rose-500/30 px-2 py-1 rounded-lg text-[10px] transition font-bold cursor-pointer"
+                  className="flex items-center justify-center gap-1 bg-[#1e293b] hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-slate-700/60 hover:border-rose-500/30 w-[30px] h-[30px] shrink-0 rounded-lg transition font-bold cursor-pointer"
                   id="google-sign-out"
+                  aria-label="Sign out"
+                  title="Sign out"
                 >
-                  <LogOut className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                  <span className="hidden xs:inline">Out</span>
+                  <LogOut className="w-[15px] h-[15px]" />
                 </button>
               </div>
             ) : (
