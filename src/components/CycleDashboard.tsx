@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { localDateISO } from '../lib/date';
+import { localDateISO, localTimeHM } from '../lib/date';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Activity, CalendarDays, PlusCircle, AlertCircle, Syringe, CheckSquare, Info, RefreshCw, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
@@ -170,7 +170,7 @@ export default function CycleDashboard({
       }
     }
 
-    const targetTime = manualTime || new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    const targetTime = manualTime || localTimeHM();
 
     onLogDose({
       id: crypto.randomUUID(),
@@ -238,7 +238,7 @@ export default function CycleDashboard({
 
   const handleAdministerDose = (comp: Compound) => {
     if (logs.some(l => l.compoundId === comp.id && l.date === selectedDate)) return;
-    const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    const timeStr = localTimeHM();
     onLogDose({
       id: crypto.randomUUID(),
       compoundId: comp.id,

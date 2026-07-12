@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { localDateISO } from '../../lib/date';
+import { localDateISO, localTimeHM } from '../../lib/date';
 import {
   Sparkles, Plus, Check, Search, ShoppingBag, Settings as SettingsIcon,
   Droplets, Syringe as SyringeIcon, CalendarCheck, GraduationCap, ChevronLeft, ChevronRight, X, Trash2, RotateCcw, History,
@@ -274,7 +274,7 @@ function Home({
 
   const quickLog = (c: Compound) => {
     triggerHaptic('success');
-    const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    const time = localTimeHM();
     const units = syringeUnits(c);
     onLogDose({
       id: crypto.randomUUID(),

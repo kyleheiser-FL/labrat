@@ -1,5 +1,5 @@
 import AiAssistant from './components/AiAssistant';
-import { localDateISO } from './lib/date';
+import { localDateISO, localTimeHM } from './lib/date';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AppHeader from './components/AppHeader';
 import UpdateBanner from './components/UpdateBanner';
@@ -1184,7 +1184,7 @@ export default function App() {
     const dateStr = (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) ? date : localDateISO();
     // Already logged that day — treat as a no-op success rather than a duplicate.
     if (logs.some(l => l.compoundId === comp.id && l.date === dateStr)) return true;
-    const timeStr = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    const timeStr = localTimeHM();
     const doseInMcg = comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount;
     handleLogDose({
       id: crypto.randomUUID(),

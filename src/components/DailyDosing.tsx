@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { localDateISO } from '../lib/date';
+import { localDateISO, localTimeHM } from '../lib/date';
 import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History } from 'lucide-react';
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
 import { getDoseScheduleForDate } from '../lib/schedule';
@@ -60,7 +60,7 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
     const doseAmount = doseOverride != null && !isNaN(doseOverride) ? doseOverride : c.doseAmount;
     const doseUnit = unitOverride || c.doseUnit;
     const units = unitsFor(doseAmount, doseUnit, c.vialSizeMg, c.bacWaterMl);
-    const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    const time = localTimeHM();
     onLogDose({
       id: crypto.randomUUID(),
       compoundId: c.id,

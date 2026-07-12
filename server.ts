@@ -219,8 +219,20 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
     const fcmMessaging = getAdminMessaging(adminApp);
 
     const nowUtc = new Date();
-    const nowUtcMinutes = nowUtc.getUTCHours() * 60 + nowUtc.getUTCMinutes();
-    const todayStr = nowUtc.toISOString().split('T')[0];
+    // The app runs on New York (US Eastern) time with automatic DST, so reminder
+    // times and the per-day guard are evaluated against NY wall-clock for everyone.
+    const nyParts = (() => {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/New_York',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: false,
+      }).formatToParts(nowUtc);
+      const get = (t: string) => parts.find(p => p.type === t)?.value || '00';
+      let hh = parseInt(get('hour'), 10); if (hh === 24) hh = 0; // ICU midnight quirk
+      return { date: `${get('year')}-${get('month')}-${get('day')}`, minutes: hh * 60 + parseInt(get('minute'), 10) };
+    })();
+    const nowNyMinutes = nyParts.minutes;
+    const todayStr = nyParts.date;
 
     // Catch-up semantics: send once the reminder time has PASSED (within a
     // grace period) rather than matching a narrow window around it. The cron
@@ -248,18 +260,16 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
         const profile = profileDoc.data();
         const tokens: string[] = profile.fcmTokens || [];
 
-        // Compute user's local minute-of-day from UTC + their stored offset
-        // timezoneOffset = getTimezoneOffset() — positive means WEST of UTC
-        const offset: number = typeof profile.timezoneOffset === 'number' ? profile.timezoneOffset : 0;
-        const userLocalMinutes = ((nowUtcMinutes - offset) % 1440 + 1440) % 1440;
+        // The app operates on New York time — evaluate every reminder against
+        // NY wall-clock regardless of the user's device timezone.
+        const userLocalMinutes = nowNyMinutes;
 
         diag.push({
           uid: uid.slice(0, 6),
           tokens: tokens.length,
           reminderEnabled: !!profile.reminderEnabled,
           reminderTime: profile.reminderTime || null,
-          tzOffset: offset,
-          userLocalTime: `${String(Math.floor(userLocalMinutes / 60)).padStart(2, '0')}:${String(userLocalMinutes % 60).padStart(2, '0')}`,
+          nyTime: `${String(Math.floor(userLocalMinutes / 60)).padStart(2, '0')}:${String(userLocalMinutes % 60).padStart(2, '0')}`,
           compounds: (profile.compounds || []).map((c: any) => ({ name: c.name, time: c.reminderTime })),
         });
 
