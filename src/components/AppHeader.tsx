@@ -81,17 +81,17 @@ export default function AppHeader({
       <div className="max-w-7xl mx-auto flex flex-col gap-2.5">
 
         <div className="flex flex-row items-center justify-between gap-2 min-w-0">
-          {/* Logo — fixed px so it doesn't scale with the phone's text-size setting */}
-          <div className="flex items-center shrink-0">
-            <img
-              src={labratTheme === 'neon' ? '/pwa-icons/lr-neon-192.png' : '/pwa-icons/lr-clinical-192.png'}
-              alt="labrat logo"
-              className={`h-[clamp(34px,9vw,46px)] w-[clamp(34px,9vw,46px)] shrink-0 object-contain rounded-xl ${
+          {/* Wordmark — fixed px/vw so it doesn't scale with the phone's text-size setting */}
+          <div className="flex items-center min-w-0">
+            <span
+              className={`labrat-brand-wordmark text-[clamp(20px,7vw,30px)] leading-none font-black tracking-tighter font-sans uppercase truncate ${
                 labratTheme === 'neon'
-                  ? 'drop-shadow-[0_0_16px_rgba(34,211,238,0.55)]'
-                  : 'drop-shadow-[0_0_10px_rgba(148,163,184,0.18)]'
+                  ? 'bg-gradient-to-r from-[#00d9ff] via-[#1e88ff] to-[#39ff14] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(34,211,238,0.25)]'
+                  : 'text-slate-100'
               }`}
-            />
+            >
+              labrat
+            </span>
           </div>
 
           {/* Right side controls — fixed px sizing so they don't scale with the phone's text-size setting */}
