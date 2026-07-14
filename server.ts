@@ -351,6 +351,45 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
   });
 
   // ──────────────────────────────────────────────────────────────────────────
+  // Real background-push test: the signed-in user triggers an immediate FCM
+  // push to their own device tokens. Lets us confirm whether background push
+  // actually reaches + displays on the device (separate from the daily cron).
+  // ──────────────────────────────────────────────────────────────────────────
+  app.post('/api/test-push', async (req, res) => {
+    const who = await verifyFirebaseToken(req);
+    if (!who) return res.status(401).json({ error: 'Unauthorized' });
+    const adminApp = getAdminApp();
+    if (!adminApp) return res.status(503).json({ error: 'Firebase Admin not configured' });
+    const firestore = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
+    const fcm = getAdminMessaging(adminApp);
+    try {
+      const snap = await firestore.collection('pushProfiles').doc(who.uid).get();
+      const tokens: string[] = snap.data()?.fcmTokens || [];
+      let sent = 0, errors = 0;
+      const errMsgs: string[] = [];
+      for (const token of tokens) {
+        try {
+          await fcm.send({
+            token,
+            data: {
+              title: '✅ LabRat test push',
+              body: 'Background push works — you can close the app.',
+              tag: 'labrat-test',
+              icon: '/icon_192.png',
+            },
+            android: { priority: 'high' },
+            webpush: { headers: { Urgency: 'high', TTL: '600' } },
+          });
+          sent++;
+        } catch (e: any) { errors++; if (errMsgs.length < 3) errMsgs.push(String(e?.errorInfo?.code || e?.message || e)); }
+      }
+      res.json({ ok: true, tokens: tokens.length, sent, errors, errMsgs });
+    } catch (err: any) {
+      res.status(500).json({ error: err?.message || 'Internal error' });
+    }
+  });
+
+  // ──────────────────────────────────────────────────────────────────────────
   // Order notification sender — called by the client after order events
   // type 'order_placed'  → notifies admin
   // type 'status_change' → notifies the customer whose order changed

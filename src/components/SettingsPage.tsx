@@ -20,6 +20,7 @@ interface SettingsPageProps {
   reminderTime: string;
   onReminderTimeChange: (time: string) => void;
   onTestNotification: () => void;
+  onSendTestPush?: () => void;
   testStatus: 'idle' | 'countdown' | 'triggered' | 'denied' | 'unsupported';
   countdown: number;
   // Notification history
@@ -67,6 +68,7 @@ export default function SettingsPage({
   reminderTime,
   onReminderTimeChange,
   onTestNotification,
+  onSendTestPush,
   testStatus,
   countdown,
   notifications,
@@ -334,10 +336,25 @@ export default function SettingsPage({
                 ) : testStatus === 'triggered' ? (
                   <><Check className="w-3.5 h-3.5 text-emerald-400 font-bold" /><span>Success! Check Notification Center</span></>
                 ) : (
-                  <><Bell className="w-3.5 h-3.5 text-slate-400" /><span>Send test alert (5s)</span></>
+                  <><Bell className="w-3.5 h-3.5 text-slate-400" /><span>Local test alert</span></>
                 )}
               </button>
             </div>
+
+            {onSendTestPush && (
+              <div className="mt-2.5">
+                <button
+                  type="button"
+                  onClick={onSendTestPush}
+                  className="w-full py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition border cursor-pointer bg-cyan-500/12 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20"
+                >
+                  <BellRing className="w-3.5 h-3.5" /><span>Send background test push (from server)</span>
+                </button>
+                <p className="text-[10px] text-slate-500 leading-relaxed mt-1.5 px-0.5">
+                  This asks the server to push your device right now — the real background path. Tap it, then <strong>lock your phone</strong>; the banner should arrive within a few seconds. If it doesn't, it's a device background-restriction (ColorOS battery settings), not the app.
+                </p>
+              </div>
+            )}
 
             {typeof window !== 'undefined' && !(window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) && (
               <div className="border border-dashed border-cyan-500/10 bg-cyan-950/5 p-2.5 rounded-lg text-[9.5px] leading-relaxed text-slate-500">

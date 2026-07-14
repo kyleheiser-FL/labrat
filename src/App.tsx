@@ -511,6 +511,34 @@ export default function App() {
     }, 1000);
   };
 
+  // Real background push test — asks the SERVER to FCM-push this device now.
+  // Unlike the local test above, this exercises the full background-delivery path.
+  const sendBackgroundTestPush = async () => {
+    triggerHaptic('medium');
+    if (!user) { triggerNotification('Sign in required', 'Sign in first so we know which device to push.', 'warning'); return; }
+    if (Notification.permission !== 'granted') {
+      const status = await Notification.requestPermission();
+      setNotificationPermission(status);
+      if (status !== 'granted') { triggerNotification('Permission needed', 'Allow notifications to test push.', 'warning'); return; }
+      await registerFCMToken(user.uid).catch(() => {});
+    }
+    try {
+      const idToken = await user.getIdToken();
+      const res = await fetch('/api/test-push', { method: 'POST', headers: { Authorization: `Bearer ${idToken}` } });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { triggerNotification('Test push failed', data.error || `Server error ${res.status}`, 'error'); return; }
+      if (!data.tokens) {
+        triggerNotification('No device registered', 'No push token on file. Make sure notifications are allowed, then reopen the app once.', 'warning');
+      } else if (data.sent > 0) {
+        triggerNotification('Test push sent ✅', `Sent to ${data.sent} device(s). Lock your phone now — the banner should arrive in a few seconds.`, 'success');
+      } else {
+        triggerNotification('Push not accepted', `Tokens ${data.tokens}, delivered 0. ${(data.errMsgs || []).join('; ') || 'Token may be stale — reopen the app to refresh it.'}`, 'error');
+      }
+    } catch (e: any) {
+      triggerNotification('Test push error', e?.message || 'Network error', 'error');
+    }
+  };
+
   const triggerTestNotification = () => {
     triggerHaptic('medium');
     if (!('Notification' in window)) { setTestStatus('unsupported'); return; }
@@ -1664,6 +1692,7 @@ export default function App() {
                   reminderTime={reminderTime}
                   onReminderTimeChange={handleReminderTimeChange}
                   onTestNotification={triggerTestNotification}
+                  onSendTestPush={sendBackgroundTestPush}
                   testStatus={testStatus}
                   countdown={countdown}
                   notifications={notifications}
