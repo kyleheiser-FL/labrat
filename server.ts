@@ -289,12 +289,17 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
               for (const token of tokens) {
                 try {
                   await fcmMessaging.send({
-                    notification: {
+                    token,
+                    // DATA-ONLY (no `notification` field) so the service worker's
+                    // onBackgroundMessage always runs and shows the banner when closed.
+                    data: {
                       title: '🔬 LabRat Dose Reminder',
                       body: "Time to record today's scheduled administrations.",
+                      tag: 'labrat-reminder-daily',
+                      icon: '/icon_192.png',
                     },
-                    data: { tag: 'labrat-reminder-daily' },
-                    token,
+                    android: { priority: 'high' },
+                    webpush: { headers: { Urgency: 'high', TTL: '86400' } },
                   });
                   sent++;
                 } catch { errors++; }
@@ -319,12 +324,15 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
               for (const token of tokens) {
                 try {
                   await fcmMessaging.send({
-                    notification: {
+                    token,
+                    data: {
                       title: `💉 Time for ${comp.name}`,
                       body: 'Open LabRat to log your dose.',
+                      tag: `comp-${comp.id}`,
+                      icon: '/icon_192.png',
                     },
-                    data: { tag: `comp-${comp.id}` },
-                    token,
+                    android: { priority: 'high' },
+                    webpush: { headers: { Urgency: 'high', TTL: '86400' } },
                   });
                   sent++;
                 } catch { errors++; }
@@ -387,12 +395,16 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
         for (const token of tokens) {
           try {
             await fcmMessaging.send({
-              notification: {
+              token,
+              data: {
                 title: '🛒 New Order Placed',
                 body: `${customerEmail || 'A customer'} placed order ${orderId}`,
+                tag: 'labrat-new-order',
+                icon: '/icon_192.png',
+                orderId,
               },
-              data: { tag: 'labrat-new-order', orderId },
-              token,
+              android: { priority: 'high' },
+              webpush: { headers: { Urgency: 'high', TTL: '86400' } },
             });
             sent++;
           } catch { /* stale token */ }
@@ -416,9 +428,10 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
         for (const token of tokens) {
           try {
             await fcmMessaging.send({
-              notification: { title: '📬 LabRat Order Update', body },
-              data: { tag: `labrat-order-${orderId}`, orderId, status },
               token,
+              data: { title: '📬 LabRat Order Update', body, tag: `labrat-order-${orderId}`, icon: '/icon_192.png', orderId, status },
+              android: { priority: 'high' },
+              webpush: { headers: { Urgency: 'high', TTL: '86400' } },
             });
             sent++;
           } catch { /* stale token */ }

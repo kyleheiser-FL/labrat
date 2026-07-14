@@ -72,9 +72,11 @@ export function initForegroundMessaging(
 ): () => void {
   try {
     return onMessage(messaging(), (payload) => {
-      const title = payload.notification?.title || 'LabRat';
-      const body = payload.notification?.body || '';
-      const tag = (payload.data as any)?.tag as string | undefined;
+      // Messages are now data-only; fall back to notification for older payloads.
+      const d = (payload.data as any) || {};
+      const title = d.title || payload.notification?.title || 'LabRat';
+      const body = d.body || payload.notification?.body || '';
+      const tag = d.tag as string | undefined;
       onNotification(title, body, tag);
     });
   } catch {

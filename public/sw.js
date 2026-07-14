@@ -17,19 +17,22 @@ if (!self.firebase.apps.length) {
 
 const _messaging = self.firebase.messaging();
 
-/* Background FCM push — fires when the app is closed or backgrounded */
+/* Background FCM push — fires when the app is closed or backgrounded.
+   The server sends DATA-ONLY messages (title/body/tag inside `data`) so this
+   handler reliably runs and shows the banner. (Messages with a `notification`
+   field bypass onBackgroundMessage and rely on the SDK's finicky auto-display,
+   which also conflicted with the manual `push` listener that used to live below.) */
 _messaging.onBackgroundMessage((payload) => {
-  const notif = payload.notification || {};
-  const tag = (payload.data && payload.data.tag) ? payload.data.tag : 'labrat-push';
-  self.registration.showNotification(notif.title || 'LabRat', {
-    body: notif.body || '',
-    icon: notif.icon || '/icon_192.png',
+  const d = (payload && payload.data) || {};
+  self.registration.showNotification(d.title || 'LabRat', {
+    body: d.body || '',
+    icon: d.icon || '/icon_192.png',
     badge: '/icon_96.png',
-    tag,
+    tag: d.tag || 'labrat-push',
     renotify: true,
     requireInteraction: false,
     vibrate: [200, 100, 200, 100, 200],
-    data: payload.data || {},
+    data: d,
   });
 });
 
@@ -156,23 +159,9 @@ self.addEventListener("message", (event) => {
   );
 });
 
-/* Web Push event — for future server-side push (FCM/VAPID) */
-self.addEventListener("push", (event) => {
-  let payload = { title: "LabRat", body: "You have a new notification." };
-  try { if (event.data) payload = event.data.json(); } catch (_) {}
-  event.waitUntil(
-    self.registration.showNotification(payload.title, {
-      body: payload.body || "",
-      icon: payload.icon || "/icon_192.png",
-      badge: "/icon_96.png",
-      tag: payload.tag || "labrat-push",
-      renotify: true,
-      requireInteraction: false,
-      vibrate: [200, 100, 200, 100, 200],
-      data: payload.data || {},
-    })
-  );
-});
+/* NOTE: no manual `push` listener here. The Firebase Messaging SDK registers
+   its own push handler (routing to onBackgroundMessage above). A second manual
+   push listener double-handled every message and broke background display. */
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
