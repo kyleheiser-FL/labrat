@@ -206,7 +206,13 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
     if (!cronSecret) {
       return res.status(503).json({ error: 'CRON_SECRET not configured' });
     }
-    if ((req.headers.authorization || '') !== `Bearer ${cronSecret}`) {
+    // Accept the secret via the Authorization header (GitHub Actions) OR a ?key=
+    // query param. The query param survives apex→www redirects (external cron
+    // services drop the Authorization header on cross-host redirects), so a
+    // plain GET URL from cron-job.org just works.
+    const provided = (req.headers.authorization || '').replace('Bearer ', '')
+      || (typeof req.query.key === 'string' ? req.query.key : '');
+    if (provided !== cronSecret) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
