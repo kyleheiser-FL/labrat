@@ -249,18 +249,22 @@ export default function CyclePlanner({
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+        <div className="mt-4 grid grid-cols-4 gap-2 text-center">
           <div className="labrat-mini-surface p-2.5 min-w-0">
             <strong className="labrat-title block text-base tabular-nums">{row.daysLeft}</strong>
-            <span className="labrat-muted text-[10px] uppercase tracking-wide">days left</span>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide flex justify-center items-center h-full">days left</span>
           </div>
           <div className="labrat-mini-surface p-2.5 min-w-0">
             <strong className="labrat-title block text-base tabular-nums">{row.loggedCount}</strong>
-            <span className="labrat-muted text-[10px] uppercase tracking-wide">logged</span>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide flex justify-center items-center h-full">logged</span>
+          </div>
+          <div className="labrat-mini-surface p-2.5 min-w-0">
+            <strong className="labrat-title block text-base tabular-nums">{row.missedCount}</strong>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide flex justify-center items-center h-full">missed</span>
           </div>
           <div className="labrat-mini-surface p-2.5 min-w-0">
             <strong className="labrat-title block text-base truncate">{row.lastLoggedLabel}</strong>
-            <span className="labrat-muted text-[10px] uppercase tracking-wide">last dose</span>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide flex justify-center items-center h-full">last dose</span>
           </div>
         </div>
 

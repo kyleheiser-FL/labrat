@@ -17,6 +17,7 @@ export interface StatsCompoundRow {
   progressPct: number;
   daysLeft: number;
   loggedCount: number;
+  missedCount: number;
   lastLoggedLabel: string;
   status: 'Ending soon' | 'No logs yet' | 'Recently logged' | 'On track' | 'Completed';
 }
@@ -187,6 +188,8 @@ function buildRow(compound: Compound, logs: DoseLog[], todayISO: string): StatsC
   const latestLog = compoundLogs.at(-1);
   const daysLeft = getDaysLeft(endISO, todayISO);
 
+  const missedCount = logs.filter(log => log.compoundId === compound.id && log.isSkipped).length;
+
   return {
     id: compound.id,
     name: compound.name,
@@ -202,6 +205,7 @@ function buildRow(compound: Compound, logs: DoseLog[], todayISO: string): StatsC
     progressPct: getProgressPct(startISO, endISO, todayISO),
     daysLeft: compound.isCompleted ? 0 : daysLeft,
     loggedCount: compoundLogs.length,
+    missedCount,
     lastLoggedLabel: latestLog ? formatShortDate(latestLog.date) : 'No logs yet',
     status: getStatus(compound, compoundLogs, daysLeft, todayISO),
   };
