@@ -9,6 +9,7 @@
     "start": "node dist/server.mjs",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
+    "smoke:themes": "node scripts/smoke-labrat-themes.mjs",
     "test": "vitest run"
   },
   "dependencies": {
