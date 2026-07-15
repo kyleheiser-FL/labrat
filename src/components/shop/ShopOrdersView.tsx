@@ -1,6 +1,7 @@
 import React from 'react';
 import { ClipboardList, Loader2, MapPin, Truck, RefreshCcw } from 'lucide-react';
 import { OrderDetail } from '../../lib/shopTypes';
+import { getOrderProgress, getOrderStatusViewModel } from '../../lib/shopViewModels';
 
 interface ShopOrdersViewProps {
   orders: OrderDetail[];
@@ -40,21 +41,19 @@ export default function ShopOrdersView({
         </div>
       ) : (
         <div className="space-y-4">
-          {orders.map(order => (
+          {orders.map(order => {
+            const statusVm = getOrderStatusViewModel(order.status);
+            const progressSteps = getOrderProgress(order.status);
+
+            return (
             <div key={order.id} className="bg-[#0b1329] border border-slate-800 hover:border-slate-700 p-5 rounded-2xl flex flex-col md:flex-row justify-between gap-6 transition-all">
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-2.5 mb-2.5">
                   <span className="text-xs font-mono font-semibold text-cyan-400 bg-cyan-400/10 border border-cyan-400/20 px-2 py-0.5 rounded">
                     {order.id}
                   </span>
-                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider ${
-                    order.status === 'placed' ? 'bg-amber-500/15 text-amber-300 border border-amber-500/15' :
-                    order.status === 'processing' ? 'bg-blue-500/15 text-blue-300 border border-blue-500/15' :
-                    order.status === 'shipped' ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/15' :
-                    order.status === 'completed' ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/15' :
-                    'bg-red-500/15 text-red-300 border border-red-500/15'
-                  }`}>
-                    {order.status}
+                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider ${statusVm.toneClassName}`}>
+                    {statusVm.label}
                   </span>
                   <span className="text-xs text-slate-500 font-mono">
                     {new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
@@ -109,14 +108,13 @@ export default function ShopOrdersView({
                   )}
 
                   {/* Horizontal Progress Stepper */}
+                  <p className="labrat-shop-body text-[11px] text-slate-400 leading-relaxed mb-3">
+                    {statusVm.nextStep}
+                  </p>
+
                   <div className="grid grid-cols-4 gap-1 relative py-1 mb-2">
                     <div className="absolute top-1/2 left-2 right-4 h-0.5 bg-slate-800 -translate-y-1/2 z-0" />
-                    {[
-                      { label: 'Paid', active: order.paymentStatus === 'paid' || ['processing', 'shipped', 'completed'].includes(order.status) },
-                      { label: 'Processed', active: ['processing', 'shipped', 'completed'].includes(order.status) },
-                      { label: 'Shipped', active: ['shipped', 'completed'].includes(order.status) },
-                      { label: 'Delivered', active: order.status === 'completed' }
-                    ].map((step, idx) => (
+                    {progressSteps.map((step, idx) => (
                       <div key={idx} className="flex flex-col items-center relative z-10">
                         <div className={`w-5 h-5 rounded-full flex items-center justify-center border text-[9px] font-bold ${
                           step.active
@@ -193,7 +191,8 @@ export default function ShopOrdersView({
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -60,7 +60,6 @@ import {
   ExperienceMode, getStoredExperienceMode, setStoredExperienceMode,
   matchLibraryItemsToProductNames,
 } from './lib/experience';
-import { LibraryItem } from './types';
 
 // Firebase Setup
 import { auth, db } from './firebase';
@@ -800,12 +799,12 @@ export default function App() {
   const triggerNotification = (
     title: string,
     message: string,
-    type: 'info' | 'success' | 'warning' | 'reminder',
+    type: 'info' | 'success' | 'warning' | 'error' | 'reminder',
     persist: boolean = true
   ) => {
     if (type === 'success') {
       triggerHaptic('success');
-    } else if (type === 'warning') {
+    } else if (type === 'warning' || type === 'error') {
       triggerHaptic('warning');
     } else if (type === 'reminder') {
       triggerHaptic('medium');

@@ -360,7 +360,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
   };
 
   const goNext = () => {
-    if (step === 0 && !name.trim()) { setNameError('Enter a compound name first.'); triggerHaptic('error'); return; }
+    if (step === 0 && !name.trim()) { setNameError('Enter a compound name first.'); triggerHaptic('warning'); return; }
     triggerHaptic('light'); setStep(s => Math.min(TOTAL_STEPS - 1, s + 1));
   };
   const goBack = () => { triggerHaptic('light'); setStep(s => Math.max(0, s - 1)); };

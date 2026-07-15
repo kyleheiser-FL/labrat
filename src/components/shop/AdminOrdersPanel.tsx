@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ClipboardList, Loader2, Mail, Trash2 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { OrderDetail } from '../../lib/shopTypes';
+import { getOrderStatusViewModel } from '../../lib/shopViewModels';
 import { fetchWholesaleBook, getProductCostPerVial, type WholesaleBook } from '../../lib/wholesale';
 
 interface AdminOrdersPanelProps {
@@ -73,21 +74,18 @@ export default function AdminOrdersPanel({
         </div>
       ) : (
         <div className="space-y-4">
-          {adminOrdersList.map(order => (
+          {adminOrdersList.map(order => {
+            const statusVm = getOrderStatusViewModel(order.status);
+
+            return (
             <div key={order.id} className="bg-slate-950 border border-slate-800 hover:border-slate-700 p-5 rounded-2xl flex flex-col md:flex-row justify-between gap-6 transition-all">
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   <span className="text-xs font-mono font-semibold text-[#ef4444] bg-[#ef4444]/10 px-2 py-0.5 rounded border border-[#ef4444]/25">
                     {order.id}
                   </span>
-                  <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide ${
-                    order.status === 'placed' ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20' :
-                    order.status === 'processing' ? 'bg-blue-500/10 text-blue-300 border border-blue-500/20' :
-                    order.status === 'shipped' ? 'bg-cyan-500/10 text-cyan-200 border border-cyan-500/20' :
-                    order.status === 'completed' ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' :
-                    'bg-red-500/10 text-red-300 border border-red-500/20'
-                  }`}>
-                    {order.status}
+                  <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide ${statusVm.toneClassName}`}>
+                    {statusVm.label}
                   </span>
                   <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wide ${
                     order.paymentStatus === 'paid' ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' : 'bg-red-500/10 text-red-300 border border-red-500/20'
@@ -107,6 +105,11 @@ export default function AdminOrdersPanel({
                   {order.shippingInfo.notes && (
                     <p className="italic text-slate-500 mt-1">📝 Notes: "{order.shippingInfo.notes}"</p>
                   )}
+                </div>
+
+                <div className="labrat-shop-mini-surface mt-3 max-w-lg rounded-xl border border-slate-800/80 bg-slate-900/50 px-3 py-2.5">
+                  <div className="labrat-shop-muted text-[9px] font-black uppercase tracking-widest">Operations next step</div>
+                  <div className="labrat-shop-body text-[11px] text-slate-300 mt-1 leading-relaxed">{statusVm.nextStep}</div>
                 </div>
 
                 {/* Items list */}
@@ -310,7 +313,8 @@ export default function AdminOrdersPanel({
                 </a>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

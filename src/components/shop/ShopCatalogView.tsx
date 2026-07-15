@@ -16,6 +16,9 @@ import {
   Moon,
   Dna,
   TrendingUp,
+  BadgeCheck,
+  Truck,
+  ClipboardCheck,
 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { ShopProduct, CartItem, OrderDetail } from '../../lib/shopTypes';
@@ -33,6 +36,7 @@ import {
 } from '../../lib/shopHelpers';
 import { usePricingConfig } from '../../lib/pricingConfig';
 import { rankSearch, SearchFields } from '../../lib/search';
+import { getShopTierViewModel } from '../../lib/shopViewModels';
 import ProductVialVisual from './ProductVialVisual';
 import PeptideRequestForm from './PeptideRequestForm';
 
@@ -146,6 +150,13 @@ export default function ShopCatalogView({
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category).filter(c => c !== 'Reconstitution Solvents')))];
 
   const isChinaTier = isChinaKitPricing || isChinaVialPricing;
+  const tierVm = getShopTierViewModel({
+    isViewingAsAdmin,
+    isKitPricing,
+    isChinaKitPricing,
+    isChinaVialPricing,
+    isApprovedVialPricing,
+  });
 
   const searchMatchIds = searchQuery.trim()
     ? new Set(rankSearch(searchQuery, products, shopFields).map(p => p.id))
@@ -180,81 +191,59 @@ export default function ShopCatalogView({
   return (
     <div className="flex flex-col gap-6">
 
-      {/* Pricing notice banner — different for kit vs china vs standard members */}
-      {isKitPricing ? (
-        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-cyan-950/30 via-[#0a0f1d] to-cyan-950/30 border border-cyan-500/30 rounded-xl p-3 sm:p-4 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
-            <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-              <Package className="w-4 h-4 text-cyan-400" />
-              🇳🇴 Norway Kit Member: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">$30 Flat Shipping</span>
-            </h3>
-            <div className="text-[9px] uppercase font-black tracking-widest text-cyan-300 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
-              Wholesale Rate
+      <div id="shop-pricing-notice-banner" className={`labrat-shop-premium-header rounded-2xl border ${tierVm.panelClassName} p-4 sm:p-5 text-left shadow-[0_20px_60px_rgba(0,0,0,0.2)]`}>
+        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-black uppercase tracking-wider ${tierVm.iconToneClassName}`}>
+                <Sparkles className="w-3.5 h-3.5" />
+                {tierVm.badge}
+              </span>
+              <span className="labrat-shop-muted text-[10px] text-slate-500 font-bold uppercase tracking-widest">{tierVm.sourceLine}</span>
             </div>
+            <h3 className="labrat-shop-title text-lg sm:text-xl font-black text-white tracking-tight">{tierVm.title}</h3>
+            <p className="labrat-shop-body mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed max-w-3xl">
+              <span className="font-bold text-cyan-300">{tierVm.priceBasis}</span>. {tierVm.trustLine}
+            </p>
           </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            You are enrolled in <strong className="text-cyan-300 font-bold">Norway kit pricing</strong>. Every listed price is for a <strong className="text-cyan-300 font-bold">full kit of 10 vials</strong> sourced from our Norway lab partners under Swiss GMP standards. All kit orders ship at a flat <strong className="text-cyan-300">$30.00</strong> international rate.
-          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2 lg:w-64 shrink-0">
+            {[
+              { icon: Package, label: 'Pricing', value: tierVm.priceBasis },
+              { icon: Truck, label: 'Shipping', value: tierVm.shippingPromise },
+              { icon: BadgeCheck, label: 'Verification', value: 'COA-backed listings' },
+            ].map(({ icon: IconComponent, label, value }) => (
+              <div key={label} className="labrat-shop-mini-surface bg-slate-950/60 border border-slate-800/80 rounded-xl px-3 py-2.5 min-w-0">
+                <div className="labrat-shop-muted flex items-center gap-2 text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                  <IconComponent className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  {label}
+                </div>
+                <div className="labrat-shop-title text-[11px] font-bold text-slate-200 mt-1 leading-snug">{value}</div>
+              </div>
+            ))}
+          </div>
         </div>
-      ) : isChinaKitPricing ? (
-        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-red-950/30 via-[#0a0f1d] to-red-950/30 border border-red-500/30 rounded-xl p-3 sm:p-4 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-red-900/50 pb-2 mb-2">
-            <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-              <Package className="w-4 h-4 text-red-400" />
-              🇨🇳 China Kit Member: <span className="text-red-300 bg-red-950/65 px-2 py-0.5 rounded border border-red-500/20 text-xs font-black">10 Vials per Kit</span>
-            </h3>
-            <div className="text-[9px] uppercase font-black tracking-widest text-red-300 bg-red-950/45 px-2.5 py-0.5 rounded border border-red-500/20 self-start sm:self-center">
-              Wholesale Rate
-            </div>
+      </div>
+
+      {filteredProducts.length > 0 && !catalogLoading && (
+        <div className="labrat-shop-mini-surface rounded-2xl border border-slate-800/80 bg-slate-950/35 p-3 sm:p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {[
+              { icon: ClipboardCheck, label: 'Curated catalog', value: `${filteredProducts.length} visible listings` },
+              { icon: BadgeCheck, label: 'Documented sourcing', value: 'COA and SOP cues included' },
+              { icon: ShoppingBag, label: 'Request checkout', value: 'Manual invoice after review' },
+            ].map(({ icon: IconComponent, label, value }) => (
+              <div key={label} className="flex items-center gap-3 rounded-xl border border-slate-800/70 bg-slate-950/45 px-3 py-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg border border-cyan-500/20 bg-cyan-500/10 flex items-center justify-center shrink-0">
+                  <IconComponent className="w-4 h-4 text-cyan-400" />
+                </div>
+                <div className="min-w-0 text-left">
+                  <div className="labrat-shop-title text-xs font-black text-slate-100 truncate">{label}</div>
+                  <div className="labrat-shop-body text-[10px] font-semibold text-slate-400 truncate">{value}</div>
+                </div>
+              </div>
+            ))}
           </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            You are enrolled in <strong className="text-red-300 font-bold">China kit pricing</strong>. Every listed price is for a <strong className="text-red-300 font-bold">full kit of 10 vials</strong> sourced directly from our China lab partners and shipped internationally for a flat rate.
-          </p>
-        </div>
-      ) : isChinaVialPricing ? (
-        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-cyan-950/30 via-[#0a0f1d] to-cyan-950/30 border border-cyan-500/30 rounded-xl p-3 sm:p-4 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
-            <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              Per-Vial Pricing: <span className="text-emerald-300 bg-emerald-950/65 px-2 py-0.5 rounded border border-emerald-500/20 text-xs font-black">Free Shipping</span>
-            </h3>
-            <div className="text-[9px] uppercase font-black tracking-widest text-cyan-300 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
-              Per-Vial Rate
-            </div>
-          </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Every listed price represents exactly one (1) individual research vial. <strong className="text-emerald-400">Free shipping on every order</strong> — no minimum, no shipping charges.
-          </p>
-        </div>
-      ) : isApprovedVialPricing ? (
-        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-cyan-950/30 via-[#0a0f1d] to-cyan-950/30 border border-cyan-500/30 rounded-xl p-3 sm:p-4 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-900/50 pb-2 mb-2">
-            <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              🇳🇴 Norway Vial Member: <span className="text-cyan-400 bg-cyan-950/65 px-2 py-0.5 rounded border border-cyan-500/20 text-xs font-black">Free Shipping $100+</span>
-            </h3>
-            <div className="text-[9px] uppercase font-black tracking-widest text-cyan-300 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
-              Per-Vial Rate
-            </div>
-          </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            You are enrolled in <strong className="text-cyan-300 font-bold">Norway per-vial pricing</strong>. Every listed price represents exactly one (1) individual research vial sourced under Swiss GMP standards. Orders of <strong className="text-cyan-300">$100+</strong> qualify for free shipping — otherwise shipping is calculated at checkout.
-          </p>
-        </div>
-      ) : (
-        <div id="shop-pricing-notice-banner" className="bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 border border-cyan-500/20 rounded-xl p-3 sm:p-4 text-left shadow-[0_0_15px_rgba(6,182,212,0.03)] focus-within:ring-1 focus-within:ring-cyan-500/30">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2 mb-2">
-            <h3 className="text-xs sm:text-sm font-black text-white tracking-wide uppercase flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              Research Vial Pricing
-            </h3>
-            <div className="text-[9px] uppercase font-black tracking-widest text-[#22d3ee] bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-500/20 self-start sm:self-center">
-              Per-Vial Rate
-            </div>
-          </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            <strong className="text-cyan-300 font-bold">Every listed price represents exactly one (1) individual high-purity research vial (all vials are standard 3ml volume)</strong>, allowing you to build and customize your research volume as needed. <strong className="text-emerald-400">Free shipping on every order.</strong>
-          </p>
         </div>
       )}
 

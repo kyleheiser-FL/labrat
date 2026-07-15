@@ -8,7 +8,10 @@ import {
   ArrowLeft,
   ShoppingCart,
   Edit,
-  Trash2
+  Trash2,
+  BadgeCheck,
+  Truck,
+  ClipboardCheck
 } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { ShopProduct, CartItem, OrderDetail } from '../../lib/shopTypes';
@@ -109,6 +112,15 @@ export default function ProductDrawerModal({
   const setDrawerQuantity = onSetDrawerQuantity;
   const setSelectedParentProductGroup = (_: null) => onClose();
   const isUnlimitedStockTier = isKitPricing || isChinaKitPricing || isChinaVialPricing;
+  const sourceLabel = isChinaKitPricing || isChinaVialPricing
+    ? 'China partner source'
+    : 'Norway partner source';
+  const purchaseModel = isKitPricing || isChinaKitPricing
+    ? 'Kit order · 10 vials'
+    : 'Single-vial order';
+  const dispatchLabel = isKitPricing
+    ? '$30 flat international dispatch'
+    : 'Free dispatch on submitted requests';
 
   return (
     <AnimatePresence>
@@ -174,6 +186,25 @@ export default function ProductDrawerModal({
                     COA Certified
                   </span>
                 </div>
+              </div>
+            </div>
+
+            <div className="labrat-shop-mini-surface grid grid-cols-1 sm:grid-cols-3 gap-2 rounded-xl border border-slate-800/80 bg-slate-950/45 p-3">
+              {[
+                { icon: BadgeCheck, label: 'Verification', value: 'COA-backed listing' },
+                { icon: ClipboardCheck, label: 'Order model', value: purchaseModel },
+                { icon: Truck, label: 'Dispatch', value: dispatchLabel },
+              ].map(({ icon: IconComponent, label, value }) => (
+                <div key={label} className="rounded-lg border border-slate-800/70 bg-slate-950/40 px-3 py-2">
+                  <div className="labrat-shop-muted flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-500">
+                    <IconComponent className="w-3.5 h-3.5 text-cyan-400" />
+                    {label}
+                  </div>
+                  <div className="labrat-shop-title mt-1 text-[11px] font-bold text-slate-200 leading-snug">{value}</div>
+                </div>
+              ))}
+              <div className="sm:col-span-3 labrat-shop-body text-[10px] text-slate-400 leading-relaxed px-1">
+                {sourceLabel}. Request review and invoice confirmation happen after checkout; no payment details are collected in the app.
               </div>
             </div>
 

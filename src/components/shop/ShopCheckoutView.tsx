@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Truck, Loader2, Send, BadgeCheck, Minus, Plus } from 'lucide-react';
+import { MapPin, Truck, Loader2, Send, BadgeCheck, Minus, Plus, ClipboardCheck } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem, ShippingOption } from '../../lib/shopTypes';
 import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getShippingOptions, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING, cleanProductName } from '../../lib/shopHelpers';
@@ -89,6 +89,20 @@ export default function ShopCheckoutView({
           </h3>
 
           <form onSubmit={onPlaceOrder} className="space-y-4">
+            <div className="labrat-shop-mini-surface rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-3.5">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-lg border border-cyan-500/20 bg-cyan-500/10 flex items-center justify-center shrink-0">
+                  <ClipboardCheck className="w-4 h-4 text-cyan-400" />
+                </div>
+                <div className="text-left">
+                  <div className="labrat-shop-title text-xs font-black text-slate-100 uppercase tracking-wider">Dispatch request review</div>
+                  <p className="labrat-shop-body mt-1 text-[11px] text-slate-400 leading-relaxed">
+                    Confirming this form submits the request for manual invoice review. No card, bank, or wallet details are collected in LabRat.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div>
               <label className="block text-xs font-semibold text-slate-400 mb-1.5" htmlFor="ship-name">Full Dispatch Name</label>
               <input
@@ -335,7 +349,7 @@ export default function ShopCheckoutView({
 
           <div className="mt-4 bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-2.5 text-[10px] text-emerald-300/90 leading-tight flex items-start gap-1.5">
             <BadgeCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-            <span><b>Manual Transfer:</b> Invoicing totals arrive via email inclusive of your chosen carrier postage.</span>
+            <span><b>Manual Invoice:</b> Invoicing totals arrive by verified email after the request is reviewed.</span>
           </div>
         </div>
       </div>

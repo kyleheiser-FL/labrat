@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingCart, ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Minus, Plus, Trash2, ClipboardCheck, BadgeCheck, Truck } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
 import { CartItem } from '../../lib/shopTypes';
 import { getSalePrice, getKitSellPrice, getChinaKitSellPrice, getChinaVialSellPrice, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING, cleanProductName } from '../../lib/shopHelpers';
@@ -221,6 +221,26 @@ export default function ShopCartView({
 
                 <div className="bg-cyan-500/5 border border-cyan-500/20 text-[11px] text-cyan-400/90 rounded-xl p-3.5 mt-5 leading-normal">
                   🤝 <span className="font-bold text-cyan-300">No Payment Details Required:</span> Checkout is completed without providing banking or debit information. The administrator handles invoicing manually by verified email.
+                </div>
+
+                <div className="labrat-shop-mini-surface mt-3 rounded-xl border border-slate-800/80 bg-slate-950/45 p-3">
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { icon: ClipboardCheck, label: 'Submit' },
+                      { icon: BadgeCheck, label: 'Review' },
+                      { icon: Truck, label: 'Dispatch' },
+                    ].map(({ icon: IconComponent, label }) => (
+                      <div key={label} className="flex flex-col items-center gap-1 text-center">
+                        <div className="w-8 h-8 rounded-lg border border-cyan-500/20 bg-cyan-500/10 flex items-center justify-center">
+                          <IconComponent className="w-4 h-4 text-cyan-400" />
+                        </div>
+                        <span className="labrat-shop-muted text-[9px] font-black uppercase tracking-widest">{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="labrat-shop-body text-[10px] text-slate-400 leading-relaxed mt-3">
+                    Your order becomes a reviewed dispatch request. Invoice instructions arrive separately after the request is checked.
+                  </p>
                 </div>
 
                 <button

@@ -75,7 +75,7 @@ export interface AppNotification {
   title: string;
   message: string;
   timestamp: string;          // ISO Date
-  type: 'info' | 'success' | 'warning' | 'reminder';
+  type: 'info' | 'success' | 'warning' | 'error' | 'reminder';
   isRead: boolean;
 }
 
@@ -127,4 +127,3 @@ export function formatTimeTo12Hour(timeStr: string): string {
   }
   return clean;
 }
-

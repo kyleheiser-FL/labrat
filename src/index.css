@@ -2469,6 +2469,73 @@ html[data-labrat-theme="clinical-light"] .labrat-command-metrics strong {
   text-shadow: none !important;
 }
 
+/* ── shop premium pass: explicit three-theme surfaces ─────────────────── */
+.labrat-shop-premium-header,
+.labrat-shop-mini-surface {
+  color: #e2e8f0;
+}
+
+.labrat-shop-title {
+  color: #f8fafc;
+}
+
+.labrat-shop-body {
+  color: #cbd5e1;
+}
+
+.labrat-shop-muted {
+  color: #94a3b8;
+}
+
+html[data-labrat-theme="clinical"] .labrat-shop-premium-header,
+html[data-labrat-theme="clinical"] .labrat-shop-mini-surface {
+  background-color: rgba(2, 6, 23, 0.82) !important;
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.22) !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-shop-title {
+  color: #f8fafc !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-shop-body {
+  color: #cbd5e1 !important;
+}
+
+html[data-labrat-theme="clinical"] .labrat-shop-muted {
+  color: #94a3b8 !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-shop-premium-header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%) !important;
+  border-color: rgba(37, 99, 235, 0.18) !important;
+  box-shadow: 0 2px 16px rgba(15, 23, 42, 0.06), 0 1px 5px rgba(15, 23, 42, 0.04) !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-shop-mini-surface {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(148, 163, 184, 0.32) !important;
+  box-shadow: none !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-shop-title {
+  color: #0f172a !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-shop-body {
+  color: #334155 !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-shop-muted {
+  color: #64748b !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-shop-premium-header .bg-slate-950\/60,
+html[data-labrat-theme="clinical-light"] .labrat-shop-mini-surface .bg-slate-950\/45,
+html[data-labrat-theme="clinical-light"] .labrat-shop-mini-surface .bg-slate-950\/35 {
+  background-color: rgba(248, 250, 252, 0.92) !important;
+}
+
 html[data-labrat-theme="clinical-light"] .labrat-command-hero-art {
   opacity: 0.55 !important;
 }
