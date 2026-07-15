@@ -37,7 +37,7 @@ export default function ToastContainer({ toasts }: ToastContainerProps) {
             animate={{ opacity: 1 - i * 0.15, y: 0, scale: 1 - i * 0.03 }}
             exit={{ opacity: 0, y: 16, scale: 0.93, transition: { duration: 0.18 } }}
             transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-            className={`w-full max-w-[400px] pointer-events-auto bg-[#0b1220]/95 border ${
+            className={`labrat-card-strong w-full max-w-[400px] pointer-events-auto bg-[#0b1220]/95 border ${
               BORDER[toast.type] ?? 'border-slate-700/50'
             } rounded-2xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl flex items-center gap-3`}
           >

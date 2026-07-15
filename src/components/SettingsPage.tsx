@@ -85,7 +85,7 @@ export default function SettingsPage({
   return (
     <div className="space-y-6">
       {/* Hero Section */}
-      <section className="labrat-command-hero" id="settings-hero">
+      <section className="labrat-command-hero labrat-page-header" id="settings-hero">
         <div className="labrat-command-hero-copy">
           <span className="labrat-command-eyebrow">App Configuration</span>
           <h2>Settings</h2>
@@ -97,7 +97,7 @@ export default function SettingsPage({
       </section>
 
       {/* Section 1: Appearance */}
-      <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+      <div className="labrat-card p-6">
         <div className="flex items-center gap-2 mb-1">
           <Palette className="w-4 h-4 text-cyan-400" />
           <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Appearance</span>
@@ -109,7 +109,7 @@ export default function SettingsPage({
           <button
             type="button"
             onClick={() => { triggerHaptic('light'); onThemeChange('system'); }}
-            className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`labrat-button-secondary relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
               themePreference === 'system'
                 ? 'border-emerald-500/60 bg-emerald-500/10 shadow-[0_0_16px_rgba(16,185,129,0.12)]'
                 : 'border-slate-700/50 bg-[#030712]/50 hover:border-slate-600'
@@ -133,7 +133,7 @@ export default function SettingsPage({
           <button
             type="button"
             onClick={() => { triggerHaptic('light'); onThemeChange('clinical'); }}
-            className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`labrat-button-secondary relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
               themePreference === 'clinical'
                 ? 'border-sky-400/60 bg-sky-500/10 shadow-[0_0_16px_rgba(56,189,248,0.1)]'
                 : 'border-slate-700/50 bg-[#030712]/50 hover:border-slate-600'
@@ -159,7 +159,7 @@ export default function SettingsPage({
           <button
             type="button"
             onClick={() => { triggerHaptic('light'); onThemeChange('clinical-light'); }}
-            className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
+            className={`labrat-button-secondary relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
               themePreference === 'clinical-light'
                 ? 'border-blue-500/60 bg-blue-500/10 shadow-[0_0_16px_rgba(37,99,235,0.12)]'
                 : 'border-slate-700/50 bg-[#030712]/50 hover:border-slate-600'
@@ -185,7 +185,7 @@ export default function SettingsPage({
 
       {/* Section: Experience */}
       {onSelectExperience && (
-        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+        <div className="labrat-card p-6">
           <div className="flex items-center gap-2 mb-1">
             <Sparkles className="w-4 h-4 text-cyan-400" />
             <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Experience</span>
@@ -200,7 +200,7 @@ export default function SettingsPage({
                   key={mode}
                   type="button"
                   onClick={() => { triggerHaptic('light'); onSelectExperience(mode); }}
-                  className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`labrat-button-secondary relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
                     selected ? ring : 'border-slate-700/50 bg-[#030712]/50 hover:border-slate-600'
                   }`}
                 >
@@ -222,7 +222,7 @@ export default function SettingsPage({
       )}
 
       {/* Section 3: Notifications */}
-      <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+      <div className="labrat-card p-6">
         <div className="flex items-center gap-2 mb-1">
           <Bell className="w-4 h-4 text-cyan-400" />
           <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Notifications</span>
@@ -236,7 +236,7 @@ export default function SettingsPage({
 
           {/* Quick Status Checks */}
           <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-            <div className="bg-slate-900/60 border border-slate-800 p-2.5 rounded-xl text-left">
+            <div className="labrat-mini-surface p-2.5 text-left">
               <span className="text-[9px] text-slate-500 block uppercase font-bold">App Environment</span>
               <span className="text-[11px] text-slate-300 font-semibold mt-0.5 flex items-center gap-1.5">
                 {typeof window !== 'undefined' && (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) ? (
@@ -253,7 +253,7 @@ export default function SettingsPage({
               </span>
             </div>
 
-            <div className="bg-slate-900/60 border border-slate-800 p-2.5 rounded-xl text-left">
+            <div className="labrat-mini-surface p-2.5 text-left">
               <span className="text-[9px] text-slate-500 block uppercase font-bold">Permission State</span>
               <span className="text-[11px] text-slate-300 font-semibold mt-0.5 flex items-center gap-1.5">
                 {notificationPermission === 'granted' ? (
@@ -281,13 +281,13 @@ export default function SettingsPage({
             <button
               type="button"
               onClick={() => { triggerHaptic('medium'); onRequestPermission(); }}
-              className="w-full py-2.5 px-4 bg-cyan-500/10 hover:bg-cyan-500/20 active:bg-cyan-500/30 text-cyan-400 hover:text-cyan-300 border border-cyan-500/25 hover:border-cyan-500/40 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer"
+              className="labrat-button-secondary w-full py-2.5 px-4 bg-cyan-500/10 hover:bg-cyan-500/20 active:bg-cyan-500/30 text-cyan-400 hover:text-cyan-300 border border-cyan-500/25 hover:border-cyan-500/40 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer"
             >
               <BellRing className="w-4 h-4" />
               <span>Grant Phone Notification Permission</span>
             </button>
           ) : (
-            <div className="bg-[#1e293b]/15 border border-[#1e293b]/45 p-3.5 rounded-xl space-y-3">
+            <div className="labrat-mini-surface p-3.5 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="text-left space-y-0.5">
                   <span className="text-xs font-bold text-slate-200">Daily Reminder Service</span>
@@ -309,7 +309,7 @@ export default function SettingsPage({
                     type="time"
                     value={reminderTime}
                     onChange={(e) => { triggerHaptic('light'); onReminderTimeChange(e.target.value); }}
-                    className="bg-[#0f172a] border border-slate-800 text-slate-200 text-xs py-1 px-2.5 rounded-lg focus:outline-none focus:border-cyan-500 text-right font-mono"
+                    className="labrat-input text-xs py-1 px-2.5 text-right font-mono"
                   />
                 </div>
               )}
@@ -317,7 +317,7 @@ export default function SettingsPage({
           )}
 
           {/* Test Simulation Module */}
-          <div className="bg-slate-950/40 border border-[#1e293b]/50 p-3 rounded-xl space-y-2.5 text-left">
+          <div className="labrat-mini-surface p-3 space-y-2.5 text-left">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider font-mono block">Simulate Native Reminders</span>
             <p className="text-[10.5px] text-slate-500 leading-normal">
               Locks/backgrounds aren't required to test! Request a delayed alert below, then put your device in your pocket or lock the screen to verify native behavior.
@@ -374,7 +374,7 @@ export default function SettingsPage({
       </div>
 
       {/* Section 4: Notification History */}
-      <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md">
+      <div className="labrat-card overflow-hidden">
         <div className="p-6 pb-4">
           <div className="flex items-center gap-2 mb-1">
             <Bell className="w-4 h-4 text-cyan-400" />
@@ -443,7 +443,7 @@ export default function SettingsPage({
 
       {/* Section 5: Admin (only for kyleheiser@gmail.com) */}
       {isAdmin && (
-        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+        <div className="labrat-card p-6">
           <div className="flex items-center gap-2 mb-1">
             <ShieldAlert className="w-4 h-4 text-amber-400" />
             <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-widest">Admin</span>

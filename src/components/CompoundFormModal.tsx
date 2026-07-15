@@ -378,7 +378,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
     <>
       {createPortal(
         <div className="fixed inset-0 bg-[#020617]/75 backdrop-blur-sm flex items-start sm:items-center justify-center p-2.5 sm:p-4 z-50 overflow-y-auto" id="planner-form-overlay">
-          <div className="bg-[#0f172a] border border-[#1e293b] rounded-2xl p-4 sm:p-6 w-full max-w-xl shadow-2xl relative space-y-5 my-4 sm:my-0" id="planner-form-card" onClick={(e) => e.stopPropagation()}>
+          <div className="labrat-card-strong p-4 sm:p-6 w-full max-w-xl relative space-y-5 my-4 sm:my-0" id="planner-form-card" onClick={(e) => e.stopPropagation()}>
             {showAddSuccessPrompt ? (
               <div className="space-y-6 py-4 text-center flex flex-col items-center justify-center" id="add-success-screen">
                 <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center animate-bounce shadow-[0_0_15px_rgba(16,185,129,0.2)]">
@@ -392,19 +392,19 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 w-full pt-4">
                   <button type="button" onClick={() => { triggerHaptic('medium'); onClose(); onNavigateToTab?.('dashboard'); }}
-                    className="flex-1 py-3 px-4 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm tracking-wide transition shadow-[0_0_15px_rgba(34,211,238,0.15)] flex items-center justify-center gap-2 cursor-pointer"
+                    className="labrat-button-primary flex-1 py-3 px-4 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm tracking-wide transition shadow-[0_0_15px_rgba(34,211,238,0.15)] flex items-center justify-center gap-2 cursor-pointer"
                     id="success-go-to-cycle-btn">
                     <span>Go to My Cycle Checklist</span>
                     <ArrowLeftRight className="w-4 h-4 shrink-0" strokeWidth={2.5} />
                   </button>
                   <button type="button" onClick={() => { triggerHaptic('light'); setShowAddSuccessPrompt(false); setAddedCompoundName(null); }}
-                    className="flex-1 py-3 px-4 bg-[#1e293b]/85 border border-[#1e293b] hover:border-slate-700 text-slate-300 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer"
+                    className="labrat-button-secondary flex-1 py-3 px-4 bg-[#1e293b]/85 border border-[#1e293b] hover:border-slate-700 text-slate-300 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer"
                     id="success-add-another-btn">
                     <span>Add Another Compound</span>
                     <Plus className="w-4 h-4 shrink-0" strokeWidth={2.5} />
                   </button>
                 </div>
-                <div className="bg-[#1e293b]/35 border border-[#1e293b] p-4.5 rounded-2xl text-left w-full space-y-2.5 mt-2" id="success-retro-sync-card">
+                <div className="labrat-mini-surface p-4.5 text-left w-full space-y-2.5 mt-2" id="success-retro-sync-card">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">
                     <History className="w-4 h-4 text-cyan-400" />
                     <span>Sync Historic Administrations?</span>
@@ -414,7 +414,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                   </p>
                   <button type="button"
                     onClick={() => { triggerHaptic('light'); onClose(); setShowAddSuccessPrompt(false); setAddedCompoundName(null); if (addedCompoundId) onOpenRetroLog?.(addedCompoundId); }}
-                    className="w-full py-2.5 bg-cyan-700/20 hover:bg-cyan-600/30 text-cyan-300 hover:text-white border border-cyan-500/30 rounded-xl text-xs font-bold font-mono uppercase transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="labrat-button-secondary w-full py-2.5 bg-cyan-700/20 hover:bg-cyan-600/30 text-cyan-300 hover:text-white border border-cyan-500/30 rounded-xl text-xs font-bold font-mono uppercase transition flex items-center justify-center gap-1.5 cursor-pointer"
                     id="success-retro-sync-btn">
                     <span>Configure Historical Dose Logs</span>
                   </button>
@@ -431,7 +431,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                     <p className="text-[11px] text-slate-400 mt-0.5">One question at a time. Step {step + 1} of {TOTAL_STEPS}.</p>
                   </div>
                   <button type="button" onClick={onClose}
-                    className="p-1 px-2 border border-[#1e293b] hover:border-slate-700 bg-[#1e293b]/45 text-slate-400 hover:text-slate-200 text-xs font-semibold rounded-lg transition"
+                    className="labrat-button-secondary p-1 px-2 border border-[#1e293b] hover:border-slate-700 bg-[#1e293b]/45 text-slate-400 hover:text-slate-200 text-xs font-semibold rounded-lg transition"
                     id="close-form-btn">Close</button>
                 </div>
 
@@ -465,11 +465,11 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                         onFocus={() => { setShowSuggestions(true); setFocusedSuggestionIndex(-1); }}
                         onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                         placeholder="Enter chemical title or starting letters..."
-                        className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/30 transition shadow-inner"
+                        className="labrat-input w-full py-2 px-3 text-sm transition shadow-inner"
                         id="form-name-input" autoComplete="off" />
                       {nameError && <p className="text-[11px] text-red-400 mt-1 font-medium">{nameError}</p>}
                       {showSuggestions && suggestions.length > 0 && (
-                        <div className="absolute top-full left-0 w-full mt-1.5 bg-[#0f172a] border border-[#1e293b] rounded-xl shadow-2xl overflow-y-auto max-h-48 z-50 divide-y divide-slate-800/60 custom-scrollbar" id="name-autocomplete-dropdown">
+                        <div className="labrat-card absolute top-full left-0 w-full mt-1.5 overflow-y-auto max-h-48 z-50 divide-y divide-slate-800/60 custom-scrollbar" id="name-autocomplete-dropdown">
                           <div className="px-3 py-1 bg-slate-900/45 text-[9px] font-mono text-slate-500 tracking-wider uppercase font-semibold">Matched Encyclopedia Suggestions</div>
                           {suggestions.map((item, idx) => (
                             <button key={item.id} type="button" onMouseDown={() => handleSelectSuggestion(item)} onMouseEnter={() => setFocusedSuggestionIndex(idx)}
@@ -488,7 +488,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Compound Family Category</label>
                       <select value={type} onChange={(e) => setType(e.target.value as any)}
-                        className="w-full bg-[#1e293b] border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-type-select">
+                        className="labrat-input py-2 px-3 text-sm" id="form-type-select">
                         <option value="peptide">Peptide (Freeze-Dried Vial)</option>
                         <option value="steroid">Anabolic Steroid / TRT</option>
                         <option value="compound">Anabolic / SARM / Chemical</option>
@@ -501,7 +501,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                   {/* ── STEP 1: Dose ── */}
                   <div className={step === 1 ? 'space-y-4' : 'hidden'}>
                   {activePresets.length > 0 && (
-                    <div className="border border-[#1e293b] rounded-xl overflow-hidden" id="goal-preset-panel">
+                    <div className="labrat-mini-surface overflow-hidden" id="goal-preset-panel">
                       <div className="px-3.5 py-2.5 bg-[#0d1422]/80 border-b border-[#1e293b]/70 flex items-center justify-between">
                         <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
                           <Zap className="w-3 h-3 text-cyan-400" />
@@ -561,14 +561,14 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
 
                   {type === 'peptide' && !showMixTools && (
                     <button type="button" onClick={() => { triggerHaptic('light'); setShowMixTools(true); }}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-cyan-500/8 border border-cyan-500/25 hover:bg-cyan-500/15 text-cyan-300 font-bold text-sm transition cursor-pointer"
+                      className="labrat-button-secondary w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-cyan-500/8 border border-cyan-500/25 hover:bg-cyan-500/15 text-cyan-300 font-bold text-sm transition cursor-pointer"
                       id="form-open-mix-tools">
                       <Sparkles className="w-4 h-4" /> Peptide mix &amp; reconstitution tools
                     </button>
                   )}
 
                   {type === 'peptide' && showMixTools && (
-                    <div className="bg-cyan-500/5 border border-cyan-500/15 p-4 rounded-xl space-y-3.5">
+                    <div className="labrat-mini-surface p-4 space-y-3.5">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] uppercase font-mono tracking-wider text-cyan-400 font-bold block">Optional Reconstitution Mapping</span>
                         <button type="button" onClick={() => setShowMixTools(false)} className="text-[10px] text-slate-500 hover:text-slate-300 font-mono cursor-pointer">Hide</button>
@@ -596,12 +596,12 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                         <div className="space-y-1">
                           <label className="text-[11px] font-semibold text-slate-300">Vial Capacity (mg)</label>
                           <input type="number" step="0.1" value={vialSizeMg} onChange={(e) => setVialSizeMg(e.target.value)} placeholder="e.g. 5"
-                            className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-vial-mg-input" />
+                            className="labrat-input py-1.5 px-3 text-xs" id="form-vial-mg-input" />
                         </div>
                         <div className="space-y-1">
                           <label className="text-[11px] font-semibold text-slate-300">{solventLabel} Added (ml / cc, max 3 — peptide vials are 3ml)</label>
                           <input type="number" step="0.1" min="0.5" max="3" value={bacWaterMl} onChange={(e) => setBacWaterMl(e.target.value)} placeholder="e.g. 2"
-                            className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-water-ml-input" />
+                            className="labrat-input py-1.5 px-3 text-xs" id="form-water-ml-input" />
                         </div>
                       </div>
                       <span className="text-[9px] text-slate-500 leading-normal block">Entering these allows the system to auto-map mcg dosages into physical syringe tick marks, displaying plunger volumes inside active daily schedules.</span>
@@ -609,7 +609,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                   )}
 
                   {(type === 'steroid' || type === 'supplement' || type === 'compound') && (
-                    <div className="bg-cyan-500/5 border border-cyan-500/15 p-4 rounded-xl space-y-3.5">
+                    <div className="labrat-mini-surface p-4 space-y-3.5">
                       <span className="text-[10px] uppercase font-mono tracking-wider text-cyan-400 font-bold block">Delivery Format & Configuration</span>
                       <div className="grid grid-cols-2 gap-3.5">
                         <div className="space-y-1 col-span-2">
@@ -627,19 +627,19 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                           <div className="space-y-1 col-span-2">
                             <label className="text-[11px] font-semibold text-slate-300">Tablet / Pill Size (mg per Tablet)</label>
                             <input type="number" step="any" value={pillSizeMg} onChange={(e) => setPillSizeMg(e.target.value)} placeholder="e.g. 10"
-                              className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-pill-size-input" />
+                              className="labrat-input py-1.5 px-3 text-xs" id="form-pill-size-input" />
                           </div>
                         ) : (
                           <>
                             <div className="space-y-1">
                               <label className="text-[11px] font-semibold text-slate-300">Liquid Concentration (mg per 1 ml / cc)</label>
                               <input type="number" step="any" value={oilConcMgMl} onChange={(e) => setOilConcMgMl(e.target.value)} placeholder="e.g. 250"
-                                className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-oil-conc-input" />
+                                className="labrat-input py-1.5 px-3 text-xs" id="form-oil-conc-input" />
                             </div>
                             <div className="space-y-1">
                               <label className="text-[11px] font-semibold text-slate-300">Vial Volume (ml) — roids are 10ml</label>
                               <input type="number" step="any" min="1" max="20" value={vialMl} onChange={(e) => setVialMl(e.target.value)} placeholder="e.g. 10"
-                                className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-vial-ml-input" />
+                                className="labrat-input py-1.5 px-3 text-xs" id="form-vial-ml-input" />
                             </div>
                           </>
                         )}
@@ -666,7 +666,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                         )}
                       </div>
                       <div className={`relative transition-all duration-300 rounded-xl ${type === 'peptide' && showMixTools ? 'border border-dashed border-cyan-500/30 bg-cyan-500/5 hover:border-cyan-500/50 hover:bg-cyan-500/10 p-1' : ''}`}>
-                        <div className="flex gap-1 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl pr-2 items-center">
+                        <div className="labrat-input flex gap-1 pr-2 items-center">
                           <input type="number" step="any" value={doseAmount} onChange={(e) => setDoseAmount(e.target.value)} placeholder="e.g. 250"
                             className="w-full bg-transparent border-0 rounded-l-xl py-2 px-3 text-sm text-slate-200 focus:outline-none" id="form-dose-amount-input" />
                           <select value={doseUnit} onChange={(e) => setDoseUnit(e.target.value as any)}
@@ -697,7 +697,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Administration Frequency</label>
                       <select value={frequency} onChange={(e) => setFrequency(e.target.value as any)}
-                        className="w-full bg-[#1e293b] border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-frequency-select">
+                        className="labrat-input py-2 px-3 text-sm" id="form-frequency-select">
                         <option value="daily">Every Day (Daily)</option>
                         <option value="eod">Every Other Day (EOD)</option>
                         <option value="twice_weekly">Twice a Week (e.g. Mon/Thurs)</option>
@@ -710,20 +710,20 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                       <div className="space-y-1.5 col-span-2">
                         <label className="text-xs font-semibold text-slate-300">Custom Frequency Intermission (Days)</label>
                         <input type="number" min="1" max="30" value={customDays} onChange={(e) => setCustomDays(e.target.value)} placeholder="e.g. 3"
-                          className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-custom-days-input" />
+                          className="labrat-input py-2 px-3 text-sm" id="form-custom-days-input" />
                       </div>
                     )}
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Cycle Active Start Date</label>
                       <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
-                        className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-start-date-input" />
+                        className="labrat-input py-2 px-3 text-sm" id="form-start-date-input" />
                     </div>
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Active Duration (Weeks)</label>
                       <input type="number" min="1" max="52" value={durationWeeks} onChange={(e) => setDurationWeeks(parseInt(e.target.value))}
-                        className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" id="form-duration-weeks-input" />
+                        className="labrat-input py-2 px-3 text-sm" id="form-duration-weeks-input" />
                     </div>
                   </div>
                   </div>
@@ -735,12 +735,12 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                         Dose reminder time <span className="text-[10px] text-slate-500 font-normal">(optional daily push)</span>
                       </label>
                       <input type="time" value={reminderTime} onChange={e => setReminderTime(e.target.value)}
-                        className="w-full bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-2 px-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/80" />
+                        className="labrat-input py-2 px-3 text-sm" />
                     </div>
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Color tag</label>
-                      <div className="flex gap-1.5 items-center bg-[#1e293b]/45 border border-slate-700/60 rounded-xl py-1.5 px-2.5 h-10">
+                      <div className="labrat-input flex gap-1.5 items-center py-1.5 px-2.5 h-10">
                         <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-7 h-7 bg-transparent border-0 cursor-pointer overflow-hidden rounded shrink-0" id="form-color-picker" />
                         <div className="flex flex-wrap gap-1 items-center">
                           {PRESET_COLORS.map(c => (
@@ -753,7 +753,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Notes <span className="text-[10px] text-slate-500 font-normal">(optional)</span></label>
                       <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Injection site, titration plan, anything to remember..."
-                        className="w-full h-18 bg-[#1e293b]/45 border border-slate-700/60 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/80" id="form-notes-textarea" />
+                        className="labrat-input h-18 p-3 text-sm placeholder-slate-500" id="form-notes-textarea" />
                     </div>
                   </div>
 
@@ -765,12 +765,12 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                     </button>
                     {step < TOTAL_STEPS - 1 ? (
                       <button type="button" onClick={goNext}
-                        className="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-sm flex items-center gap-1.5 cursor-pointer transition shadow-lg shadow-cyan-500/10" id="wizard-next">
+                        className="labrat-button-primary px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-sm flex items-center gap-1.5 cursor-pointer transition shadow-lg shadow-cyan-500/10" id="wizard-next">
                         Next →
                       </button>
                     ) : (
                       <button type="submit"
-                        className="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-sm flex items-center gap-1.5 cursor-pointer transition shadow-lg shadow-cyan-500/10" id="submit-form">
+                        className="labrat-button-primary px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-sm flex items-center gap-1.5 cursor-pointer transition shadow-lg shadow-cyan-500/10" id="submit-form">
                         <Save className="w-4 h-4 text-slate-950" />
                         {editingCompound ? 'Save changes' : 'Add to cycle'}
                       </button>
@@ -786,7 +786,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
 
       {showCalcModal && typeof window !== 'undefined' && createPortal(
         <div className="fixed inset-0 bg-[#020617]/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-[60]" id="calc-helper-overlay">
-          <div className="bg-[#0f172a] border border-[#1e293b] rounded-3xl p-4 sm:p-6 w-full max-w-5xl shadow-2xl relative space-y-4 my-2 sm:my-0 flex flex-col max-h-[95vh] text-left" id="calc-helper-modal">
+          <div className="labrat-card-strong p-4 sm:p-6 w-full max-w-5xl relative space-y-4 my-2 sm:my-0 flex flex-col max-h-[95vh] text-left" id="calc-helper-modal">
             <div className="flex justify-between items-center pb-3 border-b border-[#1e293b] shrink-0">
               <div>
                 <h4 className="text-base sm:text-lg font-black text-slate-100 flex items-center gap-1.5 uppercase tracking-wider font-mono">
@@ -795,7 +795,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                 <p className="text-[10px] text-slate-400 mt-0.5 font-mono">Configure peptide/compound titration, inspect visual syringe scale tick marks, and apply to formulation state instantly.</p>
               </div>
               <button type="button" onClick={() => { triggerHaptic('light'); setShowCalcModal(false); }}
-                className="p-1.5 px-3 border border-[#1e293b] hover:border-slate-700 bg-[#1e293b]/45 text-slate-400 hover:text-slate-200 text-xs font-semibold rounded-lg transition shrink-0 cursor-pointer"
+                className="labrat-button-secondary p-1.5 px-3 border border-[#1e293b] hover:border-slate-700 bg-[#1e293b]/45 text-slate-400 hover:text-slate-200 text-xs font-semibold rounded-lg transition shrink-0 cursor-pointer"
                 id="close-calc-helper-btn">Close</button>
             </div>
             <div className="overflow-y-auto flex-grow pr-1 custom-scrollbar">
