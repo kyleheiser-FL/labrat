@@ -284,17 +284,17 @@ export default function CycleDashboard({
 
   return (
     <div className="space-y-6 flex flex-col" id="dashboard-wrapper">
-      <section className="labrat-command-hero" id="labrat-command-hero">
+      <section className="labrat-command-hero labrat-page-header" id="labrat-command-hero">
         <motion.div className="labrat-command-hero-copy" style={{ y: heroCopyY }}>
           <span className="labrat-command-eyebrow">Clinical Research Console</span>
-          <h2>Daily Protocol</h2>
-          <p>Track today's active schedule, verify administrations, monitor cycle progress, and keep device reminders ready from one high-visibility command surface.</p>
+          <h2 className="labrat-page-title">Daily Protocol</h2>
+          <p className="labrat-page-subtitle">Track today's active schedule, verify administrations, monitor cycle progress, and keep device reminders ready from one high-visibility command surface.</p>
           <div className="labrat-command-metrics">
-            <div><strong>{scheduledCompounds.length}</strong><span>Scheduled</span></div>
-            <div><strong>{logs.filter(l => l.date === selectedDate).length}</strong><span>Logged</span></div>
-            <div><strong>{compounds.filter(c => !c.isCompleted).length}</strong><span>Active</span></div>
+            <div className="labrat-mini-surface"><strong>{scheduledCompounds.length}</strong><span>Scheduled</span></div>
+            <div className="labrat-mini-surface"><strong>{logs.filter(l => l.date === selectedDate).length}</strong><span>Logged</span></div>
+            <div className="labrat-mini-surface"><strong>{compounds.filter(c => !c.isCompleted).length}</strong><span>Active</span></div>
             {visibleMissedCount > 0 && (
-              <div className="missed-metric"><strong>{visibleMissedCount}</strong><span>Missed</span></div>
+              <div className="labrat-mini-surface missed-metric"><strong>{visibleMissedCount}</strong><span>Missed</span></div>
             )}
           </div>
         </motion.div>

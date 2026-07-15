@@ -97,7 +97,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
   })();
 
   return (
-    <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-lg relative flex flex-col justify-between animate-fadeIn min-w-0 overflow-hidden" id={`compound-card-${comp.id}`}>
+    <div className="labrat-card p-5 relative flex flex-col justify-between animate-fadeIn min-w-0 overflow-hidden" id={`compound-card-${comp.id}`}>
       <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-2xl" style={{ backgroundColor: comp.color }} />
 
       <div className="space-y-4">
@@ -106,10 +106,10 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
             <h4 className="text-base font-bold text-slate-100 flex items-center gap-1.5 flex-wrap">
               <span>{comp.name}</span>
               {comp.isCompleted && (
-                <span className="text-[9px] bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 px-1.5 py-0.2 rounded font-mono font-bold tracking-wider">COMPLETED</span>
+                <span className="labrat-status-badge text-emerald-400 border-emerald-500/20 bg-emerald-500/15 px-1.5 py-0.2">COMPLETED</span>
               )}
             </h4>
-            <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-slate-500">{comp.type}</span>
+            <span className="labrat-status-badge mt-1">{comp.type}</span>
           </div>
           {hideActions ? null : isConfirmingDelete ? (
             <div className="flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/20 p-1.5 rounded-xl text-[10px] select-none shrink-0" id={`confirm-delete-actions-${comp.id}`}>
@@ -138,7 +138,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-2 bg-[#1e293b]/20 p-2.5 rounded-xl border border-slate-800/80 text-[11px]">
+        <div className="labrat-mini-surface grid grid-cols-2 gap-2 p-2.5 text-[11px]">
           <div><span className="text-slate-500 block">Planned Dose</span><span className="font-mono font-semibold text-slate-300">{comp.doseAmount} {comp.doseUnit}</span></div>
           <div><span className="text-slate-500 block">Administration</span><span className="font-semibold text-slate-300 capitalize">{comp.frequency.replace('_', ' ')}</span></div>
           <div><span className="text-slate-500 block">Course Duration</span><span className="font-mono font-semibold text-slate-300">{comp.durationWeeks} Weeks</span></div>
@@ -162,7 +162,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
         </div>
 
         {comp.vialSizeMg && comp.bacWaterMl && (
-          <div className="bg-cyan-500/5 border border-cyan-500/10 p-2.5 rounded-xl text-[10px] text-cyan-400 flex items-start gap-1.5">
+          <div className="labrat-mini-surface p-2.5 text-[10px] text-cyan-400 flex items-start gap-1.5">
             <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             <div>
               <span className="font-semibold block text-[11px]">Formula Reconstituted Ratio</span>
@@ -178,7 +178,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
         )}
 
         {(comp.type === 'steroid' || comp.type === 'supplement' || comp.type === 'compound') && comp.steroidForm && (
-          <div className="bg-cyan-500/5 border border-cyan-500/10 p-2.5 rounded-xl text-[10px] text-cyan-400 flex items-start gap-1.5">
+          <div className="labrat-mini-surface p-2.5 text-[10px] text-cyan-400 flex items-start gap-1.5">
             <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             <div>
               <span className="font-semibold block text-[11px]">
@@ -195,7 +195,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
         )}
 
         {decayLevel && (
-          <div className="bg-indigo-950/20 border border-indigo-500/15 p-2.5 rounded-xl space-y-1.5">
+          <div className="labrat-mini-surface p-2.5 space-y-1.5">
             <div className="flex items-center justify-between text-[10px]">
               <span className="font-semibold text-indigo-300 flex items-center gap-1">
                 <Activity className="w-3 h-3" /> Active Level
@@ -229,7 +229,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
         )}
 
         {comp.notes && (
-          <p className="text-[11px] text-slate-400 italic bg-[#1e293b]/20 p-2.5 rounded-xl border border-slate-800/80">&ldquo;{comp.notes}&rdquo;</p>
+          <p className="labrat-mini-surface text-[11px] text-slate-400 italic p-2.5">&ldquo;{comp.notes}&rdquo;</p>
         )}
 
         {/* Mini week timeline strip */}
