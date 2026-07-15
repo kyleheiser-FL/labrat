@@ -343,7 +343,7 @@ function SourceBadge({ flags, light }: { flags: VialFlags; light: boolean }) {
   );
 }
 
-export default function ProductVialVisual({ name, category, theme = 'clinical' }: { name: string; category: string; theme?: LabratThemeMode }) {
+export default function ProductVialVisual({ name, category, theme = 'clinical', variant = 'full' }: { name: string; category: string; theme?: LabratThemeMode; variant?: 'full' | 'thumbnail' }) {
   const lowerCat = category.toLowerCase();
   const lowerName = name.toLowerCase();
   const isSolvent = lowerCat.includes('reconstitution') || lowerCat.includes('solvent') || lowerName.includes('water') || lowerName.includes('bacteriostatic');
@@ -368,6 +368,16 @@ export default function ProductVialVisual({ name, category, theme = 'clinical' }
     || PRODUCT_PHOTOS[`_compound-${cSlug}-cutout`]
     || PRODUCT_PHOTOS[`_compound-${cSlug}`]
     || null;
+
+  if (variant === 'thumbnail') {
+    return (
+      <div className="w-full h-full flex items-center justify-center relative select-none pointer-events-none">
+        {photo
+          ? <img src={photo} alt={`${name} research vial`} loading="lazy" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[140%] max-w-[160%] object-contain drop-shadow-md" />
+          : <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] scale-[0.38] origin-center"><RealisticVial name={name} category={category} flags={flags} light={false} /></div>}
+      </div>
+    );
+  }
 
   const glowClass = isSolvent ? 'labrat-real-vial-visual--solvent'
     : isChina ? 'labrat-real-vial-visual--china'
