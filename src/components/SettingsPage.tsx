@@ -4,9 +4,13 @@ import { AppNotification } from '../types';
 import { ExperienceMode } from '../lib/experience';
 import { triggerHaptic } from '../lib/haptics';
 
+type LabRatTheme = 'clinical' | 'clinical-light';
+type LabRatThemePreference = 'system' | LabRatTheme;
+
 interface SettingsPageProps {
-  labratTheme: 'neon' | 'clinical' | 'clinical-light';
-  onThemeChange: (theme: 'neon' | 'clinical' | 'clinical-light') => void;
+  labratTheme: LabRatTheme;
+  themePreference: LabRatThemePreference;
+  onThemeChange: (theme: LabRatThemePreference) => void;
   user: any; // Firebase User
   hideShop: boolean;
   onToggleHideShop: (hide: boolean) => void;
@@ -55,6 +59,7 @@ function ToggleSwitch({ enabled, onToggle }: { enabled: boolean; onToggle: () =>
 
 export default function SettingsPage({
   labratTheme,
+  themePreference,
   onThemeChange,
   user,
   hideShop,
@@ -100,30 +105,28 @@ export default function SettingsPage({
         <h3 className="text-base font-bold text-slate-100 mb-4">Theme Selection</h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {/* Neon Lab Card */}
+          {/* System Card */}
           <button
             type="button"
-            onClick={() => { triggerHaptic('light'); onThemeChange('neon'); }}
+            onClick={() => { triggerHaptic('light'); onThemeChange('system'); }}
             className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
-              labratTheme === 'neon'
-                ? 'border-cyan-500/60 bg-cyan-500/10 shadow-[0_0_16px_rgba(34,211,238,0.12)]'
+              themePreference === 'system'
+                ? 'border-emerald-500/60 bg-emerald-500/10 shadow-[0_0_16px_rgba(16,185,129,0.12)]'
                 : 'border-slate-700/50 bg-[#030712]/50 hover:border-slate-600'
             }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="flex gap-1">
-                <span className="w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.6)]"></span>
-                <span className="w-3 h-3 rounded-full bg-[#39ff14] shadow-[0_0_6px_rgba(57,255,20,0.5)]"></span>
-                <span className="w-3 h-3 rounded-full bg-indigo-400"></span>
-              </div>
-              {labratTheme === 'neon' && (
-                <span className="w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center shrink-0">
+              <Smartphone className="w-5 h-5 text-emerald-300" />
+              {themePreference === 'system' && (
+                <span className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
                   <Check className="w-3 h-3 text-slate-950" strokeWidth={3} />
                 </span>
               )}
             </div>
-            <div className="text-sm font-bold text-slate-100">Neon Lab</div>
-            <div className="text-xs text-slate-500 mt-0.5">Cyberpunk, immersive, high-energy.</div>
+            <div className="text-sm font-bold text-slate-100">Use System</div>
+            <div className="text-xs text-slate-500 mt-0.5">
+              Matches your phone automatically. Current: {labratTheme === 'clinical-light' ? 'Light' : 'Dark'}.
+            </div>
           </button>
 
           {/* Clinical Dark Card */}
@@ -131,7 +134,7 @@ export default function SettingsPage({
             type="button"
             onClick={() => { triggerHaptic('light'); onThemeChange('clinical'); }}
             className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
-              labratTheme === 'clinical'
+              themePreference === 'clinical'
                 ? 'border-sky-400/60 bg-sky-500/10 shadow-[0_0_16px_rgba(56,189,248,0.1)]'
                 : 'border-slate-700/50 bg-[#030712]/50 hover:border-slate-600'
             }`}
@@ -142,13 +145,13 @@ export default function SettingsPage({
                 <span className="w-3 h-3 rounded-full bg-slate-400"></span>
                 <span className="w-3 h-3 rounded-full bg-slate-600"></span>
               </div>
-              {labratTheme === 'clinical' && (
+              {themePreference === 'clinical' && (
                 <span className="w-5 h-5 rounded-full bg-sky-400 flex items-center justify-center shrink-0">
                   <Check className="w-3 h-3 text-slate-950" strokeWidth={3} />
                 </span>
               )}
             </div>
-            <div className="text-sm font-bold text-slate-100">Clinical Dark</div>
+            <div className="text-sm font-bold text-slate-100">Dark</div>
             <div className="text-xs text-slate-500 mt-0.5">OLED black, professional, low-glow.</div>
           </button>
 
@@ -157,7 +160,7 @@ export default function SettingsPage({
             type="button"
             onClick={() => { triggerHaptic('light'); onThemeChange('clinical-light'); }}
             className={`relative p-4 rounded-xl border text-left transition-all cursor-pointer ${
-              labratTheme === 'clinical-light'
+              themePreference === 'clinical-light'
                 ? 'border-blue-500/60 bg-blue-500/10 shadow-[0_0_16px_rgba(37,99,235,0.12)]'
                 : 'border-slate-700/50 bg-[#030712]/50 hover:border-slate-600'
             }`}
@@ -168,13 +171,13 @@ export default function SettingsPage({
                 <span className="w-3 h-3 rounded-full bg-blue-400"></span>
                 <span className="w-3 h-3 rounded-full bg-slate-300"></span>
               </div>
-              {labratTheme === 'clinical-light' && (
+              {themePreference === 'clinical-light' && (
                 <span className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
                   <Check className="w-3 h-3 text-white" strokeWidth={3} />
                 </span>
               )}
             </div>
-            <div className="text-sm font-bold text-slate-100">Clinical Light</div>
+            <div className="text-sm font-bold text-slate-100">Light</div>
             <div className="text-xs text-slate-500 mt-0.5">White, clean, easy to read.</div>
           </button>
         </div>

@@ -52,7 +52,7 @@ interface ProductDrawerModalProps {
   onSetSelectedOptionId: (id: string) => void;
   drawerQuantity: number;
   onSetDrawerQuantity: (q: number | ((prev: number) => number)) => void;
-  labratTheme: 'neon' | 'clinical' | 'clinical-light';
+  labratTheme: 'clinical' | 'clinical-light';
   cart: CartItem[];
   allOrdersGlobal: OrderDetail[];
   actionLoading: string | null;

@@ -167,13 +167,25 @@ const migrateMetricsLegacyWeight = (metricsList: any[]): DailyMetric[] => {
   });
 };
 
-type LabRatTheme = 'neon' | 'clinical' | 'clinical-light';
+type LabRatTheme = 'clinical' | 'clinical-light';
+type LabRatThemePreference = 'system' | LabRatTheme;
 type LabRatBranding = 'mascot' | 'wordmark' | 'lr';
 
-const getInitialTheme = (): LabRatTheme => {
-  const saved = safeLocalStorage.getItem('labrat_ui_theme');
-  if (saved === 'clinical' || saved === 'neon' || saved === 'clinical-light') return saved;
-  return 'neon';
+const resolveSystemTheme = (): LabRatTheme => {
+  if (typeof window === 'undefined' || !window.matchMedia) return 'clinical';
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'clinical-light' : 'clinical';
+};
+
+const getInitialThemePreference = (): LabRatThemePreference => {
+  const savedPreference = safeLocalStorage.getItem('labrat_theme_preference');
+  if (savedPreference === 'system' || savedPreference === 'clinical' || savedPreference === 'clinical-light') {
+    return savedPreference;
+  }
+
+  const legacyTheme = safeLocalStorage.getItem('labrat_ui_theme');
+  if (legacyTheme === 'clinical-light') return 'clinical-light';
+  if (legacyTheme === 'clinical' || legacyTheme === 'neon') return 'clinical';
+  return 'system';
 };
 
 const getInitialBranding = (): LabRatBranding => {
@@ -279,18 +291,20 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
-  const [labratTheme, setLabratTheme] = useState<LabRatTheme>(getInitialTheme);
+  const [themePreference, setThemePreference] = useState<LabRatThemePreference>(getInitialThemePreference);
+  const [systemTheme, setSystemTheme] = useState<LabRatTheme>(resolveSystemTheme);
+  const labratTheme: LabRatTheme = themePreference === 'system' ? systemTheme : themePreference;
   const [labratBranding, setLabratBranding] = useState<LabRatBranding>(getInitialBranding);
   const [showFirstBootThemePicker, setShowFirstBootThemePicker] = useState<boolean>(() => {
     return safeLocalStorage.getItem('labrat_theme_selected') !== 'true';
   });
   const [showAppearanceModal, setShowAppearanceModal] = useState(false);
 
-  const applyThemeSelection = (theme: LabRatTheme) => {
-    setLabratTheme(theme);
+  const applyThemeSelection = (preference: LabRatThemePreference) => {
+    setThemePreference(preference);
     setLabratBranding('lr');
     safeLocalStorage.setItem('labrat_in_app_branding', 'lr');
-    safeLocalStorage.setItem('labrat_ui_theme', theme);
+    safeLocalStorage.setItem('labrat_theme_preference', preference);
     safeLocalStorage.setItem('labrat_theme_selected', 'true');
     setShowFirstBootThemePicker(false);
     triggerHaptic('success');
@@ -324,6 +338,15 @@ export default function App() {
 
   // Theme support visual attributes syncing
   useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const media = window.matchMedia('(prefers-color-scheme: light)');
+    const sync = () => setSystemTheme(media.matches ? 'clinical-light' : 'clinical');
+    sync();
+    media.addEventListener?.('change', sync);
+    return () => media.removeEventListener?.('change', sync);
+  }, []);
+
+  useEffect(() => {
     const root = window.document.documentElement;
     if (labratTheme === 'clinical-light') {
       root.classList.remove('dark');
@@ -337,11 +360,12 @@ export default function App() {
     root.setAttribute('data-labrat-theme', labratTheme);
     root.setAttribute('data-labrat-branding', labratBranding);
 
+    safeLocalStorage.setItem('labrat_theme_preference', themePreference);
     safeLocalStorage.setItem('labrat_theme_mode', labratTheme === 'clinical-light' ? 'light' : 'dark');
     safeLocalStorage.setItem('labrat_ui_theme', labratTheme);
     safeLocalStorage.setItem('labrat_in_app_branding', labratBranding);
 
-    const manifestHref = labratTheme === 'neon' ? '/manifest-neon.json?v=lr-neon-final-20260528-live-refine-v2' : '/manifest-clinical.json?v=lr-clinical-final-20260528-live-refine-v2';
+    const manifestHref = '/manifest-clinical.json?v=lr-clinical-final-20260528-live-refine-v2';
     let manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     if (!manifestLink) {
       manifestLink = document.createElement('link');
@@ -354,9 +378,9 @@ export default function App() {
 
     const themeMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
     if (themeMeta) {
-      themeMeta.setAttribute('content', labratTheme === 'neon' ? '#020b12' : labratTheme === 'clinical-light' ? '#f0f4f8' : '#000000');
+      themeMeta.setAttribute('content', labratTheme === 'clinical-light' ? '#f0f4f8' : '#000000');
     }
-  }, [labratTheme, labratBranding]);
+  }, [labratTheme, labratBranding, themePreference]);
 
   // Core authenticated user from Firebase
   const [user, setUser] = useState<User | null>(null);
@@ -772,7 +796,7 @@ export default function App() {
   }, []);
 
   const handleInstallApp = async () => {
-    const manifestHref = labratTheme === 'neon' ? '/manifest-neon.json?v=lr-neon-final-20260528-live-refine-v2' : '/manifest-clinical.json?v=lr-clinical-final-20260528-live-refine-v2';
+    const manifestHref = '/manifest-clinical.json?v=lr-clinical-final-20260528-live-refine-v2';
     const manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     manifestLink?.setAttribute('href', manifestHref);
     safeLocalStorage.setItem('labrat_pwa_icon_theme', labratTheme);
@@ -1678,6 +1702,7 @@ export default function App() {
               {activeTab === 'settings' && (
                 <SettingsPage
                   labratTheme={labratTheme}
+                  themePreference={themePreference}
                   onThemeChange={applyThemeSelection}
                   user={user}
                   hideShop={hideShop}
@@ -1732,7 +1757,7 @@ export default function App() {
 
       <LegalModal open={showLegalModal} onClose={() => setShowLegalModal(false)} />
       <FirstBootThemePicker open={showFirstBootThemePicker} onSelectTheme={applyThemeSelection} />
-      <AppearanceModal open={showAppearanceModal} onClose={() => setShowAppearanceModal(false)} currentTheme={labratTheme} onSelectTheme={applyThemeSelection} />
+      <AppearanceModal open={showAppearanceModal} onClose={() => setShowAppearanceModal(false)} currentTheme={themePreference} onSelectTheme={applyThemeSelection} />
       <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} onNotification={triggerNotification} onSignUpSuccess={(u) => setUser(u as any)} initialMode={authModalMode} />
       <AiAssistant
         compounds={compounds}

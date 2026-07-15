@@ -22,7 +22,7 @@ type Tab = 'dashboard' | 'planner' | 'blood' | 'library' | 'stats' | 'shop' | 's
 interface AppHeaderProps {
   activeTab: Tab;
   onSetActiveTab: (tab: Tab) => void;
-  labratTheme: 'neon' | 'clinical' | 'clinical-light';
+  labratTheme: 'clinical' | 'clinical-light';
   user: User | null;
   authLoading: boolean;
   isStandalone: boolean;
@@ -39,7 +39,6 @@ interface AppHeaderProps {
 export default function AppHeader({
   activeTab,
   onSetActiveTab,
-  labratTheme,
   user,
   authLoading,
   isStandalone,
@@ -84,11 +83,7 @@ export default function AppHeader({
           {/* Wordmark — fixed px/vw so it doesn't scale with the phone's text-size setting */}
           <div className="flex items-center min-w-0">
             <span
-              className={`labrat-brand-wordmark text-[clamp(20px,7vw,30px)] leading-none font-black tracking-tighter font-sans uppercase truncate ${
-                labratTheme === 'neon'
-                  ? 'bg-gradient-to-r from-[#00d9ff] via-[#1e88ff] to-[#39ff14] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(34,211,238,0.25)]'
-                  : 'text-slate-100'
-              }`}
+              className="labrat-brand-wordmark text-[clamp(20px,7vw,30px)] leading-none font-black tracking-tighter font-sans uppercase truncate text-slate-100"
             >
               labrat
             </span>

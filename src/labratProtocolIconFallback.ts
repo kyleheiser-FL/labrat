@@ -2,11 +2,11 @@
 // Safe patch: does not alter cycle/protectant data, filtering, or add-preset logic.
 // It only replaces failed/missing protocol preset images with local LABRAT SVGs.
 
-const ICONS: Record<string, { neon: string; clinical: string }> = {
-  vitamins: { neon: "/protocol-icons/vitamins-neon.svg", clinical: "/protocol-icons/vitamins-clinical.svg" },
-  joint: { neon: "/protocol-icons/joint-neon.svg", clinical: "/protocol-icons/joint-clinical.svg" },
-  estrogen: { neon: "/protocol-icons/estrogen-neon.svg", clinical: "/protocol-icons/estrogen-clinical.svg" },
-  endocrine: { neon: "/protocol-icons/endocrine-neon.svg", clinical: "/protocol-icons/endocrine-clinical.svg" },
+const ICONS: Record<string, string> = {
+  vitamins: "/protocol-icons/vitamins-clinical.svg",
+  joint: "/protocol-icons/joint-clinical.svg",
+  estrogen: "/protocol-icons/estrogen-clinical.svg",
+  endocrine: "/protocol-icons/endocrine-clinical.svg",
 };
 
 function protocolKind(text: string): keyof typeof ICONS | null {
@@ -18,11 +18,6 @@ function protocolKind(text: string): keyof typeof ICONS | null {
   return null;
 }
 
-function clinicalMode(): boolean {
-  const rootText = `${document.documentElement.className} ${document.body.className} ${document.documentElement.getAttribute("data-theme") || ""} ${document.body.getAttribute("data-theme") || ""}`.toLowerCase();
-  return rootText.includes("clinical") || rootText.includes("light") || rootText.includes("professional");
-}
-
 function replaceIfProtocolImage(img: HTMLImageElement): void {
   if (!img || img.dataset.labratProtocolFixed === "1") return;
   const card = img.closest("article,section,div,li") as HTMLElement | null;
@@ -31,7 +26,7 @@ function replaceIfProtocolImage(img: HTMLImageElement): void {
   if (!kind) return;
 
   img.dataset.labratProtocolFixed = "1";
-  img.src = clinicalMode() ? ICONS[kind].clinical : ICONS[kind].neon;
+  img.src = ICONS[kind];
   img.alt = img.alt || kind;
   img.loading = "lazy";
   img.decoding = "async";

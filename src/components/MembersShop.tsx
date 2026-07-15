@@ -59,14 +59,14 @@ import NorwayHeritageModal from './shop/NorwayHeritageModal';
 import ShopRegistrationView from './shop/ShopRegistrationView';
 import ProductVialVisual from './shop/ProductVialVisual';
 
-type LabratThemeMode = 'neon' | 'clinical' | 'clinical-light';
+type LabratThemeMode = 'clinical' | 'clinical-light';
 
 function resolveLabratTheme(): LabratThemeMode {
-  if (typeof document === 'undefined') return 'neon';
+  if (typeof document === 'undefined') return 'clinical';
   const t = document.documentElement.getAttribute('data-labrat-theme');
   if (t === 'clinical') return 'clinical';
   if (t === 'clinical-light') return 'clinical-light';
-  return 'neon';
+  return 'clinical';
 }
 
 
@@ -1693,12 +1693,6 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
           <motion.button
             id="floating-view-cart-btn"
             key="floating-cart"
-            ref={(el: HTMLButtonElement | null) => {
-              if (el && labratTheme !== 'neon') {
-                el.style.setProperty('background-color', '#1e293b', 'important');
-                el.style.setProperty('color', '#ffffff', 'important');
-              }
-            }}
             initial={{ scale: 0, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0, opacity: 0, y: 20 }}
@@ -1706,10 +1700,10 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
             onClick={() => { triggerHaptic('light'); navigateView('cart'); }}
             className="fixed bottom-6 left-4 z-[999] flex items-center gap-2.5 px-4 py-3 active:scale-95 font-black text-sm rounded-2xl shadow-xl cursor-pointer"
             style={{
-              backgroundColor: labratTheme === 'neon' ? '#06b6d4' : '#1e293b',
+              backgroundColor: labratTheme === 'clinical-light' ? '#2563eb' : '#1e293b',
               color: '#ffffff',
-              boxShadow: labratTheme === 'neon'
-                ? '0 10px 25px -5px rgba(6,182,212,0.4)'
+              boxShadow: labratTheme === 'clinical-light'
+                ? '0 8px 20px -4px rgba(37,99,235,0.28)'
                 : '0 8px 20px -4px rgba(0,0,0,0.30)',
             }}
           >
@@ -1727,4 +1721,3 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
     </div>
   );
 }
-

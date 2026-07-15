@@ -1,7 +1,7 @@
 import React from 'react';
 import { getProductBaseAndSize } from '../../lib/shopHelpers';
 
-type LabratThemeMode = 'neon' | 'clinical' | 'clinical-light';
+type LabratThemeMode = 'clinical' | 'clinical-light';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Per-product photography (optional): drop AI-generated or studio photos into
@@ -343,7 +343,7 @@ function SourceBadge({ flags, light }: { flags: VialFlags; light: boolean }) {
   );
 }
 
-export default function ProductVialVisual({ name, category, theme = 'neon' }: { name: string; category: string; theme?: LabratThemeMode }) {
+export default function ProductVialVisual({ name, category, theme = 'clinical' }: { name: string; category: string; theme?: LabratThemeMode }) {
   const lowerCat = category.toLowerCase();
   const lowerName = name.toLowerCase();
   const isSolvent = lowerCat.includes('reconstitution') || lowerCat.includes('solvent') || lowerName.includes('water') || lowerName.includes('bacteriostatic');

@@ -86,7 +86,7 @@ interface ShopCatalogViewProps {
   selectedProductIds: Record<string, string>;
   onSetSelectedProductIds: (ids: Record<string, string> | ((prev: Record<string, string>) => Record<string, string>)) => void;
   cart: CartItem[];
-  labratTheme: 'neon' | 'clinical' | 'clinical-light';
+  labratTheme: 'clinical' | 'clinical-light';
   isViewingAsAdmin: boolean;
   isAdminUser: boolean;
   actionLoading: string | null;

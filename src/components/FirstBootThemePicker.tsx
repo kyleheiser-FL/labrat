@@ -1,11 +1,11 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
-type LabRatTheme = 'neon' | 'clinical' | 'clinical-light';
+type LabRatThemePreference = 'system' | 'clinical' | 'clinical-light';
 
 interface FirstBootThemePickerProps {
   open: boolean;
-  onSelectTheme: (theme: LabRatTheme) => void;
+  onSelectTheme: (theme: LabRatThemePreference) => void;
 }
 
 export default function FirstBootThemePicker({ open, onSelectTheme }: FirstBootThemePickerProps) {
@@ -37,18 +37,16 @@ export default function FirstBootThemePicker({ open, onSelectTheme }: FirstBootT
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
-                onClick={() => onSelectTheme('neon')}
-                className="group text-left rounded-2xl border border-cyan-500/30 bg-[#030712]/70 p-4 hover:border-cyan-400/70 hover:bg-cyan-500/10 transition-all cursor-pointer"
+                onClick={() => onSelectTheme('system')}
+                className="group text-left rounded-2xl border border-emerald-500/30 bg-[#030712]/70 p-4 hover:border-emerald-400/70 hover:bg-emerald-500/10 transition-all cursor-pointer"
               >
-                <div className="h-24 rounded-xl bg-[radial-gradient(circle_at_top_right,rgba(160,94,255,0.35),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(34,211,238,0.28),transparent_45%),#050816] border border-cyan-500/20 mb-4 flex items-center justify-center overflow-hidden">
-                  <img
-                    src="/labrat_top_left_logo_transparent.png"
-                    alt="Neon Lab"
-                    className="h-16 w-16 object-contain drop-shadow-[0_0_18px_rgba(34,211,238,0.45)]"
-                  />
+                <div className="h-24 rounded-xl bg-[linear-gradient(135deg,#f8fafc_0%,#f8fafc_49%,#0f172a_50%,#020617_100%)] border border-emerald-500/20 mb-4 flex items-center justify-center overflow-hidden">
+                  <div className="h-14 w-14 rounded-2xl bg-emerald-500 border border-emerald-300/70 flex items-center justify-center shadow-lg">
+                    <span className="text-lg font-black text-slate-950 tracking-tighter">LR</span>
+                  </div>
                 </div>
-                <h3 className="text-cyan-300 font-black uppercase tracking-wider text-sm">Neon Lab</h3>
-                <p className="text-xs text-slate-400 mt-1">Cyberpunk, high-energy, immersive.</p>
+                <h3 className="text-emerald-300 font-black uppercase tracking-wider text-sm">Use System</h3>
+                <p className="text-xs text-slate-400 mt-1">Matches your phone automatically.</p>
               </button>
 
               <button
@@ -60,7 +58,7 @@ export default function FirstBootThemePicker({ open, onSelectTheme }: FirstBootT
                     <span className="text-xl font-black text-slate-100 tracking-tighter">LR</span>
                   </div>
                 </div>
-                <h3 className="text-slate-100 font-black uppercase tracking-wider text-sm">Clinical Dark</h3>
+                <h3 className="text-slate-100 font-black uppercase tracking-wider text-sm">Dark</h3>
                 <p className="text-xs text-slate-400 mt-1">OLED black, professional, low-glow.</p>
               </button>
 
@@ -73,7 +71,7 @@ export default function FirstBootThemePicker({ open, onSelectTheme }: FirstBootT
                     <span className="text-xl font-black text-blue-700 tracking-tighter">LR</span>
                   </div>
                 </div>
-                <h3 className="text-blue-300 font-black uppercase tracking-wider text-sm">Clinical Light</h3>
+                <h3 className="text-blue-300 font-black uppercase tracking-wider text-sm">Light</h3>
                 <p className="text-xs text-slate-400 mt-1">White, clean, minimal interface.</p>
               </button>
             </div>

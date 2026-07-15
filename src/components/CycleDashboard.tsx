@@ -20,7 +20,7 @@ interface CycleDashboardProps {
   onLogDose: (log: DoseLog) => void;
   onUndoDose: (id: string) => void;
   onUpdateCompoundDose?: (compoundId: string, newDose: number) => void;
-  labratTheme?: 'neon' | 'clinical' | 'clinical-light';
+  labratTheme?: 'clinical' | 'clinical-light';
   visibility?: {
     schedule: boolean;
     history: boolean;
@@ -33,7 +33,7 @@ export default function CycleDashboard({
   onLogDose,
   onUndoDose,
   onUpdateCompoundDose,
-  labratTheme = 'neon',
+  labratTheme = 'clinical',
   visibility = { schedule: true, history: true }
 }: CycleDashboardProps) {
   const todayStr = localDateISO();
@@ -286,7 +286,7 @@ export default function CycleDashboard({
     <div className="space-y-6 flex flex-col" id="dashboard-wrapper">
       <section className="labrat-command-hero" id="labrat-command-hero">
         <motion.div className="labrat-command-hero-copy" style={{ y: heroCopyY }}>
-          <span className="labrat-command-eyebrow">{labratTheme === 'neon' ? 'LabRat Research Console' : 'Clinical Research Console'}</span>
+          <span className="labrat-command-eyebrow">Clinical Research Console</span>
           <h2>Daily Protocol</h2>
           <p>Track today's active schedule, verify administrations, monitor cycle progress, and keep device reminders ready from one high-visibility command surface.</p>
           <div className="labrat-command-metrics">
@@ -300,7 +300,7 @@ export default function CycleDashboard({
         </motion.div>
         <motion.div className="labrat-command-hero-art" aria-hidden="true" style={{ y: heroArtY }}>
           <img
-            src={labratTheme === 'neon' ? '/labrat_top_left_logo_transparent.png' : '/labrat_hero_rat_dark.png'}
+            src="/labrat_hero_rat_dark.png"
             alt=""
             style={labratTheme === 'clinical' ? { filter: 'invert(1) opacity(0.2)' } : undefined}
           />

@@ -1,10 +1,10 @@
 // Realistic, theme-aware SVG art for the guided how-to walkthroughs.
 // Scenes are built as SVG strings (designed + validated in a preview harness)
 // and injected via dangerouslySetInnerHTML. All colors come from CSS custom
-// properties so the same art renders correctly on neon, clinical (dark) and
+// properties so the same art renders correctly on clinical (dark) and
 // clinical-light.
 
-export type LabTheme = 'neon' | 'clinical' | 'clinical-light';
+export type LabTheme = 'clinical' | 'clinical-light';
 
 export function guideThemeVars(theme: LabTheme, accent: string): React.CSSProperties {
   const light = theme === 'clinical-light';
