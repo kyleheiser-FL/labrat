@@ -1369,6 +1369,11 @@ export default function App() {
         triggerNotification('Cloud Sync Interruption', 'Dose logged successfully offline but backup sync failed.', 'warning');
       });
     }
+    if (newLog.isSkipped) {
+      triggerNotification('Dose Skipped', `${newLog.compoundName} marked skipped for ${newLog.date}.`, 'info');
+      return;
+    }
+
     triggerNotification('Dose Administered', `Successfully logged administration of ${newLog.doseAmount} ${newLog.doseUnit} ${newLog.compoundName}.`, 'success');
     syncCompoundStartDate(newLog.compoundId, updated);
   };

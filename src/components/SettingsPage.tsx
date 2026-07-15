@@ -394,7 +394,10 @@ export default function SettingsPage({
           </div>
         </div>
 
-        <div className="divide-y divide-slate-800/70 max-h-[420px] overflow-y-auto custom-scrollbar">
+        <div
+          className="labrat-notification-scroll divide-y divide-slate-800/70 max-h-[300px] sm:max-h-[380px] overflow-y-auto overscroll-contain pr-1"
+          aria-label="Scrollable notification history"
+        >
           {notifications.length === 0 ? (
             <div className="py-14 px-4 text-center">
               <Bell className="w-8 h-8 text-slate-700 mx-auto mb-3 opacity-40" />

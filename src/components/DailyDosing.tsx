@@ -111,6 +111,22 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
       calculatedQtyText: draw?.calculatedQtyText,
     });
   };
+  const skipDose = (c: Compound) => {
+    triggerHaptic('light');
+    const time = localTimeHM();
+    onLogDose({
+      id: crypto.randomUUID(),
+      compoundId: c.id,
+      compoundName: c.name,
+      date,
+      time,
+      doseAmount: 0,
+      doseUnit: c.doseUnit,
+      calculatedQtyText: 'Skipped',
+      notes: 'Skipped scheduled dose',
+      isSkipped: true,
+    });
+  };
   const undo = (c: Compound) => { const l = loggedFor(c); if (l) { triggerHaptic('warning'); onUndoDose(l.id); } };
 
   const startAdjustment = (c: Compound) => {
@@ -135,7 +151,9 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
   };
 
   const doseCard = (c: Compound) => {
-    const logged = !!loggedFor(c);
+    const loggedLog = loggedFor(c);
+    const logged = !!loggedLog;
+    const skipped = !!loggedLog?.isSkipped;
     const draw = drawInfo(c);
     const isAdjusting = adjustingId === c.id;
     const adjustedPreview = isAdjusting ? drawInfo(c, parseFloat(adjustDose), adjustUnit) : undefined;
@@ -159,22 +177,31 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
               {FREQ_LABEL[c.frequency] || c.frequency}
             </span>
             {!logged && (
-              <button
-                type="button"
-                onClick={() => startAdjustment(c)}
-                className="labrat-dose-chip px-2 py-1 hover:border-cyan-400/45 hover:text-cyan-200 transition cursor-pointer"
-              >
-                adjust dose
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => startAdjustment(c)}
+                  className="labrat-dose-chip px-2 py-1 hover:border-cyan-400/45 hover:text-cyan-200 transition cursor-pointer"
+                >
+                  adjust dose
+                </button>
+                <button
+                  type="button"
+                  onClick={() => skipDose(c)}
+                  className="labrat-dose-chip px-2 py-1 hover:border-amber-400/45 hover:text-amber-200 transition cursor-pointer"
+                >
+                  skip
+                </button>
+              </>
             )}
           </div>
         </div>
         {logged ? (
           <button onClick={() => undo(c)} title="Tap to undo"
             aria-label={`Undo dose for ${c.name}`}
-            className="shrink-0 min-w-[92px] sm:min-w-[118px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide bg-emerald-500/15 text-emerald-400 hover:bg-rose-500/15 hover:text-rose-300 transition cursor-pointer group">
+            className={`shrink-0 min-w-[92px] sm:min-w-[118px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide hover:bg-rose-500/15 hover:text-rose-300 transition cursor-pointer group ${skipped ? 'bg-amber-500/12 text-amber-300' : 'bg-emerald-500/15 text-emerald-400'}`}>
             <Check className="w-4.5 h-4.5 group-hover:hidden" /><RotateCcw className="w-4.5 h-4.5 hidden group-hover:inline" />
-            <span className="group-hover:hidden">Done</span><span className="hidden group-hover:inline">Undo</span>
+            <span className="group-hover:hidden">{skipped ? 'Skipped' : 'Done'}</span><span className="hidden group-hover:inline">Undo</span>
           </button>
         ) : (
           <button onClick={() => logDose(c)}
@@ -350,8 +377,12 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
                   <div className="min-w-0">
                     <p className="text-[13.5px] font-semibold text-slate-200 truncate">{l.compoundName}</p>
                     <p className="text-[11.5px] text-slate-500 font-mono">
-                      {l.doseAmount} {l.doseUnit}
-                      {l.calculatedQtyText ? ` · ${l.calculatedQtyText}` : l.reconstitutedRatio ? ` · ${l.reconstitutedRatio.syringeUnits} units` : ''}
+                      {l.isSkipped ? 'Skipped scheduled dose' : (
+                        <>
+                          {l.doseAmount} {l.doseUnit}
+                          {l.calculatedQtyText ? ` · ${l.calculatedQtyText}` : l.reconstitutedRatio ? ` · ${l.reconstitutedRatio.syringeUnits} units` : ''}
+                        </>
+                      )}
                       {' · '}{formatTimeTo12Hour(l.time)}
                     </p>
                   </div>

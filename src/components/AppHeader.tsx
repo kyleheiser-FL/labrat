@@ -56,7 +56,7 @@ export default function AppHeader({
       onClick={() => { triggerHaptic('light'); onSetActiveTab(tab); }}
       className={`relative flex flex-col min-[480px]:flex-row items-center justify-center text-center gap-1 px-1 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer select-none truncate flex-1 justify-self-stretch ${
         activeTab === tab
-          ? 'labrat-button-primary text-slate-950 font-bold shadow-[0_0_12px_rgba(34,211,238,0.25)]'
+          ? 'labrat-button-primary text-white font-bold shadow-[0_0_12px_rgba(34,211,238,0.25)]'
           : 'labrat-button-secondary text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/55'
       }`}
       id={`tab-btn-${tab}`}

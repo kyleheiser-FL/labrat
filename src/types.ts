@@ -38,6 +38,7 @@ export interface DoseLog {
   };
   calculatedQtyText?: string; // Text representing automatically resolved physical quantities (e.g. "2 pills" or "0.5 ml")
   notes?: string;
+  isSkipped?: boolean;        // Scheduled dose was intentionally skipped, not administered
 }
 
 export interface DailyMetric {

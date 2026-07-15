@@ -183,7 +183,7 @@ function getStatus(compound: Compound, logs: DoseLog[], daysLeft: number, todayI
 function buildRow(compound: Compound, logs: DoseLog[], todayISO: string): StatsCompoundRow {
   const startISO = compound.startDate;
   const endISO = getEndISO(compound);
-  const compoundLogs = logs.filter(log => log.compoundId === compound.id).sort((a, b) => a.date.localeCompare(b.date));
+  const compoundLogs = logs.filter(log => log.compoundId === compound.id && !log.isSkipped).sort((a, b) => a.date.localeCompare(b.date));
   const latestLog = compoundLogs.at(-1);
   const daysLeft = getDaysLeft(endISO, todayISO);
 
@@ -213,8 +213,9 @@ export function buildProtocolRows(compounds: Compound[], logs: DoseLog[], todayI
 
 export function buildStatsTimelineViewModel(compounds: Compound[], logs: DoseLog[], todayISO = new Date().toISOString().slice(0, 10)): StatsTimelineViewModel {
   const activeCompounds = compounds.filter(compound => !compound.isCompleted);
-  const active = activeCompounds.map(compound => buildRow(compound, logs, todayISO));
-  const dosesLoggedThisWeek = logs.filter(log => isCurrentWeek(log.date, todayISO)).length;
+  const administeredLogs = logs.filter(log => !log.isSkipped);
+  const active = activeCompounds.map(compound => buildRow(compound, administeredLogs, todayISO));
+  const dosesLoggedThisWeek = administeredLogs.filter(log => isCurrentWeek(log.date, todayISO)).length;
 
   if (active.length === 0) {
     return {
@@ -224,7 +225,7 @@ export function buildStatsTimelineViewModel(compounds: Compound[], logs: DoseLog
         overallProgressPct: 0,
         daysLeft: 0,
         dosesLoggedThisWeek,
-        totalLogs: logs.length,
+        totalLogs: administeredLogs.length,
       },
     };
   }
@@ -241,7 +242,7 @@ export function buildStatsTimelineViewModel(compounds: Compound[], logs: DoseLog
       overallProgressPct: runwayProgress,
       daysLeft,
       dosesLoggedThisWeek,
-      totalLogs: logs.length,
+      totalLogs: administeredLogs.length,
     },
     runway: {
       startISO,

@@ -95,6 +95,31 @@ describe('stats timeline helpers', () => {
     });
   });
 
+  it('does not count skipped doses as administered stats', () => {
+    const logs: DoseLog[] = [
+      {
+        id: 'skip-1',
+        compoundId: 'test-cyp',
+        compoundName: 'Testosterone Cypionate',
+        date: '2026-07-14',
+        time: '08:00',
+        doseAmount: 0,
+        doseUnit: 'mg',
+        isSkipped: true,
+      },
+    ];
+
+    const vm = buildStatsTimelineViewModel([baseCompound], logs, '2026-07-15');
+
+    expect(vm.summary.totalLogs).toBe(0);
+    expect(vm.summary.dosesLoggedThisWeek).toBe(0);
+    expect(vm.active[0]).toMatchObject({
+      loggedCount: 0,
+      lastLoggedLabel: 'No logs yet',
+      status: 'No logs yet',
+    });
+  });
+
   it('returns status tone classes for existing progress bars', () => {
     expect(getStatusTone('Ending soon')).toMatchObject({
       label: 'Ending soon',
