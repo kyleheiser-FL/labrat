@@ -18,7 +18,7 @@ export interface StatsCompoundRow {
   daysLeft: number;
   loggedCount: number;
   lastLoggedLabel: string;
-  status: 'Ending soon' | 'No logs yet' | 'Recently logged' | 'On track';
+  status: 'Ending soon' | 'No logs yet' | 'Recently logged' | 'On track' | 'Completed';
 }
 
 export interface StatsTimelineRunway {
@@ -42,6 +42,50 @@ export interface StatsTimelineViewModel {
   active: StatsCompoundRow[];
   summary: StatsTimelineSummary;
   runway?: StatsTimelineRunway;
+}
+
+export interface StatusTone {
+  label: StatsCompoundRow['status'];
+  chipClass: string;
+  barClass: string;
+  accentClass: string;
+}
+
+const STATUS_TONES: Record<StatsCompoundRow['status'], StatusTone> = {
+  'Ending soon': {
+    label: 'Ending soon',
+    chipClass: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
+    barClass: 'bg-gradient-to-r from-amber-300 to-orange-400',
+    accentClass: 'border-amber-500/30',
+  },
+  'No logs yet': {
+    label: 'No logs yet',
+    chipClass: 'border-slate-500/35 bg-slate-500/10 text-slate-300',
+    barClass: 'bg-gradient-to-r from-slate-400 to-slate-500',
+    accentClass: 'border-slate-500/25',
+  },
+  'Recently logged': {
+    label: 'Recently logged',
+    chipClass: 'border-emerald-500/35 bg-emerald-500/10 text-emerald-300',
+    barClass: 'bg-gradient-to-r from-cyan-400 to-emerald-400',
+    accentClass: 'border-emerald-500/25',
+  },
+  'On track': {
+    label: 'On track',
+    chipClass: 'border-cyan-500/35 bg-cyan-500/10 text-cyan-300',
+    barClass: 'bg-gradient-to-r from-cyan-400 to-blue-500',
+    accentClass: 'border-cyan-500/25',
+  },
+  Completed: {
+    label: 'Completed',
+    chipClass: 'border-slate-500/35 bg-slate-500/10 text-slate-300',
+    barClass: 'bg-gradient-to-r from-slate-400 to-slate-500',
+    accentClass: 'border-slate-500/25',
+  },
+};
+
+export function getStatusTone(status: StatsCompoundRow['status']): StatusTone {
+  return STATUS_TONES[status];
 }
 
 const FREQ_LABEL: Record<Compound['frequency'], string> = {
@@ -127,7 +171,8 @@ export function getDrawLabel(compound: Compound): string | undefined {
   return undefined;
 }
 
-function getStatus(logs: DoseLog[], daysLeft: number, todayISO: string): StatsCompoundRow['status'] {
+function getStatus(compound: Compound, logs: DoseLog[], daysLeft: number, todayISO: string): StatsCompoundRow['status'] {
+  if (compound.isCompleted) return 'Completed';
   if (daysLeft > 0 && daysLeft <= 7) return 'Ending soon';
   if (logs.length === 0) return 'No logs yet';
   const latest = logs.map(log => log.date).sort().at(-1);
@@ -155,11 +200,15 @@ function buildRow(compound: Compound, logs: DoseLog[], todayISO: string): StatsC
     startLabel: formatShortDate(startISO),
     endLabel: formatShortDate(endISO),
     progressPct: getProgressPct(startISO, endISO, todayISO),
-    daysLeft,
+    daysLeft: compound.isCompleted ? 0 : daysLeft,
     loggedCount: compoundLogs.length,
     lastLoggedLabel: latestLog ? formatShortDate(latestLog.date) : 'No logs yet',
-    status: getStatus(compoundLogs, daysLeft, todayISO),
+    status: getStatus(compound, compoundLogs, daysLeft, todayISO),
   };
+}
+
+export function buildProtocolRows(compounds: Compound[], logs: DoseLog[], todayISO = new Date().toISOString().slice(0, 10)): StatsCompoundRow[] {
+  return compounds.map(compound => buildRow(compound, logs, todayISO));
 }
 
 export function buildStatsTimelineViewModel(compounds: Compound[], logs: DoseLog[], todayISO = new Date().toISOString().slice(0, 10)): StatsTimelineViewModel {

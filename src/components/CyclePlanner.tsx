@@ -8,9 +8,11 @@ import {
 import { Compound, LibraryItem, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
 import { PEPTIDE_LIBRARY } from '../data/peptides';
-import CompoundCard from './CompoundCard';
+import { buildProtocolRows, getStatusTone, StatsCompoundRow } from '../lib/statsTimeline';
 import CompoundFormModal from './CompoundFormModal';
 import RetroactiveLogModal from './RetroactiveLogModal';
+
+type CycleFilter = 'all' | 'steroids' | 'peptides' | 'ending' | 'completed';
 
 interface CyclePlannerProps {
   compounds: Compound[];
@@ -179,24 +181,161 @@ export default function CyclePlanner({
     return c.isCompleted || (endDate ? todayObj >= endDate : false);
   });
 
+  const protocolRows = useMemo(() => buildProtocolRows(compounds, logs), [compounds, logs]);
+  const [cycleFilter, setCycleFilter] = useState<CycleFilter>('all');
+  const rowById = new Map(protocolRows.map(row => [row.id, row]));
+  const activeCount = protocolRows.filter(row => row.status !== 'Completed').length;
+  const endingSoonCount = protocolRows.filter(row => row.status === 'Ending soon').length;
+  const latestEnd = protocolRows
+    .filter(row => row.status !== 'Completed')
+    .map(row => row.endISO)
+    .sort()
+    .at(-1);
+  const latestEndDaysLeft = protocolRows
+    .filter(row => row.status !== 'Completed')
+    .map(row => row.daysLeft)
+    .sort((a, b) => b - a)[0] ?? 0;
+  const visibleCompounds = compounds.filter(compound => {
+    const row = rowById.get(compound.id);
+    if (!row) return false;
+    if (cycleFilter === 'steroids') return row.status !== 'Completed' && compound.type === 'steroid';
+    if (cycleFilter === 'peptides') return row.status !== 'Completed' && compound.type === 'peptide';
+    if (cycleFilter === 'ending') return row.status === 'Ending soon';
+    if (cycleFilter === 'completed') return row.status === 'Completed';
+    return row.status !== 'Completed';
+  });
+  const filterOptions: { key: CycleFilter; label: string; count: number }[] = [
+    { key: 'all', label: 'Active', count: activeCount },
+    { key: 'steroids', label: 'Steroids', count: protocolRows.filter(row => row.status !== 'Completed' && row.type === 'steroid').length },
+    { key: 'peptides', label: 'Peptides', count: protocolRows.filter(row => row.status !== 'Completed' && row.type === 'peptide').length },
+    { key: 'ending', label: 'Ending', count: endingSoonCount },
+    { key: 'completed', label: 'Done', count: protocolRows.filter(row => row.status === 'Completed').length },
+  ];
+
+  const ProtocolCard = ({ compound, row }: { compound: Compound; row: StatsCompoundRow }) => {
+    const tone = getStatusTone(row.status);
+
+    return (
+      <article className={`labrat-card p-4 sm:p-5 min-w-0 ${tone.accentClass}`}>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex items-start gap-2.5">
+            <span
+              className="w-3 h-3 rounded-full shrink-0 mt-1.5 shadow-[0_0_16px_currentColor]"
+              style={{ background: compound.color, color: compound.color }}
+            />
+            <div className="min-w-0">
+              <h4 className="labrat-title text-lg font-black leading-tight break-words">{compound.name}</h4>
+              <div className="mt-2 flex flex-wrap gap-1.5 text-[12px] font-semibold">
+                <span className="labrat-dose-chip px-2 py-1 capitalize">{compound.type}</span>
+                <span className="labrat-dose-chip px-2 py-1">{row.doseLabel}</span>
+                {row.drawLabel && <span className="labrat-dose-chip labrat-dose-chip-accent px-2 py-1">{row.drawLabel}</span>}
+                <span className="labrat-dose-chip px-2 py-1">{row.frequencyLabel}</span>
+              </div>
+            </div>
+          </div>
+          <span className={`shrink-0 rounded-lg border px-2 py-1 text-[10px] font-black uppercase tracking-wide ${tone.chipClass}`}>
+            {tone.label}
+          </span>
+        </div>
+
+        <div className="mt-4">
+          <div className="labrat-muted flex items-center justify-between gap-3 text-[12px] font-mono">
+            <span>{row.startLabel}</span>
+            <span className="font-black">{row.progressPct}%</span>
+            <span>{row.endLabel}</span>
+          </div>
+          <div className="labrat-progress-track h-2 mt-2 overflow-hidden">
+            <div className={`h-full rounded-full ${tone.barClass}`} style={{ width: `${row.progressPct}%` }} />
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+          <div className="labrat-mini-surface p-2.5 min-w-0">
+            <strong className="labrat-title block text-base tabular-nums">{row.daysLeft}</strong>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide">days left</span>
+          </div>
+          <div className="labrat-mini-surface p-2.5 min-w-0">
+            <strong className="labrat-title block text-base tabular-nums">{row.loggedCount}</strong>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide">logged</span>
+          </div>
+          <div className="labrat-mini-surface p-2.5 min-w-0">
+            <strong className="labrat-title block text-base truncate">{row.lastLoggedLabel}</strong>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide">last dose</span>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button type="button" onClick={() => openFormEdit(compound)} className="labrat-button-secondary py-2 px-3 text-xs cursor-pointer">Edit</button>
+          <button type="button" onClick={() => handleOpenRetroLog(compound.id)} className="labrat-button-secondary py-2 px-3 text-xs cursor-pointer">History</button>
+          <button type="button" onClick={() => onUpdateCompound({ ...compound, isCompleted: !compound.isCompleted })} className="labrat-button-secondary py-2 px-3 text-xs cursor-pointer">
+            {compound.isCompleted ? 'Reactivate' : 'Complete'}
+          </button>
+          <button type="button" onClick={() => onDeleteCompound(compound.id)} className="labrat-button-secondary py-2 px-3 text-xs text-rose-300 hover:text-rose-200 cursor-pointer">Delete</button>
+        </div>
+      </article>
+    );
+  };
+
   return (
     <div className="space-y-6" id="planner-main-container">
       {/* Top action bar */}
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <h3 className="text-base font-semibold text-slate-100">Your Cycle</h3>
-        <div className="flex flex-wrap items-center gap-2">
-          <button onClick={() => setShowHelperTools(v => !v)}
-            className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border cursor-pointer transition-all ${showHelperTools ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30' : 'bg-[#1e293b] hover:bg-slate-800 text-slate-300 border-slate-700/50'}`}
-            title="Back up or restore your cycle data">
-            <ArrowLeftRight className="w-3.5 h-3.5" /> Import / Export
-          </button>
-          <button onClick={openFormNew}
-            className="py-2.5 px-5 bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-black rounded-xl text-sm flex items-center gap-1.5 cursor-pointer shadow-lg shadow-cyan-500/10"
-            id="new-formulate-btn">
-            <Plus className="w-4 h-4 text-slate-950" strokeWidth={3} /> Add Compound
-          </button>
+      <section className="labrat-card-strong p-4 sm:p-5 space-y-4">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Cycle Builder</span>
+            <h3 className="labrat-title text-3xl sm:text-4xl font-black tracking-tight mt-1">Protocol control</h3>
+            <p className="labrat-body text-sm mt-1.5">Manage compounds, progress, draw amounts, and cycle status without leaving this tab.</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button onClick={() => setShowHelperTools(v => !v)}
+              className={`labrat-button-secondary py-2.5 px-3 text-xs cursor-pointer ${showHelperTools ? 'text-cyan-300 border-cyan-500/40' : ''}`}
+              title="Back up or restore your cycle data">
+              <ArrowLeftRight className="w-3.5 h-3.5" /> Import / Export
+            </button>
+            <button onClick={openFormNew}
+              className="labrat-button-primary py-2.5 px-5 text-sm cursor-pointer"
+              id="new-formulate-btn">
+              <Plus className="w-4 h-4" /> Add Compound
+            </button>
+          </div>
         </div>
-      </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <div className="labrat-mini-surface p-3">
+            <strong className="labrat-title block text-2xl tabular-nums">{activeCount}</strong>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide">active</span>
+          </div>
+          <div className="labrat-mini-surface p-3">
+            <strong className="labrat-title block text-2xl tabular-nums">{endingSoonCount}</strong>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide">ending soon</span>
+          </div>
+          <div className="labrat-mini-surface p-3">
+            <strong className="labrat-title block text-2xl tabular-nums">{logs.length}</strong>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide">doses logged</span>
+          </div>
+          <div className="labrat-mini-surface p-3">
+            <strong className="labrat-title block text-2xl tabular-nums">{latestEnd ? latestEndDaysLeft : 0}</strong>
+            <span className="labrat-muted text-[10px] uppercase tracking-wide">days to end</span>
+          </div>
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {filterOptions.map(option => (
+            <button
+              key={option.key}
+              type="button"
+              onClick={() => setCycleFilter(option.key)}
+              className={`shrink-0 rounded-xl border px-3 py-2 text-xs font-black uppercase tracking-wide transition cursor-pointer ${
+                cycleFilter === option.key
+                  ? 'border-cyan-400/50 bg-cyan-500/15 text-cyan-300'
+                  : 'border-slate-700/45 bg-slate-950/25 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {option.label} <span className="opacity-70">{option.count}</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
       {/* Cycle Templates Panel */}
       {showLegacyHelpers && (
@@ -299,36 +438,34 @@ export default function CyclePlanner({
 
       {/* Compound Cards Grid */}
       {compounds.length === 0 ? (
-        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl px-6 py-12 text-center flex flex-col items-center gap-4">
+        <div className="labrat-card px-6 py-12 text-center flex flex-col items-center gap-4">
           <span className="flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/12 text-cyan-400"><Plus className="w-7 h-7" /></span>
           <div>
-            <h4 className="text-lg font-black tracking-tight text-slate-100">Build your cycle</h4>
-            <p className="text-sm text-slate-400 mt-1.5 max-w-xs mx-auto">Add your first compound — just a name, dose and how often.</p>
+            <h4 className="labrat-title text-lg font-black tracking-tight">Build your cycle</h4>
+            <p className="labrat-body text-sm mt-1.5 max-w-xs mx-auto">Add your first compound: just a name, dose, and how often.</p>
           </div>
           <button onClick={openFormNew}
-            className="flex items-center gap-2 font-black uppercase tracking-wider text-sm px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_14px_30px_-14px_rgba(34,211,238,0.7)] transition cursor-pointer">
+            className="labrat-button-primary px-7 py-3.5 text-sm cursor-pointer">
             <Plus className="w-4 h-4" /> Add Compound
           </button>
         </div>
+      ) : visibleCompounds.length === 0 ? (
+        <div className="labrat-card px-6 py-10 text-center">
+          <h4 className="labrat-title text-lg font-black">No compounds in this filter</h4>
+          <p className="labrat-body text-sm mt-1.5">Switch back to Active or add a new compound.</p>
+          <button type="button" onClick={() => setCycleFilter('all')} className="labrat-button-secondary mt-4 px-4 py-2.5 text-sm cursor-pointer">Show active</button>
+        </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="compounds-list-grid">
-            {compounds.map((comp) => (
-              <CompoundCard
-                key={comp.id}
-                compound={comp}
-                logs={logs}
-                onEdit={openFormEdit}
-                onDelete={onDeleteCompound}
-                onUpdateCompound={onUpdateCompound}
-                onOpenRetroLog={handleOpenRetroLog}
-                onNavigateToTab={onNavigateToTab}
-                compact
-              />
-            ))}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3" id="compounds-list-grid">
+            {visibleCompounds.map((compound) => {
+              const row = rowById.get(compound.id);
+              if (!row) return null;
+              return <ProtocolCard key={compound.id} compound={compound} row={row} />;
+            })}
           </div>
           <button onClick={openFormNew}
-            className="w-full flex items-center justify-center gap-2 font-black uppercase tracking-wider text-sm py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_14px_30px_-14px_rgba(34,211,238,0.7)] transition cursor-pointer">
+            className="labrat-button-primary w-full py-4 text-sm cursor-pointer">
             <Plus className="w-5 h-5" /> Add Compound
           </button>
         </>
