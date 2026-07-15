@@ -58,7 +58,7 @@ function CompoundTimelineRow({ row }: { row: StatsCompoundRow }) {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+      <div className="mt-4 grid grid-cols-4 gap-2 text-center">
         <div className="labrat-mini-surface p-2.5">
           <strong className="labrat-title block text-base tabular-nums">{row.daysLeft}</strong>
           <span className="labrat-muted text-[10px] uppercase tracking-wide">days left</span>
@@ -66,6 +66,10 @@ function CompoundTimelineRow({ row }: { row: StatsCompoundRow }) {
         <div className="labrat-mini-surface p-2.5">
           <strong className="labrat-title block text-base tabular-nums">{row.loggedCount}</strong>
           <span className="labrat-muted text-[10px] uppercase tracking-wide">logged</span>
+        </div>
+        <div className="labrat-mini-surface p-2.5">
+          <strong className="labrat-title block text-base tabular-nums">{row.missedCount}</strong>
+          <span className="labrat-muted text-[10px] uppercase tracking-wide">missed</span>
         </div>
         <div className="labrat-mini-surface p-2.5">
           <strong className="labrat-title block text-base truncate">{row.lastLoggedLabel}</strong>
