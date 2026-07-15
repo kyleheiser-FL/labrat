@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the app-wide clinical premium foundation so LabRat feels polished, readable, and consistent across `clinical-light`, `clinical`, and `neon`.
+**Goal:** Build the app-wide clinical premium foundation so LabRat feels polished, readable, and consistent across Light and Dark modes, with System preference support.
 
 **Architecture:** Add shared CSS primitives in `src/index.css`, then apply them to the app shell and highest-reuse surfaces without changing data or business logic. Keep the migration incremental: existing Tailwind utilities remain, while new `labrat-*` classes define the premium baseline for future screen passes.
 
@@ -13,8 +13,10 @@
 - Do not change Firebase data models, shop pricing, order logic, push notification logic, cron behavior, AI provider behavior, or medical calculations.
 - Do not rewrite major app screens from scratch.
 - Do not introduce a full component library migration in this pass.
-- Do not remove the `neon` theme personality; refine it.
-- Do not deploy incomplete visual states where clinical-light contrast is unverified.
+- Do not expose `neon` as a user-facing theme option.
+- Map legacy saved `neon` preferences to Dark.
+- Support System mode plus manual Light and Dark switching.
+- Do not deploy incomplete visual states where Light mode contrast is unverified.
 - Preserve compact mobile-first utility; do not add marketing-style landing pages.
 
 ---
@@ -22,6 +24,10 @@
 ## File Structure
 
 - Modify `src/index.css`: define reusable clinical premium primitives and theme-specific variants.
+- Modify `src/App.tsx`: replace the three-theme state with a System/Dark/Light preference that resolves to `clinical` or `clinical-light`.
+- Modify `src/components/FirstBootThemePicker.tsx`: show System, Dark, and Light choices only.
+- Modify `src/components/AppearanceModal.tsx`: show System, Dark, and Light choices only.
+- Modify `src/components/SettingsPage.tsx`: show System, Dark, and Light choices only.
 - Modify `src/App.tsx`: apply `labrat-page-shell` to the routed content wrapper and keep tab logic unchanged.
 - Modify `src/components/AppHeader.tsx`: apply premium header/nav/button primitives without changing navigation rules.
 - Modify `src/components/CycleDashboard.tsx`: migrate the dashboard hero and metric surfaces to the shared primitives.
@@ -30,7 +36,7 @@
 - Modify `src/components/CompoundFormModal.tsx`: apply form, modal, input, and button primitives.
 - Modify `src/components/SettingsPage.tsx`: align settings hero, theme selector cards, and controls with the primitives.
 - Modify `src/components/ToastContainer.tsx`: make toast surfaces theme-safe and consistent.
-- Create `scripts/smoke-labrat-themes.mjs`: local browser smoke check for `neon`, `clinical`, and `clinical-light`.
+- Create `scripts/smoke-labrat-themes.mjs`: local browser smoke check for System, Dark, and Light preferences.
 
 ---
 
@@ -254,7 +260,167 @@ git commit -m "Add LabRat clinical premium foundation styles"
 
 ---
 
-### Task 2: Apply Foundation To App Shell And Navigation
+### Task 2: Convert To System, Dark, And Light Theme Preferences
+
+**Files:**
+- Modify: `src/App.tsx`
+- Modify: `src/components/FirstBootThemePicker.tsx`
+- Modify: `src/components/AppearanceModal.tsx`
+- Modify: `src/components/SettingsPage.tsx`
+- Modify: `src/components/AppHeader.tsx`
+- Modify: `src/components/CycleDashboard.tsx`
+- Modify: `src/components/CyclePlanner.tsx`
+
+**Interfaces:**
+- Produces user-facing preference type `LabRatThemePreference = 'system' | 'clinical' | 'clinical-light'`.
+- Produces resolved theme type `LabRatTheme = 'clinical' | 'clinical-light'`.
+- Legacy saved `labrat_ui_theme === 'neon'` resolves to `clinical`.
+- Later smoke tests set `labrat_theme_preference`, not `neon`.
+
+- [ ] **Step 1: Update theme state in `src/App.tsx`**
+
+Replace the three-value theme type with:
+
+```tsx
+type LabRatTheme = 'clinical' | 'clinical-light';
+type LabRatThemePreference = 'system' | LabRatTheme;
+```
+
+Add helpers:
+
+```tsx
+const resolveSystemTheme = (): LabRatTheme => {
+  if (typeof window === 'undefined' || !window.matchMedia) return 'clinical';
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'clinical-light' : 'clinical';
+};
+
+const getInitialThemePreference = (): LabRatThemePreference => {
+  const savedPreference = safeLocalStorage.getItem('labrat_theme_preference');
+  if (savedPreference === 'system' || savedPreference === 'clinical' || savedPreference === 'clinical-light') return savedPreference;
+
+  const legacyTheme = safeLocalStorage.getItem('labrat_ui_theme');
+  if (legacyTheme === 'clinical-light') return 'clinical-light';
+  if (legacyTheme === 'clinical' || legacyTheme === 'neon') return 'clinical';
+  return 'system';
+};
+```
+
+Use `themePreference` state and derive `labratTheme`:
+
+```tsx
+const [themePreference, setThemePreference] = useState<LabRatThemePreference>(getInitialThemePreference);
+const [systemTheme, setSystemTheme] = useState<LabRatTheme>(resolveSystemTheme);
+const labratTheme: LabRatTheme = themePreference === 'system' ? systemTheme : themePreference;
+```
+
+- [ ] **Step 2: Add system preference listener**
+
+In `App.tsx`, add an effect:
+
+```tsx
+useEffect(() => {
+  if (typeof window === 'undefined' || !window.matchMedia) return;
+  const media = window.matchMedia('(prefers-color-scheme: light)');
+  const sync = () => setSystemTheme(media.matches ? 'clinical-light' : 'clinical');
+  sync();
+  media.addEventListener?.('change', sync);
+  return () => media.removeEventListener?.('change', sync);
+}, []);
+```
+
+- [ ] **Step 3: Update theme selection and persistence**
+
+Change `applyThemeSelection` to accept `LabRatThemePreference`:
+
+```tsx
+const applyThemeSelection = (preference: LabRatThemePreference) => {
+  setThemePreference(preference);
+  setLabratBranding('lr');
+  safeLocalStorage.setItem('labrat_in_app_branding', 'lr');
+  safeLocalStorage.setItem('labrat_theme_preference', preference);
+  safeLocalStorage.setItem('labrat_theme_selected', 'true');
+  setShowFirstBootThemePicker(false);
+  triggerHaptic('success');
+};
+```
+
+In the theme-sync effect, keep `labrat_ui_theme` as the resolved compatibility value:
+
+```tsx
+safeLocalStorage.setItem('labrat_theme_preference', themePreference);
+safeLocalStorage.setItem('labrat_theme_mode', labratTheme === 'clinical-light' ? 'light' : 'dark');
+safeLocalStorage.setItem('labrat_ui_theme', labratTheme);
+```
+
+Use only the clinical manifest and two theme colors:
+
+```tsx
+const manifestHref = '/manifest-clinical.json?v=lr-clinical-final-20260528-live-refine-v2';
+themeMeta.setAttribute('content', labratTheme === 'clinical-light' ? '#f0f4f8' : '#000000');
+```
+
+- [ ] **Step 4: Update first-boot and appearance modals**
+
+In `FirstBootThemePicker.tsx` and `AppearanceModal.tsx`:
+
+```tsx
+type LabRatThemePreference = 'system' | 'clinical' | 'clinical-light';
+```
+
+Show exactly three choices:
+
+- System: calls `onSelectTheme('system')`
+- Dark: calls `onSelectTheme('clinical')`
+- Light: calls `onSelectTheme('clinical-light')`
+
+Remove the Neon choice and all `onSelectTheme('neon')` calls.
+
+- [ ] **Step 5: Update SettingsPage**
+
+Change props:
+
+```tsx
+type LabRatTheme = 'clinical' | 'clinical-light';
+type LabRatThemePreference = 'system' | LabRatTheme;
+```
+
+Add `themePreference: LabRatThemePreference` and change `onThemeChange` to accept `LabRatThemePreference`.
+
+Render System, Dark, and Light cards in a two-mode preference grid. Remove the Neon card and all `onThemeChange('neon')` calls.
+
+- [ ] **Step 6: Update dependent prop types and defaults**
+
+Update `AppHeader.tsx`, `CycleDashboard.tsx`, and `CyclePlanner.tsx` to accept only `clinical | clinical-light` for `labratTheme`.
+
+Use clinical assets/icons for Dark and Light:
+
+```tsx
+const protocolIcon = (name: string) => `/protocol-icons/${name}-clinical.svg`;
+```
+
+Remove conditions like `labratTheme === 'neon'`.
+
+- [ ] **Step 7: Run verification**
+
+Run:
+
+```bash
+npm run lint
+npm run build
+```
+
+Expected: both exit 0.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add src/App.tsx src/components/FirstBootThemePicker.tsx src/components/AppearanceModal.tsx src/components/SettingsPage.tsx src/components/AppHeader.tsx src/components/CycleDashboard.tsx src/components/CyclePlanner.tsx
+git commit -m "Simplify LabRat themes to system light and dark"
+```
+
+---
+
+### Task 3: Apply Foundation To App Shell And Navigation
 
 **Files:**
 - Modify: `src/App.tsx`
@@ -329,7 +495,7 @@ git commit -m "Apply premium foundation to LabRat shell"
 
 ---
 
-### Task 3: Migrate Dashboard And Daily Repeated Surfaces
+### Task 4: Migrate Dashboard And Daily Repeated Surfaces
 
 **Files:**
 - Modify: `src/components/CycleDashboard.tsx`
@@ -347,7 +513,7 @@ In `CycleDashboard.tsx`, keep `labrat-command-hero` but add `labrat-page-header`
 ```tsx
 <section className="labrat-command-hero labrat-page-header" id="labrat-command-hero">
   <motion.div className="labrat-command-hero-copy" style={{ y: heroCopyY }}>
-    <span className="labrat-command-eyebrow">{labratTheme === 'neon' ? 'LabRat Research Console' : 'Clinical Research Console'}</span>
+    <span className="labrat-command-eyebrow">Clinical Research Console</span>
     <h2 className="labrat-page-title">Your Protocol, Under Control</h2>
     <p className="labrat-page-subtitle">A compact overview of today's schedule, active compounds, and recovery signals.</p>
   </motion.div>
@@ -414,7 +580,7 @@ git commit -m "Polish dashboard and daily surfaces"
 
 ---
 
-### Task 4: Migrate Forms, Settings, And Toasts
+### Task 5: Migrate Forms, Settings, And Toasts
 
 **Files:**
 - Modify: `src/components/CompoundFormModal.tsx`
@@ -501,7 +667,7 @@ git commit -m "Polish forms settings and toasts"
 
 ---
 
-### Task 5: Add Theme Smoke Check Script
+### Task 6: Add Theme Smoke Check Script
 
 **Files:**
 - Create: `scripts/smoke-labrat-themes.mjs`
@@ -519,7 +685,7 @@ Create `scripts/smoke-labrat-themes.mjs`:
 import puppeteer from 'puppeteer';
 
 const baseUrl = process.env.LABRAT_SMOKE_URL || 'http://127.0.0.1:3000';
-const themes = ['neon', 'clinical', 'clinical-light'];
+const preferences = ['system', 'clinical', 'clinical-light'];
 const routes = [
   { name: 'dashboard', url: '/?tab=dashboard', selector: '#labrat-command-hero' },
   { name: 'planner', url: '/?tab=planner', selector: '#planner-page' },
@@ -533,19 +699,20 @@ const browser = await puppeteer.launch({
 });
 
 try {
-  for (const theme of themes) {
+  for (const preference of preferences) {
     for (const route of routes) {
       const page = await browser.newPage();
       await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
-      await page.evaluateOnNewDocument((selectedTheme) => {
-        localStorage.setItem('labrat_ui_theme', selectedTheme);
+      await page.evaluateOnNewDocument((selectedPreference) => {
+        localStorage.setItem('labrat_theme_preference', selectedPreference);
+        localStorage.setItem('labrat_ui_theme', selectedPreference === 'clinical-light' ? 'clinical-light' : 'clinical');
         localStorage.setItem('labrat_theme_selected', 'true');
         localStorage.setItem('labrat_in_app_branding', 'lr');
         localStorage.setItem('labrat_tracking_enabled', 'true');
         localStorage.setItem('labrat_experience_mode', 'expert');
         localStorage.setItem('labrat_experience_prompt_v', '1');
         localStorage.setItem('labrat_hide_shop', 'false');
-      }, theme);
+      }, preference);
 
       await page.goto(`${baseUrl}${route.url}`, { waitUntil: 'domcontentloaded', timeout: 20000 });
       await page.waitForSelector(route.selector, { timeout: 15000 });
@@ -556,6 +723,7 @@ try {
         const shell = document.querySelector('#labrat-app-shell');
         const shellStyle = shell ? getComputedStyle(shell) : null;
         return {
+          preference: localStorage.getItem('labrat_theme_preference'),
           theme: document.documentElement.getAttribute('data-labrat-theme'),
           bodyColor: body.color,
           bodyBg: body.backgroundColor,
@@ -564,14 +732,17 @@ try {
         };
       });
 
-      if (result.theme !== theme) {
-        throw new Error(`Expected theme ${theme}, got ${result.theme} on ${route.name}`);
+      if (result.preference !== preference) {
+        throw new Error(`Expected preference ${preference}, got ${result.preference} on ${route.name}`);
+      }
+      if (result.theme !== 'clinical' && result.theme !== 'clinical-light') {
+        throw new Error(`Expected resolved light/dark theme, got ${result.theme} on ${preference}/${route.name}`);
       }
       if (result.textLength < 50) {
-        throw new Error(`Expected visible text on ${theme}/${route.name}`);
+        throw new Error(`Expected visible text on ${preference}/${route.name}`);
       }
 
-      console.log(`${theme}/${route.name}: ${result.bodyColor} on ${result.bodyBg}`);
+      console.log(`${preference}/${route.name} -> ${result.theme}: ${result.bodyColor} on ${result.bodyBg}`);
       await page.close();
     }
   }
@@ -609,7 +780,7 @@ git commit -m "Add LabRat theme smoke check"
 
 ---
 
-### Task 6: Final Verification And Production Ship
+### Task 7: Final Verification And Production Ship
 
 **Files:**
 - No planned source edits.

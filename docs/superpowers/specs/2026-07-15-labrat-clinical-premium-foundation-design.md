@@ -2,15 +2,17 @@
 
 ## Purpose
 
-Give the whole LabRat app the same premium foundation that the shop now has: polished, trustworthy, highly readable, and theme-safe across `clinical-light`, `clinical`, and `neon`. This pass focuses on shared visual primitives and the app shell first, not on changing medical, shop, Firebase, notification, AI, or scheduler behavior.
+Give the whole LabRat app the same premium foundation that the shop now has: polished, trustworthy, highly readable, and theme-safe across Light and Dark modes. This pass focuses on shared visual primitives and the app shell first, not on changing medical, shop, Firebase, notification, AI, or scheduler behavior.
 
 ## Design Direction
 
-LabRat should feel like a serious health operating system with three theme personalities:
+LabRat should feel like a serious health operating system with two user-facing modes and one preference layer:
 
-- `clinical-light`: the primary premium look. White/off-white surfaces, dark readable text, restrained blue accents, subtle borders, minimal glow.
-- `clinical`: professional dark mode. Black/slate surfaces, crisp contrast, restrained blue/emerald accents, very little neon treatment.
-- `neon`: keeps LabRat's high-tech identity but becomes cleaner, better spaced, and less visually noisy.
+- `system`: follows the phone/browser color-scheme preference and resolves to Light or Dark automatically.
+- `light`: the primary premium look. White/off-white surfaces, dark readable text, restrained blue accents, subtle borders, minimal glow.
+- `dark`: professional dark mode. Black/slate surfaces, crisp contrast, restrained blue/emerald accents, very little glow.
+
+Legacy saved `neon` values must map to Dark automatically. Neon must no longer appear as a user-facing theme option.
 
 The app should keep its compact mobile-first utility. This is not a landing-page redesign and should not add marketing hero sections where users need tools.
 
@@ -33,7 +35,9 @@ This pass should touch repeated structural patterns before individual workflow d
 - Do not change Firebase data models, shop pricing, order logic, push notification logic, cron behavior, AI provider behavior, or medical calculations.
 - Do not rewrite major app screens from scratch.
 - Do not introduce a full component library migration in this pass.
-- Do not remove the `neon` theme personality; refine it.
+- Do not expose `neon` as a user-facing theme option.
+- Map legacy saved `neon` preferences to Dark.
+- Support both automatic System mode and manual Light/Dark switching.
 - Do not deploy incomplete visual states where clinical-light contrast is unverified.
 
 ## Visual Primitives
@@ -61,26 +65,20 @@ These primitives should define baseline structure and theme-aware color/contrast
 
 ## Theme Rules
 
-Every primitive must define behavior for all three themes.
+Every primitive must define behavior for the resolved Light and Dark modes.
 
-For `clinical-light`:
+For Light:
 
 - Use white or near-white panels with slate text.
 - Use blue as the main accent and emerald/amber/red only for status meaning.
 - Keep shadows subtle and avoid glow effects.
 - Ensure muted text remains readable on white surfaces.
 
-For `clinical`:
+For Dark:
 
 - Use black/slate surfaces and quiet blue accents.
 - Keep borders visible enough to distinguish stacked panels.
 - Avoid bright neon glows unless they indicate a meaningful active state.
-
-For `neon`:
-
-- Keep cyan/blue energy and LabRat identity.
-- Reduce visual noise through consistent card spacing, cleaner hierarchy, and fewer competing glows.
-- Preserve existing recognizable brand moments where they help orientation.
 
 ## Rollout Plan
 
@@ -106,7 +104,7 @@ Apply primitives to repeated cards, panels, forms, buttons, and empty states in 
 
 ### Phase 4: Verification
 
-Run automated checks and a browser smoke pass for `neon`, `clinical`, and `clinical-light` at mobile width. The check should verify page load, app shell visibility, and readable foreground/background colors on the major shell surfaces.
+Run automated checks and a browser smoke pass for System, Dark, and Light preferences at mobile width. The check should verify page load, app shell visibility, resolved theme, and readable foreground/background colors on the major shell surfaces.
 
 ## Testing
 
@@ -115,7 +113,7 @@ Required verification:
 - `npm run test`
 - `npm run lint`
 - `npm run build`
-- Local browser smoke check for all three themes.
+- Local browser smoke check for System, Dark, and Light preferences.
 
 The browser smoke check must include at least:
 
@@ -129,13 +127,14 @@ The browser smoke check must include at least:
 
 - The app currently has many Tailwind utility classes and broad clinical-light overrides. New primitives must coexist with these rules until the app is fully migrated.
 - Too much visual cleanup at once could accidentally change layout density. Keep mobile ergonomics compact.
-- The `neon` theme can lose its personality if all themes are flattened too aggressively. Preserve its identity while improving clarity.
+- Legacy `neon` CSS may remain temporarily for compatibility, but no UI should route users into it.
+- System mode must react to phone/browser setting changes without requiring a reload.
 
 ## Success Criteria
 
 - The whole app feels more like one product, not separate visual eras.
-- Clinical-light becomes the most polished default-feeling theme.
-- Clinical dark is readable and professional.
-- Neon still feels like LabRat, but cleaner.
+- Light mode becomes the most polished default-feeling theme.
+- Dark mode is readable and professional.
+- System mode follows phone/browser settings and can still be overridden manually.
 - No known contrast failure on major app shell surfaces.
 - No business logic or data behavior changes are introduced by the foundation pass.
