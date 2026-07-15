@@ -56,8 +56,8 @@ export default function AppHeader({
       onClick={() => { triggerHaptic('light'); onSetActiveTab(tab); }}
       className={`relative flex flex-col min-[480px]:flex-row items-center justify-center text-center gap-1 px-1 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer select-none truncate flex-1 justify-self-stretch ${
         activeTab === tab
-          ? 'bg-cyan-500 text-slate-950 font-bold shadow-[0_0_12px_rgba(34,211,238,0.25)]'
-          : 'text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/55'
+          ? 'labrat-button-primary text-slate-950 font-bold shadow-[0_0_12px_rgba(34,211,238,0.25)]'
+          : 'labrat-button-secondary text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/55'
       }`}
       id={`tab-btn-${tab}`}
     >
@@ -76,7 +76,7 @@ export default function AppHeader({
   );
 
   return (
-    <header className="sticky top-0 bg-[#030712] backdrop-blur-md border-b border-[#1e293b]/70 py-2.5 px-4 sm:px-6 shrink-0 z-40 shadow-lg" id="app-header">
+    <header className="labrat-card-strong sticky top-0 bg-[#030712] backdrop-blur-md border-b border-[#1e293b]/70 py-2.5 px-4 sm:px-6 shrink-0 z-40 shadow-lg" id="app-header">
       <div className="max-w-7xl mx-auto flex flex-col gap-2.5">
 
         <div className="flex flex-row items-center justify-between gap-2 min-w-0">
@@ -96,7 +96,7 @@ export default function AppHeader({
             {onOpenAi && (
               <button
                 onClick={() => { triggerHaptic('light'); onOpenAi(); }}
-                className="relative flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
+                className="labrat-icon-button relative flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
                 aria-label="LABRAT AI"
                 title="LABRAT AI Assistant"
               >
@@ -108,7 +108,7 @@ export default function AppHeader({
             {/* Messenger chat — always available in the header (was a floating bubble) */}
             <button
               onClick={() => { triggerHaptic('light'); window.location.href = 'https://m.me/1188568744330200'; }}
-              className="flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
+              className="labrat-icon-button flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
               aria-label="Chat on Messenger"
               title="Chat on Messenger"
             >
@@ -121,7 +121,7 @@ export default function AppHeader({
             {/* Settings button with unread notification badge */}
             <button
               onClick={() => { triggerHaptic('light'); onSetActiveTab('settings'); }}
-              className={`relative flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border transition-all cursor-pointer ${
+              className={`labrat-icon-button relative flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border transition-all cursor-pointer ${
                 activeTab === 'settings'
                   ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
                   : 'bg-[#0f172a]/60 border-[#1e293b]/50 text-slate-400 hover:text-slate-100 hover:bg-[#1e293b]/50'
@@ -138,7 +138,7 @@ export default function AppHeader({
             {!isStandalone && (
               <button
                 onClick={onInstallApp}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#06b6d4]/10 hover:bg-[#06b6d4]/20 text-cyan-400 hover:text-cyan-300 border border-cyan-500/25 hover:border-cyan-500/45 rounded-xl transition-all cursor-pointer text-[10px] sm:text-xs font-bold font-mono"
+                className="labrat-button-secondary flex items-center gap-1.5 px-2.5 py-1.5 bg-[#06b6d4]/10 hover:bg-[#06b6d4]/20 text-cyan-400 hover:text-cyan-300 border border-cyan-500/25 hover:border-cyan-500/45 rounded-xl transition-all cursor-pointer text-[10px] sm:text-xs font-bold font-mono"
                 id="pwa-install-header-btn"
                 title="Install labrat application"
               >
@@ -215,7 +215,7 @@ export default function AppHeader({
           }
           const gridColsClass = navTabs.length <= 1 ? 'grid-cols-1' : navTabs.length === 2 ? 'grid-cols-2' : navTabs.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
           return (
-            <nav className={`bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid ${gridColsClass} sm:flex sm:flex-row gap-1.5 w-full overflow-visible`} id="navigation-tabs-rail">
+            <nav className={`labrat-panel bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid ${gridColsClass} sm:flex sm:flex-row gap-1.5 w-full overflow-visible`} id="navigation-tabs-rail">
               {navTabs.map(({ tab, icon, label, badge }) => (
                 <React.Fragment key={tab}>{tabBtn(tab, icon, label, badge)}</React.Fragment>
               ))}
