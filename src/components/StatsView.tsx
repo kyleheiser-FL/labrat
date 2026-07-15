@@ -2,7 +2,7 @@ import React from 'react';
 import { Activity, BarChart3, BookOpen, ChevronRight, History } from 'lucide-react';
 import { Compound, DoseLog } from '../types';
 import AdministrationLedger from './AdministrationLedger';
-import { buildStatsTimelineViewModel, StatsCompoundRow } from '../lib/statsTimeline';
+import { buildStatsTimelineViewModel, getStatusTone, StatsCompoundRow } from '../lib/statsTimeline';
 
 interface StatsViewProps {
   compounds: Compound[];
@@ -11,13 +11,6 @@ interface StatsViewProps {
   onUpdateCompound: (compound: Compound) => void;
   onOpenEncyclopedia: () => void;
 }
-
-const statusClasses: Record<StatsCompoundRow['status'], string> = {
-  'Ending soon': 'border-amber-500/35 bg-amber-500/10 text-amber-300',
-  'No logs yet': 'border-slate-500/35 bg-slate-500/10 text-slate-300',
-  'Recently logged': 'border-emerald-500/35 bg-emerald-500/10 text-emerald-300',
-  'On track': 'border-cyan-500/35 bg-cyan-500/10 text-cyan-300',
-};
 
 function MetricCard({ label, value, hint }: { label: string; value: string | number; hint: string }) {
   return (
@@ -30,8 +23,10 @@ function MetricCard({ label, value, hint }: { label: string; value: string | num
 }
 
 function CompoundTimelineRow({ row }: { row: StatsCompoundRow }) {
+  const tone = getStatusTone(row.status);
+
   return (
-    <article className="labrat-card p-4 sm:p-5 min-w-0">
+    <article className={`labrat-card p-4 sm:p-5 min-w-0 ${tone.accentClass}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-start gap-2.5">
@@ -47,19 +42,19 @@ function CompoundTimelineRow({ row }: { row: StatsCompoundRow }) {
             </div>
           </div>
         </div>
-        <span className={`shrink-0 rounded-lg border px-2 py-1 text-[10px] font-black uppercase tracking-wide ${statusClasses[row.status]}`}>
-          {row.status}
+        <span className={`shrink-0 rounded-lg border px-2 py-1 text-[10px] font-black uppercase tracking-wide ${tone.chipClass}`}>
+          {tone.label}
         </span>
       </div>
 
       <div className="mt-4">
         <div className="labrat-muted flex items-center justify-between gap-3 text-[12px] font-mono">
           <span>{row.startLabel}</span>
-          <span>{row.progressPct}%</span>
+          <span className={row.status === 'Ending soon' ? 'font-black text-amber-300' : 'font-black text-cyan-300'}>{row.progressPct}%</span>
           <span>{row.endLabel}</span>
         </div>
         <div className="labrat-progress-track h-2 mt-2 overflow-hidden">
-          <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400" style={{ width: `${row.progressPct}%` }} />
+          <div className={`h-full rounded-full ${tone.barClass}`} style={{ width: `${row.progressPct}%` }} />
         </div>
       </div>
 
