@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Compound, DoseLog } from '../types';
-import { buildStatsTimelineViewModel, getDrawLabel } from './statsTimeline';
+import { buildProtocolRows, buildStatsTimelineViewModel, getDrawLabel, getStatusTone } from './statsTimeline';
 
 const baseCompound: Compound = {
   id: 'test-cyp',
@@ -63,6 +63,46 @@ describe('stats timeline helpers', () => {
       loggedCount: 2,
       lastLoggedLabel: 'Jul 14',
       status: 'Recently logged',
+    });
+  });
+
+  it('includes completed rows for protocol management and marks ending soon', () => {
+    const endingSoon: Compound = {
+      ...baseCompound,
+      id: 'ending',
+      name: 'Ending Compound',
+      startDate: '2026-07-01',
+      durationWeeks: 3,
+      isCompleted: false,
+    };
+    const completed: Compound = {
+      ...baseCompound,
+      id: 'completed',
+      name: 'Completed Compound',
+      isCompleted: true,
+    };
+
+    const rows = buildProtocolRows([endingSoon, completed], [], '2026-07-20');
+
+    expect(rows).toHaveLength(2);
+    expect(rows.find(row => row.id === 'ending')).toMatchObject({
+      status: 'Ending soon',
+      daysLeft: 2,
+    });
+    expect(rows.find(row => row.id === 'completed')).toMatchObject({
+      status: 'Completed',
+      daysLeft: 0,
+    });
+  });
+
+  it('returns status tone classes for existing progress bars', () => {
+    expect(getStatusTone('Ending soon')).toMatchObject({
+      label: 'Ending soon',
+      barClass: 'bg-gradient-to-r from-amber-300 to-orange-400',
+    });
+    expect(getStatusTone('Completed')).toMatchObject({
+      label: 'Completed',
+      barClass: 'bg-gradient-to-r from-slate-400 to-slate-500',
     });
   });
 });
