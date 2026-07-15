@@ -4,7 +4,6 @@ import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, His
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
 import { getDoseScheduleForDate } from '../lib/schedule';
 import { triggerHaptic } from '../lib/haptics';
-import ProductVialVisual from './shop/ProductVialVisual';
 
 interface DailyDosingProps {
   compounds: Compound[];
@@ -158,23 +157,13 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
     const draw = drawInfo(c);
     const isAdjusting = adjustingId === c.id;
     const adjustedPreview = isAdjusting ? drawInfo(c, parseFloat(adjustDose), adjustUnit) : undefined;
-    
-    // Map product category for the vial visualizer based on compound type
-    let vialCategory = 'Peptides';
-    if (c.type === 'steroid') vialCategory = 'Muscle Growth';
-    else if (c.type === 'supplement') vialCategory = 'Longevity & Cellular';
-    
     return (
-      <div key={c.id} className={`labrat-card p-4 sm:p-5 flex flex-col gap-3 sm:gap-4 ${logged ? 'border-emerald-500/25' : ''}`}>
-        <div className="flex items-center gap-3 sm:gap-4 w-full">
-          <div className="w-12 h-16 sm:w-16 sm:h-20 shrink-0 bg-[#0b1220]/60 rounded-xl border border-white/5 flex items-center justify-center overflow-hidden">
-            <ProductVialVisual name={c.name} category={vialCategory} theme="clinical" variant="thumbnail" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-bold text-[15.5px] sm:text-lg leading-snug text-slate-100 flex items-start gap-2.5 break-words">
-              <span className="w-3 h-3 rounded-full shrink-0 mt-1.5 shadow-[0_0_16px_currentColor]" style={{ background: c.color, color: c.color }} />
-              <span className="min-w-0">{c.name}</span>
-            </p>
+      <div key={c.id} className={`labrat-card p-4 sm:p-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4 ${logged ? 'border-emerald-500/25' : ''}`}>
+        <div className="min-w-0">
+          <p className="font-bold text-[15.5px] sm:text-lg leading-snug text-slate-100 flex items-start gap-2.5 break-words">
+            <span className="w-3 h-3 rounded-full shrink-0 mt-1.5 shadow-[0_0_16px_currentColor]" style={{ background: c.color, color: c.color }} />
+            <span className="min-w-0">{c.name}</span>
+          </p>
           <div className="mt-2 pl-[22px] flex flex-wrap gap-1.5 text-[12px] font-semibold">
             <span className="labrat-dose-chip px-2 py-1">
               {c.doseAmount} {c.doseUnit}
@@ -207,23 +196,22 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
             )}
           </div>
         </div>
-          {logged ? (
-            <button onClick={() => undo(c)} title="Tap to undo"
-              aria-label={`Undo dose for ${c.name}`}
-              className={`shrink-0 min-w-[84px] sm:min-w-[118px] h-12 sm:h-[52px] flex items-center justify-center gap-1.5 px-2 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide hover:bg-rose-500/15 hover:text-rose-300 transition cursor-pointer group ${skipped ? 'bg-amber-500/12 text-amber-300' : 'bg-emerald-500/15 text-emerald-400'}`}>
-              <Check className="w-4 h-4 sm:w-4.5 sm:h-4.5 group-hover:hidden" /><RotateCcw className="w-4 h-4 sm:w-4.5 sm:h-4.5 hidden group-hover:inline" />
-              <span className="group-hover:hidden">{skipped ? 'Skipped' : 'Done'}</span><span className="hidden group-hover:inline">Undo</span>
-            </button>
-          ) : (
-            <button onClick={() => logDose(c)}
-              aria-label={`Log dose for ${c.name}`}
-              className="shrink-0 min-w-[84px] sm:min-w-[118px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_10px_24px_-12px_rgba(34,211,238,0.7)] transition cursor-pointer">
-              <span className="sm:hidden">Log</span><span className="hidden sm:inline">Log dose</span>
-            </button>
-          )}
-        </div>
+        {logged ? (
+          <button onClick={() => undo(c)} title="Tap to undo"
+            aria-label={`Undo dose for ${c.name}`}
+            className={`shrink-0 min-w-[92px] sm:min-w-[118px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide hover:bg-rose-500/15 hover:text-rose-300 transition cursor-pointer group ${skipped ? 'bg-amber-500/12 text-amber-300' : 'bg-emerald-500/15 text-emerald-400'}`}>
+            <Check className="w-4.5 h-4.5 group-hover:hidden" /><RotateCcw className="w-4.5 h-4.5 hidden group-hover:inline" />
+            <span className="group-hover:hidden">{skipped ? 'Skipped' : 'Done'}</span><span className="hidden group-hover:inline">Undo</span>
+          </button>
+        ) : (
+          <button onClick={() => logDose(c)}
+            aria-label={`Log dose for ${c.name}`}
+            className="shrink-0 min-w-[96px] sm:min-w-[128px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_10px_24px_-12px_rgba(34,211,238,0.7)] transition cursor-pointer">
+            <span className="sm:hidden">Log</span><span className="hidden sm:inline">Log dose</span>
+          </button>
+        )}
         {isAdjusting && !logged && (
-          <div className="labrat-mini-surface p-3 flex flex-col gap-3">
+          <div className="col-span-full labrat-mini-surface p-3 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-3">
               <span className="text-[12px] font-black uppercase tracking-wide text-slate-300">Adjust this dose</span>
               <button onClick={finishAdjustment} className="p-1 text-slate-500 hover:text-slate-200 cursor-pointer" aria-label="Cancel dose adjustment"><X className="w-4 h-4" /></button>
