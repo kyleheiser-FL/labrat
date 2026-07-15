@@ -288,24 +288,39 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
           const targetMinutes = rh * 60 + rm;
           const diff = userLocalMinutes - targetMinutes;
           if (diff >= 0 && diff < REMINDER_GRACE_MIN) {
-            const guardId = `${uid}_daily_${todayStr}`;
+            const normalizedTime = `${String(rh).padStart(2, '0')}${String(rm).padStart(2, '0')}`;
+            const guardId = `${uid}_daily_${todayStr}_${normalizedTime}`;
             const guardRef = firestore.collection('pushGuards').doc(guardId);
             const guardSnap = await guardRef.get();
             if (!guardSnap.exists) {
               for (const token of tokens) {
                 try {
+                  const title = '🔬 LabRat Dose Reminder';
+                  const body = "Time to record today's scheduled administrations.";
                   await fcmMessaging.send({
                     token,
-                    // DATA-ONLY (no `notification` field) so the service worker's
-                    // onBackgroundMessage always runs and shows the banner when closed.
+                    notification: { title, body },
+                    // Include both notification + data: Android/Chrome can use
+                    // Firebase's native background display path, while the app
+                    // still receives data in foreground.
                     data: {
-                      title: '🔬 LabRat Dose Reminder',
-                      body: "Time to record today's scheduled administrations.",
+                      title,
+                      body,
                       tag: 'labrat-reminder-daily',
                       icon: '/icon_192.png',
                     },
                     android: { priority: 'high' },
-                    webpush: { headers: { Urgency: 'high', TTL: '86400' } },
+                    webpush: {
+                      headers: { Urgency: 'high', TTL: '86400' },
+                      notification: {
+                        title,
+                        body,
+                        icon: '/icon_192.png',
+                        badge: '/icon_96.png',
+                        tag: 'labrat-reminder-daily',
+                        renotify: true,
+                      },
+                    },
                   });
                   sent++;
                 } catch { errors++; }
@@ -323,22 +338,36 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
           const compTarget = ch * 60 + cm;
           const compDiff = userLocalMinutes - compTarget;
           if (compDiff >= 0 && compDiff < REMINDER_GRACE_MIN) {
-            const guardId = `${uid}_comp_${comp.id}_${todayStr}`;
+            const normalizedTime = `${String(ch).padStart(2, '0')}${String(cm).padStart(2, '0')}`;
+            const guardId = `${uid}_comp_${comp.id}_${todayStr}_${normalizedTime}`;
             const guardRef = firestore.collection('pushGuards').doc(guardId);
             const guardSnap = await guardRef.get();
             if (!guardSnap.exists) {
               for (const token of tokens) {
                 try {
+                  const title = `💉 Time for ${comp.name}`;
+                  const body = 'Open LabRat to log your dose.';
                   await fcmMessaging.send({
                     token,
+                    notification: { title, body },
                     data: {
-                      title: `💉 Time for ${comp.name}`,
-                      body: 'Open LabRat to log your dose.',
+                      title,
+                      body,
                       tag: `comp-${comp.id}`,
                       icon: '/icon_192.png',
                     },
                     android: { priority: 'high' },
-                    webpush: { headers: { Urgency: 'high', TTL: '86400' } },
+                    webpush: {
+                      headers: { Urgency: 'high', TTL: '86400' },
+                      notification: {
+                        title,
+                        body,
+                        icon: '/icon_192.png',
+                        badge: '/icon_96.png',
+                        tag: `comp-${comp.id}`,
+                        renotify: true,
+                      },
+                    },
                   });
                   sent++;
                 } catch { errors++; }
@@ -349,6 +378,7 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
         }
       }
 
+      console.log('[send-reminders] result', JSON.stringify({ sent, errors, profiles: diag.length, checkedAt: nowUtc.toISOString() }));
       res.json({ ok: true, sent, errors, checkedAt: nowUtc.toISOString(), profiles: diag });
     } catch (err: any) {
       console.error('[send-reminders] Error:', err);
@@ -375,20 +405,34 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
       const errMsgs: string[] = [];
       for (const token of tokens) {
         try {
+          const title = '✅ LabRat test push';
+          const body = 'Background push works — you can close the app.';
           await fcm.send({
             token,
+            notification: { title, body },
             data: {
-              title: '✅ LabRat test push',
-              body: 'Background push works — you can close the app.',
+              title,
+              body,
               tag: 'labrat-test',
               icon: '/icon_192.png',
             },
             android: { priority: 'high' },
-            webpush: { headers: { Urgency: 'high', TTL: '600' } },
+            webpush: {
+              headers: { Urgency: 'high', TTL: '600' },
+              notification: {
+                title,
+                body,
+                icon: '/icon_192.png',
+                badge: '/icon_96.png',
+                tag: 'labrat-test',
+                renotify: true,
+              },
+            },
           });
           sent++;
         } catch (e: any) { errors++; if (errMsgs.length < 3) errMsgs.push(String(e?.errorInfo?.code || e?.message || e)); }
       }
+      console.log('[test-push] result', JSON.stringify({ uid: who.uid.slice(0, 6), tokens: tokens.length, sent, errors, errMsgs }));
       res.json({ ok: true, tokens: tokens.length, sent, errors, errMsgs });
     } catch (err: any) {
       res.status(500).json({ error: err?.message || 'Internal error' });

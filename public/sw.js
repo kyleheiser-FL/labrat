@@ -18,11 +18,13 @@ if (!self.firebase.apps.length) {
 const _messaging = self.firebase.messaging();
 
 /* Background FCM push — fires when the app is closed or backgrounded.
-   The server sends DATA-ONLY messages (title/body/tag inside `data`) so this
-   handler reliably runs and shows the banner. (Messages with a `notification`
-   field bypass onBackgroundMessage and rely on the SDK's finicky auto-display,
-   which also conflicted with the manual `push` listener that used to live below.) */
+   The server now sends both `notification` and `data` payloads. Firebase can
+   auto-display notification payloads in the background; this handler remains
+   for older data-only pushes. */
 _messaging.onBackgroundMessage((payload) => {
+  // Notification payloads are auto-displayed by the Firebase SDK in the
+  // background. Only manually render data-only pushes so we do not double show.
+  if (payload && payload.notification) return;
   const d = (payload && payload.data) || {};
   self.registration.showNotification(d.title || 'LabRat', {
     body: d.body || '',
