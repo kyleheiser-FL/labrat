@@ -43,6 +43,8 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
   const due = active.filter(c => getDoseScheduleForDate(c, date).isDue);
   const loggedFor = (c: Compound) => logs.find(l => l.compoundId === c.id && l.date === date);
   const remaining = due.filter(c => !loggedFor(c)).length;
+  const loggedCount = Math.max(0, due.length - remaining);
+  const completionPct = due.length ? Math.round((loggedCount / due.length) * 100) : 0;
   const isToday = date === iso(new Date());
 
   const shiftDay = (n: number) => {
@@ -79,25 +81,38 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
     const logged = !!loggedFor(c);
     const units = syringeUnits(c);
     return (
-      <div key={c.id} className="labrat-card p-4 sm:p-5 flex items-center justify-between gap-3">
+      <div key={c.id} className={`labrat-card p-4 sm:p-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4 ${logged ? 'border-emerald-500/25' : ''}`}>
         <div className="min-w-0">
-          <p className="font-bold text-base sm:text-lg text-slate-100 truncate flex items-center gap-2.5">
-            <span className="w-3 h-3 rounded-full shrink-0" style={{ background: c.color }} />{c.name}
+          <p className="font-bold text-[15.5px] sm:text-lg leading-snug text-slate-100 flex items-start gap-2.5 break-words">
+            <span className="w-3 h-3 rounded-full shrink-0 mt-1.5 shadow-[0_0_16px_currentColor]" style={{ background: c.color, color: c.color }} />
+            <span className="min-w-0">{c.name}</span>
           </p>
-          <p className="text-[13px] text-slate-400 mt-1 pl-[22px]">
-            {c.doseAmount} {c.doseUnit}{units != null ? ` · draw ${units} units` : ''}
-          </p>
+          <div className="mt-2 pl-[22px] flex flex-wrap gap-1.5 text-[12px] font-semibold">
+            <span className="labrat-dose-chip px-2 py-1">
+              {c.doseAmount} {c.doseUnit}
+            </span>
+            {units != null && (
+              <span className="labrat-dose-chip labrat-dose-chip-accent px-2 py-1">
+                draw {units} units
+              </span>
+            )}
+            <span className="labrat-dose-chip px-2 py-1">
+              {FREQ_LABEL[c.frequency] || c.frequency}
+            </span>
+          </div>
         </div>
         {logged ? (
           <button onClick={() => undo(c)} title="Tap to undo"
-            className="shrink-0 flex items-center gap-2 px-5 py-3.5 rounded-xl text-sm font-black uppercase tracking-wide bg-emerald-500/15 text-emerald-400 hover:bg-rose-500/15 hover:text-rose-300 transition cursor-pointer group">
-            <Check className="w-5 h-5 group-hover:hidden" /><RotateCcw className="w-5 h-5 hidden group-hover:inline" />
+            aria-label={`Undo dose for ${c.name}`}
+            className="shrink-0 min-w-[92px] sm:min-w-[118px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide bg-emerald-500/15 text-emerald-400 hover:bg-rose-500/15 hover:text-rose-300 transition cursor-pointer group">
+            <Check className="w-4.5 h-4.5 group-hover:hidden" /><RotateCcw className="w-4.5 h-4.5 hidden group-hover:inline" />
             <span className="group-hover:hidden">Done</span><span className="hidden group-hover:inline">Undo</span>
           </button>
         ) : (
           <button onClick={() => logDose(c)}
-            className="shrink-0 flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_10px_24px_-12px_rgba(34,211,238,0.7)] transition cursor-pointer">
-            Log dose
+            aria-label={`Log dose for ${c.name}`}
+            className="shrink-0 min-w-[96px] sm:min-w-[128px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_10px_24px_-12px_rgba(34,211,238,0.7)] transition cursor-pointer">
+            <span className="sm:hidden">Log</span><span className="hidden sm:inline">Log dose</span>
           </button>
         )}
       </div>
@@ -111,24 +126,39 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
         src="/labrat_hero_rat_dark.png"
         alt=""
         aria-hidden="true"
-        className="pointer-events-none select-none absolute -top-8 left-1/2 -translate-x-1/2 w-[135%] max-w-[560px] opacity-40 z-0"
-        style={{ WebkitMaskImage: 'linear-gradient(to bottom, #000 45%, transparent 92%)', maskImage: 'linear-gradient(to bottom, #000 45%, transparent 92%)' }}
+        className="pointer-events-none select-none absolute -top-5 left-1/2 -translate-x-1/2 w-[130%] max-w-[520px] opacity-20 z-0"
+        style={{ WebkitMaskImage: 'linear-gradient(to bottom, #000 35%, transparent 88%)', maskImage: 'linear-gradient(to bottom, #000 35%, transparent 88%)' }}
       />
 
       <div className="relative z-10 flex flex-col gap-5">
       {/* header + date nav */}
-      <div className="flex items-center justify-between gap-3">
-        <div>
+      <div className="labrat-card-strong p-4 sm:p-5 overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="min-w-0">
           <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Daily Dosing</span>
-          <h1 className="text-2xl font-black tracking-tight mt-1">
-            {remaining === 0 ? (due.length ? "All done ✓" : 'Nothing due') : `${remaining} to log`}
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight mt-1">
+            {remaining === 0 ? (due.length ? 'All logged' : 'Nothing due') : `${remaining} to log`}
           </h1>
+          <p className="mt-1 text-sm font-semibold text-slate-400">
+            {due.length ? `${loggedCount} of ${due.length} scheduled doses complete` : active.length ? 'No scheduled doses on this date' : 'Add compounds in Cycle to start tracking'}
+          </p>
         </div>
-        <div className="labrat-mini-surface flex items-center gap-1 rounded-xl p-1">
+        <div className="labrat-mini-surface w-full sm:w-auto flex items-center justify-between sm:justify-start gap-1 rounded-xl p-1">
           <button onClick={() => shiftDay(-1)} className="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/60 transition cursor-pointer" aria-label="Previous day"><ChevronLeft className="w-4 h-4" /></button>
-          <span className="px-2 text-[13px] font-bold text-slate-200 min-w-[64px] text-center flex items-center gap-1.5 justify-center"><CalendarDays className="w-3.5 h-3.5 text-cyan-400" />{prettyDate(date)}</span>
+          <span className="px-2 text-[13px] font-bold text-slate-200 min-w-[104px] text-center flex items-center gap-1.5 justify-center"><CalendarDays className="w-3.5 h-3.5 text-cyan-400" />{prettyDate(date)}</span>
           <button onClick={() => shiftDay(1)} disabled={isToday} className="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/60 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer" aria-label="Next day"><ChevronRight className="w-4 h-4" /></button>
         </div>
+        </div>
+        {due.length > 0 && (
+          <div className="mt-4">
+            <div className="labrat-progress-track h-2 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-[width] duration-300"
+                style={{ width: `${completionPct}%` }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* due doses */}
@@ -147,7 +177,7 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
       {active.length > 0 && (
         !showManual ? (
           <button onClick={() => { const c = active[0]; setShowManual(true); setManualId(c?.id || ''); setManualDose(c ? String(c.doseAmount) : ''); setManualUnit((c?.doseUnit as any) || 'mg'); }}
-            className="labrat-button-secondary self-start inline-flex items-center gap-1.5 text-[13px] font-bold text-slate-400 hover:text-cyan-300 bg-[#0f172a]/50 hover:bg-[#0f172a]/80 border border-[#1e293b]/70 px-4 py-2.5 rounded-xl transition cursor-pointer">
+            className="labrat-button-secondary w-full sm:w-auto justify-center self-start inline-flex items-center gap-1.5 text-[13px] font-bold text-slate-400 hover:text-cyan-300 bg-[#0f172a]/50 hover:bg-[#0f172a]/80 border border-[#1e293b]/70 px-4 py-3 sm:py-2.5 rounded-xl transition cursor-pointer">
             <Plus className="w-4 h-4" /> Log an unscheduled dose
           </button>
         ) : (() => {

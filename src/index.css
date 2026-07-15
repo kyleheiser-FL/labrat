@@ -2587,6 +2587,25 @@ html[data-labrat-theme="clinical-light"] .labrat-shop-muted {
   color: #e2e8f0;
 }
 
+.labrat-dose-chip {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 0.5rem;
+  background: rgba(15, 23, 42, 0.65);
+  color: #cbd5e1;
+}
+
+.labrat-dose-chip-accent {
+  border-color: rgba(34, 211, 238, 0.24);
+  background: rgba(34, 211, 238, 0.1);
+  color: #a5f3fc;
+}
+
+.labrat-progress-track {
+  border: 1px solid rgba(30, 41, 59, 0.7);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.8);
+}
+
 .labrat-button-primary,
 .labrat-button-secondary,
 .labrat-icon-button {
@@ -2706,6 +2725,23 @@ html[data-labrat-theme="clinical-light"] .labrat-status-badge {
   background: rgba(248, 250, 252, 0.92) !important;
   border-color: rgba(148, 163, 184, 0.38) !important;
   color: #0f172a !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-dose-chip {
+  background: rgba(241, 245, 249, 0.92) !important;
+  border-color: rgba(148, 163, 184, 0.42) !important;
+  color: #334155 !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-dose-chip-accent {
+  background: rgba(219, 234, 254, 0.9) !important;
+  border-color: rgba(37, 99, 235, 0.35) !important;
+  color: #1e3a8a !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-progress-track {
+  background: rgba(226, 232, 240, 0.9) !important;
+  border-color: rgba(148, 163, 184, 0.4) !important;
 }
 
 html[data-labrat-theme="clinical-light"] .labrat-shop-premium-header .bg-slate-950\/60,
