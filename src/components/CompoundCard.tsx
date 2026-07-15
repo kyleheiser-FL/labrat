@@ -101,8 +101,8 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
       <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-2xl" style={{ backgroundColor: comp.color }} />
 
       <div className="space-y-4">
-        <div className="flex justify-between items-start pt-1">
-          <div>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 pt-1">
+          <div className="min-w-0 w-full sm:w-auto">
             <h4 className="text-base font-bold text-slate-100 flex items-center gap-1.5 flex-wrap">
               <span>{comp.name}</span>
               {comp.isCompleted && (
@@ -112,7 +112,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
             <span className="labrat-status-badge mt-1">{comp.type}</span>
           </div>
           {hideActions ? null : isConfirmingDelete ? (
-            <div className="flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/20 p-1.5 rounded-xl text-[10px] select-none shrink-0" id={`confirm-delete-actions-${comp.id}`}>
+            <div className="grid grid-cols-[1fr_auto_auto] sm:flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/20 p-1.5 rounded-xl text-[10px] select-none w-full sm:w-auto sm:shrink-0" id={`confirm-delete-actions-${comp.id}`}>
               <span className="text-rose-400 font-bold font-mono uppercase tracking-widest text-[9px]">Delete?</span>
               <button type="button" onClick={() => { triggerHaptic('warning'); onDelete(comp.id); setIsConfirmingDelete(false); }}
                 className="px-2 py-1 bg-rose-600 hover:bg-rose-700 active:scale-[0.95] text-white rounded text-[9px] font-bold uppercase transition">Yes</button>
@@ -120,18 +120,18 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
                 className="px-2 py-1 bg-[#1e293b] hover:bg-slate-800 active:scale-[0.95] text-slate-300 border border-slate-700/50 rounded text-[9px] font-bold uppercase transition">No</button>
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="grid grid-cols-3 sm:flex items-center gap-1.5 w-full sm:w-auto sm:shrink-0">
               <button onClick={() => { triggerHaptic('light'); onUpdateCompound({ ...comp, isCompleted: !comp.isCompleted }); }}
-                className={`px-2.5 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-wide transition cursor-pointer ${comp.isCompleted ? 'bg-emerald-500/12 border-emerald-500/30 text-emerald-400' : 'bg-[#1e293b]/40 border-slate-700/50 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30'}`}
+                className={`min-w-0 px-2 py-1.5 rounded-lg border text-[10px] font-bold uppercase tracking-wide transition cursor-pointer whitespace-nowrap ${comp.isCompleted ? 'bg-emerald-500/12 border-emerald-500/30 text-emerald-400' : 'bg-[#1e293b]/40 border-slate-700/50 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/30'}`}
                 id={`toggle-complete-comp-${comp.id}`}>
                 {comp.isCompleted ? 'Reopen' : 'Mark done'}
               </button>
               <button onClick={() => { triggerHaptic('light'); onEdit(comp); }}
-                className="px-2.5 py-1.5 rounded-lg border border-slate-700/50 bg-[#1e293b]/40 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 text-[10px] font-bold uppercase tracking-wide transition cursor-pointer" id={`edit-comp-${comp.id}`}>
+                className="min-w-0 px-2 py-1.5 rounded-lg border border-slate-700/50 bg-[#1e293b]/40 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 text-[10px] font-bold uppercase tracking-wide transition cursor-pointer whitespace-nowrap" id={`edit-comp-${comp.id}`}>
                 Edit
               </button>
               <button onClick={() => { triggerHaptic('warning'); setIsConfirmingDelete(true); }}
-                className="px-2.5 py-1.5 rounded-lg border border-slate-700/50 bg-[#1e293b]/40 text-slate-400 hover:text-rose-400 hover:border-rose-500/30 text-[10px] font-bold uppercase tracking-wide transition cursor-pointer" id={`delete-comp-${comp.id}`}>
+                className="min-w-0 px-2 py-1.5 rounded-lg border border-slate-700/50 bg-[#1e293b]/40 text-slate-400 hover:text-rose-400 hover:border-rose-500/30 text-[10px] font-bold uppercase tracking-wide transition cursor-pointer whitespace-nowrap" id={`delete-comp-${comp.id}`}>
                 Delete
               </button>
             </div>
