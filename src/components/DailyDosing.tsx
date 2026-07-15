@@ -4,6 +4,7 @@ import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, His
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
 import { getDoseScheduleForDate } from '../lib/schedule';
 import { triggerHaptic } from '../lib/haptics';
+import ProductVialVisual from './shop/ProductVialVisual';
 
 interface DailyDosingProps {
   compounds: Compound[];
@@ -157,6 +158,12 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
     const draw = drawInfo(c);
     const isAdjusting = adjustingId === c.id;
     const adjustedPreview = isAdjusting ? drawInfo(c, parseFloat(adjustDose), adjustUnit) : undefined;
+    
+    // Map product category for the vial visualizer based on compound type
+    let vialCategory = 'Peptides';
+    if (c.type === 'steroid') vialCategory = 'Muscle Growth';
+    else if (c.type === 'supplement') vialCategory = 'Longevity & Cellular';
+    
     return (
       <div key={c.id} className={`labrat-card p-4 sm:p-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4 ${logged ? 'border-emerald-500/25' : ''}`}>
         <div className="min-w-0">
@@ -204,11 +211,18 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
             <span className="group-hover:hidden">{skipped ? 'Skipped' : 'Done'}</span><span className="hidden group-hover:inline">Undo</span>
           </button>
         ) : (
-          <button onClick={() => logDose(c)}
-            aria-label={`Log dose for ${c.name}`}
-            className="shrink-0 min-w-[96px] sm:min-w-[128px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_10px_24px_-12px_rgba(34,211,238,0.7)] transition cursor-pointer">
-            <span className="sm:hidden">Log</span><span className="hidden sm:inline">Log dose</span>
-          </button>
+          <div className="relative group shrink-0 min-w-[96px] sm:min-w-[128px] h-20 flex items-center justify-center">
+            <div className="absolute inset-0 overflow-hidden rounded-xl opacity-80 group-hover:opacity-100 transition duration-300 scale-125 transform-gpu select-none pointer-events-none -mr-4 flex items-center justify-center translate-y-3">
+               <ProductVialVisual name={c.name} category={vialCategory} theme="clinical" />
+            </div>
+            <button onClick={() => logDose(c)}
+              aria-label={`Log dose for ${c.name}`}
+              className="absolute inset-0 z-10 w-full h-full bg-slate-900/40 backdrop-blur-[2px] group-hover:bg-slate-900/10 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] flex items-center justify-center rounded-xl border border-white/10 group-hover:border-cyan-400/50 transition cursor-pointer">
+              <span className="text-[13px] sm:text-sm font-black uppercase tracking-wide text-white group-hover:text-cyan-300 drop-shadow-md">
+                <span className="sm:hidden">Log</span><span className="hidden sm:inline">Log dose</span>
+              </span>
+            </button>
+          </div>
         )}
         {isAdjusting && !logged && (
           <div className="col-span-full labrat-mini-surface p-3 flex flex-col gap-3">
