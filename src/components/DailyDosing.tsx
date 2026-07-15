@@ -10,16 +10,54 @@ interface DailyDosingProps {
   logs: DoseLog[];
   onLogDose: (log: DoseLog) => void;
   onUndoDose: (id: string) => void;
+  onUpdateCompound: (compound: Compound) => void;
 }
 
 const FREQ_LABEL: Record<string, string> = {
   daily: 'every day', eod: 'every other day', twice_weekly: 'twice a week', weekly: 'once a week', custom: 'custom schedule',
 };
 
-function syringeUnits(c: Compound): number | undefined {
-  if (!c.vialSizeMg || !c.bacWaterMl) return undefined;
-  const mcg = c.doseUnit === 'mg' ? c.doseAmount * 1000 : c.doseAmount;
-  return Math.round((mcg / ((c.vialSizeMg * 1000) / (c.bacWaterMl * 100))) * 10) / 10;
+function formatDrawNumber(n: number): string {
+  return Number.isInteger(n) ? String(n) : String(n);
+}
+
+function peptideSyringeUnits(dose: number, unit: string, vialMg?: number, bacMl?: number): number | undefined {
+  if (!vialMg || !bacMl) return undefined;
+  const mcg = unit === 'mg' ? dose * 1000 : dose;
+  return Math.round((mcg / ((vialMg * 1000) / (bacMl * 100))) * 10) / 10;
+}
+
+function drawInfo(c: Compound, dose = c.doseAmount, unit = c.doseUnit): { label: string; calculatedQtyText?: string; syringeUnits?: number } | undefined {
+  if (!Number.isFinite(dose) || dose <= 0) return undefined;
+
+  const peptideUnits = peptideSyringeUnits(dose, unit, c.vialSizeMg, c.bacWaterMl);
+  if (peptideUnits != null) {
+    return {
+      label: `draw ${formatDrawNumber(peptideUnits)} units`,
+      calculatedQtyText: `${formatDrawNumber(peptideUnits)} Units`,
+      syringeUnits: peptideUnits,
+    };
+  }
+
+  if (c.steroidForm === 'oil' && c.oilConcMgMl && unit === 'mg') {
+    const ml = dose / c.oilConcMgMl;
+    const units = Math.round(ml * 1000) / 10;
+    const mlText = ml.toFixed(2);
+    return {
+      label: `draw ${formatDrawNumber(units)} units`,
+      calculatedQtyText: `${mlText} ml / cc (${c.oilConcMgMl}mg/ml)`,
+    };
+  }
+
+  if (c.steroidForm === 'pill' && c.pillSizeMg && unit === 'mg') {
+    const pills = Math.round((dose / c.pillSizeMg) * 100) / 100;
+    return {
+      label: `${formatDrawNumber(pills)} ${pills === 1 ? 'pill' : 'pills'}`,
+      calculatedQtyText: `${formatDrawNumber(pills)} ${pills === 1 ? 'pill' : 'pills'} (${c.pillSizeMg}mg each)`,
+    };
+  }
+
+  return undefined;
 }
 const iso = (d: Date) => localDateISO(d);
 const prettyDate = (s: string) => {
@@ -32,12 +70,15 @@ const prettyDate = (s: string) => {
 };
 
 // Clean, big-button daily dose recording. Deep stats live on the Stats tab.
-export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: DailyDosingProps) {
+export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, onUpdateCompound }: DailyDosingProps) {
   const [date, setDate] = useState(iso(new Date()));
   const [showManual, setShowManual] = useState(false);
   const [manualId, setManualId] = useState('');
   const [manualDose, setManualDose] = useState('');
   const [manualUnit, setManualUnit] = useState<'mcg' | 'mg' | 'IU' | 'ml'>('mg');
+  const [adjustingId, setAdjustingId] = useState<string | null>(null);
+  const [adjustDose, setAdjustDose] = useState('');
+  const [adjustUnit, setAdjustUnit] = useState<Compound['doseUnit']>('mg');
 
   const active = compounds.filter(c => !c.isCompleted);
   const due = active.filter(c => getDoseScheduleForDate(c, date).isDue);
@@ -51,17 +92,11 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
     const d = new Date(date + 'T00:00:00'); d.setDate(d.getDate() + n); setDate(iso(d)); triggerHaptic('light');
   };
 
-  const unitsFor = (dose: number, unit: string, vialMg?: number, bacMl?: number): number | undefined => {
-    if (!vialMg || !bacMl) return undefined;
-    const mcg = unit === 'mg' ? dose * 1000 : dose;
-    return Math.round((mcg / ((vialMg * 1000) / (bacMl * 100))) * 10) / 10;
-  };
-
   const logDose = (c: Compound, doseOverride?: number, unitOverride?: 'mcg' | 'mg' | 'IU' | 'ml') => {
     triggerHaptic('success');
     const doseAmount = doseOverride != null && !isNaN(doseOverride) ? doseOverride : c.doseAmount;
     const doseUnit = unitOverride || c.doseUnit;
-    const units = unitsFor(doseAmount, doseUnit, c.vialSizeMg, c.bacWaterMl);
+    const draw = drawInfo(c, doseAmount, doseUnit);
     const time = localTimeHM();
     onLogDose({
       id: crypto.randomUUID(),
@@ -71,15 +106,39 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
       time,
       doseAmount,
       doseUnit,
-      reconstitutedRatio: c.vialSizeMg && c.bacWaterMl && units != null
-        ? { vialSizeMg: c.vialSizeMg, bacWaterMl: c.bacWaterMl, syringeUnits: units } : undefined,
+      reconstitutedRatio: c.vialSizeMg && c.bacWaterMl && draw?.syringeUnits != null
+        ? { vialSizeMg: c.vialSizeMg, bacWaterMl: c.bacWaterMl, syringeUnits: draw.syringeUnits } : undefined,
+      calculatedQtyText: draw?.calculatedQtyText,
     });
   };
   const undo = (c: Compound) => { const l = loggedFor(c); if (l) { triggerHaptic('warning'); onUndoDose(l.id); } };
 
+  const startAdjustment = (c: Compound) => {
+    triggerHaptic('light');
+    setAdjustingId(c.id);
+    setAdjustDose(String(c.doseAmount));
+    setAdjustUnit(c.doseUnit);
+  };
+
+  const finishAdjustment = () => {
+    setAdjustingId(null);
+    setAdjustDose('');
+  };
+
+  const logAdjustedDose = (c: Compound, shouldUpdateCycle: boolean) => {
+    const parsed = parseFloat(adjustDose);
+    if (!Number.isFinite(parsed) || parsed <= 0) return;
+    const adjustedCompound = { ...c, doseAmount: parsed, doseUnit: adjustUnit };
+    if (shouldUpdateCycle) onUpdateCompound(adjustedCompound);
+    logDose(adjustedCompound, parsed, adjustUnit);
+    finishAdjustment();
+  };
+
   const doseCard = (c: Compound) => {
     const logged = !!loggedFor(c);
-    const units = syringeUnits(c);
+    const draw = drawInfo(c);
+    const isAdjusting = adjustingId === c.id;
+    const adjustedPreview = isAdjusting ? drawInfo(c, parseFloat(adjustDose), adjustUnit) : undefined;
     return (
       <div key={c.id} className={`labrat-card p-4 sm:p-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4 ${logged ? 'border-emerald-500/25' : ''}`}>
         <div className="min-w-0">
@@ -91,14 +150,23 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
             <span className="labrat-dose-chip px-2 py-1">
               {c.doseAmount} {c.doseUnit}
             </span>
-            {units != null && (
+            {draw && (
               <span className="labrat-dose-chip labrat-dose-chip-accent px-2 py-1">
-                draw {units} units
+                {draw.label}
               </span>
             )}
             <span className="labrat-dose-chip px-2 py-1">
               {FREQ_LABEL[c.frequency] || c.frequency}
             </span>
+            {!logged && (
+              <button
+                type="button"
+                onClick={() => startAdjustment(c)}
+                className="labrat-dose-chip px-2 py-1 hover:border-cyan-400/45 hover:text-cyan-200 transition cursor-pointer"
+              >
+                adjust dose
+              </button>
+            )}
           </div>
         </div>
         {logged ? (
@@ -114,6 +182,57 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
             className="shrink-0 min-w-[96px] sm:min-w-[128px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 shadow-[0_10px_24px_-12px_rgba(34,211,238,0.7)] transition cursor-pointer">
             <span className="sm:hidden">Log</span><span className="hidden sm:inline">Log dose</span>
           </button>
+        )}
+        {isAdjusting && !logged && (
+          <div className="col-span-full labrat-mini-surface p-3 flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[12px] font-black uppercase tracking-wide text-slate-300">Adjust this dose</span>
+              <button onClick={finishAdjustment} className="p-1 text-slate-500 hover:text-slate-200 cursor-pointer" aria-label="Cancel dose adjustment"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="grid grid-cols-[minmax(0,1fr)_88px] gap-2">
+              <input
+                type="number"
+                step="any"
+                value={adjustDose}
+                onChange={e => setAdjustDose(e.target.value)}
+                onFocus={e => e.currentTarget.select()}
+                className="labrat-input flex-1 min-w-0 px-3 py-2.5 text-sm"
+                aria-label={`Adjusted dose for ${c.name}`}
+              />
+              <select
+                value={adjustUnit}
+                onChange={e => setAdjustUnit(e.target.value as Compound['doseUnit'])}
+                className="labrat-input !w-[88px] px-3 py-2.5 text-sm"
+                aria-label="Adjusted dose unit"
+              >
+                <option value="mcg">mcg</option>
+                <option value="mg">mg</option>
+                <option value="IU">IU</option>
+                <option value="ml">ml</option>
+              </select>
+            </div>
+            {adjustedPreview && (
+              <p className="text-[12px] text-cyan-400 font-mono">≈ {adjustedPreview.label}</p>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => logAdjustedDose(c, false)}
+                disabled={!Number.isFinite(parseFloat(adjustDose)) || parseFloat(adjustDose) <= 0}
+                className="labrat-button-secondary py-2.5 px-3 text-xs font-black uppercase tracking-wide disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                One-time log
+              </button>
+              <button
+                type="button"
+                onClick={() => logAdjustedDose(c, true)}
+                disabled={!Number.isFinite(parseFloat(adjustDose)) || parseFloat(adjustDose) <= 0}
+                className="labrat-button-primary py-2.5 px-3 text-xs font-black uppercase tracking-wide disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                Update cycle
+              </button>
+            </div>
+          </div>
         )}
       </div>
     );
@@ -182,7 +301,7 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
           </button>
         ) : (() => {
           const selected = active.find(x => x.id === manualId);
-          const previewUnits = selected ? unitsFor(parseFloat(manualDose), manualUnit, selected.vialSizeMg, selected.bacWaterMl) : undefined;
+          const previewDraw = selected ? drawInfo(selected, parseFloat(manualDose), manualUnit) : undefined;
           return (
           <div className="labrat-card p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between">
@@ -202,8 +321,8 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
                 <option value="mcg">mcg</option><option value="mg">mg</option><option value="IU">IU</option><option value="ml">ml</option>
               </select>
             </div>
-            {previewUnits != null && (
-              <p className="text-[12px] text-cyan-400 font-mono">≈ draw {previewUnits} units on the syringe</p>
+            {previewDraw && (
+              <p className="text-[12px] text-cyan-400 font-mono">≈ {previewDraw.label}</p>
             )}
             <button
               onClick={() => { if (selected) { logDose(selected, parseFloat(manualDose), manualUnit); setShowManual(false); } }}
@@ -230,7 +349,11 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose }: 
                 <div key={l.id} className="labrat-mini-surface px-4 py-2.5 flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-[13.5px] font-semibold text-slate-200 truncate">{l.compoundName}</p>
-                    <p className="text-[11.5px] text-slate-500 font-mono">{l.doseAmount} {l.doseUnit}{l.reconstitutedRatio ? ` · ${l.reconstitutedRatio.syringeUnits} units` : ''} · {formatTimeTo12Hour(l.time)}</p>
+                    <p className="text-[11.5px] text-slate-500 font-mono">
+                      {l.doseAmount} {l.doseUnit}
+                      {l.calculatedQtyText ? ` · ${l.calculatedQtyText}` : l.reconstitutedRatio ? ` · ${l.reconstitutedRatio.syringeUnits} units` : ''}
+                      {' · '}{formatTimeTo12Hour(l.time)}
+                    </p>
                   </div>
                   <button onClick={() => { triggerHaptic('warning'); onUndoDose(l.id); }}
                     className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-rose-400 px-2 py-1 rounded-lg hover:bg-rose-500/10 transition cursor-pointer">

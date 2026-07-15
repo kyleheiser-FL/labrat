@@ -1653,6 +1653,7 @@ export default function App() {
                   logs={logs}
                   onLogDose={handleLogDose}
                   onUndoDose={handleUndoDose}
+                  onUpdateCompound={handleUpdateCompound}
                 />
               )}
 
