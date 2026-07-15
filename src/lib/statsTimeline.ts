@@ -1,4 +1,5 @@
 import { Compound, DoseLog } from '../types';
+import { getDoseScheduleForDate } from './schedule';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -188,7 +189,24 @@ function buildRow(compound: Compound, logs: DoseLog[], todayISO: string): StatsC
   const latestLog = compoundLogs.at(-1);
   const daysLeft = getDaysLeft(endISO, todayISO);
 
-  const missedCount = logs.filter(log => log.compoundId === compound.id && log.isSkipped).length;
+  let missedCount = logs.filter(log => log.compoundId === compound.id && log.isSkipped).length;
+
+  const startDate = parseISODate(startISO);
+  const todayDate = parseISODate(todayISO);
+  const maxDate = new Date(Math.min(parseISODate(endISO).getTime(), todayDate.getTime() - MS_PER_DAY));
+
+  let currentDate = startDate;
+  while (currentDate <= maxDate) {
+    const dateStr = toISODate(currentDate);
+    const { isDue } = getDoseScheduleForDate(compound, dateStr);
+    if (isDue) {
+      const hasAnyLog = logs.some(log => log.compoundId === compound.id && log.date === dateStr);
+      if (!hasAnyLog) {
+        missedCount++;
+      }
+    }
+    currentDate = addDays(currentDate, 1);
+  }
 
   return {
     id: compound.id,
