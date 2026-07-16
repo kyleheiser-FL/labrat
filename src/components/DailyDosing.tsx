@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { localDateISO, localTimeHM } from '../lib/date';
-import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History, SlidersHorizontal, SkipForward } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History, SlidersHorizontal, SkipForward, Syringe } from 'lucide-react';
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
 import { getDoseScheduleForDate } from '../lib/schedule';
 import { triggerHaptic } from '../lib/haptics';
@@ -164,16 +164,18 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
             <span className="w-3 h-3 rounded-full shrink-0 mt-1.5 shadow-[0_0_16px_currentColor]" style={{ background: c.color, color: c.color }} />
             <span className="min-w-0">{c.name}</span>
           </p>
-          {/* Passive info — the numbers you read. Draw amount stays highlighted
-              (it's the value you act on); dose + frequency recede to quiet text
-              so they don't compete with the action buttons below. */}
-          <div className="mt-2 pl-[22px] flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px]">
+          {/* Passive info — read-only, never tappable. The draw amount is the
+              key readout, so it gets emphasis (accent color + syringe icon) but
+              no border/box, so it can't be mistaken for a button. Dose and
+              frequency stay quiet muted text below it. */}
+          <div className="mt-2 pl-[22px] flex flex-col gap-0.5">
             {draw && (
-              <span className="labrat-dose-chip labrat-dose-chip-accent px-2 py-1 font-bold">
+              <span className="labrat-primary-text inline-flex items-center gap-1.5 font-bold text-[13.5px]">
+                <Syringe className="w-3.5 h-3.5 shrink-0" />
                 {draw.label}
               </span>
             )}
-            <span className="text-slate-400 font-semibold">
+            <span className="text-slate-400 font-semibold text-[12px]">
               {c.doseAmount} {c.doseUnit}
               <span className="mx-1.5 text-slate-600">·</span>
               {FREQ_LABEL[c.frequency] || c.frequency}
