@@ -1,4 +1,3 @@
-import AiAssistant from './components/AiAssistant';
 import { localDateISO, localTimeHM } from './lib/date';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AppHeader from './components/AppHeader';
@@ -50,7 +49,6 @@ import DailyDosing from './components/DailyDosing';
 import StatsView from './components/StatsView';
 import CyclePlanner from './components/CyclePlanner';
 import PeptideLibrary from './components/PeptideLibrary';
-import BloodAnalyzer from './components/BloodAnalyzer';
 import MembersShop from './components/MembersShop';
 import { PricingProvider } from './lib/pricingConfig';
 import SettingsPage from './components/SettingsPage';
@@ -247,7 +245,6 @@ export default function App() {
     () => (getInitialTrackingEnabled() ? 'dashboard' : 'shop')
   );
   const [trackingEnabled, setTrackingEnabled] = useState<boolean>(getInitialTrackingEnabled);
-  const [aiOpen, setAiOpen] = useState(false);
 
   // Experience mode — expert (full app) | guided (hand-holding) | store (shop only).
   // Null means the gate hasn't been answered for this release yet.
@@ -1228,95 +1225,6 @@ export default function App() {
     triggerNotification('Schedule Parameter Adjustment', `Modified dosing schedule parameters for ${updatedComp.name}.`, 'info');
   };
 
-  // ── AI assistant actions ─────────────────────────────────────────────
-  // The assistant proposes these; the user confirms them in the chat card
-  // before they run, so these execute an already-approved intent.
-  const AI_COMPOUND_COLORS = ['#06b6d4', '#10b981', '#a855f7', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899'];
-
-  const handleAiAddCompound = (args: any) => {
-    const type = ['peptide', 'steroid', 'supplement', 'compound'].includes(args?.type) ? args.type : 'peptide';
-    const doseUnit = ['mcg', 'mg', 'IU', 'ml'].includes(args?.doseUnit) ? args.doseUnit : 'mg';
-    const frequency = ['daily', 'eod', 'twice_weekly', 'weekly', 'custom'].includes(args?.frequency) ? args.frequency : 'daily';
-    const comp: Compound = {
-      id: crypto.randomUUID(),
-      name: String(args?.name || 'New Compound').slice(0, 80),
-      type,
-      doseAmount: Number(args?.doseAmount) || 0,
-      doseUnit,
-      frequency,
-      customDays: args?.customDays ? Number(args.customDays) : undefined,
-      startDate: localDateISO(),
-      durationWeeks: Number(args?.durationWeeks) || 8,
-      color: AI_COMPOUND_COLORS[compounds.length % AI_COMPOUND_COLORS.length],
-      vialSizeMg: args?.vialSizeMg ? Number(args.vialSizeMg) : undefined,
-      bacWaterMl: args?.bacWaterMl ? Number(args.bacWaterMl) : undefined,
-      isCompleted: false,
-    };
-    handleAddCompound(comp);
-    navigateTab('dashboard');
-  };
-
-  const handleAiStopCompound = (name: string): boolean => {
-    if (!name) return false;
-    const lower = name.toLowerCase();
-    const target = compounds.find(c => !c.isCompleted && c.name.toLowerCase() === lower)
-      || compounds.find(c => !c.isCompleted && c.name.toLowerCase().includes(lower));
-    if (!target) return false;
-    handleUpdateCompound({ ...target, isCompleted: true });
-    return true;
-  };
-
-  const handleAiOpenShop = (query?: string) => {
-    if (query) safeLocalStorage.setItem('labrat_shop_search_seed', query);
-    navigateTab('shop');
-  };
-
-  const findActiveCompoundByName = (name: string): Compound | undefined => {
-    const lower = (name || '').toLowerCase();
-    if (!lower) return undefined;
-    return compounds.find(c => !c.isCompleted && c.name.toLowerCase() === lower)
-      || compounds.find(c => !c.isCompleted && c.name.toLowerCase().includes(lower));
-  };
-
-  const handleAiLogDose = (name: string, date?: string): boolean => {
-    const comp = findActiveCompoundByName(name);
-    if (!comp) return false;
-    const dateStr = (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) ? date : localDateISO();
-    // Already logged that day — treat as a no-op success rather than a duplicate.
-    if (logs.some(l => l.compoundId === comp.id && l.date === dateStr)) return true;
-    const timeStr = localTimeHM();
-    const doseInMcg = comp.doseUnit === 'mg' ? comp.doseAmount * 1000 : comp.doseAmount;
-    handleLogDose({
-      id: crypto.randomUUID(),
-      compoundId: comp.id,
-      compoundName: comp.name,
-      date: dateStr,
-      time: timeStr,
-      doseAmount: comp.doseAmount,
-      doseUnit: comp.doseUnit,
-      reconstitutedRatio: comp.vialSizeMg && comp.bacWaterMl ? {
-        vialSizeMg: comp.vialSizeMg,
-        bacWaterMl: comp.bacWaterMl,
-        syringeUnits: Math.round((doseInMcg / ((comp.vialSizeMg * 1000) / (comp.bacWaterMl * 100))) * 10) / 10,
-      } : undefined,
-    });
-    return true;
-  };
-
-  const handleAiUpdateCompound = (args: any): boolean => {
-    const comp = findActiveCompoundByName(args?.name);
-    if (!comp) return false;
-    const updated: Compound = { ...comp };
-    if (args.doseAmount != null && !isNaN(Number(args.doseAmount))) updated.doseAmount = Number(args.doseAmount);
-    if (['mcg', 'mg', 'IU', 'ml'].includes(args.doseUnit)) updated.doseUnit = args.doseUnit;
-    if (['daily', 'eod', 'twice_weekly', 'weekly', 'custom'].includes(args.frequency)) updated.frequency = args.frequency;
-    if (args.durationWeeks != null && !isNaN(Number(args.durationWeeks))) updated.durationWeeks = Number(args.durationWeeks);
-    if (args.vialSizeMg != null && !isNaN(Number(args.vialSizeMg))) updated.vialSizeMg = Number(args.vialSizeMg);
-    if (args.bacWaterMl != null && !isNaN(Number(args.bacWaterMl))) updated.bacWaterMl = Number(args.bacWaterMl);
-    if (args.customDays != null && !isNaN(Number(args.customDays))) updated.customDays = Number(args.customDays);
-    handleUpdateCompound(updated);
-    return true;
-  };
 
   const handleDeleteCompound = (id: string) => {
     const targetComp = compounds.find(c => c.id === id);
@@ -1623,7 +1531,6 @@ export default function App() {
         trackingEnabled={trackingEnabled}
         tabBadges={tabBadges}
         experienceMode={experienceMode}
-        onOpenAi={() => setAiOpen(true)}
       />
 
       {/* Main Responsive Layout Wrapper */}
@@ -1765,17 +1672,6 @@ export default function App() {
       <FirstBootThemePicker open={showFirstBootThemePicker} onSelectTheme={applyThemeSelection} />
       <AppearanceModal open={showAppearanceModal} onClose={() => setShowAppearanceModal(false)} currentTheme={themePreference} onSelectTheme={applyThemeSelection} />
       <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} onNotification={triggerNotification} onSignUpSuccess={(u) => setUser(u as any)} initialMode={authModalMode} />
-      <AiAssistant
-        compounds={compounds}
-        onAddCompound={handleAiAddCompound}
-        onStopCompound={handleAiStopCompound}
-        onOpenShop={handleAiOpenShop}
-        onLogDose={handleAiLogDose}
-        onUpdateCompound={handleAiUpdateCompound}
-        externalOpen={aiOpen}
-        onExternalOpenChange={setAiOpen}
-        hideLauncher
-      />
     </div>
   );
 }

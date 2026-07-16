@@ -12,7 +12,6 @@ import {
   Loader2,
   Sparkles,
   BarChart3,
-  Bot,
 } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { triggerHaptic } from '../lib/haptics';
@@ -33,7 +32,6 @@ interface AppHeaderProps {
   trackingEnabled: boolean;
   tabBadges?: { dashboard: number; notifications: number };
   experienceMode?: 'expert' | 'guided' | 'store' | null;
-  onOpenAi?: () => void;
 }
 
 export default function AppHeader({
@@ -49,7 +47,6 @@ export default function AppHeader({
   trackingEnabled,
   tabBadges,
   experienceMode,
-  onOpenAi,
 }: AppHeaderProps) {
   const tabBtn = (tab: Tab, icon: React.ReactNode, label: React.ReactNode, badge?: number) => (
     <button
@@ -91,19 +88,6 @@ export default function AppHeader({
 
           {/* Right side controls — fixed px sizing so they don't scale with the phone's text-size setting */}
           <div className="flex items-center gap-1 sm:gap-1.5 shrink-0" id="header-indicators-bar">
-
-            {/* LABRAT AI assistant — small launcher in the header */}
-            {onOpenAi && (
-              <button
-                onClick={() => { triggerHaptic('light'); onOpenAi(); }}
-                className="labrat-icon-button relative flex items-center justify-center w-[38px] h-[38px] shrink-0 rounded-xl border border-[#1e293b]/50 bg-[#0f172a]/60 text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/50 hover:border-cyan-500/40 transition-all cursor-pointer"
-                aria-label="LABRAT AI"
-                title="LABRAT AI Assistant"
-              >
-                <Bot className="w-[18px] h-[18px]" />
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-400 border border-[#030712]" />
-              </button>
-            )}
 
             {/* Messenger chat — always available in the header (was a floating bubble) */}
             <button
