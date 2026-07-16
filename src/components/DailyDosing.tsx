@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { localDateISO, localTimeHM } from '../lib/date';
-import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History, SlidersHorizontal, SkipForward } from 'lucide-react';
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
 import { getDoseScheduleForDate } from '../lib/schedule';
 import { triggerHaptic } from '../lib/haptics';
@@ -164,37 +164,41 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
             <span className="w-3 h-3 rounded-full shrink-0 mt-1.5 shadow-[0_0_16px_currentColor]" style={{ background: c.color, color: c.color }} />
             <span className="min-w-0">{c.name}</span>
           </p>
-          <div className="mt-2 pl-[22px] flex flex-wrap gap-1.5 text-[12px] font-semibold">
-            <span className="labrat-dose-chip px-2 py-1">
-              {c.doseAmount} {c.doseUnit}
-            </span>
+          {/* Passive info — the numbers you read. Draw amount stays highlighted
+              (it's the value you act on); dose + frequency recede to quiet text
+              so they don't compete with the action buttons below. */}
+          <div className="mt-2 pl-[22px] flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px]">
             {draw && (
-              <span className="labrat-dose-chip labrat-dose-chip-accent px-2 py-1">
+              <span className="labrat-dose-chip labrat-dose-chip-accent px-2 py-1 font-bold">
                 {draw.label}
               </span>
             )}
-            <span className="labrat-dose-chip px-2 py-1">
+            <span className="text-slate-400 font-semibold">
+              {c.doseAmount} {c.doseUnit}
+              <span className="mx-1.5 text-slate-600">·</span>
               {FREQ_LABEL[c.frequency] || c.frequency}
             </span>
-            {!logged && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => startAdjustment(c)}
-                  className="labrat-dose-chip px-2 py-1 hover:border-cyan-400/45 hover:text-cyan-200 transition cursor-pointer"
-                >
-                  adjust dose
-                </button>
-                <button
-                  type="button"
-                  onClick={() => skipDose(c)}
-                  className="labrat-dose-chip px-2 py-1 hover:border-amber-400/45 hover:text-amber-200 transition cursor-pointer"
-                >
-                  skip
-                </button>
-              </>
-            )}
           </div>
+          {/* Actions — real buttons, set on their own row and clearly distinct
+              from the info above so they read as tappable. */}
+          {!logged && (
+            <div className="mt-3 pl-[22px] flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => startAdjustment(c)}
+                className="labrat-button-secondary px-3 py-1.5 text-[12px] font-bold cursor-pointer hover:border-cyan-400/50"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" /> Adjust
+              </button>
+              <button
+                type="button"
+                onClick={() => skipDose(c)}
+                className="labrat-button-secondary px-3 py-1.5 text-[12px] font-bold cursor-pointer hover:border-amber-400/50"
+              >
+                <SkipForward className="w-3.5 h-3.5 text-amber-400" /> Skip
+              </button>
+            </div>
+          )}
         </div>
         {logged ? (
           <button onClick={() => undo(c)} title="Tap to undo"
