@@ -15,7 +15,9 @@ import {
   Search,
   UserPlus,
   LogIn,
-  Truck
+  Truck,
+  BookOpen,
+  ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, auth } from '../firebase';
@@ -72,9 +74,10 @@ function resolveLabratTheme(): LabratThemeMode {
 
 interface MembersShopProps {
   onRequestAuth?: (mode: 'signin' | 'signup') => void;
+  onOpenResearch?: () => void;
 }
 
-export default function MembersShop({ onRequestAuth }: MembersShopProps) {
+export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersShopProps) {
   const pricingConfig = usePricingConfig();
   const [currentUser, setCurrentUser] = useState<any>(auth.currentUser);
   const [labratTheme, setLabratTheme] = useState<LabratThemeMode>(() => resolveLabratTheme());
@@ -1287,6 +1290,23 @@ export default function MembersShop({ onRequestAuth }: MembersShopProps) {
             <span className="text-base font-black tracking-tighter font-sans uppercase">LABRAT</span>
             <span className="text-slate-300 font-semibold">Bioresearch Peptide &amp; Compound Shop</span>
           </h1>
+
+          {onOpenResearch && (
+            <button
+              type="button"
+              onClick={() => { triggerHaptic('light'); onOpenResearch(); }}
+              className="group flex items-center justify-between gap-3 w-full rounded-xl border border-cyan-500/25 bg-cyan-500/10 px-3.5 py-2.5 text-left hover:border-cyan-400/45 hover:bg-cyan-500/15 transition cursor-pointer"
+            >
+              <span className="flex items-center gap-2.5 min-w-0">
+                <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-300 shrink-0"><BookOpen className="w-4 h-4" /></span>
+                <span className="min-w-0">
+                  <span className="block text-[13px] font-bold text-white">Compound Research</span>
+                  <span className="block text-[11px] text-slate-400 truncate">Dosing ranges, half-lives, benefits &amp; reconstitution</span>
+                </span>
+              </span>
+              <ChevronRight className="w-4 h-4 text-cyan-400 group-hover:translate-x-0.5 transition shrink-0" />
+            </button>
+          )}
 
           {/* Customer nav — same for everyone including admin-in-preview */}
           {(memberProfile?.status === 'approved' || memberProfile?.status === 'kit' || memberProfile?.status === 'chinakit' || memberProfile?.status === 'chinavial' || isAdminUser) && (

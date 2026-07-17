@@ -440,6 +440,9 @@ export default function App() {
     const isTabVisible = (tab: typeof activeTab) => {
       if (tab === 'shop') return !hideShop;
       if (tab === 'settings') return true;
+      // Compound Research (library) is reached from the Shop, so it's available
+      // to everyone — including store-only users who have tracking turned off.
+      if (tab === 'library') return true;
       return trackingEnabled;
     };
     if (!isTabVisible(activeTab)) {
@@ -1573,34 +1576,32 @@ export default function App() {
                 />
               )}
 
-              {activeTab === 'stats' && (
-                <StatsView
-                  compounds={compounds}
-                  logs={logs}
-                  onUndoDose={handleUndoDose}
-                  onUpdateCompound={handleUpdateCompound}
-                  onOpenEncyclopedia={() => navigateTab('library')}
-                />
-              )}
-
               {activeTab === 'planner' && (
-                <CyclePlanner
-                  compounds={compounds}
-                  logs={logs}
-                  onLogDose={handleLogDose}
-                  onBatchLogDoses={handleBatchLogDoses}
-                  onUndoDose={handleUndoDose}
-                  onAddCompound={handleAddCompound}
-                  onUpdateCompound={handleUpdateCompound}
-                  onDeleteCompound={handleDeleteCompound}
-                  onImportData={handleImportDatabase}
-                  onResetData={handleResetAllData}
-                  activeFromLibrary={activeFromLibrary}
-                  clearActiveFromLibrary={() => setActiveFromLibrary(null)}
-                  onNavigateToTab={navigateTab}
-                  labratTheme={labratTheme}
-                  visibility={segmentVisibility.planner}
-                />
+                <div className="flex flex-col gap-6">
+                  <CyclePlanner
+                    compounds={compounds}
+                    logs={logs}
+                    onLogDose={handleLogDose}
+                    onBatchLogDoses={handleBatchLogDoses}
+                    onUndoDose={handleUndoDose}
+                    onAddCompound={handleAddCompound}
+                    onUpdateCompound={handleUpdateCompound}
+                    onDeleteCompound={handleDeleteCompound}
+                    onImportData={handleImportDatabase}
+                    onResetData={handleResetAllData}
+                    activeFromLibrary={activeFromLibrary}
+                    clearActiveFromLibrary={() => setActiveFromLibrary(null)}
+                    onNavigateToTab={navigateTab}
+                    labratTheme={labratTheme}
+                    visibility={segmentVisibility.planner}
+                  />
+                  {/* Stats merged into the Cycle tab — runway summary + history */}
+                  <StatsView
+                    compounds={compounds}
+                    logs={logs}
+                    onUndoDose={handleUndoDose}
+                  />
+                </div>
               )}
 
               {activeTab === 'library' && (
@@ -1612,7 +1613,7 @@ export default function App() {
 
               {activeTab === 'shop' && !hideShop && (
                 <PricingProvider>
-                  <MembersShop onRequestAuth={openAuthModal} />
+                  <MembersShop onRequestAuth={openAuthModal} onOpenResearch={() => navigateTab('library')} />
                 </PricingProvider>
               )}
 
