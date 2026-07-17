@@ -3,7 +3,7 @@ import { localDateISO } from '../lib/date';
 import {
   Plus, Trash2, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
   Info, Activity, Shield, Apple, Sun, Heart, CheckSquare, History, Clock,
-  Layers, X, Wrench
+  Layers, X, Wrench, CalendarPlus
 } from 'lucide-react';
 import { Compound, LibraryItem, DoseLog } from '../types';
 import { triggerHaptic } from '../lib/haptics';
@@ -54,6 +54,9 @@ export default function CyclePlanner({
   const [editingCompound, setEditingCompound] = useState<Compound | null>(null);
   const [formPrefill, setFormPrefill] = useState<Partial<Compound> | null>(null);
   const [retroactiveCompId, setRetroactiveCompId] = useState<string | null>(null);
+  // Compounds whose "extend cycle to cover missed doses" suggestion the user
+  // has extended or dismissed this session, so we stop nagging.
+  const [dismissedExtend, setDismissedExtend] = useState<Set<string>>(new Set());
 
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [showDataControls, setShowDataControls] = useState(false);
@@ -174,6 +177,36 @@ export default function CyclePlanner({
     return s;
   };
 
+  // Days between scheduled doses for a compound's frequency — used to turn a
+  // count of missed/skipped doses into how much time to add to the cycle.
+  const intervalDaysFor = (c: Compound): number => {
+    switch (c.frequency) {
+      case 'daily': return 1;
+      case 'eod': return 2;
+      case 'twice_weekly': return 3.5;
+      case 'weekly': return 7;
+      case 'custom': return c.customDays || 3;
+      default: return 1;
+    }
+  };
+
+  // Whole weeks to add so the missed/skipped doses can be made up. The schedule
+  // is week-granular (see lib/schedule.ts), so we round the missed doses' worth
+  // of days to the nearest whole week, at least one.
+  const extraWeeksFor = (c: Compound, missed: number): number =>
+    Math.max(1, Math.round((missed * intervalDaysFor(c)) / 7));
+
+  const extendCycle = (c: Compound, extraWeeks: number) => {
+    triggerHaptic('success');
+    onUpdateCompound({ ...c, durationWeeks: c.durationWeeks + extraWeeks });
+    setDismissedExtend(prev => new Set(prev).add(c.id));
+  };
+
+  const dismissExtend = (id: string) => {
+    triggerHaptic('light');
+    setDismissedExtend(prev => new Set(prev).add(id));
+  };
+
   const todayObj = new Date();
   const suppressiveCompounds = compounds.filter(c => c.type === 'steroid' || c.type === 'compound');
   const pctCandidates = suppressiveCompounds.filter(c => {
@@ -267,6 +300,36 @@ export default function CyclePlanner({
             <span className="labrat-muted text-[10px] uppercase tracking-wide flex justify-center items-center h-full">last dose</span>
           </div>
         </div>
+
+        {row.missedCount > 0 && row.status !== 'Completed' && !dismissedExtend.has(compound.id) && (() => {
+          const extraWeeks = extraWeeksFor(compound, row.missedCount);
+          const newEnd = getEndDate(compound.startDate, compound.durationWeeks + extraWeeks);
+          const newEndLabel = newEnd ? newEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+          return (
+            <div className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-3">
+              <div className="flex items-start gap-2.5">
+                <CalendarPlus className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] font-bold text-slate-100">
+                    {row.missedCount} {row.missedCount === 1 ? 'dose' : 'doses'} missed or skipped
+                  </p>
+                  <p className="text-[11.5px] text-slate-400 mt-0.5">
+                    Extend this cycle by {extraWeeks} {extraWeeks === 1 ? 'week' : 'weeks'}
+                    {newEndLabel ? <> — new end <span className="font-semibold text-slate-300">{newEndLabel}</span></> : ''} to make them up?
+                  </p>
+                  <div className="mt-2.5 flex flex-wrap gap-2">
+                    <button type="button" onClick={() => extendCycle(compound, extraWeeks)} className="labrat-button-primary py-1.5 px-3 text-[12px] font-bold cursor-pointer">
+                      Extend +{extraWeeks}wk
+                    </button>
+                    <button type="button" onClick={() => dismissExtend(compound.id)} className="labrat-button-secondary py-1.5 px-3 text-[12px] font-bold cursor-pointer">
+                      Not now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
           <button type="button" onClick={() => openFormEdit(compound)} className="labrat-button-secondary py-2 px-3 text-xs cursor-pointer">Edit</button>
