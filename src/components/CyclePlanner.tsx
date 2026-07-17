@@ -59,6 +59,7 @@ export default function CyclePlanner({
   const [dismissedExtend, setDismissedExtend] = useState<Set<string>>(new Set());
 
   const [confirmingReset, setConfirmingReset] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [showDataControls, setShowDataControls] = useState(false);
   const [importString, setImportString] = useState('');
   const [importError, setImportError] = useState('');
@@ -337,7 +338,43 @@ export default function CyclePlanner({
           <button type="button" onClick={() => onUpdateCompound({ ...compound, isCompleted: !compound.isCompleted })} className="labrat-button-secondary py-2 px-3 text-xs cursor-pointer">
             {compound.isCompleted ? 'Reactivate' : 'Complete'}
           </button>
-          <button type="button" onClick={() => onDeleteCompound(compound.id)} className="labrat-button-secondary py-2 px-3 text-xs text-rose-300 hover:text-rose-200 cursor-pointer">Delete</button>
+          {confirmDeleteId === compound.id ? (
+            <div className="col-span-2 sm:col-span-1 flex items-center gap-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 p-1.5">
+              <span className="text-[9px] font-bold uppercase tracking-wide text-rose-300 px-1">Sure?</span>
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic('warning');
+                  onDeleteCompound(compound.id);
+                  setConfirmDeleteId(null);
+                }}
+                className="flex-1 py-1.5 px-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-bold uppercase cursor-pointer"
+              >
+                Yes
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic('light');
+                  setConfirmDeleteId(null);
+                }}
+                className="flex-1 py-1.5 px-2 rounded-lg bg-[#1e293b] border border-slate-700/60 text-slate-300 text-[10px] font-bold uppercase cursor-pointer"
+              >
+                No
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic('warning');
+                setConfirmDeleteId(compound.id);
+              }}
+              className="labrat-button-secondary py-2 px-3 text-xs text-rose-300 hover:text-rose-200 cursor-pointer"
+            >
+              Delete
+            </button>
+          )}
         </div>
       </article>
     );

@@ -10,6 +10,7 @@ interface AdministrationLedgerProps {
 
 export default function AdministrationLedger({ logs, onUndoDose }: AdministrationLedgerProps) {
   const [showCount, setShowCount] = useState(5);
+  const [confirmUndoId, setConfirmUndoId] = useState<string | null>(null);
 
   // Normalize a stored time to 24-hour "HH:MM" so sorting is reliable even
   // when some logs persist "22:37" and others persist "10:37 PM".
@@ -99,17 +100,43 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
                     {log.calculatedQtyText ? log.calculatedQtyText : (log.reconstitutedRatio ? `${log.reconstitutedRatio.syringeUnits} Units` : 'Standard Draw')}
                   </td>
                   <td className="py-2.5 px-2 text-right">
-                    <button
-                      onClick={() => {
-                        triggerHaptic('warning');
-                        onUndoDose(log.id);
-                      }}
-                      className="p-1 px-2 rounded-md text-[10px] font-bold text-slate-500 hover:text-rose-400 transition"
-                      title="Undo / Delete log"
-                      id={`undo-log-${log.id}`}
-                    >
-                      Undo
-                    </button>
+                    {confirmUndoId === log.id ? (
+                      <div className="inline-flex items-center gap-1 bg-rose-500/10 border border-rose-500/25 rounded-lg p-0.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            triggerHaptic('warning');
+                            onUndoDose(log.id);
+                            setConfirmUndoId(null);
+                          }}
+                          className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-bold uppercase cursor-pointer"
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            triggerHaptic('light');
+                            setConfirmUndoId(null);
+                          }}
+                          className="px-1.5 py-0.5 rounded text-slate-300 text-[9px] font-bold uppercase cursor-pointer"
+                        >
+                          No
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          triggerHaptic('warning');
+                          setConfirmUndoId(log.id);
+                        }}
+                        className="p-1 px-2 rounded-md text-[10px] font-bold text-slate-500 hover:text-rose-400 transition cursor-pointer"
+                        title="Undo / Delete log"
+                        id={`undo-log-${log.id}`}
+                      >
+                        Undo
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

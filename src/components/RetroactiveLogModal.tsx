@@ -62,6 +62,7 @@ export default function RetroactiveLogModal({ compound, logs, onLogDose, onBatch
   });
   const [retroBatchEnd, setRetroBatchEnd] = useState(localDateISO());
   const [retroBatchFreq, setRetroBatchFreq] = useState<'daily' | 'eod' | 'twice_weekly' | 'weekly'>('daily');
+  const [confirmDeleteLogId, setConfirmDeleteLogId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!compound) return;
@@ -323,10 +324,43 @@ export default function RetroactiveLogModal({ compound, logs, onLogDose, onBatch
                       {log.calculatedQtyText && <span className="text-slate-500 text-[9px] font-bold">({log.calculatedQtyText})</span>}
                     </div>
                     {onUndoDose && (
-                      <button type="button" onClick={() => { triggerHaptic('warning'); onUndoDose(log.id); }}
-                        className="p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-all cursor-pointer" title="Delete dose record">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      confirmDeleteLogId === log.id ? (
+                        <div className="flex items-center gap-1 bg-rose-500/10 border border-rose-500/25 rounded-lg p-0.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              triggerHaptic('warning');
+                              onUndoDose(log.id);
+                              setConfirmDeleteLogId(null);
+                            }}
+                            className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-bold uppercase cursor-pointer"
+                          >
+                            Yes
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              triggerHaptic('light');
+                              setConfirmDeleteLogId(null);
+                            }}
+                            className="px-1.5 py-0.5 rounded text-slate-300 text-[9px] font-bold uppercase cursor-pointer"
+                          >
+                            No
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            triggerHaptic('warning');
+                            setConfirmDeleteLogId(log.id);
+                          }}
+                          className="p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-all cursor-pointer"
+                          title="Delete dose record"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )
                     )}
                   </div>
                 ))}

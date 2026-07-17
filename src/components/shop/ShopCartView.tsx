@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, ArrowLeft, Minus, Plus, Trash2, ClipboardCheck, BadgeCheck, Truck } from 'lucide-react';
 import { triggerHaptic } from '../../lib/haptics';
@@ -39,6 +39,7 @@ export default function ShopCartView({
   onSetView,
 }: ShopCartViewProps) {
   const pc = usePricingConfig();
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const effectivePrice = (item: CartItem) =>
     isKitPricing ? (getKitSellPrice(item.product.name, pc) || item.product.price) :
     isChinaKitPricing ? (getChinaKitSellPrice(item.product.name, pc) || item.product.price) :
@@ -111,13 +112,42 @@ export default function ShopCartView({
                     <span className="text-sm font-extrabold text-white w-16 text-right">
                       ${effectivePrice(item) * item.quantity}.00
                     </span>
-                    <button
-                      onClick={() => onRemoveFromCart(item.product.id)}
-                      className="p-1.5 hover:bg-red-500/10 text-red-400 hover:text-red-300 rounded-lg transition-all cursor-pointer"
-                      title="Discard compound"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {confirmRemoveId === item.product.id ? (
+                      <div className="flex items-center gap-1 bg-rose-500/10 border border-rose-500/25 rounded-lg p-0.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            triggerHaptic('warning');
+                            onRemoveFromCart(item.product.id);
+                            setConfirmRemoveId(null);
+                          }}
+                          className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-bold uppercase cursor-pointer"
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            triggerHaptic('light');
+                            setConfirmRemoveId(null);
+                          }}
+                          className="px-1.5 py-0.5 rounded text-slate-300 text-[9px] font-bold uppercase cursor-pointer"
+                        >
+                          No
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          triggerHaptic('warning');
+                          setConfirmRemoveId(item.product.id);
+                        }}
+                        className="p-1.5 hover:bg-red-500/10 text-red-400 hover:text-red-300 rounded-lg transition-all cursor-pointer"
+                        title="Discard compound"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

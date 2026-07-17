@@ -19,6 +19,7 @@ export default function WellnessTracker({ metrics, onSaveMetrics, onDeleteMetric
   const [sideEffects, setSideEffects] = useState('');
   const [metricNotes, setMetricNotes] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [confirmDeleteDate, setConfirmDeleteDate] = useState<string | null>(null);
 
   useEffect(() => {
     const m = metrics.find(item => item.date === wellnessDate);
@@ -258,10 +259,43 @@ export default function WellnessTracker({ metrics, onSaveMetrics, onDeleteMetric
                   <div className="flex items-center gap-2">
                     <span>{m.date}</span>
                     {onDeleteMetric && (
-                      <button type="button" onClick={() => { triggerHaptic('warning'); onDeleteMetric(m.date); }}
-                        className="p-1 text-slate-500 hover:text-rose-400 transition cursor-pointer rounded" title="Delete entry">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      confirmDeleteDate === m.date ? (
+                        <div className="flex items-center gap-1 bg-rose-500/10 border border-rose-500/25 rounded-lg p-0.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              triggerHaptic('warning');
+                              onDeleteMetric(m.date);
+                              setConfirmDeleteDate(null);
+                            }}
+                            className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-bold uppercase cursor-pointer"
+                          >
+                            Yes
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              triggerHaptic('light');
+                              setConfirmDeleteDate(null);
+                            }}
+                            className="px-1.5 py-0.5 rounded text-slate-300 text-[9px] font-bold uppercase cursor-pointer"
+                          >
+                            No
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            triggerHaptic('warning');
+                            setConfirmDeleteDate(m.date);
+                          }}
+                          className="p-1 text-slate-500 hover:text-rose-400 transition cursor-pointer rounded"
+                          title="Delete entry"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )
                     )}
                   </div>
                   {m.weightLb && <span className="text-cyan-400">Weight: {m.weightLb} Lbs</span>}

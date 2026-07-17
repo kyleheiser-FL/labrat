@@ -253,6 +253,7 @@ function Home({
   onGuide: (kind: 'mix' | 'inject', comp: Compound) => void;
 }) {
   const [confirmDel, setConfirmDel] = useState<string | null>(null);
+  const [confirmUndoId, setConfirmUndoId] = useState<string | null>(null);
   const [date, setDate] = useState(todayStr());
   const isTodaySel = date === todayStr();
   const shiftDay = (n: number) => {
@@ -267,7 +268,15 @@ function Home({
 
   const undoToday = (c: Compound) => {
     const log = logs.find(l => l.compoundId === c.id && l.date === date);
-    if (log) { triggerHaptic('warning'); onUndoDose(log.id); }
+    if (!log) return;
+    if (confirmUndoId === log.id) {
+      triggerHaptic('warning');
+      onUndoDose(log.id);
+      setConfirmUndoId(null);
+      return;
+    }
+    triggerHaptic('warning');
+    setConfirmUndoId(log.id);
   };
   const dueToday = compounds.filter(c => getDoseScheduleForDate(c, date).isDue);
   const isLogged = (c: Compound) => logs.some(l => l.compoundId === c.id && l.date === date);
@@ -363,13 +372,32 @@ function Home({
                       </p>
                     </div>
                     {logged ? (
-                      <button onClick={() => undoToday(c)} title="Tap to undo"
-                        className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-black uppercase tracking-wide bg-emerald-500/15 text-emerald-400 hover:bg-rose-500/15 hover:text-rose-300 transition cursor-pointer group">
-                        <Check className="w-4 h-4 group-hover:hidden" />
-                        <RotateCcw className="w-4 h-4 hidden group-hover:inline" />
-                        <span className="group-hover:hidden">Done</span>
-                        <span className="hidden group-hover:inline">Undo</span>
-                      </button>
+                      (() => {
+                        const log = logs.find(l => l.compoundId === c.id && l.date === date);
+                        const confirming = !!log && confirmUndoId === log.id;
+                        return (
+                          <button onClick={() => undoToday(c)} title={confirming ? 'Tap again to confirm undo' : 'Tap to undo'}
+                            className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-black uppercase tracking-wide transition cursor-pointer group ${
+                              confirming
+                                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                                : 'bg-emerald-500/15 text-emerald-400 hover:bg-rose-500/15 hover:text-rose-300'
+                            }`}>
+                            {confirming ? (
+                              <>
+                                <RotateCcw className="w-4 h-4" />
+                                <span>Sure?</span>
+                              </>
+                            ) : (
+                              <>
+                                <Check className="w-4 h-4 group-hover:hidden" />
+                                <RotateCcw className="w-4 h-4 hidden group-hover:inline" />
+                                <span className="group-hover:hidden">Done</span>
+                                <span className="hidden group-hover:inline">Undo</span>
+                              </>
+                            )}
+                          </button>
+                        );
+                      })()
                     ) : (
                       <button onClick={() => quickLog(c)}
                         className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-black uppercase tracking-wide bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-950 hover:brightness-110 transition cursor-pointer">
@@ -410,10 +438,29 @@ function Home({
                     <p className="text-[13.5px] font-semibold text-slate-200 truncate">{l.compoundName}</p>
                     <p className="text-[11.5px] text-slate-500 font-mono">{l.doseAmount} {l.doseUnit}{l.reconstitutedRatio ? ` · ${l.reconstitutedRatio.syringeUnits} units` : ''} · {formatTimeTo12Hour(l.time)}</p>
                   </div>
-                  <button onClick={() => { triggerHaptic('warning'); onUndoDose(l.id); }}
-                    className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-rose-400 px-2 py-1 rounded-lg hover:bg-rose-500/10 transition cursor-pointer">
-                    <RotateCcw className="w-3.5 h-3.5" /> Undo
-                  </button>
+                  {confirmUndoId === l.id ? (
+                    <div className="shrink-0 flex items-center gap-1 bg-rose-500/10 border border-rose-500/25 rounded-lg p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => { triggerHaptic('warning'); onUndoDose(l.id); setConfirmUndoId(null); }}
+                        className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-bold uppercase cursor-pointer"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { triggerHaptic('light'); setConfirmUndoId(null); }}
+                        className="px-1.5 py-0.5 rounded text-slate-300 text-[9px] font-bold uppercase cursor-pointer"
+                      >
+                        No
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => { triggerHaptic('warning'); setConfirmUndoId(l.id); }}
+                      className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-rose-400 px-2 py-1 rounded-lg hover:bg-rose-500/10 transition cursor-pointer">
+                      <RotateCcw className="w-3.5 h-3.5" /> Undo
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
