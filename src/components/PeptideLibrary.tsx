@@ -27,18 +27,18 @@ interface PeptideLibraryProps {
   visibility?: { filters: boolean };
 }
 
-const CATEGORIES: { value: string; label: string; color: string }[] = [
-  { value: 'all', label: 'All Compounds', color: 'bg-slate-500/10 text-slate-300 border-slate-700/50' },
-  { value: 'healing', label: 'Tendon & Joint Healing', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' },
-  { value: 'weight_loss', label: 'Weight & Appetite Control', color: 'bg-amber-400/10 text-amber-300 border-amber-400/30' },
-  { value: 'longevity', label: 'Longevity & Cellular Repair', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' },
-  { value: 'cognitive', label: 'Nootropics & Cognitive', color: 'bg-pink-500/10 text-pink-400 border-pink-500/30' },
-  { value: 'muscle', label: 'Muscle Development', color: 'bg-rose-500/10 text-rose-400 border-rose-500/30' },
-  { value: 'lifestyle', label: 'Tanning & Vitality', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' },
-  { value: 'sexual_health', label: 'Sexual Health & Libido', color: 'bg-purple-500/10 text-purple-400 border-purple-500/30' },
-  { value: 'hormones', label: 'Hormones & Optimization', color: 'bg-violet-500/10 text-violet-400 border-violet-500/30' },
-  { value: 'immune', label: 'Immune & Gut Resilience', color: 'bg-teal-500/10 text-teal-400 border-teal-500/30' },
-  { value: 'supplements', label: 'Vitamins & Supplements', color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' },
+const CATEGORIES: { value: string; label: string; shortLabel: string; color: string }[] = [
+  { value: 'all', label: 'All Compounds', shortLabel: 'All', color: 'bg-slate-500/10 text-slate-300 border-slate-700/50' },
+  { value: 'healing', label: 'Tendon & Joint Healing', shortLabel: 'Healing', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' },
+  { value: 'weight_loss', label: 'Weight & Appetite Control', shortLabel: 'Weight', color: 'bg-amber-400/10 text-amber-300 border-amber-400/30' },
+  { value: 'longevity', label: 'Longevity & Cellular Repair', shortLabel: 'Longevity', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30' },
+  { value: 'cognitive', label: 'Nootropics & Cognitive', shortLabel: 'Cognitive', color: 'bg-pink-500/10 text-pink-400 border-pink-500/30' },
+  { value: 'muscle', label: 'Muscle Development', shortLabel: 'Muscle', color: 'bg-rose-500/10 text-rose-400 border-rose-500/30' },
+  { value: 'lifestyle', label: 'Tanning & Vitality', shortLabel: 'Lifestyle', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' },
+  { value: 'sexual_health', label: 'Sexual Health & Libido', shortLabel: 'Sexual', color: 'bg-purple-500/10 text-purple-400 border-purple-500/30' },
+  { value: 'hormones', label: 'Hormones & Optimization', shortLabel: 'Hormones', color: 'bg-violet-500/10 text-violet-400 border-violet-500/30' },
+  { value: 'immune', label: 'Immune & Gut Resilience', shortLabel: 'Immune', color: 'bg-teal-500/10 text-teal-400 border-teal-500/30' },
+  { value: 'supplements', label: 'Vitamins & Supplements', shortLabel: 'Supps', color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' },
 ];
 
 const SECTION_TABS: { id: ResearchSection; label: string }[] = [
@@ -526,7 +526,7 @@ export default function PeptideLibrary({
                             </div>
                           </div>
                           <span className={`px-2 py-0.5 rounded text-[8px] font-bold border uppercase shrink-0 font-sans ${categoryBadge?.color || 'bg-slate-700/50 text-slate-300'}`}>
-                            {categoryBadge?.label.split(' & ')[0]}
+                            {categoryBadge?.shortLabel || categoryBadge?.label}
                           </span>
                         </button>
                       );
@@ -544,21 +544,29 @@ export default function PeptideLibrary({
         </div>
 
         {visibility.filters && (
-          <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-[#1e293b]/50" id="library-categories-list">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => setSelectedCategory(cat.value)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border cursor-pointer transition ${
-                  selectedCategory === cat.value
-                    ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/50'
-                    : 'bg-[#1e293b]/30 text-slate-400 border-transparent hover:border-[#1e293b] hover:text-slate-200'
-                }`}
-                id={`cat-btn-${cat.value}`}
-              >
-                {cat.label}
-              </button>
-            ))}
+          <div className="mt-4 pt-4 border-t border-[#1e293b]/50" id="library-categories-list">
+            {/* One compact horizontal row on phones so filters don't stack into a long list. */}
+            <div className="-mx-1 px-1 flex gap-1.5 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.value}
+                  onClick={() => {
+                    triggerHaptic('light');
+                    setSelectedCategory(cat.value);
+                  }}
+                  title={cat.label}
+                  className={`snap-start shrink-0 px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold border cursor-pointer transition whitespace-nowrap ${
+                    selectedCategory === cat.value
+                      ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/50'
+                      : 'bg-[#1e293b]/30 text-slate-400 border-slate-800/60 hover:border-[#1e293b] hover:text-slate-200'
+                  }`}
+                  id={`cat-btn-${cat.value}`}
+                >
+                  <span className="sm:hidden">{cat.shortLabel}</span>
+                  <span className="hidden sm:inline">{cat.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -617,7 +625,7 @@ export default function PeptideLibrary({
                       </div>
                     </div>
                     <span className={`px-2.5 py-0.5 rounded text-[10px] font-medium border uppercase tracking-wider shrink-0 ${categoryBadge?.color || 'bg-slate-700 text-slate-300'}`}>
-                      {categoryBadge?.label.split(' & ')[0]}
+                      {categoryBadge?.shortLabel || categoryBadge?.label}
                     </span>
                   </div>
 
