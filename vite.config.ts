@@ -24,7 +24,7 @@ export default defineConfig(() => {
           // Split heavyweight vendors into cacheable chunks so app-code
           // changes don't re-download Firebase/animation/icon bundles.
           manualChunks: {
-            firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/messaging'],
+            firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
             motion: ['motion/react'],
             icons: ['lucide-react'],
             peptides: ['./src/data/peptides.ts'],
