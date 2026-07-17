@@ -6,7 +6,6 @@
 //   'expert' → the full app, unchanged
 //   'guided' → the hand-holding experience (auto protocols + how-to guides)
 //   'store'  → shop only, no tracking
-import { PEPTIDE_LIBRARY } from '../data/peptides';
 import { localDateISO } from './date';
 import { PEPTIDE_GOAL_PRESETS, STEROID_GOAL_PRESETS, GoalPreset } from '../data/goalPresets';
 import { LibraryItem, Compound } from '../types';
@@ -37,7 +36,10 @@ export function setStoredExperienceMode(mode: ExperienceMode): void {
 // ── Match a purchased product name to a library compound ────────────────────
 // Product names look like "CJC-1295 (Without DAC) + Ipamorelin (10mg)" —
 // score library items by how much of their name/id appears in the product.
-export function matchLibraryItemsToProductNames(productNames: string[]): LibraryItem[] {
+export async function matchLibraryItemsToProductNames(productNames: string[]): Promise<LibraryItem[]> {
+  // Load the (large) peptide dataset on demand so it stays out of the boot
+  // bundle — this only runs in guided mode after the user is signed in.
+  const { PEPTIDE_LIBRARY } = await import('../data/peptides');
   const found = new Map<string, LibraryItem>();
   for (const raw of productNames) {
     const name = (raw || '').toLowerCase();

@@ -1,5 +1,5 @@
 import { localDateISO, localTimeHM } from './lib/date';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import AppHeader from './components/AppHeader';
 import UpdateBanner from './components/UpdateBanner';
 import ToastContainer from './components/ToastContainer';
@@ -46,14 +46,16 @@ import { triggerHaptic } from './lib/haptics';
 import { safeLocalStorage } from './lib/storage';
 import { getDoseScheduleForDate } from './lib/schedule';
 import DailyDosing from './components/DailyDosing';
-import StatsView from './components/StatsView';
-import CyclePlanner from './components/CyclePlanner';
-import PeptideLibrary from './components/PeptideLibrary';
-import MembersShop from './components/MembersShop';
 import { PricingProvider } from './lib/pricingConfig';
-import SettingsPage from './components/SettingsPage';
 import ExperienceGate from './components/ExperienceGate';
-import GuidedExperience from './components/guided/GuidedExperience';
+// Heavy tab views are code-split so only the Daily screen ships in the boot
+// bundle. Each downloads the first time its tab is opened, then caches.
+const StatsView = lazy(() => import('./components/StatsView'));
+const CyclePlanner = lazy(() => import('./components/CyclePlanner'));
+const PeptideLibrary = lazy(() => import('./components/PeptideLibrary'));
+const MembersShop = lazy(() => import('./components/MembersShop'));
+const SettingsPage = lazy(() => import('./components/SettingsPage'));
+const GuidedExperience = lazy(() => import('./components/guided/GuidedExperience'));
 import {
   ExperienceMode, getStoredExperienceMode, setStoredExperienceMode,
   matchLibraryItemsToProductNames,
@@ -606,7 +608,8 @@ export default function App() {
           const items = (d.data() as any)?.items || [];
           items.forEach((it: any) => { if (it?.name) names.push(it.name); });
         });
-        if (!cancelled) setPurchasedItems(matchLibraryItemsToProductNames(names));
+        const matched = await matchLibraryItemsToProductNames(names);
+        if (!cancelled) setPurchasedItems(matched);
       } catch (e) {
         console.warn('[guided] could not load purchases:', e);
       }
@@ -1536,6 +1539,7 @@ export default function App() {
       {/* Main Responsive Layout Wrapper */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 z-10 flex flex-col gap-6 overflow-hidden">
         <div className="flex-1 min-h-[300px]">
+          <Suspense fallback={<div className="flex items-center justify-center py-24 text-slate-500"><Loader2 className="w-6 h-6 animate-spin" /></div>}>
           {experienceMode === 'guided' && activeTab !== 'shop' && activeTab !== 'settings' ? (
             <GuidedExperience
               compounds={compounds}
@@ -1640,6 +1644,7 @@ export default function App() {
             </motion.div>
           </AnimatePresence>
           )}
+          </Suspense>
         </div>
       </main>
 
