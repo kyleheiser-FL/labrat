@@ -21,7 +21,7 @@ const libraryFields = (item: LibraryItem): SearchFields => ({
 type ResearchSection = 'overview' | 'dosing' | 'studies' | 'safety';
 
 interface PeptideLibraryProps {
-  onAddToCycle: (item: LibraryItem) => void;
+  onAddToCycle?: (item: LibraryItem) => void;
   onViewInStore?: (productName: string) => void;
   onBackToShop?: () => void;
   visibility?: { filters: boolean };
@@ -374,7 +374,6 @@ function ResearchDetail({
 }
 
 export default function PeptideLibrary({
-  onAddToCycle,
   onViewInStore,
   onBackToShop,
   visibility = { filters: true },
@@ -645,27 +644,6 @@ export default function PeptideLibrary({
                     </div>
                   </div>
 
-                  {inStore && onViewInStore && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        triggerHaptic('light');
-                        onViewInStore(storeMatches[0].name);
-                      }}
-                      className="w-full flex items-center justify-between gap-2 rounded-xl border border-cyan-500/25 bg-cyan-500/10 px-3 py-2.5 text-left hover:bg-cyan-500/15 hover:border-cyan-400/40 transition cursor-pointer"
-                    >
-                      <span className="min-w-0">
-                        <span className="block text-[12px] font-bold text-cyan-200">
-                          Buy {getProductBaseAndSize(storeMatches[0].name).baseName}
-                        </span>
-                        <span className="block text-[10px] text-slate-400 truncate">
-                          {storeMatches.length} size{storeMatches.length === 1 ? '' : 's'} in catalog
-                        </span>
-                      </span>
-                      <ArrowUpRight className="w-4 h-4 text-cyan-300 shrink-0" />
-                    </button>
-                  )}
-
                   <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#1e293b]/50">
                     <button
                       onClick={() => {
@@ -684,14 +662,25 @@ export default function PeptideLibrary({
                       {isExpanded ? 'Collapse research' : 'Read research'}
                     </button>
 
-                    <button
-                      onClick={() => onAddToCycle(item)}
-                      className="py-1.5 px-3 bg-[#1e293b] hover:bg-cyan-500 hover:text-slate-950 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
-                      id={`add-to-cycle-btn-${item.id}`}
-                    >
-                      Add to cycle
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </button>
+                    {inStore && onViewInStore ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          triggerHaptic('light');
+                          onViewInStore(storeMatches[0].name);
+                        }}
+                        className="py-1.5 px-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 border border-cyan-400/60 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+                        id={`view-in-store-btn-${item.id}`}
+                      >
+                        <ShoppingBag className="w-3.5 h-3.5" />
+                        View in store
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </button>
+                    ) : (
+                      <span className="py-1.5 px-3 text-[11px] font-semibold text-slate-500 border border-slate-800/80 rounded-xl">
+                        Not in store
+                      </span>
+                    )}
                   </div>
                 </div>
 

@@ -1606,7 +1606,6 @@ export default function App() {
 
               {activeTab === 'library' && (
                 <PeptideLibrary
-                  onAddToCycle={handleAddLibraryItemToCycle}
                   visibility={segmentVisibility.library}
                   onBackToShop={!hideShop ? () => navigateTab('shop') : undefined}
                   onViewInStore={!hideShop ? (productName) => {
