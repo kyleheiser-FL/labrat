@@ -10,18 +10,35 @@ export function getProductBaseAndSize(name: string) {
   return { baseName: name, size: '' };
 }
 
-export function findShopProductMatch(compoundName: string, vialSizeMg?: number): ShopProduct | null {
-  if (!compoundName || !compoundName.trim()) return null;
-  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const target = normalize(compoundName);
-  if (!target) return null;
+function normalizeShopToken(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
 
-  const candidates = SAMPLE_INVENTORY.filter((p) => {
+function shopMatchCandidates(compoundName: string): ShopProduct[] {
+  if (!compoundName || !compoundName.trim()) return [];
+  const target = normalizeShopToken(compoundName);
+  if (!target) return [];
+
+  return SAMPLE_INVENTORY.filter((p) => {
     const { baseName } = getProductBaseAndSize(p.name);
-    const base = normalize(baseName);
+    const base = normalizeShopToken(baseName);
     if (!base) return false;
     return base === target || base.includes(target) || target.includes(base);
   });
+}
+
+/** All catalog SKUs that match a library/research compound name, sorted by vial size. */
+export function findShopProductMatches(compoundName: string): ShopProduct[] {
+  const candidates = shopMatchCandidates(compoundName);
+  return [...candidates].sort((a, b) => {
+    const aMg = parseFloat((getProductBaseAndSize(a.name).size || '').replace(/[^0-9.]/g, '')) || 0;
+    const bMg = parseFloat((getProductBaseAndSize(b.name).size || '').replace(/[^0-9.]/g, '')) || 0;
+    return aMg - bMg;
+  });
+}
+
+export function findShopProductMatch(compoundName: string, vialSizeMg?: number): ShopProduct | null {
+  const candidates = shopMatchCandidates(compoundName);
   if (candidates.length === 0) return null;
 
   if (vialSizeMg && vialSizeMg > 0) {

@@ -309,7 +309,7 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
 
   // Search and filter states
   const [searchQuery, setSearchQuery] = useState(() => {
-    // Deep-link seed set by the AI assistant's "recommend product" action.
+    // Deep-link seed set by research cards / AI "recommend product" actions.
     const seed = safeLocalStorage.getItem('labrat_shop_search_seed');
     if (seed) {
       safeLocalStorage.removeItem('labrat_shop_search_seed');
@@ -319,6 +319,83 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
   });
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showShopSuggestions, setShowShopSuggestions] = useState(false);
+  const [pendingResearchSeed, setPendingResearchSeed] = useState<string | null>(() => {
+    // Capture once so we can open the matching product drawer after catalog load.
+    return searchQuery.trim() || null;
+  });
+
+  // When research deep-links into the shop, open the matching product group once inventory is ready.
+  useEffect(() => {
+    if (!pendingResearchSeed || products.length === 0) return;
+
+    const seed = pendingResearchSeed.trim();
+    if (!seed) {
+      setPendingResearchSeed(null);
+      return;
+    }
+
+    const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const seedNorm = normalize(seed);
+    const seedBaseNorm = normalize(getProductBaseAndSize(seed).baseName);
+
+    const groups = new Map<string, { baseName: string; category: string; description: string; options: (ShopProduct & { size: string })[] }>();
+    for (const prod of products) {
+      const { baseName, size } = getProductBaseAndSize(prod.name);
+      let group = groups.get(baseName);
+      if (!group) {
+        group = {
+          baseName,
+          category: prod.category,
+          description: prod.description,
+          options: [],
+        };
+        groups.set(baseName, group);
+      }
+      group.options.push({ ...prod, size });
+    }
+
+    let best:
+      | { group: { baseName: string; category: string; description: string; options: (ShopProduct & { size: string })[] }; optionId: string; score: number }
+      | null = null;
+
+    for (const group of groups.values()) {
+      const baseNorm = normalize(group.baseName);
+      let score = 0;
+      if (baseNorm === seedBaseNorm || baseNorm === seedNorm) score = 100;
+      else if (baseNorm.includes(seedBaseNorm) || seedBaseNorm.includes(baseNorm)) score = 80;
+      else if (baseNorm.includes(seedNorm) || seedNorm.includes(baseNorm)) score = 60;
+      else continue;
+
+      let optionId = group.options[0]?.id || '';
+      const seededSize = getProductBaseAndSize(seed).size;
+      if (seededSize) {
+        const exact = group.options.find((o) => o.size.toLowerCase() === seededSize.toLowerCase());
+        if (exact) {
+          optionId = exact.id;
+          score += 10;
+        }
+      }
+
+      if (!best || score > best.score) {
+        best = { group, optionId, score };
+      }
+    }
+
+    if (best) {
+      setView('catalog');
+      setSearchQuery(best.group.baseName);
+      setSelectedCategory('All');
+      setSelectedProductIds((prev) => ({
+        ...prev,
+        [best!.group.baseName]: best!.optionId || prev[best!.group.baseName],
+      }));
+      setSelectedOptionIdInDrawer(best.optionId || best.group.options[0]?.id || '');
+      setDrawerQuantity(1);
+      openProductDrawer(best.group);
+    }
+
+    setPendingResearchSeed(null);
+  }, [pendingResearchSeed, products, openProductDrawer]);
 
   // Registration / Join Waitlist inputs
   const [joinForm, setJoinForm] = useState({

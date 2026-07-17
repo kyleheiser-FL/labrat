@@ -1608,6 +1608,11 @@ export default function App() {
                 <PeptideLibrary
                   onAddToCycle={handleAddLibraryItemToCycle}
                   visibility={segmentVisibility.library}
+                  onBackToShop={!hideShop ? () => navigateTab('shop') : undefined}
+                  onViewInStore={!hideShop ? (productName) => {
+                    safeLocalStorage.setItem('labrat_shop_search_seed', productName);
+                    navigateTab('shop');
+                  } : undefined}
                 />
               )}
 
