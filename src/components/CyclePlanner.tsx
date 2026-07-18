@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { localDateISO } from '../lib/date';
 import {
-  Plus, Trash2, FileDown, FileUp, AlertTriangle, CheckCircle, Sparkles, ArrowLeftRight, Save,
+  Plus, Trash2, AlertTriangle, CheckCircle, Sparkles, Save,
   Info, Activity, Shield, Apple, Sun, Heart, CheckSquare, History, Clock,
   Layers, X, Wrench, CalendarPlus
 } from 'lucide-react';
@@ -23,13 +23,12 @@ interface CyclePlannerProps {
   onAddCompound: (compound: Compound) => void;
   onUpdateCompound: (compound: Compound) => void;
   onDeleteCompound: (id: string) => void;
-  onImportData: (importDataString: string) => boolean;
   onResetData: () => void;
   activeFromLibrary?: LibraryItem | null;
   clearActiveFromLibrary?: () => void;
   onNavigateToTab?: (tab: 'dashboard' | 'planner' | 'blood' | 'library' | 'shop' | 'settings') => void;
   labratTheme?: 'clinical' | 'clinical-light';
-  visibility?: { pct: boolean; dataControls: boolean; };
+  visibility?: { pct: boolean; };
 }
 
 export default function CyclePlanner({
@@ -41,12 +40,11 @@ export default function CyclePlanner({
   onAddCompound,
   onUpdateCompound,
   onDeleteCompound,
-  onImportData,
   onResetData,
   activeFromLibrary,
   clearActiveFromLibrary,
   onNavigateToTab,
-  visibility = { pct: true, dataControls: true }
+  visibility = { pct: true }
 }: CyclePlannerProps) {
   const protocolIcon = (name: string) => `/protocol-icons/${name}-clinical.svg`;
 
@@ -60,13 +58,6 @@ export default function CyclePlanner({
 
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-  const [showDataControls, setShowDataControls] = useState(false);
-  const [importString, setImportString] = useState('');
-  const [importError, setImportError] = useState('');
-  const [importSuccess, setImportSuccess] = useState(false);
-  const [copiedData, setCopiedData] = useState(false);
-  // The header button now reveals only the Import / Export data panel.
-  const [showHelperTools, setShowHelperTools] = useState(false);
   // Legacy helper panels (templates, PCT, mitigation presets, cycle history)
   // are kept in the code but hidden to keep the Cycle tab simple.
   const showLegacyHelpers = false;
@@ -123,29 +114,6 @@ export default function CyclePlanner({
     }
     return { hasOral, hasInjectable, hasAromatizing, hasJointStrain, hasSuppressive, hasStimulant, liverSupportInCycle, vitaminsInCycle, jointHealthInCycle, estrogenControlInCycle, endocrineShieldInCycle, jitterRescueInCycle };
   }, [compounds]);
-
-  const handleExportData = () => {
-    navigator.clipboard.writeText(JSON.stringify(compounds, null, 2));
-    setCopiedData(true);
-    setTimeout(() => setCopiedData(false), 2000);
-  };
-
-  const handleImportSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setImportError(''); setImportSuccess(false);
-    try {
-      const parsed = JSON.parse(importString);
-      if (!Array.isArray(parsed)) { setImportError('Invalid JSON formatting: Data must be a compound list array.'); return; }
-      if (onImportData(importString)) {
-        setImportSuccess(true); setImportString('');
-        setTimeout(() => setImportSuccess(false), 3000);
-      } else {
-        setImportError('Could not process import array. Verification failed.');
-      }
-    } catch (err: any) {
-      setImportError(`Failed parsing JSON: ${err?.message || 'Syntax error'}`);
-    }
-  };
 
   useEffect(() => {
     if (activeFromLibrary) {
@@ -394,11 +362,21 @@ export default function CyclePlanner({
             <p className="labrat-body text-sm mt-1.5">Manage compounds, progress, draw amounts, and protocol status without leaving this tab.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <button onClick={() => setShowHelperTools(v => !v)}
-              className={`labrat-button-secondary py-2.5 px-3 text-xs cursor-pointer ${showHelperTools ? 'text-cyan-300 border-cyan-500/40' : ''}`}
-              title="Back up or restore your protocol data">
-              <ArrowLeftRight className="w-3.5 h-3.5" /> Import / Export
-            </button>
+            {confirmingReset ? (
+              <div className="flex items-center gap-1.5 rounded-xl border border-red-500/20 bg-red-950/20 p-1.5 text-[10px]">
+                <span className="shrink-0 font-mono text-[9px] font-bold uppercase tracking-wider text-red-400">Reset all protocols?</span>
+                <button type="button" onClick={() => { triggerHaptic('warning'); onResetData(); setConfirmingReset(false); }}
+                  className="rounded bg-red-600 px-2 py-1 text-[9px] font-bold uppercase text-white transition hover:bg-red-700">Yes</button>
+                <button type="button" onClick={() => { triggerHaptic('light'); setConfirmingReset(false); }}
+                  className="rounded border border-slate-700/50 bg-[#1e293b] px-2 py-1 text-[9px] font-bold uppercase text-slate-300 transition hover:bg-slate-800">No</button>
+              </div>
+            ) : (
+              <button type="button" onClick={() => { triggerHaptic('warning'); setConfirmingReset(true); }}
+                className="labrat-button-secondary px-3 py-2.5 text-xs text-slate-400 hover:text-rose-300 cursor-pointer"
+                id="reset-cycle-btn">
+                <Trash2 className="h-3.5 w-3.5" /> Reset All
+              </button>
+            )}
             <button onClick={openFormNew}
               className="labrat-button-primary py-2.5 px-5 text-sm cursor-pointer"
               id="new-formulate-btn">
@@ -452,7 +430,7 @@ export default function CyclePlanner({
               <Layers className="w-4 h-4 text-purple-400" />
               <h4 className="text-sm font-bold text-slate-200">Protocol Templates</h4>
             </div>
-            <button onClick={() => setShowHelperTools(false)} className="p-1 text-slate-500 hover:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
+            <button onClick={() => setShowTemplates(false)} className="p-1 text-slate-500 hover:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
           </div>
 
           {compounds.length > 0 && (
@@ -498,48 +476,6 @@ export default function CyclePlanner({
               ))}
             </div>
           )}
-        </div>
-      )}
-
-      {/* Data Import/Export */}
-      {visibility.dataControls && showHelperTools && (
-        <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="data-controls-panel">
-          <div className="flex items-center justify-between border-b border-[#1e293b]/60 pb-3">
-            <h4 className="text-sm font-semibold text-slate-200">Local Protocol Syncing & Backup Data</h4>
-            {confirmingReset ? (
-              <div className="flex items-center gap-1.5 bg-red-950/20 border border-red-500/20 p-1 rounded-lg text-[10px]">
-                <span className="text-red-400 font-bold font-mono uppercase tracking-wider text-[9px] shrink-0">Wipe all protocols?</span>
-                <button type="button" onClick={() => { triggerHaptic('warning'); onResetData(); setConfirmingReset(false); }}
-                  className="px-2 py-0.5 bg-red-600 hover:bg-red-700 active:scale-[0.95] text-white rounded text-[9px] font-bold uppercase transition">Yes</button>
-                <button type="button" onClick={() => { triggerHaptic('light'); setConfirmingReset(false); }}
-                  className="px-2 py-0.5 bg-[#1e293b] hover:bg-slate-800 text-slate-300 border border-slate-700/50 rounded text-[9px] font-bold uppercase transition">No</button>
-              </div>
-            ) : (
-              <button type="button" onClick={() => { triggerHaptic('warning'); setConfirmingReset(true); }}
-                className="text-[10px] font-mono text-slate-500 hover:text-rose-400 font-semibold cursor-pointer flex items-center gap-1 transition"
-                id="reset-cycle-btn">
-                <Trash2 className="w-3 h-3" /> Reset All Protocols
-              </button>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <button onClick={handleExportData}
-              className="py-2 px-4 bg-[#1e293b] hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700/50 cursor-pointer"
-              id="export-db-btn">
-              <FileDown className="w-3.5 h-3.5" /> {copiedData ? 'Copied!' : 'Export JSON'}
-            </button>
-          </div>
-          <form onSubmit={handleImportSubmit} className="space-y-2">
-            <textarea value={importString} onChange={(e) => setImportString(e.target.value)}
-              placeholder="Paste exported JSON protocol array here..."
-              className="w-full h-20 bg-[#1e293b]/30 border border-slate-800 rounded-xl p-3 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/40 placeholder-slate-600"
-              id="import-db-textarea" />
-            {importError && <p className="text-xs text-rose-400 font-medium">{importError}</p>}
-            {importSuccess && <p className="text-xs text-emerald-400 font-medium">✓ Import successful — protocols loaded.</p>}
-            <button type="submit" className="py-2 px-4 bg-[#1e293b] hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700/50 cursor-pointer" id="submit-import">
-              <FileUp className="w-3.5 h-3.5" /> Import & Apply
-            </button>
-          </form>
         </div>
       )}
 

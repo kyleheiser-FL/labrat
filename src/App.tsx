@@ -1329,25 +1329,6 @@ export default function App() {
     triggerNotification('Biometrics Removed', `Successfully deleted entry for ${date}.`, 'info');
   };
 
-  const handleImportDatabase = (importJson: string) => {
-    try {
-      const parsed = JSON.parse(importJson);
-      setCompounds(parsed);
-      if (user) {
-        parsed.forEach((c: Compound) => {
-          saveUserCompound(user.uid, c).catch(e => console.error(e));
-        });
-      } else {
-        safeLocalStorage.setItem('labrat_compounds', JSON.stringify(parsed));
-      }
-      triggerNotification('Database Import Success', 'Restored compound parameters successfully.', 'success');
-      return true;
-    } catch {
-      triggerNotification('Import Failed', 'Invalid chemical structure or string parsing fault.', 'warning');
-      return false;
-    }
-  };
-
   const handleResetAllData = () => {
     setCompounds([]);
     setLogs([]);
@@ -1538,7 +1519,6 @@ export default function App() {
                     onAddCompound={handleAddCompound}
                     onUpdateCompound={handleUpdateCompound}
                     onDeleteCompound={handleDeleteCompound}
-                    onImportData={handleImportDatabase}
                     onResetData={handleResetAllData}
                     activeFromLibrary={activeFromLibrary}
                     clearActiveFromLibrary={() => setActiveFromLibrary(null)}

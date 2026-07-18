@@ -82,14 +82,14 @@ export interface AppNotification {
 
 export interface SegmentVisibility {
   dashboard: { schedule: boolean; history: boolean; };
-  planner: { pct: boolean; dataControls: boolean; };
+  planner: { pct: boolean; };
   library: { filters: boolean; };
   blood: { dossier: boolean; upload: boolean; wellness: boolean; };
 }
 
 export const DEFAULT_SEGMENT_VISIBILITY: SegmentVisibility = {
   dashboard: { schedule: true, history: true },
-  planner: { pct: true, dataControls: true },
+  planner: { pct: true },
   library: { filters: true },
   blood: { dossier: true, upload: true, wellness: true },
 };
