@@ -410,7 +410,7 @@ export default function CycleDashboard({
       <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6" id="dashboard-main-grid">
 
         {/* Left Column */}
-        <div className="2xl:col-span-7 flex flex-col gap-6">
+        <div className="2xl:col-span-7 flex min-w-0 flex-col gap-6">
           {visibility.schedule && (
             <>
               {/* Date Navigator */}
@@ -734,7 +734,7 @@ export default function CycleDashboard({
         </div>
 
         {/* Right Column */}
-        <div className="2xl:col-span-5 flex flex-col gap-6" id="dashboard-wellness-panel">
+        <div className="2xl:col-span-5 flex min-w-0 flex-col gap-6" id="dashboard-wellness-panel">
           <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="active-progress-monitors-card">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">

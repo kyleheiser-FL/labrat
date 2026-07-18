@@ -26,8 +26,8 @@ export default function StatsView({ compounds, logs, onUndoDose }: StatsViewProp
   const vm = buildStatsTimelineViewModel(compounds, logs);
 
   return (
-    <div className="max-w-5xl mx-auto flex flex-col gap-6 pb-8" id="stats-view">
-      <section className="labrat-card-strong p-4 sm:p-5 overflow-hidden">
+    <div className="mx-auto flex max-w-5xl min-w-0 flex-col gap-6 pb-8" id="stats-view">
+      <section className="labrat-card-strong min-w-0 overflow-hidden p-4 sm:p-5">
         <div className="flex flex-col gap-4">
           <div>
             <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Protocol Insights</span>
@@ -35,7 +35,7 @@ export default function StatsView({ compounds, logs, onUndoDose }: StatsViewProp
             <p className="labrat-body text-sm mt-1.5">Overall timing and your administration record.</p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <div className="grid min-w-0 grid-cols-2 gap-2.5 lg:grid-cols-4">
             <MetricCard label="Complete" value={`${vm.summary.overallProgressPct}%`} hint="overall active window" />
             <MetricCard label="Days left" value={vm.summary.daysLeft} hint="latest active end" />
             <MetricCard label="Active" value={vm.summary.activeCount} hint="compounds running" />
@@ -43,11 +43,11 @@ export default function StatsView({ compounds, logs, onUndoDose }: StatsViewProp
           </div>
 
           {vm.runway ? (
-            <div className="labrat-mini-surface p-4">
-              <div className="labrat-muted flex items-center justify-between gap-3 text-[12px] font-mono">
-                <span>{vm.runway.startLabel}</span>
-                <span className="text-cyan-300">{vm.runway.progressPct}% complete</span>
-                <span>{vm.runway.endLabel}</span>
+            <div className="labrat-mini-surface min-w-0 p-4">
+              <div className="labrat-muted flex flex-col gap-2 text-[12px] font-mono sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+                <span className="min-w-0">{vm.runway.startLabel}</span>
+                <span className="text-cyan-300 sm:text-center">{vm.runway.progressPct}% complete</span>
+                <span className="min-w-0 sm:text-right">{vm.runway.endLabel}</span>
               </div>
               <div className="relative labrat-progress-track h-3 mt-3 overflow-hidden">
                 <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400" style={{ width: `${vm.runway.progressPct}%` }} />

@@ -36,9 +36,10 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
   const hasOlder = sorted.length > showCount;
 
   return (
-    <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md" id="administration-ledger-card">
-      <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider mb-4 flex items-center gap-2">
-        <History className="w-4 h-4 text-cyan-400" /> Chronological Administration Logs
+    <div className="min-w-0 max-w-full overflow-hidden bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-4 sm:p-6 shadow-xl backdrop-blur-md" id="administration-ledger-card">
+      <h4 className="mb-4 flex items-start gap-2 text-sm font-semibold uppercase tracking-wider text-slate-200">
+        <History className="mt-0.5 h-4 w-4 shrink-0 text-cyan-400" />
+        <span className="min-w-0 leading-snug">Chronological Administration Logs</span>
       </h4>
 
       {logs.length === 0 ? (
@@ -54,12 +55,12 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
           </div>
         </div>
       ) : (
-        <div className="overflow-x-auto" id="ledger-scrolling-container">
-          <div className="flex items-center justify-between mb-3">
+        <div className="min-w-0">
+          <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between mb-3">
             <span className="text-[10px] text-slate-500 font-mono">
               Showing {visibleLogs.length} of {sorted.length} log{sorted.length !== 1 ? 's' : ''} · newest → oldest
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {showCount > 5 && (
                 <button
                   type="button"
@@ -80,68 +81,70 @@ export default function AdministrationLedger({ logs, onUndoDose }: Administratio
               )}
             </div>
           </div>
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="border-b border-[#1e293b]/80 text-[#475569] font-mono text-[10px] uppercase font-bold">
-                <th className="py-2.5 px-2">Timestamp Date</th>
-                <th className="py-2.5 px-2">Substance</th>
-                <th className="py-2.5 px-2">Dosage</th>
-                <th className="py-2.5 px-2">Physical Qty / Draw</th>
-                <th className="py-2.5 px-2 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/40 text-slate-300 font-mono">
-              {visibleLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-900/10">
-                  <td className="py-2.5 px-2 text-slate-400">{log.date} at {formatTimeTo12Hour(log.time)}</td>
-                  <td className="py-2.5 px-2 text-slate-200 font-semibold">{log.compoundName}</td>
-                  <td className="py-2.5 px-2">{log.doseAmount} {log.doseUnit}</td>
-                  <td className="py-2.5 px-2 text-cyan-400">
-                    {log.calculatedQtyText ? log.calculatedQtyText : (log.reconstitutedRatio ? `${log.reconstitutedRatio.syringeUnits} Units` : 'Standard Draw')}
-                  </td>
-                  <td className="py-2.5 px-2 text-right">
-                    {confirmUndoId === log.id ? (
-                      <div className="inline-flex items-center gap-1 bg-rose-500/10 border border-rose-500/25 rounded-lg p-0.5">
+          <div className="max-w-full overflow-x-auto overscroll-x-contain" id="ledger-scrolling-container">
+            <table className="w-full min-w-[680px] text-left border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-[#1e293b]/80 text-[#475569] font-mono text-[10px] uppercase font-bold">
+                  <th className="py-2.5 px-2">Timestamp Date</th>
+                  <th className="py-2.5 px-2">Substance</th>
+                  <th className="py-2.5 px-2">Dosage</th>
+                  <th className="py-2.5 px-2">Physical Qty / Draw</th>
+                  <th className="py-2.5 px-2 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/40 text-slate-300 font-mono">
+                {visibleLogs.map((log) => (
+                  <tr key={log.id} className="hover:bg-slate-900/10">
+                    <td className="py-2.5 px-2 text-slate-400">{log.date} at {formatTimeTo12Hour(log.time)}</td>
+                    <td className="py-2.5 px-2 text-slate-200 font-semibold">{log.compoundName}</td>
+                    <td className="py-2.5 px-2">{log.doseAmount} {log.doseUnit}</td>
+                    <td className="py-2.5 px-2 text-cyan-400">
+                      {log.calculatedQtyText ? log.calculatedQtyText : (log.reconstitutedRatio ? `${log.reconstitutedRatio.syringeUnits} Units` : 'Standard Draw')}
+                    </td>
+                    <td className="py-2.5 px-2 text-right">
+                      {confirmUndoId === log.id ? (
+                        <div className="inline-flex items-center gap-1 bg-rose-500/10 border border-rose-500/25 rounded-lg p-0.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              triggerHaptic('warning');
+                              onUndoDose(log.id);
+                              setConfirmUndoId(null);
+                            }}
+                            className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-bold uppercase cursor-pointer"
+                          >
+                            Yes
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              triggerHaptic('light');
+                              setConfirmUndoId(null);
+                            }}
+                            className="px-1.5 py-0.5 rounded text-slate-300 text-[9px] font-bold uppercase cursor-pointer"
+                          >
+                            No
+                          </button>
+                        </div>
+                      ) : (
                         <button
-                          type="button"
                           onClick={() => {
                             triggerHaptic('warning');
-                            onUndoDose(log.id);
-                            setConfirmUndoId(null);
+                            setConfirmUndoId(log.id);
                           }}
-                          className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-bold uppercase cursor-pointer"
+                          className="p-1 px-2 rounded-md text-[10px] font-bold text-slate-500 hover:text-rose-400 transition cursor-pointer"
+                          title="Undo / Delete log"
+                          id={`undo-log-${log.id}`}
                         >
-                          Yes
+                          Undo
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            triggerHaptic('light');
-                            setConfirmUndoId(null);
-                          }}
-                          className="px-1.5 py-0.5 rounded text-slate-300 text-[9px] font-bold uppercase cursor-pointer"
-                        >
-                          No
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          triggerHaptic('warning');
-                          setConfirmUndoId(log.id);
-                        }}
-                        className="p-1 px-2 rounded-md text-[10px] font-bold text-slate-500 hover:text-rose-400 transition cursor-pointer"
-                        title="Undo / Delete log"
-                        id={`undo-log-${log.id}`}
-                      >
-                        Undo
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
