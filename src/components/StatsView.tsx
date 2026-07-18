@@ -20,7 +20,7 @@ function MetricCard({ label, value, hint }: { label: string; value: string | num
   );
 }
 
-// Cycle insights — folded into the Cycle tab. Shows the overall runway summary
+// Protocol insights — folded into the Protocol tab. Shows the overall runway summary
 // and the administration history; per-compound cards live above in the planner.
 export default function StatsView({ compounds, logs, onUndoDose }: StatsViewProps) {
   const vm = buildStatsTimelineViewModel(compounds, logs);
@@ -30,8 +30,8 @@ export default function StatsView({ compounds, logs, onUndoDose }: StatsViewProp
       <section className="labrat-card-strong p-4 sm:p-5 overflow-hidden">
         <div className="flex flex-col gap-4">
           <div>
-            <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Cycle Insights</span>
-            <h2 className="labrat-title text-2xl font-black tracking-tight mt-1">Cycle runway</h2>
+            <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Protocol Insights</span>
+            <h2 className="labrat-title text-2xl font-black tracking-tight mt-1">Protocol runway</h2>
             <p className="labrat-body text-sm mt-1.5">Overall timing and your administration record.</p>
           </div>
 
@@ -57,7 +57,7 @@ export default function StatsView({ compounds, logs, onUndoDose }: StatsViewProp
           ) : (
             <div className="labrat-mini-surface px-5 py-8 text-center">
               <BarChart3 className="mx-auto w-9 h-9 text-slate-500" />
-              <h3 className="labrat-title mt-3 text-base font-black">No active cycle yet</h3>
+              <h3 className="labrat-title mt-3 text-base font-black">No active protocol yet</h3>
               <p className="labrat-body mt-1 text-sm">Add compounds above to populate the timeline.</p>
             </div>
           )}

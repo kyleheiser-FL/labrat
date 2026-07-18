@@ -318,7 +318,7 @@ export default function CyclePlanner({
                     {row.missedCount} {row.missedCount === 1 ? 'dose' : 'doses'} missed or skipped
                   </p>
                   <p className="text-[11.5px] text-slate-400 mt-0.5">
-                    Extend this cycle by {extraWeeks} {extraWeeks === 1 ? 'week' : 'weeks'}
+                    Extend this protocol by {extraWeeks} {extraWeeks === 1 ? 'week' : 'weeks'}
                     {newEndLabel ? <> — new end <span className="font-semibold text-slate-300">{newEndLabel}</span></> : ''} to make them up?
                   </p>
                   <div className="mt-2.5 flex flex-wrap gap-2">
@@ -389,14 +389,14 @@ export default function CyclePlanner({
       <section className="labrat-card-strong p-4 sm:p-5 space-y-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Cycle Builder</span>
+            <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Protocol Builder</span>
             <h3 className="labrat-title text-3xl sm:text-4xl font-black tracking-tight mt-1">Protocol control</h3>
-            <p className="labrat-body text-sm mt-1.5">Manage compounds, progress, draw amounts, and cycle status without leaving this tab.</p>
+            <p className="labrat-body text-sm mt-1.5">Manage compounds, progress, draw amounts, and protocol status without leaving this tab.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <button onClick={() => setShowHelperTools(v => !v)}
               className={`labrat-button-secondary py-2.5 px-3 text-xs cursor-pointer ${showHelperTools ? 'text-cyan-300 border-cyan-500/40' : ''}`}
-              title="Back up or restore your cycle data">
+              title="Back up or restore your protocol data">
               <ArrowLeftRight className="w-3.5 h-3.5" /> Import / Export
             </button>
             <button onClick={openFormNew}
@@ -450,7 +450,7 @@ export default function CyclePlanner({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Layers className="w-4 h-4 text-purple-400" />
-              <h4 className="text-sm font-bold text-slate-200">Cycle Templates</h4>
+              <h4 className="text-sm font-bold text-slate-200">Protocol Templates</h4>
             </div>
             <button onClick={() => setShowHelperTools(false)} className="p-1 text-slate-500 hover:text-slate-300 cursor-pointer"><X className="w-4 h-4" /></button>
           </div>
@@ -505,10 +505,10 @@ export default function CyclePlanner({
       {visibility.dataControls && showHelperTools && (
         <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-4" id="data-controls-panel">
           <div className="flex items-center justify-between border-b border-[#1e293b]/60 pb-3">
-            <h4 className="text-sm font-semibold text-slate-200">Local Cycle Syncing & Backup Data</h4>
+            <h4 className="text-sm font-semibold text-slate-200">Local Protocol Syncing & Backup Data</h4>
             {confirmingReset ? (
               <div className="flex items-center gap-1.5 bg-red-950/20 border border-red-500/20 p-1 rounded-lg text-[10px]">
-                <span className="text-red-400 font-bold font-mono uppercase tracking-wider text-[9px] shrink-0">Wipe all cycles?</span>
+                <span className="text-red-400 font-bold font-mono uppercase tracking-wider text-[9px] shrink-0">Wipe all protocols?</span>
                 <button type="button" onClick={() => { triggerHaptic('warning'); onResetData(); setConfirmingReset(false); }}
                   className="px-2 py-0.5 bg-red-600 hover:bg-red-700 active:scale-[0.95] text-white rounded text-[9px] font-bold uppercase transition">Yes</button>
                 <button type="button" onClick={() => { triggerHaptic('light'); setConfirmingReset(false); }}
@@ -518,7 +518,7 @@ export default function CyclePlanner({
               <button type="button" onClick={() => { triggerHaptic('warning'); setConfirmingReset(true); }}
                 className="text-[10px] font-mono text-slate-500 hover:text-rose-400 font-semibold cursor-pointer flex items-center gap-1 transition"
                 id="reset-cycle-btn">
-                <Trash2 className="w-3 h-3" /> Reset All Cycles
+                <Trash2 className="w-3 h-3" /> Reset All Protocols
               </button>
             )}
           </div>
@@ -531,11 +531,11 @@ export default function CyclePlanner({
           </div>
           <form onSubmit={handleImportSubmit} className="space-y-2">
             <textarea value={importString} onChange={(e) => setImportString(e.target.value)}
-              placeholder="Paste exported JSON cycle array here..."
+              placeholder="Paste exported JSON protocol array here..."
               className="w-full h-20 bg-[#1e293b]/30 border border-slate-800 rounded-xl p-3 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/40 placeholder-slate-600"
               id="import-db-textarea" />
             {importError && <p className="text-xs text-rose-400 font-medium">{importError}</p>}
-            {importSuccess && <p className="text-xs text-emerald-400 font-medium">✓ Import successful — cycles loaded.</p>}
+            {importSuccess && <p className="text-xs text-emerald-400 font-medium">✓ Import successful — protocols loaded.</p>}
             <button type="submit" className="py-2 px-4 bg-[#1e293b] hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700/50 cursor-pointer" id="submit-import">
               <FileUp className="w-3.5 h-3.5" /> Import & Apply
             </button>
@@ -548,7 +548,7 @@ export default function CyclePlanner({
         <div className="labrat-card px-6 py-12 text-center flex flex-col items-center gap-4">
           <span className="flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/12 text-cyan-400"><Plus className="w-7 h-7" /></span>
           <div>
-            <h4 className="labrat-title text-lg font-black tracking-tight">Build your cycle</h4>
+            <h4 className="labrat-title text-lg font-black tracking-tight">Build your protocol</h4>
             <p className="labrat-body text-sm mt-1.5 max-w-xs mx-auto">Add your first compound: just a name, dose, and how often.</p>
           </div>
           <button onClick={openFormNew}
@@ -586,8 +586,8 @@ export default function CyclePlanner({
           <div className="bg-[#0f172a]/70 border border-[#1e293b]/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
             <div className="flex items-center gap-2 border-b border-[#1e293b]/60 pb-3 mb-4">
               <History className="w-4 h-4 text-slate-400" />
-              <h4 className="text-sm font-bold text-slate-200">Completed Cycle History</h4>
-              <span className="ml-auto text-[10px] text-slate-500 font-mono">{completed.length} cycle{completed.length !== 1 ? 's' : ''}</span>
+              <h4 className="text-sm font-bold text-slate-200">Completed Protocol History</h4>
+              <span className="ml-auto text-[10px] text-slate-500 font-mono">{completed.length} protocol{completed.length !== 1 ? 's' : ''}</span>
             </div>
             <div className="relative pl-4">
               <div className="absolute left-1 top-0 bottom-0 w-0.5 bg-slate-800" />
@@ -637,14 +637,14 @@ export default function CyclePlanner({
                 </h4>
               </div>
               <span className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">
-                {pctCandidates.length} Cycle{pctCandidates.length !== 1 ? 's' : ''} Ready for HPTA Recovery
+                {pctCandidates.length} Protocol{pctCandidates.length !== 1 ? 's' : ''} Ready for HPTA Recovery
               </span>
             </div>
             {pctCandidates.length === 0 ? (
               <div className="text-center py-6 text-slate-500 text-xs border border-dashed border-[#1e293b] rounded-xl max-w-xl mx-auto space-y-1">
                 <Shield className="w-6 h-6 text-indigo-500/40 mx-auto mb-1" />
                 <p className="font-semibold text-slate-400">Restoration Systems Standing By</p>
-                <p className="text-slate-500 text-[11px]">Schedules are active. Once a suppressive cycle's duration limit is reached, or you click the checkmark on its card to complete it early, custom PCT suggestions will activate automatically here.</p>
+                <p className="text-slate-500 text-[11px]">Schedules are active. Once a suppressive protocol's duration limit is reached, or you click the checkmark on its card to complete it early, custom PCT suggestions will activate automatically here.</p>
               </div>
             ) : (
               <div className="space-y-4 pt-1">
@@ -699,7 +699,7 @@ export default function CyclePlanner({
           <span className="text-xs text-indigo-400 font-mono tracking-wider font-semibold uppercase">Auto-Mitigation Protocol Engine</span>
           <h4 className="text-sm font-bold text-slate-100 flex items-center gap-1.5 mt-0.5">
             <Heart className="w-4 h-4 text-rose-400" />
-            <span>Cycle Support & Side Effect Defenses</span>
+            <span>Protocol Support & Side Effect Defenses</span>
           </h4>
         </div>
 
@@ -729,7 +729,7 @@ export default function CyclePlanner({
               return (
                 <div className="bg-cyan-950/15 border border-cyan-500/25 p-4.5 rounded-2xl flex items-center gap-3.5 text-left max-w-2xl mx-auto" id="all-presets-added-card">
                   <div className="p-2.5 bg-cyan-950/60 border border-cyan-500/20 rounded-xl h-fit shrink-0"><CheckCircle className="w-5 h-5 text-cyan-400" /></div>
-                  <div><span className="text-xs font-bold text-cyan-200 block">All Suggested Protectants Instantiated</span><p className="text-[11px] text-slate-400 leading-normal mt-0.5">Your current active cycle is fully safeguarded! All dynamic support suites matching your compounds have been added to your cycle.</p></div>
+                  <div><span className="text-xs font-bold text-cyan-200 block">All Suggested Protectants Instantiated</span><p className="text-[11px] text-slate-400 leading-normal mt-0.5">Your current active protocol is fully safeguarded! All dynamic support suites matching your compounds have been added to your protocol.</p></div>
                 </div>
               );
             }

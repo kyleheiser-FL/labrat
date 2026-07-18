@@ -23,7 +23,7 @@ const OPTIONS: {
     accent: '#a855f7',
     points: [
       'Straight to the members catalog',
-      'No daily tracking or cycle tools',
+      'No daily tracking or protocol tools',
       'Turn on tracking anytime in Settings',
     ],
   },
@@ -31,10 +31,10 @@ const OPTIONS: {
     mode: 'tracking',
     icon: <Activity className="w-6 h-6" />,
     title: 'Protocol tracking + Store',
-    tag: 'Daily + Cycle + Shop',
+    tag: 'Daily + Protocol + Shop',
     accent: '#22d3ee',
     points: [
-      'Log doses on Daily and manage cycles',
+      'Log doses on Daily and manage protocols',
       'Full shop + Compound Research included',
       'How-to mix & inject guides when you need them',
     ],

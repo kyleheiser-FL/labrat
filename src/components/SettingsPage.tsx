@@ -35,7 +35,7 @@ interface SettingsPageProps {
 
 const EXPERIENCES: { mode: ExperienceMode; label: string; desc: string; icon: typeof Sparkles; accent: string; ring: string }[] = [
   { mode: 'store', label: 'Store only', desc: 'Shop and order. No daily tracking tabs.', icon: ShoppingBag, accent: 'text-amber-300', ring: 'border-amber-500/60 bg-amber-500/10 shadow-[0_0_16px_rgba(245,158,11,0.12)]' },
-  { mode: 'tracking', label: 'Protocol tracking + Store', desc: 'Daily + Cycle tools with full shop access.', icon: Activity, accent: 'text-cyan-300', ring: 'border-cyan-500/60 bg-cyan-500/10 shadow-[0_0_16px_rgba(34,211,238,0.12)]' },
+  { mode: 'tracking', label: 'Protocol tracking + Store', desc: 'Daily + Protocol tools with full shop access.', icon: Activity, accent: 'text-cyan-300', ring: 'border-cyan-500/60 bg-cyan-500/10 shadow-[0_0_16px_rgba(34,211,238,0.12)]' },
 ];
 
 function ToggleSwitch({ enabled, onToggle }: { enabled: boolean; onToggle: () => void }) {

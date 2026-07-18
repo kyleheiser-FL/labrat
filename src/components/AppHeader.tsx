@@ -186,7 +186,7 @@ export default function AppHeader({
           const navTabs: { tab: Tab; icon: React.ReactNode; label: React.ReactNode; badge?: number }[] = [];
           if (trackingEnabled) {
             navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Dosing</span></>, badge: tabBadges?.dashboard });
-            navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Cycle</> });
+            navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Protocol</> });
           }
           if (!hideShop) {
             navTabs.push({ tab: 'shop', icon: <ShoppingBag className="w-3.5 h-3.5 shrink-0" />, label: 'Shop' });

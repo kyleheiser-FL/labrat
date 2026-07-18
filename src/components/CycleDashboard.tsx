@@ -288,7 +288,7 @@ export default function CycleDashboard({
         <motion.div className="labrat-command-hero-copy" style={{ y: heroCopyY }}>
           <span className="labrat-command-eyebrow">Clinical Research Console</span>
           <h2 className="labrat-page-title">Daily Protocol</h2>
-          <p className="labrat-page-subtitle">Track today's active schedule, verify administrations, monitor cycle progress, and keep device reminders ready from one high-visibility command surface.</p>
+          <p className="labrat-page-subtitle">Track today's active schedule, verify administrations, monitor protocol progress, and keep device reminders ready from one high-visibility command surface.</p>
           <div className="labrat-command-metrics">
             <div className="labrat-mini-surface"><strong>{scheduledCompounds.length}</strong><span>Scheduled</span></div>
             <div className="labrat-mini-surface"><strong>{logs.filter(l => l.date === selectedDate).length}</strong><span>Logged</span></div>
@@ -501,7 +501,7 @@ export default function CycleDashboard({
                       <div className="relative group">
                         <Info className="w-3.5 h-3.5 text-slate-500 hover:text-slate-300 cursor-help transition" />
                         <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-slate-900 border border-slate-700 rounded-xl p-3 text-[11px] text-slate-300 leading-relaxed shadow-xl hidden group-hover:block z-50 pointer-events-none">
-                          Use this to log a dose that differs from your scheduled cycle amount, or to record a back-dated entry. If you're adjusting your ongoing dose, you can update the cycle going forward to match after entering the new amount.
+                          Use this to log a dose that differs from your scheduled protocol amount, or to record a back-dated entry. If you're adjusting your ongoing dose, you can update the protocol going forward to match after entering the new amount.
                           <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-slate-700" />
                         </div>
                       </div>
@@ -528,8 +528,8 @@ export default function CycleDashboard({
                       <div className="text-xs text-amber-300 bg-amber-500/5 border border-amber-500/10 p-3 rounded-lg flex items-start gap-2">
                         <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                         <div>
-                          <p className="font-bold">No Active Cycle Compounds</p>
-                          <p className="text-slate-400 mt-0.5">Please add or design your active compounds inside the <strong className="text-cyan-400">Cycle Architect</strong> tab first prior to logging manual intake.</p>
+                          <p className="font-bold">No Active Protocol Compounds</p>
+                          <p className="text-slate-400 mt-0.5">Please add or design your active compounds inside the <strong className="text-cyan-400">Protocol</strong> tab first prior to logging manual intake.</p>
                         </div>
                       </div>
                     ) : (
@@ -653,7 +653,7 @@ export default function CycleDashboard({
                           );
                         })()}
 
-                        {/* Update cycle dose nudge */}
+                        {/* Update protocol dose nudge */}
                         {(() => {
                           if (!manualCompoundId || !onUpdateCompoundDose) return null;
                           const comp = compounds.find(c => c.id === manualCompoundId);
@@ -664,7 +664,7 @@ export default function CycleDashboard({
                             <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 rounded-xl p-3">
                               <RefreshCw className="w-4 h-4 text-amber-400 shrink-0" />
                               <div className="flex-1 text-[11px] text-amber-300 leading-snug">
-                                Your manual dose ({parsed} {comp.doseUnit}) differs from the scheduled cycle dose ({comp.doseAmount} {comp.doseUnit}). Update the cycle to use this dose going forward?
+                                Your manual dose ({parsed} {comp.doseUnit}) differs from the scheduled protocol dose ({comp.doseAmount} {comp.doseUnit}). Update the protocol to use this dose going forward?
                               </div>
                               <button
                                 type="button"
@@ -672,7 +672,7 @@ export default function CycleDashboard({
                                 className="shrink-0 py-1.5 px-3 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 rounded-lg text-[11px] font-bold cursor-pointer transition"
                                 id="update-cycle-dose-btn"
                               >
-                                Update Cycle Dose
+                                Update Protocol Dose
                               </button>
                             </div>
                           );
@@ -739,7 +739,7 @@ export default function CycleDashboard({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Activity className="w-5 h-5 text-cyan-400" />
-                <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider text-left">Active Cycle Progress</h4>
+                <h4 className="text-sm font-semibold text-slate-200 uppercase tracking-wider text-left">Active Protocol Progress</h4>
               </div>
               <span className="text-[10px] bg-indigo-950 text-indigo-400 px-2.5 py-0.5 rounded-full border border-indigo-500/10 font-bold font-mono">
                 {compounds.filter(c => !c.isCompleted).length} Running
@@ -747,7 +747,7 @@ export default function CycleDashboard({
             </div>
             <div className="space-y-4">
               {compounds.length === 0 ? (
-                <p className="text-xs text-slate-600 text-center py-6">No cycle compounds configured. Navigate to Cycle Architect to initiate a plan.</p>
+                <p className="text-xs text-slate-600 text-center py-6">No protocol compounds configured. Navigate to Protocol to initiate a plan.</p>
               ) : (
                 compounds.map(comp => (
                   <CycleProgressCard key={`progress-card-${comp.id}`} comp={comp} />

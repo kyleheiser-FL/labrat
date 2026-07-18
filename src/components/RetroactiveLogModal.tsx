@@ -156,10 +156,10 @@ export default function RetroactiveLogModal({ compound, logs, onLogDose, onBatch
         <div className="bg-slate-900/50 p-3.5 rounded-2xl border border-slate-800/80 text-[11px] text-slate-400 mt-3 leading-relaxed flex items-start gap-2.5 shrink-0">
           <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
           <div>
-            <p>Your cycle schedule automatically centers on your <strong>first documented dosing log</strong>. Log past data below to backdate your cycle safely without losing historical synchronization.</p>
+            <p>Your protocol schedule automatically centers on your <strong>first documented dosing log</strong>. Log past data below to backdate your protocol safely without losing historical synchronization.</p>
             {sortedRetroLogs.length > 0 && (
               <div className="mt-1 text-cyan-300 font-mono font-bold">
-                Earliest Dose Detected: {sortedRetroLogs[sortedRetroLogs.length - 1].date} &rarr; Cycle has automatically shifted its start parameters to match.
+                Earliest Dose Detected: {sortedRetroLogs[sortedRetroLogs.length - 1].date} &rarr; Protocol has automatically shifted its start parameters to match.
               </div>
             )}
           </div>
@@ -251,11 +251,11 @@ export default function RetroactiveLogModal({ compound, logs, onLogDose, onBatch
                 return (
                   <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 rounded-xl p-3">
                     <div className="flex-1 text-[11px] text-amber-300 leading-snug">
-                      This dose ({parsed} {compound.doseUnit}) differs from the scheduled dose ({compound.doseAmount} {compound.doseUnit}). Update the cycle going forward?
+                      This dose ({parsed} {compound.doseUnit}) differs from the scheduled dose ({compound.doseAmount} {compound.doseUnit}). Update the protocol going forward?
                     </div>
                     <button type="button" onClick={() => { triggerHaptic('medium'); onUpdateCompound({ ...compound, doseAmount: parsed }); }}
                       className="shrink-0 py-1.5 px-3 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 rounded-lg text-[11px] font-bold cursor-pointer transition">
-                      Update Cycle Dose
+                      Update Protocol Dose
                     </button>
                   </div>
                 );

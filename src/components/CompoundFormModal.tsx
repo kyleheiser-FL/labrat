@@ -394,7 +394,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                   <button type="button" onClick={() => { triggerHaptic('medium'); onClose(); onNavigateToTab?.('dashboard'); }}
                     className="labrat-button-primary flex-1 py-3 px-4 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm tracking-wide transition shadow-[0_0_15px_rgba(34,211,238,0.15)] flex items-center justify-center gap-2 cursor-pointer"
                     id="success-go-to-cycle-btn">
-                    <span>Go to My Cycle Checklist</span>
+                    <span>Go to My Protocol Checklist</span>
                     <ArrowLeftRight className="w-4 h-4 shrink-0" strokeWidth={2.5} />
                   </button>
                   <button type="button" onClick={() => { triggerHaptic('light'); setShowAddSuccessPrompt(false); setAddedCompoundName(null); }}
@@ -410,7 +410,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                     <span>Sync Historic Administrations?</span>
                   </div>
                   <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
-                    Are you transferring record state from another logging system? You can retroactively fill past doses now to automatically balance and calibrate your cycle start date.
+                    Are you transferring record state from another logging system? You can retroactively fill past doses now to automatically balance and calibrate your protocol start date.
                   </p>
                   <button type="button"
                     onClick={() => { triggerHaptic('light'); onClose(); setShowAddSuccessPrompt(false); setAddedCompoundName(null); if (addedCompoundId) onOpenRetroLog?.(addedCompoundId); }}
@@ -703,7 +703,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                         <option value="eod">Every Other Day (EOD)</option>
                         <option value="twice_weekly">Twice a Week (e.g. Mon/Thurs)</option>
                         <option value="weekly">Once a Week</option>
-                        <option value="custom">Custom Days Cycle</option>
+                        <option value="custom">Custom Days Protocol</option>
                       </select>
                     </div>
 
@@ -717,7 +717,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-300">Cycle Active Start Date</label>
+                        <label className="text-xs font-semibold text-slate-300">Protocol Active Start Date</label>
                         <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
                           className="labrat-input w-full py-2.5 px-3 text-sm" id="form-start-date-input" />
                       </div>
@@ -775,7 +775,7 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                       <button type="submit"
                         className="labrat-button-primary px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-sm flex items-center gap-1.5 cursor-pointer transition shadow-lg shadow-cyan-500/10" id="submit-form">
                         <Save className="w-4 h-4 text-slate-950" />
-                        {editingCompound ? 'Save changes' : 'Add to cycle'}
+                        {editingCompound ? 'Save changes' : 'Add to protocol'}
                       </button>
                     )}
                   </div>

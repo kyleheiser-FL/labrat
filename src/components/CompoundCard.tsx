@@ -158,7 +158,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
         {!compact && (<>
         <div className="space-y-1.5" id={`card-progress-bar-container-${comp.id}`}>
           <div className="flex justify-between items-center text-[10px] font-mono">
-            <span className="text-slate-500">Cycle Duration Progress</span>
+            <span className="text-slate-500">Protocol Duration Progress</span>
             <span className="font-bold text-slate-300">
               {comp.isCompleted ? '100% (Completed)' : `${roundedPct}% completed`}
               {!comp.isCompleted && daysRemaining > 0 && ` (${daysRemaining}d left)`}

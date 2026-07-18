@@ -261,7 +261,7 @@ function ResearchDetail({
                 <div className="text-[13px] font-semibold text-slate-100 leading-snug">{item.halfLife}</div>
               </div>
               <div className="rounded-xl border border-slate-800/80 bg-[#0f172a]/50 p-3.5">
-                <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Cycle length</div>
+                <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Protocol length</div>
                 <div className="text-[13px] font-semibold text-slate-100 leading-snug">{item.suggestedCycleWeeks}</div>
               </div>
             </div>

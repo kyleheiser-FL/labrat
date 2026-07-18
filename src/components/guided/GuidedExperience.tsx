@@ -497,7 +497,7 @@ function Home({
                     onClick={() => { triggerHaptic('light'); setConfirmDel(c.id); }}
                     className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
                     aria-label={`Remove ${c.name}`}
-                    title="Remove from cycle"
+                    title="Remove from protocol"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

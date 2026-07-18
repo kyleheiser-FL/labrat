@@ -5,7 +5,7 @@
 //
 // Canonical modes:
 //   'store'    → shop only, no tracking tabs
-//   'tracking' → protocol tracking + store (Daily + Cycle + Shop)
+//   'tracking' → protocol tracking + store (Daily + Protocol + Shop)
 //
 // Research lives under Shop, not as its own experience mode.
 // Legacy aliases still accepted from older installs:

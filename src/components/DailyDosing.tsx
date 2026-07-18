@@ -318,7 +318,7 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
                 disabled={!Number.isFinite(parseFloat(adjustDose)) || parseFloat(adjustDose) <= 0}
                 className="labrat-button-primary py-2.5 px-3 text-xs font-black uppercase tracking-wide disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
-                Update cycle
+                Update protocol
               </button>
             </div>
           </div>
@@ -348,7 +348,7 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
             {remaining === 0 ? (due.length ? 'All logged' : 'Nothing due') : `${remaining} to log`}
           </h1>
           <p className="mt-1 text-sm font-semibold text-slate-400">
-            {due.length ? `${loggedCount} of ${due.length} scheduled doses complete` : active.length ? 'No scheduled doses on this date' : 'Add compounds in Cycle to start tracking'}
+            {due.length ? `${loggedCount} of ${due.length} scheduled doses complete` : active.length ? 'No scheduled doses on this date' : 'Add compounds in Protocol to start tracking'}
           </p>
         </div>
         <div className="labrat-mini-surface w-full sm:w-auto flex items-center justify-between sm:justify-start gap-1 rounded-xl p-1">
@@ -394,7 +394,7 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
         {helpCandidates.length === 0 && (
           <p className="mt-2 text-[11px] text-slate-500 flex items-center gap-1.5">
             <HelpCircle className="w-3.5 h-3.5" />
-            Add a compound in Cycle to unlock the how-to guides.
+            Add a compound in Protocol to unlock the how-to guides.
           </p>
         )}
 
@@ -417,7 +417,7 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
         <div className="labrat-card px-6 py-10 text-center">
           <h3 className="labrat-title text-base">{active.length === 0 ? 'No active compounds' : 'No doses scheduled'}</h3>
           <p className="labrat-body text-xs mt-1">
-            {active.length === 0 ? 'Add compounds in the Cycle tab to begin tracking.' : 'Your current protocol has no administrations due for this date.'}
+            {active.length === 0 ? 'Add compounds in the Protocol tab to begin tracking.' : 'Your current protocol has no administrations due for this date.'}
           </p>
         </div>
       )}

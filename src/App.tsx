@@ -259,7 +259,7 @@ export default function App() {
       setActiveTab('shop');
       return;
     }
-    // Protocol tracking includes Daily + Cycle + Store.
+    // Protocol tracking includes Daily + Protocol + Store.
     setTrackingEnabled(true);
     safeLocalStorage.setItem('labrat_tracking_enabled', 'true');
     setActiveTab('dashboard');
@@ -1546,7 +1546,7 @@ export default function App() {
                     labratTheme={labratTheme}
                     visibility={segmentVisibility.planner}
                   />
-                  {/* Stats merged into the Cycle tab — runway summary + history */}
+                  {/* Stats merged into the Protocol tab — runway summary + history */}
                   <StatsView
                     compounds={compounds}
                     logs={logs}
@@ -1607,7 +1607,7 @@ export default function App() {
       <footer className="py-6 px-6 border-t border-[#1e293b]/60 bg-[#030712] text-xs text-slate-500 shrink-0 z-10" id="site-footer">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-5">
           <div className="flex flex-col gap-1.5 text-center lg:text-left">
-            <span className="font-semibold text-slate-400">&copy; {new Date().getFullYear()} labrat. Persistent biochemical cycle management registers.</span>
+            <span className="font-semibold text-slate-400">&copy; {new Date().getFullYear()} labrat. Persistent biochemical protocol management registers.</span>
             <p className="text-[10px] text-slate-500 max-w-3xl leading-relaxed">
               <strong>Liability Disclaimer:</strong> labrat is strictly an educational system and laboratory calculator designed for mathematical tracking and raw historical research notation. It contains absolutely zero advice, prescriptions, or clinical diagnostic materials for consuming or compounding substances.
             </p>
