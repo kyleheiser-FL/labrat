@@ -245,24 +245,26 @@ function ResearchDetail({
 
         {section === 'dosing' && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div className="rounded-xl border border-slate-800/80 bg-[#0f172a]/50 p-3.5">
-                <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Typical dose</div>
-                <div className="text-[13px] font-semibold text-slate-100 leading-snug">{item.typicalDosage}</div>
+            <div className="space-y-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="rounded-xl border border-slate-800/80 bg-[#0f172a]/50 p-3.5">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Typical dose</div>
+                  <div className="text-[13px] font-semibold text-slate-100 leading-snug">{item.typicalDosage}</div>
+                </div>
+                <div className="rounded-xl border border-slate-800/80 bg-[#0f172a]/50 p-3.5">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> Half-life
+                  </div>
+                  <div className="text-[13px] font-semibold text-slate-100 leading-snug">{item.halfLife}</div>
+                </div>
+                <div className="rounded-xl border border-slate-800/80 bg-[#0f172a]/50 p-3.5 sm:col-span-2">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Protocol length</div>
+                  <div className="text-[13px] font-semibold text-slate-100 leading-snug">{item.suggestedCycleWeeks}</div>
+                </div>
               </div>
               <div className="rounded-xl border border-slate-800/80 bg-[#0f172a]/50 p-3.5">
                 <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Frequency</div>
                 <div className="text-[13px] font-semibold text-slate-100 leading-snug">{item.frequencyText}</div>
-              </div>
-              <div className="rounded-xl border border-slate-800/80 bg-[#0f172a]/50 p-3.5">
-                <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1 flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> Half-life
-                </div>
-                <div className="text-[13px] font-semibold text-slate-100 leading-snug">{item.halfLife}</div>
-              </div>
-              <div className="rounded-xl border border-slate-800/80 bg-[#0f172a]/50 p-3.5">
-                <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Protocol length</div>
-                <div className="text-[13px] font-semibold text-slate-100 leading-snug">{item.suggestedCycleWeeks}</div>
               </div>
             </div>
 
@@ -633,20 +635,22 @@ export default function PeptideLibrary({
                     {item.description}
                   </p>
 
-                  <div className="grid grid-cols-3 gap-2 bg-[#1e293b]/25 border border-slate-800/85 p-2.5 rounded-xl text-[11px]">
-                    <div>
-                      <span className="text-slate-500 block mb-0.5 text-[10px]">Half-life</span>
-                      <span className="text-slate-200 font-semibold leading-snug block">{item.halfLife}</span>
+                  <div className="bg-[#1e293b]/25 border border-slate-800/85 p-2.5 rounded-xl text-[11px] space-y-2.5">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <span className="text-slate-500 block mb-0.5 text-[10px]">Half-life</span>
+                        <span className="text-slate-200 font-semibold leading-snug block">{item.halfLife}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block mb-0.5 text-[10px]">Dose</span>
+                        <span className="text-slate-200 font-semibold leading-snug block line-clamp-2" title={item.typicalDosage}>
+                          {item.typicalDosage}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-slate-500 block mb-0.5 text-[10px]">Dose</span>
-                      <span className="text-slate-200 font-semibold leading-snug block line-clamp-2" title={item.typicalDosage}>
-                        {item.typicalDosage}
-                      </span>
-                    </div>
-                    <div>
+                    <div className="pt-2 border-t border-slate-800/70">
                       <span className="text-slate-500 block mb-0.5 text-[10px]">Frequency</span>
-                      <span className="text-slate-200 font-semibold leading-snug block line-clamp-2" title={item.frequencyText}>
+                      <span className="text-slate-200 font-semibold leading-snug block" title={item.frequencyText}>
                         {item.frequencyText}
                       </span>
                     </div>
