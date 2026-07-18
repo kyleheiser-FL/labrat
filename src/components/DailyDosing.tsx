@@ -212,7 +212,8 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
             )}
             <span className="text-slate-400 font-semibold text-[12px]">
               {c.doseAmount} {c.doseUnit}
-              <span className="mx-1.5 text-slate-600">·</span>
+            </span>
+            <span className="mt-1.5 w-full rounded-lg border border-slate-800/70 bg-[#0b1222]/55 px-2.5 py-1.5 text-[12px] font-semibold text-slate-200">
               {FREQ_LABEL[c.frequency] || c.frequency}
             </span>
           </div>

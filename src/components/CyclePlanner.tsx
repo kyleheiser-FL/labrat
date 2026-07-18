@@ -263,7 +263,10 @@ export default function CyclePlanner({
                 <span className="labrat-dose-chip px-2 py-1 capitalize">{compound.type}</span>
                 <span className="labrat-dose-chip px-2 py-1">{row.doseLabel}</span>
                 {row.drawLabel && <span className="labrat-dose-chip labrat-dose-chip-accent px-2 py-1">{row.drawLabel}</span>}
-                <span className="labrat-dose-chip px-2 py-1">{row.frequencyLabel}</span>
+              </div>
+              <div className="mt-2 w-full rounded-xl border border-slate-800/70 bg-[#0b1222]/70 px-3 py-2">
+                <span className="block text-[10px] uppercase tracking-wide text-slate-500 font-bold">Frequency</span>
+                <span className="block text-[13px] font-semibold text-slate-100 leading-snug">{row.frequencyLabel}</span>
               </div>
             </div>
           </div>

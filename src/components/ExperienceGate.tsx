@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Activity, BookOpen, Check, ChevronRight } from 'lucide-react';
+import { ShoppingBag, Activity, Check, ChevronRight } from 'lucide-react';
 import { ExperienceMode } from '../lib/experience';
 import { triggerHaptic } from '../lib/haptics';
 
@@ -30,25 +30,13 @@ const OPTIONS: {
   {
     mode: 'tracking',
     icon: <Activity className="w-6 h-6" />,
-    title: 'Protocol tracking',
-    tag: 'Daily + Cycle',
+    title: 'Protocol tracking + Store',
+    tag: 'Daily + Cycle + Shop',
     accent: '#22d3ee',
     points: [
       'Log doses on Daily and manage cycles',
+      'Full shop + Compound Research included',
       'How-to mix & inject guides when you need them',
-      'Full protocol tools without the beginner shell',
-    ],
-  },
-  {
-    mode: 'research',
-    icon: <BookOpen className="w-6 h-6" />,
-    title: 'Peptide research',
-    tag: 'Learn',
-    accent: '#34d399',
-    points: [
-      'Compound Research first — dosing, studies, safety',
-      'Jump into matching store SKUs when available',
-      'Tracking tools still available when you want them',
     ],
   },
 ];
@@ -73,7 +61,7 @@ export default function ExperienceGate({ onSelect }: ExperienceGateProps) {
       <div className="pointer-events-none fixed top-[-120px] left-1/3 w-[520px] h-[520px] bg-cyan-500/10 blur-[130px] rounded-full" />
       <div className="pointer-events-none fixed bottom-[-120px] right-1/4 w-[440px] h-[440px] bg-violet-500/10 blur-[130px] rounded-full" />
 
-      <div className="relative max-w-5xl mx-auto px-5 py-10 sm:py-14 flex flex-col min-h-full">
+      <div className="relative max-w-3xl mx-auto px-5 py-10 sm:py-14 flex flex-col min-h-full">
         <div className="text-center mb-8 sm:mb-10">
           <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-cyan-400 mb-3">Welcome to labrat</p>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-balance">What do you want to do?</h1>
@@ -82,7 +70,7 @@ export default function ExperienceGate({ onSelect }: ExperienceGateProps) {
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3 flex-1 content-start">
+        <div className="grid gap-4 sm:grid-cols-2 flex-1 content-start">
           {OPTIONS.map(opt => {
             const active = picked === opt.mode;
             return (

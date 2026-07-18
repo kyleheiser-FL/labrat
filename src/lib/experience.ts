@@ -5,32 +5,31 @@
 //
 // Canonical modes:
 //   'store'    → shop only, no tracking tabs
-//   'tracking' → Daily + Cycle protocol tracking
-//   'research' → Compound Research / education first
+//   'tracking' → protocol tracking + store (Daily + Cycle + Shop)
 //
+// Research lives under Shop, not as its own experience mode.
 // Legacy aliases still accepted from older installs:
-//   'expert' → tracking
-//   'guided' → tracking
+//   'expert' | 'guided' | 'research' → tracking
 import { localDateISO } from './date';
 import { PEPTIDE_GOAL_PRESETS, STEROID_GOAL_PRESETS, GoalPreset } from '../data/goalPresets';
 import { LibraryItem, Compound } from '../types';
 import { safeLocalStorage } from './storage';
 
-export type ExperienceMode = 'store' | 'tracking' | 'research';
+export type ExperienceMode = 'store' | 'tracking';
 export type Intensity = 'slow' | 'recommended' | 'full';
 
 // Bump when a release should force everyone back through the picker.
-export const EXPERIENCE_PROMPT_VERSION = 2;
+export const EXPERIENCE_PROMPT_VERSION = 3;
 
 const MODE_KEY = 'labrat_experience_mode';
 const VER_KEY = 'labrat_experience_prompt_v';
 
 function normalizeExperienceMode(raw: string | null): ExperienceMode | null {
   if (raw === 'store') return 'store';
-  if (raw === 'tracking' || raw === 'research') return raw;
+  if (raw === 'tracking') return 'tracking';
   // Map retired modes so old localStorage values still work after an update
   // that doesn't force the picker (or until the user re-answers).
-  if (raw === 'expert' || raw === 'guided') return 'tracking';
+  if (raw === 'expert' || raw === 'guided' || raw === 'research') return 'tracking';
   return null;
 }
 

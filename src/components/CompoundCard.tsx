@@ -140,10 +140,20 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
 
         <div className="labrat-mini-surface grid grid-cols-2 gap-2 p-2.5 text-[11px]">
           <div><span className="text-slate-500 block">Planned Dose</span><span className="font-mono font-semibold text-slate-300">{comp.doseAmount} {comp.doseUnit}</span></div>
-          <div><span className="text-slate-500 block">Administration</span><span className="font-semibold text-slate-300 capitalize">{comp.frequency.replace('_', ' ')}</span></div>
           <div><span className="text-slate-500 block">Course Duration</span><span className="font-mono font-semibold text-slate-300">{comp.durationWeeks} Weeks</span></div>
           <div><span className="text-slate-500 block">Sequence Start</span><span className="font-mono font-semibold text-slate-300">{comp.startDate}</span></div>
-          <div className="col-span-2 pt-2 mt-0.5 border-t border-slate-800/60"><span className="text-slate-500 block">Doses Logged</span><span className="font-mono font-semibold text-emerald-400">{loggedCount} dose{loggedCount === 1 ? '' : 's'} recorded</span></div>
+          <div><span className="text-slate-500 block">Doses Logged</span><span className="font-mono font-semibold text-emerald-400">{loggedCount} dose{loggedCount === 1 ? '' : 's'}</span></div>
+          <div className="col-span-2 pt-2 mt-0.5 border-t border-slate-800/60">
+            <span className="text-slate-500 block">Administration Frequency</span>
+            <span className="font-semibold text-slate-200 capitalize text-[12px] leading-snug">
+              {comp.frequency === 'daily' ? 'Every day'
+                : comp.frequency === 'eod' ? 'Every other day'
+                : comp.frequency === 'twice_weekly' ? 'Twice a week'
+                : comp.frequency === 'weekly' ? 'Once a week'
+                : comp.frequency === 'custom' ? `Every ${comp.customDays || 3} days`
+                : comp.frequency.replace('_', ' ')}
+            </span>
+          </div>
         </div>
 
         {!compact && (<>

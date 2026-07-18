@@ -693,11 +693,12 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
 
                   {/* ── STEP 2: Schedule ── */}
                   <div className={step === 2 ? 'space-y-4' : 'hidden'}>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    {/* Frequency is full-width so option labels stay readable on phones */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300">Administration Frequency</label>
                       <select value={frequency} onChange={(e) => setFrequency(e.target.value as any)}
-                        className="labrat-input py-2 px-3 text-sm" id="form-frequency-select">
+                        className="labrat-input w-full py-2.5 px-3 text-sm" id="form-frequency-select">
                         <option value="daily">Every Day (Daily)</option>
                         <option value="eod">Every Other Day (EOD)</option>
                         <option value="twice_weekly">Twice a Week (e.g. Mon/Thurs)</option>
@@ -707,23 +708,25 @@ export default function CompoundFormModal({ open, onClose, editingCompound, pref
                     </div>
 
                     {frequency === 'custom' && (
-                      <div className="space-y-1.5 col-span-2">
+                      <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-slate-300">Custom Frequency Intermission (Days)</label>
                         <input type="number" min="1" max="30" value={customDays} onChange={(e) => setCustomDays(e.target.value)} placeholder="e.g. 3"
-                          className="labrat-input py-2 px-3 text-sm" id="form-custom-days-input" />
+                          className="labrat-input w-full py-2.5 px-3 text-sm" id="form-custom-days-input" />
                       </div>
                     )}
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-slate-300">Cycle Active Start Date</label>
-                      <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
-                        className="labrat-input py-2 px-3 text-sm" id="form-start-date-input" />
-                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-300">Cycle Active Start Date</label>
+                        <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
+                          className="labrat-input w-full py-2.5 px-3 text-sm" id="form-start-date-input" />
+                      </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-slate-300">Active Duration (Weeks)</label>
-                      <input type="number" min="1" max="52" value={durationWeeks} onChange={(e) => setDurationWeeks(parseInt(e.target.value))}
-                        className="labrat-input py-2 px-3 text-sm" id="form-duration-weeks-input" />
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-slate-300">Active Duration (Weeks)</label>
+                        <input type="number" min="1" max="52" value={durationWeeks} onChange={(e) => setDurationWeeks(parseInt(e.target.value))}
+                          className="labrat-input w-full py-2.5 px-3 text-sm" id="form-duration-weeks-input" />
+                      </div>
                     </div>
                   </div>
                   </div>

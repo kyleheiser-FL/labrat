@@ -246,7 +246,7 @@ export default function App() {
   );
   const [trackingEnabled, setTrackingEnabled] = useState<boolean>(getInitialTrackingEnabled);
 
-  // Experience mode — store | tracking | research.
+  // Experience mode — store | tracking (+ store).
   // Null means the gate hasn't been answered for this release yet.
   const [experienceMode, setExperienceMode] = useState<ExperienceMode | null>(() => getStoredExperienceMode());
 
@@ -259,10 +259,10 @@ export default function App() {
       setActiveTab('shop');
       return;
     }
-    // tracking + research both unlock Daily/Cycle tools; research just lands in library.
+    // Protocol tracking includes Daily + Cycle + Store.
     setTrackingEnabled(true);
     safeLocalStorage.setItem('labrat_tracking_enabled', 'true');
-    setActiveTab(mode === 'research' ? 'library' : 'dashboard');
+    setActiveTab('dashboard');
   }, []);
 
   const handleToggleTracking = useCallback((enabled: boolean) => {

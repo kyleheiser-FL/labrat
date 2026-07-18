@@ -29,7 +29,7 @@ interface AppHeaderProps {
   hideShop: boolean;
   trackingEnabled: boolean;
   tabBadges?: { dashboard: number; notifications: number };
-  experienceMode?: 'store' | 'tracking' | 'research' | null;
+  experienceMode?: 'store' | 'tracking' | null;
 }
 
 export default function AppHeader({
