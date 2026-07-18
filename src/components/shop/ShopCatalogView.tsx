@@ -100,7 +100,6 @@ interface ShopCatalogViewProps {
   onSetEditingProduct: (p: ShopProduct | null) => void;
   onSetProductForm: (f: any) => void;
   onSetProductValidationError: (e: string | null) => void;
-  onSetShowNorwayModal: (v: boolean) => void;
   onSetSelectedCertKey: (k: string | null) => void;
   allOrdersGlobal: OrderDetail[];
   isKitPricing?: boolean;
@@ -135,7 +134,6 @@ export default function ShopCatalogView({
   onSetEditingProduct,
   onSetProductForm,
   onSetProductValidationError,
-  onSetShowNorwayModal,
   onSetSelectedCertKey,
   allOrdersGlobal,
   isKitPricing = false,
@@ -173,13 +171,7 @@ export default function ShopCatalogView({
     // BAC water / solvents are a checkout add-on only, not a catalog product.
     if (p.category === 'Reconstitution Solvents') return false;
 
-    // Source restriction: China members can't see Norway-only, Norway members can't see China-only
-    if (!isViewingAsAdmin) {
-      if (isChinaTier && p.sourceRestriction === 'norway') return false;
-      if (!isChinaTier && p.sourceRestriction === 'china') return false;
-    }
-
-    // Hide out-of-stock items only from non-approved tiers (kit/china/approved members see all)
+    // Hide out-of-stock items only from non-approved viewers.
     if (!isUnlimitedStockTier && !isApprovedVialPricing && !isViewingAsAdmin) {
       const stock = getProductAvailableStock(p.id, p.inventory, allOrdersGlobal);
       if (stock <= 0) return false;

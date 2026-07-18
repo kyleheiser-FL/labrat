@@ -6,20 +6,10 @@ import {
 } from './shopViewModels';
 
 describe('shop view models', () => {
-  it('describes Norway kit member pricing as a kit-rate experience', () => {
-    const tier = getShopTierViewModel({ isKitPricing: true });
-
-    expect(tier.title).toBe('Norway Kit Member');
-    expect(tier.badge).toBe('Kit Rate');
-    expect(tier.priceBasis).toContain('10-vial kit');
-    expect(tier.shippingPromise).toContain('$30');
-    expect(tier.tone).toBe('cyan');
-  });
-
-  it('describes China vial member pricing as a per-vial free-shipping experience', () => {
+  it('describes every customer as the same per-vial free-shipping experience', () => {
     const tier = getShopTierViewModel({ isChinaVialPricing: true });
 
-    expect(tier.title).toBe('China Vial Member');
+    expect(tier.title).toBe('Member Store');
     expect(tier.badge).toBe('Per-Vial Rate');
     expect(tier.priceBasis).toContain('individual research vial');
     expect(tier.shippingPromise).toBe('Free shipping on every order');

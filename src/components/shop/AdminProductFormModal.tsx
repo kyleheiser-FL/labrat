@@ -125,19 +125,6 @@ export default function AdminProductFormModal({
                     className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 placeholder:text-slate-600 rounded-lg text-xs"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 mb-1" htmlFor="prod-source">Member Tier</label>
-                  <select
-                    id="prod-source"
-                    value={productForm.sourceRestriction}
-                    onChange={(e) => onSetProductForm(prev => ({ ...prev, sourceRestriction: e.target.value as '' | 'china' | 'norway' }))}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-cyan-500 text-slate-100 rounded-lg text-xs"
-                  >
-                    <option value="">Unrestricted</option>
-                    <option value="norway">🇳🇴 Norway (approved / kit)</option>
-                    <option value="china">🇨🇳 China (chinavial / chinakit)</option>
-                  </select>
-                </div>
               </div>
 
               {productForm.name && productForm.price > 0 && (

@@ -57,8 +57,6 @@ import ProductDrawerModal from './shop/ProductDrawerModal';
 import OrderSuccessModal from './shop/OrderSuccessModal';
 import CertificationModal from './shop/CertificationModal';
 import AdminProductFormModal from './shop/AdminProductFormModal';
-import NorwayHeritageModal from './shop/NorwayHeritageModal';
-import ShopRegistrationView from './shop/ShopRegistrationView';
 import ProductVialVisual from './shop/ProductVialVisual';
 
 type LabratThemeMode = 'clinical' | 'clinical-light';
@@ -137,14 +135,12 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
   const isAdminUser = currentUser?.email?.toLowerCase() === 'kyleheiser@gmail.com';
   const isViewingAsAdmin = isAdminUser && !isAdminPreviewCustomer;
 
-  // Each status tier is locked to its own pricing — no cross-source toggle.
-  // Anyone without an explicit tier (guest, no profile yet, or pending) now
-  // defaults to China per-vial pricing so they can browse real prices first.
-  const hasExplicitTier = !!memberProfile && ['approved', 'kit', 'chinakit', 'chinavial'].includes(memberProfile.status);
-  const isKitPricing = (memberProfile?.status === 'kit' && !isAdminUser) || (isAdminUser && isAdminPreviewKit);
-  const isChinaKitPricing = (memberProfile?.status === 'chinakit' && !isAdminUser) || (isAdminUser && isAdminPreviewChinaKit);
-  const isChinaVialPricing = (memberProfile?.status === 'chinavial' && !isAdminUser) || (isAdminUser && isAdminPreviewChinaVial) || (!isAdminUser && !hasExplicitTier);
-  const isApprovedVialPricing = (memberProfile?.status === 'approved' && !isAdminUser) || (isAdminUser && isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial);
+  // There is one customer storefront. Legacy member statuses remain readable
+  // for existing accounts, but no longer change catalog, price, or shipping.
+  const isKitPricing = false;
+  const isChinaKitPricing = false;
+  const isChinaVialPricing = true;
+  const isApprovedVialPricing = false;
 
   // Application Layout Views
   // Users view: 'catalog' | 'cart' | 'checkout' | 'orders' | 'status_check'
@@ -177,7 +173,6 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
 
   const [showCertifications, setShowCertifications] = useState<boolean>(false);
   const [selectedCertKey, setSelectedCertKey] = useState<string | null>(null);
-  const [showNorwayModal, setShowNorwayModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (isAdminUser && !isAdminPreviewCustomer) {
@@ -1125,7 +1120,7 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
     try {
       const token = await auth.currentUser?.getIdToken();
       if (!token) throw new Error('Please sign in again to place your order.');
-      const tier = isKitPricing ? 'kit' : isChinaKitPricing ? 'chinakit' : isChinaVialPricing ? 'chinavial' : 'retail';
+      const tier = 'chinavial';
       const res = await fetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -1145,7 +1140,7 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
       const orderPayload: OrderDetail = (await res.json()).order;
 
       // Capture registration from the checkout details — a buyer's first order
-      // auto-registers them (China-vial tier) so there's no separate signup.
+      // auto-registers them for the single storefront so there's no separate signup.
       if (!memberProfile && currentUser) {
         try {
           const sf = shippingForm;
@@ -1154,7 +1149,7 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
             id: currentUser.uid,
             email: currentUser.email || '',
             displayName: sf.fullName || currentUser.displayName || 'labrat Member',
-            status: 'chinavial',
+            status: 'approved',
             shippingAddress: addr,
             phone: sf.phone || '',
             createdAt: new Date().toISOString(),
@@ -1270,32 +1265,17 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
   // Get unique category list
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
-  // Determine whether current viewer is a China customer (real or admin preview)
-  const isAnyChinaPricing = isChinaKitPricing || isChinaVialPricing;
-  const isAnyNorwayPricing = isKitPricing || (
-    memberProfile?.status === 'approved' ||
-    (isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial)
-  );
-
-  // Filter products by category, query, and source restriction
+  // Filter products by category and query. Every customer sees one catalog.
   const filteredProducts = products.filter(p => {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.description.toLowerCase().includes(searchQuery.toLowerCase());
-    // Source restriction: China customers should not see Norway-only products
-    // Norway customers should not see China-only products
-    // Admins see everything (unless in a preview mode)
     let matchesSource = true;
     if (!isViewingAsAdmin) {
-      if (isAnyChinaPricing && p.sourceRestriction === 'norway') matchesSource = false;
-      if (!isAnyChinaPricing && p.sourceRestriction === 'china') matchesSource = false;
-      // Hide products from China customers that have no China price defined
-      // (not in resolveChineseKitCost / resolveChineseVialCost) and aren't solvents
       // Hide BAC water from all customers — available as a $7/vial checkout add-on
       const isBacWater = p.id.startsWith('prod_bac_water');
       if (isBacWater) matchesSource = false;
-      // Hide products from China customers that have no China price defined
-      if (isAnyChinaPricing && !isBacWater && !getChinaKitSellPrice(p.name, pricingConfig) && !getChinaVialSellPrice(p.name, pricingConfig)) matchesSource = false;
+      if (!isBacWater && !getChinaVialSellPrice(p.name, pricingConfig)) matchesSource = false;
     }
     return matchesCategory && matchesSearch && matchesSource;
   });
@@ -1506,44 +1486,20 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
         <div className="flex flex-col gap-6" id="active-shop-interface">
           
           {/* SHIPPING INFO BANNER */}
-          {(isChinaKitPricing || isChinaVialPricing) && view === 'catalog' && (
+          {view === 'catalog' && (
             <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl px-4 py-3 flex items-center gap-3">
               <Truck className="w-5 h-5 text-cyan-300 shrink-0" />
               <div>
                 <p className="text-xs font-bold text-cyan-300">
-                  {isChinaKitPricing ? 'Kit Pricing — 10-Vial Kits' : 'Per-Vial Pricing'}
+                  Per-Vial Pricing
                 </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
-                  {isChinaKitPricing
-                    ? 'Products priced per 10-vial kit. Free shipping on every order.'
-                    : 'Free shipping on every order — no minimum, no shipping charges.'}
+                  Free shipping on every order — no minimum, no shipping charges.
                 </p>
               </div>
             </div>
           )}
 
-          {/* KIT PRICING INTEREST BANNER — approved (per-vial) members only */}
-          {((memberProfile?.status === 'approved' && !isAdminPreviewCustomer) || (isAdminPreviewCustomer && !isAdminPreviewKit && !isAdminPreviewChinaKit && !isAdminPreviewChinaVial)) && view === 'catalog' && (
-            <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold text-cyan-300">Interested in Kit Pricing?</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">Order 10 vials at a time at a reduced rate, shipped directly from our warehouse.</p>
-              </div>
-              {!isAdminPreviewCustomer && memberProfile?.kitUpgradeRequested ? (
-                <span className="shrink-0 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-bold rounded-lg">
-                  ✓ Request Sent
-                </span>
-              ) : (
-                <button
-                  onClick={isAdminPreviewCustomer ? undefined : handleRequestKitUpgrade}
-                  disabled={!isAdminPreviewCustomer && actionLoading === 'kit_upgrade_request'}
-                  className="shrink-0 px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-[11px] font-bold rounded-lg cursor-pointer transition-all disabled:opacity-50"
-                >
-                  {!isAdminPreviewCustomer && actionLoading === 'kit_upgrade_request' ? <Loader2 className="w-3.5 h-3.5 animate-spin inline" /> : 'Request Kit Pricing →'}
-                </button>
-              )}
-            </div>
-          )}
 
           {/* USER CATALOG VIEW */}
           {['catalog', 'admin_products'].includes(view) && (
@@ -1573,7 +1529,6 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
               onSetEditingProduct={setEditingProduct}
               onSetProductForm={setProductForm}
               onSetProductValidationError={setProductValidationError}
-              onSetShowNorwayModal={setShowNorwayModal}
               onSetSelectedCertKey={setSelectedCertKey}
               allOrdersGlobal={allOrdersGlobal}
               isKitPricing={isKitPricing}
@@ -1742,15 +1697,6 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
         onSubmit={handleSaveProduct}
         onClose={() => setShowProductModal(false)}
       />
-
-      {/* NORWAY & SWITZERLAND PEPTIDE HERITAGE MODAL */}
-      <NorwayHeritageModal
-        open={showNorwayModal}
-        onClose={() => setShowNorwayModal(false)}
-        brandLabel={renderWithLabRatBranding("LabRat")}
-      />
-
-
 
       {/* CERTIFICATION DETAIL MODAL */}
       <CertificationModal

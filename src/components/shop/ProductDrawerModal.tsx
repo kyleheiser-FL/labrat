@@ -112,9 +112,7 @@ export default function ProductDrawerModal({
   const setDrawerQuantity = onSetDrawerQuantity;
   const setSelectedParentProductGroup = (_: null) => onClose();
   const isUnlimitedStockTier = isKitPricing || isChinaKitPricing || isChinaVialPricing;
-  const sourceLabel = isChinaKitPricing || isChinaVialPricing
-    ? 'China partner source'
-    : 'Norway partner source';
+  const sourceLabel = 'Verified partner source';
   const purchaseModel = isKitPricing || isChinaKitPricing
     ? 'Kit order · 10 vials'
     : 'Single-vial order';

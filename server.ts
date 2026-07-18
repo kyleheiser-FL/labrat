@@ -10,7 +10,6 @@ import {
   type PricingMarkups, type PriceOverride,
 } from "./server/pricingData";
 import { SAMPLE_INVENTORY } from "./src/data/shopInventory";
-import { getShippingOptions, getChinaFlatShipping, NORWAY_KIT_FLAT_SHIPPING } from "./src/lib/shopHelpers";
 
 const app = express();
 const PORT = 3000;
@@ -576,18 +575,13 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
     const sf = typeof body.shippingForm === 'object' && body.shippingForm ? body.shippingForm : {};
     const str = (v: any, max = 200) => (typeof v === 'string' ? v.slice(0, max) : '');
 
-    // ── Determine pricing tier from the member's Firestore status ──
-    const isAdminCaller = caller.email === ADMIN_EMAIL;
-    let tier: 'retail' | 'kit' | 'chinakit' | 'chinavial' = 'retail';
-    if (isAdminCaller) {
-      const requested = body.tier;
-      if (requested === 'kit' || requested === 'chinakit' || requested === 'chinavial' || requested === 'retail') tier = requested;
-    } else {
+    // Every approved account uses the same customer storefront and price list.
+    if (caller.email !== ADMIN_EMAIL) {
       const memberSnap = await fsdb.collection('members').doc(caller.uid).get();
       const status = memberSnap.exists ? memberSnap.data()?.status : null;
-      if (status === 'kit' || status === 'chinakit' || status === 'chinavial') tier = status;
-      else if (status === 'approved') tier = 'retail';
-      else return res.status(403).json({ error: 'Membership not approved for ordering' });
+      if (!['approved', 'kit', 'chinakit', 'chinavial'].includes(status)) {
+        return res.status(403).json({ error: 'Membership not approved for ordering' });
+      }
     }
 
     try {
@@ -610,10 +604,7 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
       const book = computePriceBook(resolved.map(r => r.name), markups, overrides);
       const priceFor = (name: string, listPrice: number): number => {
         const e = book[name] || {};
-        if (tier === 'kit') return e.norKit || listPrice;
-        if (tier === 'chinakit') return e.chnKit || listPrice;
-        if (tier === 'chinavial') return e.chnVial || e.norVial || listPrice;
-        return e.norVial ?? listPrice;
+        return e.chnVial || e.norVial || listPrice;
       };
 
       const items = [
@@ -624,22 +615,8 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
       const bacWaterCost = bacWaterQty * 7;
 
       // ── Shipping ──
-      // Norway kit: $30 flat. China (kit or vial): $25 flat, free only when
-      // every non-BAC-water item ships from the US warehouse. Retail: live rates.
-      const isFixedShipping = tier !== 'retail';
-      const isChinaTier = tier === 'chinakit' || tier === 'chinavial';
-      let shippingCost = tier === 'kit'
-        ? NORWAY_KIT_FLAT_SHIPPING
-        : isChinaTier ? getChinaFlatShipping(resolved) : 0;
-      let selectedOption: any = null;
-      let shippingDetails: any = null;
-      if (!isFixedShipping) {
-        const totalVials = resolved.reduce((sum, r) => sum + r.quantity, 0);
-        const cartLike = resolved.map(r => ({ product: { id: r.id, name: r.name, price: r.listPrice } as any, quantity: r.quantity }));
-        shippingDetails = getShippingOptions(str(sf.zipCode, 10), totalVials, cartLike as any);
-        selectedOption = shippingDetails.options.find((o: any) => o.id === body.selectedShippingOptionId) || shippingDetails.options[0];
-        shippingCost = selectedOption ? selectedOption.cost : 0;
-      }
+      // The active customer storefront includes free shipping on every order.
+      const shippingCost = 0;
 
       // ── Florida sales tax (6%) ──
       const stateNorm = str(sf.state, 30).trim().toLowerCase();
@@ -667,15 +644,8 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
           zipCode: str(sf.zipCode, 12),
           phone: str(sf.phone, 30),
           notes: str(sf.notes, 1000),
-          carrier: isFixedShipping ? undefined : selectedOption?.carrier,
-          method: tier === 'kit'
-            ? 'Norway Kit Flat Rate'
-            : isChinaTier
-            ? (shippingCost === 0 ? 'USA Warehouse Free Shipping' : 'China Flat Rate')
-            : selectedOption?.name,
+          method: 'Free Shipping',
           cost: shippingCost,
-          deliveryEstimate: isFixedShipping ? undefined : selectedOption?.estimatedDeliveryDate,
-          weightLbs: isFixedShipping ? undefined : shippingDetails?.weightLbs,
         },
         status: 'placed',
         createdAt: new Date().toISOString(),

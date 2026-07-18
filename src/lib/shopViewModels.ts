@@ -68,62 +68,18 @@ export function getShopTierViewModel(flags: ShopTierFlags = {}): ShopTierViewMod
       badge: 'Operations View',
       priceBasis: 'Customer-facing pricing with admin controls visible',
       shippingPromise: 'Fulfillment and margin tools are available',
-      trustLine: 'Preview tier restrictions without changing catalog rules.',
-      sourceLine: 'All eligible product sources are visible.',
+      trustLine: 'Preview the same catalog and pricing every customer sees.',
+      sourceLine: 'Active customer catalog',
     });
   }
 
-  if (flags.isKitPricing) {
-    return withTone('cyan', {
-      title: 'Norway Kit Member',
-      badge: 'Kit Rate',
-      priceBasis: 'Prices are shown per 10-vial kit',
-      shippingPromise: '$30 flat international shipping',
-      trustLine: 'Swiss GMP-aligned Norway partner sourcing with COA-backed listings.',
-      sourceLine: 'Norway lab partner catalog',
-    });
-  }
-
-  if (flags.isChinaKitPricing) {
-    return withTone('red', {
-      title: 'China Kit Member',
-      badge: 'Wholesale Kit Rate',
-      priceBasis: 'Prices are shown per 10-vial kit',
-      shippingPromise: 'Flat international shipping by source lane',
-      trustLine: 'Direct China partner sourcing with kit-level ordering.',
-      sourceLine: 'China lab partner catalog',
-    });
-  }
-
-  if (flags.isChinaVialPricing) {
-    return withTone('emerald', {
-      title: 'China Vial Member',
-      badge: 'Per-Vial Rate',
-      priceBasis: 'Prices are shown per individual research vial',
-      shippingPromise: 'Free shipping on every order',
-      trustLine: 'Per-vial access to China partner sourcing with COA-backed listings.',
-      sourceLine: 'China lab partner catalog',
-    });
-  }
-
-  if (flags.isApprovedVialPricing) {
-    return withTone('cyan', {
-      title: 'Norway Vial Member',
-      badge: 'Per-Vial Rate',
-      priceBasis: 'Prices are shown per individual research vial',
-      shippingPromise: 'Free shipping on qualifying orders',
-      trustLine: 'Swiss GMP-aligned Norway sourcing with flexible vial quantities.',
-      sourceLine: 'Norway lab partner catalog',
-    });
-  }
-
-  return withTone('slate', {
-    title: 'Research Vial Pricing',
+  return withTone('emerald', {
+    title: 'Member Store',
     badge: 'Per-Vial Rate',
     priceBasis: 'Prices are shown per individual research vial',
     shippingPromise: 'Free shipping on every order',
     trustLine: 'COA-backed catalog with request-based manual invoicing.',
-    sourceLine: 'Available member catalog',
+    sourceLine: 'Active customer catalog',
   });
 }
 

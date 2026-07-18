@@ -19,7 +19,7 @@ function marginColor(p: number | null) {
 // ── Main component ─────────────────────────────────────────────────────────
 // Single customer price list: every product is sold as one individual vial.
 // Customer price = supply (kit) cost ÷ 10 × markup. Admins can override any
-// single price. Kit/Norway/US tiers are retired — there is one list now.
+// single price. The retired customer tiers no longer affect this list.
 export default function AdminPricingPanel() {
   const savedConfig = usePricingConfig();
 
