@@ -110,7 +110,9 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
   };
   const due = active.filter(c => getDoseScheduleForDate(c, date).isDue);
   const loggedFor = (c: Compound) => logs.find(l => l.compoundId === c.id && l.date === date);
-  const remaining = due.filter(c => !loggedFor(c)).length;
+  // Once logged, drop out of the action list — history below already shows them.
+  const remainingDue = due.filter(c => !loggedFor(c));
+  const remaining = remainingDue.length;
   const loggedCount = Math.max(0, due.length - remaining);
   const completionPct = due.length ? Math.round((loggedCount / due.length) * 100) : 0;
   const isToday = date === iso(new Date());
@@ -441,9 +443,16 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
         )}
       </div>
 
-      {/* due doses */}
-      {due.length > 0 ? (
-        <div className="flex flex-col gap-3">{due.map(doseCard)}</div>
+      {/* remaining due doses only — logged items live in history below */}
+      {remainingDue.length > 0 ? (
+        <div className="flex flex-col gap-3">{remainingDue.map(doseCard)}</div>
+      ) : due.length > 0 ? (
+        <div className="labrat-card px-6 py-8 text-center">
+          <h3 className="labrat-title text-base text-emerald-300">All doses logged</h3>
+          <p className="labrat-body text-xs mt-1">
+            Finished for {isToday ? 'today' : prettyDate(date).toLowerCase()}. Undo anything from the history list below.
+          </p>
+        </div>
       ) : (
         <div className="labrat-card px-6 py-10 text-center">
           <h3 className="labrat-title text-base">{active.length === 0 ? 'No active compounds' : 'No doses scheduled'}</h3>
