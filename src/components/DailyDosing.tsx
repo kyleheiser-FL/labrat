@@ -347,88 +347,20 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
       {/* header + date nav */}
       <div className="labrat-card-strong p-4 sm:p-5 overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div className="min-w-0 pr-2">
-          <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Daily Dosing</span>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight mt-1">
-            {remaining === 0 ? (due.length ? 'All logged' : 'Nothing due') : `${remaining} to log`}
-          </h1>
-          <p className="mt-1 text-sm font-semibold text-slate-400">
-            {due.length ? `${loggedCount} of ${due.length} scheduled doses complete` : active.length ? 'No scheduled doses on this date' : 'Add compounds in Protocol to start tracking'}
-          </p>
-        </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-          <div className="labrat-mini-surface flex items-center justify-between sm:justify-start gap-1 rounded-xl p-1">
+          <div className="min-w-0 pr-2">
+            <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-cyan-400">Daily Dosing</span>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight mt-1">
+              {remaining === 0 ? (due.length ? 'All logged' : 'Nothing due') : `${remaining} to log`}
+            </h1>
+            <p className="mt-1 text-sm font-semibold text-slate-400">
+              {due.length ? `${loggedCount} of ${due.length} scheduled doses complete` : active.length ? 'No scheduled doses on this date' : 'Add compounds in Protocol to start tracking'}
+            </p>
+          </div>
+          <div className="labrat-mini-surface flex items-center justify-between sm:justify-start gap-1 rounded-xl p-1 w-full sm:w-auto">
             <button onClick={() => shiftDay(-1)} className="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/60 transition cursor-pointer" aria-label="Previous day"><ChevronLeft className="w-4 h-4" /></button>
             <span className="px-2 text-[13px] font-bold text-slate-200 min-w-[104px] text-center flex items-center gap-1.5 justify-center"><CalendarDays className="w-3.5 h-3.5 text-cyan-400" />{prettyDate(date)}</span>
             <button onClick={() => shiftDay(1)} disabled={isToday} className="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/60 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer" aria-label="Next day"><ChevronRight className="w-4 h-4" /></button>
           </div>
-
-          <div className="relative shrink-0">
-            <button
-              type="button"
-              onClick={() => { triggerHaptic('light'); setHelpMenuOpen(v => !v); }}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/15 hover:border-cyan-400/50 text-[12px] font-black uppercase tracking-wide transition cursor-pointer"
-              id="daily-need-help"
-              aria-expanded={helpMenuOpen}
-              aria-haspopup="menu"
-            >
-              <HelpCircle className="w-3.5 h-3.5" />
-              Need help?
-            </button>
-            {helpMenuOpen && (
-              <>
-                <button
-                  type="button"
-                  className="fixed inset-0 z-[40] cursor-default"
-                  aria-label="Close help menu"
-                  onClick={() => setHelpMenuOpen(false)}
-                />
-                <div
-                  role="menu"
-                  className="absolute right-0 top-full mt-2 z-[50] w-64 rounded-2xl border border-slate-700/70 bg-[#0b1222] shadow-2xl overflow-hidden"
-                >
-                  <button
-                    type="button"
-                    role="menuitem"
-                    onClick={() => startHelp('mix')}
-                    disabled={helpCandidates.length === 0}
-                    className="w-full text-left px-3.5 py-3 flex items-start gap-2.5 hover:bg-cyan-500/10 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border-b border-slate-800/80"
-                    id="daily-help-mix"
-                  >
-                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-                      <Droplets className="w-4 h-4" />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-[12px] font-bold text-slate-100">Mixing guide</span>
-                      <span className="block text-[11px] text-slate-400 mt-0.5">Reconstitute a peptide vial</span>
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    onClick={() => startHelp('inject')}
-                    disabled={helpCandidates.length === 0}
-                    className="w-full text-left px-3.5 py-3 flex items-start gap-2.5 hover:bg-indigo-500/10 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                    id="daily-help-inject"
-                  >
-                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                      <Syringe className="w-4 h-4" />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-[12px] font-bold text-slate-100">Dosing guide</span>
-                      <span className="block text-[11px] text-slate-400 mt-0.5">Draw & inject step by step</span>
-                    </span>
-                  </button>
-                  {helpCandidates.length === 0 && (
-                    <p className="px-3.5 py-2.5 text-[11px] text-slate-500 border-t border-slate-800/80">
-                      Add a compound in Protocol to unlock guides.
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
         </div>
 
         {due.length > 0 && (
@@ -441,6 +373,21 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
             </div>
           </div>
         )}
+      </div>
+
+      {/* Outside the overflow-hidden header so it never clips */}
+      <div className="flex justify-end -mt-1">
+        <button
+          type="button"
+          onClick={() => { triggerHaptic('light'); setHelpMenuOpen(true); }}
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/15 hover:border-cyan-400/50 text-[12px] font-black uppercase tracking-wide transition cursor-pointer"
+          id="daily-need-help"
+          aria-expanded={helpMenuOpen}
+          aria-haspopup="dialog"
+        >
+          <HelpCircle className="w-3.5 h-3.5" />
+          Need help?
+        </button>
       </div>
 
       {/* remaining due doses only — logged items live in history below */}
@@ -560,8 +507,61 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
       })()}
       </div>
 
+      {helpMenuOpen && (
+        <div className="fixed inset-0 z-[220] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Need help">
+          <div className="w-full max-w-sm bg-[#0f172a] border border-slate-700/60 rounded-2xl p-4 shadow-2xl space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-cyan-400">How-to guides</p>
+                <h3 className="text-sm font-bold text-white mt-1">What do you need help with?</h3>
+              </div>
+              <button type="button" onClick={() => setHelpMenuOpen(false)} className="p-1 text-slate-500 hover:text-slate-200 cursor-pointer" aria-label="Close">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => startHelp('mix')}
+                disabled={helpCandidates.length === 0}
+                className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-cyan-500/40 hover:bg-cyan-500/5 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                id="daily-help-mix"
+              >
+                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                  <Droplets className="w-4 h-4" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-[13px] font-bold text-slate-100">Mixing guide</span>
+                  <span className="block text-[11px] text-slate-400 mt-0.5">Reconstitute a peptide vial</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => startHelp('inject')}
+                disabled={helpCandidates.length === 0}
+                className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-indigo-500/40 hover:bg-indigo-500/5 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                id="daily-help-inject"
+              >
+                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                  <Syringe className="w-4 h-4" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-[13px] font-bold text-slate-100">Dosing guide</span>
+                  <span className="block text-[11px] text-slate-400 mt-0.5">Draw & inject step by step</span>
+                </span>
+              </button>
+            </div>
+            {helpCandidates.length === 0 && (
+              <p className="text-[11px] text-slate-500">
+                Add a compound in Protocol to unlock guides.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       {helpPicker && (
-        <div className="fixed inset-0 z-[220] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Choose compound for guide">
+        <div className="fixed inset-0 z-[230] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Choose compound for guide">
           <div className="w-full max-w-sm bg-[#0f172a] border border-slate-700/60 rounded-2xl p-4 shadow-2xl space-y-3">
             <div className="flex items-start justify-between gap-3">
               <div>
