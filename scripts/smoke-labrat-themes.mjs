@@ -26,7 +26,7 @@ try {
         localStorage.setItem('labrat_in_app_branding', 'lr');
         localStorage.setItem('labrat_tracking_enabled', 'true');
         localStorage.setItem('labrat_experience_mode', 'expert');
-        localStorage.setItem('labrat_experience_prompt_v', '1');
+        localStorage.setItem('labrat_experience_prompt_v', '3');
         localStorage.setItem('labrat_hide_shop', 'false');
       }, preference);
 

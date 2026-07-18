@@ -224,7 +224,7 @@ function buildRow(compound: Compound, logs: DoseLog[], todayISO: string): StatsC
     daysLeft: compound.isCompleted ? 0 : daysLeft,
     loggedCount: compoundLogs.length,
     missedCount,
-    lastLoggedLabel: latestLog ? formatShortDate(latestLog.date) : 'None',
+    lastLoggedLabel: latestLog ? formatShortDate(latestLog.date) : 'No logs yet',
     status: getStatus(compound, compoundLogs, daysLeft, todayISO),
   };
 }
