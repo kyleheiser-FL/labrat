@@ -1528,7 +1528,7 @@ export default function App() {
               )}
 
               {activeTab === 'planner' && (
-                <div className="flex flex-col gap-6">
+                <div className="flex min-w-0 w-full flex-col gap-6">
                   <CyclePlanner
                     compounds={compounds}
                     logs={logs}

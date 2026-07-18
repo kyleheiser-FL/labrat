@@ -26,7 +26,7 @@ export default function StatsView({ compounds, logs, onUndoDose }: StatsViewProp
   const vm = buildStatsTimelineViewModel(compounds, logs);
 
   return (
-    <div className="mx-auto flex max-w-5xl min-w-0 flex-col gap-6 pb-8" id="stats-view">
+    <div className="mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-6 pb-8" id="stats-view">
       <section className="labrat-card-strong min-w-0 overflow-hidden p-4 sm:p-5">
         <div className="flex flex-col gap-4">
           <div>
@@ -64,7 +64,7 @@ export default function StatsView({ compounds, logs, onUndoDose }: StatsViewProp
         </div>
       </section>
 
-      <section>
+      <section className="min-w-0 max-w-full">
         <h2 className="labrat-title flex items-center gap-2 text-sm font-bold uppercase tracking-wider mb-3">
           <History className="w-4 h-4 text-cyan-400" /> Administration history
         </h2>

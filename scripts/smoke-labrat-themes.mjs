@@ -25,6 +25,17 @@ try {
         localStorage.setItem('labrat_theme_selected', 'true');
         localStorage.setItem('labrat_in_app_branding', 'lr');
         localStorage.setItem('labrat_tracking_enabled', 'true');
+        localStorage.setItem('labrat_compounds_initialized', 'true');
+        localStorage.setItem('labrat_logs', JSON.stringify([{
+          id: 'mobile-overflow-regression-log',
+          compoundId: 'mobile-overflow-regression-compound',
+          compoundName: 'CJC-1295 (No DAC) + Ipamorelin',
+          date: '2026-07-17',
+          time: '18:01',
+          doseAmount: 250,
+          doseUnit: 'mcg',
+          calculatedQtyText: '10 syringe units',
+        }]));
         localStorage.setItem('labrat_experience_mode', 'expert');
         localStorage.setItem('labrat_experience_prompt_v', '3');
         localStorage.setItem('labrat_hide_shop', 'false');
@@ -60,6 +71,26 @@ try {
       }
       if (result.textLength < 50) {
         throw new Error(`Expected visible text on ${preference}/${route.name}`);
+      }
+
+      if (route.name === 'planner') {
+        const layout = await page.evaluate(() => {
+          const stats = document.querySelector('#stats-view')?.getBoundingClientRect();
+          const ledger = document.querySelector('#administration-ledger-card')?.getBoundingClientRect();
+          const scroller = document.querySelector('#ledger-scrolling-container')?.getBoundingClientRect();
+          return {
+            viewportWidth: document.documentElement.clientWidth,
+            stats: stats && { left: stats.left, right: stats.right, width: stats.width },
+            ledger: ledger && { left: ledger.left, right: ledger.right, width: ledger.width },
+            scroller: scroller && { left: scroller.left, right: scroller.right, width: scroller.width },
+          };
+        });
+
+        for (const [name, rect] of Object.entries({ stats: layout.stats, ledger: layout.ledger, scroller: layout.scroller })) {
+          if (!rect || rect.left < -0.5 || rect.right > layout.viewportWidth + 0.5) {
+            throw new Error(`Mobile overflow in ${name} on ${preference}/${route.name}: ${JSON.stringify(layout)}`);
+          }
+        }
       }
 
       console.log(`${preference}/${route.name} -> ${result.theme}: ${result.bodyColor} on ${result.bodyBg}`);
