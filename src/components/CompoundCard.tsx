@@ -150,8 +150,7 @@ export default function CompoundCard({ compound: comp, logs, onEdit, onDelete, o
                 : comp.frequency === 'eod' ? 'Every other day'
                 : comp.frequency === 'twice_weekly' ? 'Twice a week'
                 : comp.frequency === 'weekly' ? 'Once a week'
-                : comp.frequency === 'custom' ? `Every ${comp.customDays || 3} days`
-                : comp.frequency.replace('_', ' ')}
+                : `Every ${comp.customDays || 3} days`}
             </span>
           </div>
         </div>
