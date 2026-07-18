@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { sceneSvg, guideThemeVars, GUIDE_KEYFRAMES, LabTheme, SceneOpts } from './guideArt';
+import { guideThemeVars, LabTheme } from './guideArt';
 
-export interface GuideStep { title: string; body: string; art: string; }
+export interface GuideStep {
+  title: string;
+  body: string;
+  /** Clinical still photo under /images/guides/ */
+  image?: string;
+}
 
 interface GuideShellProps {
   title: string;
   subtitle: string;
   icon: React.ReactNode;
-  accent: string;          // hex accent for this guide
+  accent: string;
   theme: LabTheme;
   steps: GuideStep[];
-  sceneOpts?: SceneOpts;
   finishLabel?: string;
   onClose: () => void;
 }
 
 export default function GuideShell({
-  title, subtitle, icon, accent, theme, steps, sceneOpts = {}, finishLabel = 'Got it', onClose,
+  title, subtitle, icon, accent, theme, steps, finishLabel = 'Got it', onClose,
 }: GuideShellProps) {
   const [i, setI] = useState(0);
   const step = steps[i];
@@ -35,7 +39,6 @@ export default function GuideShell({
         className="w-full sm:max-w-lg sm:rounded-3xl rounded-t-3xl overflow-hidden flex flex-col max-h-[92vh] border"
         style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--text)' }}
       >
-        {/* header */}
         <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: 'var(--line)' }}>
           <div className="flex items-center gap-2.5">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: `${accent}22`, color: accent }}>{icon}</span>
@@ -44,18 +47,18 @@ export default function GuideShell({
               <p className="text-[11px] mt-1 leading-none" style={{ color: 'var(--muted)' }}>{subtitle}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg transition cursor-pointer hover:opacity-70" style={{ color: 'var(--muted)' }} aria-label="Close"><X className="w-4 h-4" /></button>
+          <button onClick={onClose} className="p-1.5 rounded-lg transition cursor-pointer hover:opacity-70" style={{ color: 'var(--muted)' }} aria-label="Close">
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* progress */}
         <div className="h-1" style={{ background: 'var(--line)' }}>
           <div className="h-full transition-[width] duration-300" style={{ width: `${pct}%`, background: accent }} />
         </div>
 
-        {/* art on a designed stage */}
         <div className="px-5 pt-5">
           <div
-            className="rounded-2xl border overflow-hidden flex justify-center"
+            className="rounded-2xl border overflow-hidden"
             style={{
               borderColor: 'var(--line)',
               background: theme === 'clinical-light'
@@ -63,19 +66,29 @@ export default function GuideShell({
                 : 'radial-gradient(120% 100% at 50% 0%, rgba(148,180,214,0.07), rgba(148,180,214,0.02))',
             }}
           >
-            <svg viewBox="0 0 240 160" className="w-full max-w-[300px] h-[168px]" aria-hidden="true"
-              dangerouslySetInnerHTML={{ __html: sceneSvg(step.art, sceneOpts) }} />
+            {step.image ? (
+              <img
+                src={step.image}
+                alt=""
+                className="w-full aspect-[4/3] object-cover"
+                loading="eager"
+              />
+            ) : (
+              <div className="w-full aspect-[4/3] flex items-center justify-center text-[12px]" style={{ color: 'var(--muted)' }}>
+                Step visual
+              </div>
+            )}
           </div>
         </div>
 
-        {/* copy */}
         <div className="px-6 pb-2 pt-4 text-center">
-          <p className="font-mono text-[10px] tracking-[0.2em] uppercase mb-2" style={{ color: accent }}>Step {i + 1} of {steps.length}</p>
+          <p className="font-mono text-[10px] tracking-[0.2em] uppercase mb-2" style={{ color: accent }}>
+            Step {i + 1} of {steps.length}
+          </p>
           <h3 className="text-lg font-bold tracking-tight text-balance" style={{ color: 'var(--text)' }}>{step.title}</h3>
           <p className="text-[13.5px] leading-relaxed mt-2.5 max-w-sm mx-auto" style={{ color: 'var(--muted)' }}>{step.body}</p>
         </div>
 
-        {/* nav */}
         <div className="flex items-center justify-between gap-3 p-5 mt-auto">
           <button
             onClick={() => setI(v => Math.max(0, v - 1))}
@@ -94,8 +107,6 @@ export default function GuideShell({
           </button>
         </div>
       </div>
-
-      <style>{GUIDE_KEYFRAMES}</style>
     </div>
   );
 }
