@@ -85,6 +85,7 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
   const HELP_HIDDEN_KEY = 'labrat_hide_daily_help';
   const [guide, setGuide] = useState<'mix' | 'inject' | null>(null);
   const [helpMenuOpen, setHelpMenuOpen] = useState(false);
+  const [confirmHideHelp, setConfirmHideHelp] = useState(false);
   const [helpHidden, setHelpHidden] = useState(() => {
     try { return localStorage.getItem(HELP_HIDDEN_KEY) === '1'; } catch { return false; }
   });
@@ -94,12 +95,18 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
   const openGuide = (kind: 'mix' | 'inject') => {
     triggerHaptic('light');
     setHelpMenuOpen(false);
+    setConfirmHideHelp(false);
     setGuide(kind);
+  };
+  const closeHelpMenu = () => {
+    setHelpMenuOpen(false);
+    setConfirmHideHelp(false);
   };
   const hideHelpButton = () => {
     triggerHaptic('medium');
     try { localStorage.setItem(HELP_HIDDEN_KEY, '1'); } catch { /* ignore */ }
     setHelpHidden(true);
+    setConfirmHideHelp(false);
     setHelpMenuOpen(false);
   };
   const due = active.filter(c => getDoseScheduleForDate(c, date).isDue);
@@ -374,7 +381,7 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
         <div className="flex justify-end -mt-1">
           <button
             type="button"
-            onClick={() => { triggerHaptic('light'); setHelpMenuOpen(true); }}
+            onClick={() => { triggerHaptic('light'); setConfirmHideHelp(false); setHelpMenuOpen(true); }}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/15 hover:border-cyan-400/50 text-[12px] font-black uppercase tracking-wide transition cursor-pointer"
             id="daily-need-help"
             aria-expanded={helpMenuOpen}
@@ -506,53 +513,91 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
       {helpMenuOpen && (
         <div className="fixed inset-0 z-[220] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Need help">
           <div className="w-full max-w-sm bg-[#0f172a] border border-slate-700/60 rounded-2xl p-4 shadow-2xl space-y-3">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-cyan-400">How-to guides</p>
-                <h3 className="text-sm font-bold text-white mt-1">What do you need help with?</h3>
-              </div>
-              <button type="button" onClick={() => setHelpMenuOpen(false)} className="p-1 text-slate-500 hover:text-slate-200 cursor-pointer" aria-label="Close">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => openGuide('mix')}
-                className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-cyan-500/40 hover:bg-cyan-500/5 transition cursor-pointer"
-                id="daily-help-mix"
-              >
-                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-                  <Droplets className="w-4 h-4" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-[13px] font-bold text-slate-100">Mixing guide</span>
-                  <span className="block text-[11px] text-slate-400 mt-0.5">Reconstitute a peptide vial</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => openGuide('inject')}
-                className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-indigo-500/40 hover:bg-indigo-500/5 transition cursor-pointer"
-                id="daily-help-inject"
-              >
-                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                  <Syringe className="w-4 h-4" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-[13px] font-bold text-slate-100">Dosing guide</span>
-                  <span className="block text-[11px] text-slate-400 mt-0.5">Draw & inject step by step</span>
-                </span>
-              </button>
-            </div>
-            <button
-              type="button"
-              onClick={hideHelpButton}
-              className="w-full text-center text-[11px] font-semibold text-slate-500 hover:text-slate-300 py-1.5 transition cursor-pointer"
-              id="daily-help-hide"
-            >
-              Hide this button
-            </button>
+            {confirmHideHelp ? (
+              <>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-amber-400">Are you sure?</p>
+                    <h3 className="text-sm font-bold text-white mt-1">Hide “Need help?”</h3>
+                  </div>
+                  <button type="button" onClick={closeHelpMenu} className="p-1 text-slate-500 hover:text-slate-200 cursor-pointer" aria-label="Close">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <p className="text-[12.5px] text-slate-300 leading-relaxed">
+                  This removes the help button from Daily. You can turn it back on anytime in{' '}
+                  <span className="font-semibold text-cyan-300">Settings → Daily → Show “Need help?” button</span>.
+                </p>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => { triggerHaptic('light'); setConfirmHideHelp(false); }}
+                    className="labrat-button-secondary py-2.5 px-3 text-xs font-black uppercase tracking-wide cursor-pointer"
+                    id="daily-help-hide-cancel"
+                  >
+                    Keep it
+                  </button>
+                  <button
+                    type="button"
+                    onClick={hideHelpButton}
+                    className="py-2.5 px-3 rounded-xl text-xs font-black uppercase tracking-wide bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25 transition cursor-pointer"
+                    id="daily-help-hide-confirm"
+                  >
+                    Yes, hide it
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-cyan-400">How-to guides</p>
+                    <h3 className="text-sm font-bold text-white mt-1">What do you need help with?</h3>
+                  </div>
+                  <button type="button" onClick={closeHelpMenu} className="p-1 text-slate-500 hover:text-slate-200 cursor-pointer" aria-label="Close">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => openGuide('mix')}
+                    className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-cyan-500/40 hover:bg-cyan-500/5 transition cursor-pointer"
+                    id="daily-help-mix"
+                  >
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                      <Droplets className="w-4 h-4" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[13px] font-bold text-slate-100">Mixing guide</span>
+                      <span className="block text-[11px] text-slate-400 mt-0.5">Reconstitute a peptide vial</span>
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openGuide('inject')}
+                    className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-indigo-500/40 hover:bg-indigo-500/5 transition cursor-pointer"
+                    id="daily-help-inject"
+                  >
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                      <Syringe className="w-4 h-4" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[13px] font-bold text-slate-100">Dosing guide</span>
+                      <span className="block text-[11px] text-slate-400 mt-0.5">Draw & inject step by step</span>
+                    </span>
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { triggerHaptic('light'); setConfirmHideHelp(true); }}
+                  className="w-full text-center text-[11px] font-semibold text-slate-500 hover:text-slate-300 py-1.5 transition cursor-pointer"
+                  id="daily-help-hide"
+                >
+                  Hide this button
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
