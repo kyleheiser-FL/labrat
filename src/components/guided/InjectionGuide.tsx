@@ -77,7 +77,7 @@ export default function InjectionGuide({ compoundName, doseUnits, theme, onClose
   return (
     <GuideShell
       title="How to draw & inject"
-      subtitle={`${compoundName} · luer-lock`}
+      subtitle="Luer-lock technique"
       icon={<SyringeIcon className="w-4 h-4" />}
       accent="#6366f1"
       theme={theme}

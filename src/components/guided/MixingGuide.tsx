@@ -32,7 +32,7 @@ export default function MixingGuide({ compoundName, vialSizeMg, bacWaterMl, them
     {
       image: IMG.pour,
       title: 'Add water slowly, down the glass',
-      body: `Push the needle through the ${compoundName} stopper and angle it so the water runs slowly down the inside glass wall — never blast it straight onto the powder, which can damage the compound.`,
+      body: 'Push the needle through the vial stopper and angle it so the water runs slowly down the inside glass wall — never blast it straight onto the powder, which can damage the compound.',
     },
     {
       image: IMG.swirl,
@@ -49,7 +49,7 @@ export default function MixingGuide({ compoundName, vialSizeMg, bacWaterMl, them
   return (
     <GuideShell
       title="How to mix"
-      subtitle={compoundName}
+      subtitle="Peptide reconstitution"
       icon={<Droplets className="w-4 h-4" />}
       accent="#06b6d4"
       theme={theme}

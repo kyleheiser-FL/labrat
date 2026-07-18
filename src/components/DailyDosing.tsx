@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { localDateISO, localTimeHM } from '../lib/date';
 import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History, SlidersHorizontal, SkipForward, Syringe, Droplets, HelpCircle } from 'lucide-react';
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
@@ -82,31 +82,25 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
   const [adjustingId, setAdjustingId] = useState<string | null>(null);
   const [adjustDose, setAdjustDose] = useState('');
   const [adjustUnit, setAdjustUnit] = useState<Compound['doseUnit']>('mg');
-  const [guide, setGuide] = useState<{ kind: 'mix' | 'inject'; comp: Compound } | null>(null);
+  const HELP_HIDDEN_KEY = 'labrat_hide_daily_help';
+  const [guide, setGuide] = useState<'mix' | 'inject' | null>(null);
   const [helpMenuOpen, setHelpMenuOpen] = useState(false);
-  const [helpPicker, setHelpPicker] = useState<'mix' | 'inject' | null>(null);
+  const [helpHidden, setHelpHidden] = useState(() => {
+    try { return localStorage.getItem(HELP_HIDDEN_KEY) === '1'; } catch { return false; }
+  });
   const [confirmUndoId, setConfirmUndoId] = useState<string | null>(null);
 
   const active = compounds.filter(c => !c.isCompleted);
-  const helpCandidates = useMemo(() => {
-    const list = active.length ? active : compounds;
-    return list.slice().sort((a, b) => a.name.localeCompare(b.name));
-  }, [active, compounds]);
-  const openGuide = (kind: 'mix' | 'inject', comp: Compound) => {
+  const openGuide = (kind: 'mix' | 'inject') => {
     triggerHaptic('light');
     setHelpMenuOpen(false);
-    setHelpPicker(null);
-    setGuide({ kind, comp });
+    setGuide(kind);
   };
-  const startHelp = (kind: 'mix' | 'inject') => {
-    triggerHaptic('light');
+  const hideHelpButton = () => {
+    triggerHaptic('medium');
+    try { localStorage.setItem(HELP_HIDDEN_KEY, '1'); } catch { /* ignore */ }
+    setHelpHidden(true);
     setHelpMenuOpen(false);
-    if (helpCandidates.length === 0) return;
-    if (helpCandidates.length === 1) {
-      openGuide(kind, helpCandidates[0]);
-      return;
-    }
-    setHelpPicker(kind);
   };
   const due = active.filter(c => getDoseScheduleForDate(c, date).isDue);
   const loggedFor = (c: Compound) => logs.find(l => l.compoundId === c.id && l.date === date);
@@ -376,19 +370,21 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
       </div>
 
       {/* Outside the overflow-hidden header so it never clips */}
-      <div className="flex justify-end -mt-1">
-        <button
-          type="button"
-          onClick={() => { triggerHaptic('light'); setHelpMenuOpen(true); }}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/15 hover:border-cyan-400/50 text-[12px] font-black uppercase tracking-wide transition cursor-pointer"
-          id="daily-need-help"
-          aria-expanded={helpMenuOpen}
-          aria-haspopup="dialog"
-        >
-          <HelpCircle className="w-3.5 h-3.5" />
-          Need help?
-        </button>
-      </div>
+      {!helpHidden && (
+        <div className="flex justify-end -mt-1">
+          <button
+            type="button"
+            onClick={() => { triggerHaptic('light'); setHelpMenuOpen(true); }}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/15 hover:border-cyan-400/50 text-[12px] font-black uppercase tracking-wide transition cursor-pointer"
+            id="daily-need-help"
+            aria-expanded={helpMenuOpen}
+            aria-haspopup="dialog"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            Need help?
+          </button>
+        </div>
+      )}
 
       {/* remaining due doses only — logged items live in history below */}
       {remainingDue.length > 0 ? (
@@ -522,9 +518,8 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
             <div className="space-y-2">
               <button
                 type="button"
-                onClick={() => startHelp('mix')}
-                disabled={helpCandidates.length === 0}
-                className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-cyan-500/40 hover:bg-cyan-500/5 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                onClick={() => openGuide('mix')}
+                className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-cyan-500/40 hover:bg-cyan-500/5 transition cursor-pointer"
                 id="daily-help-mix"
               >
                 <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
@@ -537,9 +532,8 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
               </button>
               <button
                 type="button"
-                onClick={() => startHelp('inject')}
-                disabled={helpCandidates.length === 0}
-                className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-indigo-500/40 hover:bg-indigo-500/5 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                onClick={() => openGuide('inject')}
+                className="w-full text-left px-3.5 py-3.5 flex items-start gap-3 rounded-xl border border-slate-700/70 bg-[#0b1222] hover:border-indigo-500/40 hover:bg-indigo-500/5 transition cursor-pointer"
                 id="daily-help-inject"
               >
                 <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
@@ -551,65 +545,28 @@ export default function DailyDosing({ compounds, logs, labratTheme = 'clinical',
                 </span>
               </button>
             </div>
-            {helpCandidates.length === 0 && (
-              <p className="text-[11px] text-slate-500">
-                Add a compound in Protocol to unlock guides.
-              </p>
-            )}
+            <button
+              type="button"
+              onClick={hideHelpButton}
+              className="w-full text-center text-[11px] font-semibold text-slate-500 hover:text-slate-300 py-1.5 transition cursor-pointer"
+              id="daily-help-hide"
+            >
+              Hide this button
+            </button>
           </div>
         </div>
       )}
 
-      {helpPicker && (
-        <div className="fixed inset-0 z-[230] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Choose compound for guide">
-          <div className="w-full max-w-sm bg-[#0f172a] border border-slate-700/60 rounded-2xl p-4 shadow-2xl space-y-3">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-cyan-400">How-to guide</p>
-                <h3 className="text-sm font-bold text-white mt-1">
-                  {helpPicker === 'mix' ? 'Which compound are you mixing?' : 'Which compound are you dosing?'}
-                </h3>
-              </div>
-              <button type="button" onClick={() => setHelpPicker(null)} className="p-1 text-slate-500 hover:text-slate-200 cursor-pointer" aria-label="Close">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="max-h-64 overflow-y-auto space-y-1.5">
-              {helpCandidates.map(c => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => openGuide(helpPicker, c)}
-                  className="w-full text-left px-3 py-2.5 rounded-xl border border-slate-800 bg-[#0b1222] hover:border-cyan-500/30 hover:bg-cyan-500/5 transition cursor-pointer"
-                >
-                  <span className="flex items-center gap-2 min-w-0">
-                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: c.color }} />
-                    <span className="text-[13px] font-semibold text-slate-100 truncate">{c.name}</span>
-                  </span>
-                  <span className="block text-[11px] text-slate-500 mt-0.5 pl-[18px]">
-                    {c.doseAmount} {c.doseUnit}
-                    {drawInfo(c)?.label ? ` · ${drawInfo(c)?.label}` : ''}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {guide?.kind === 'mix' && (
+      {guide === 'mix' && (
         <MixingGuide
-          compoundName={guide.comp.name}
-          vialSizeMg={guide.comp.vialSizeMg}
-          bacWaterMl={guide.comp.bacWaterMl}
+          compoundName="your vial"
           theme={labratTheme}
           onClose={() => setGuide(null)}
         />
       )}
-      {guide?.kind === 'inject' && (
+      {guide === 'inject' && (
         <InjectionGuide
-          compoundName={guide.comp.name}
-          doseUnits={drawInfo(guide.comp)?.syringeUnits}
+          compoundName="your dose"
           theme={labratTheme}
           onClose={() => setGuide(null)}
         />

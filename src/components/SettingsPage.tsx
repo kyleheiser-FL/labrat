@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Palette, Bell, BellRing, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X, Sparkles, Activity, ShoppingBag } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Palette, Bell, BellRing, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X, Sparkles, Activity, ShoppingBag, HelpCircle } from 'lucide-react';
+
+const DAILY_HELP_HIDDEN_KEY = 'labrat_hide_daily_help';
 import { AppNotification } from '../types';
 import { ExperienceMode } from '../lib/experience';
 import { triggerHaptic } from '../lib/haptics';
@@ -80,6 +82,31 @@ export default function SettingsPage({
   onMarkNotificationRead,
 }: SettingsPageProps) {
   const isAdmin = user?.email?.toLowerCase() === 'kyleheiser@gmail.com';
+  const [showDailyHelp, setShowDailyHelp] = useState(() => {
+    try { return localStorage.getItem(DAILY_HELP_HIDDEN_KEY) !== '1'; } catch { return true; }
+  });
+
+  useEffect(() => {
+    const sync = () => {
+      try { setShowDailyHelp(localStorage.getItem(DAILY_HELP_HIDDEN_KEY) !== '1'); } catch { /* ignore */ }
+    };
+    window.addEventListener('storage', sync);
+    window.addEventListener('focus', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('focus', sync);
+    };
+  }, []);
+
+  const toggleDailyHelp = () => {
+    triggerHaptic('medium');
+    const next = !showDailyHelp;
+    setShowDailyHelp(next);
+    try {
+      if (next) localStorage.removeItem(DAILY_HELP_HIDDEN_KEY);
+      else localStorage.setItem(DAILY_HELP_HIDDEN_KEY, '1');
+    } catch { /* ignore */ }
+  };
 
   return (
     <div className="space-y-6">
@@ -179,6 +206,22 @@ export default function SettingsPage({
             <div className="text-sm font-bold text-slate-100">Light</div>
             <div className="text-xs text-slate-500 mt-0.5">White, clean, easy to read.</div>
           </button>
+        </div>
+      </div>
+
+      {/* Section: Daily helpers */}
+      <div className="labrat-card p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <HelpCircle className="w-4 h-4 text-cyan-400" />
+          <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">Daily</span>
+        </div>
+        <h3 className="text-base font-bold text-slate-100 mb-4">Help on Daily</h3>
+        <div className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-slate-800/30 transition">
+          <div className="text-left space-y-0.5 pr-3">
+            <span className="text-xs font-bold text-slate-200">Show “Need help?” button</span>
+            <span className="text-[10px] text-slate-500 block font-mono">Mixing & dosing guides on the Daily tab</span>
+          </div>
+          <ToggleSwitch enabled={showDailyHelp} onToggle={toggleDailyHelp} />
         </div>
       </div>
 
