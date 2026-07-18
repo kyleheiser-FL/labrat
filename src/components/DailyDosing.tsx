@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { localDateISO, localTimeHM } from '../lib/date';
-import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History, SlidersHorizontal, SkipForward, Syringe } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Check, RotateCcw, Plus, X, History, SlidersHorizontal, SkipForward, Syringe, Droplets, HelpCircle } from 'lucide-react';
 import { Compound, DoseLog, formatTimeTo12Hour } from '../types';
 import { getDoseScheduleForDate } from '../lib/schedule';
 import { triggerHaptic } from '../lib/haptics';
+import MixingGuide from './guided/MixingGuide';
+import InjectionGuide from './guided/InjectionGuide';
 
 interface DailyDosingProps {
   compounds: Compound[];
   logs: DoseLog[];
+  labratTheme?: 'clinical' | 'clinical-light';
   onLogDose: (log: DoseLog) => void;
   onUndoDose: (id: string) => void;
   onUpdateCompound: (compound: Compound) => void;
@@ -70,7 +73,7 @@ const prettyDate = (s: string) => {
 };
 
 // Clean, big-button daily dose recording. Deep stats live on the Stats tab.
-export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, onUpdateCompound }: DailyDosingProps) {
+export default function DailyDosing({ compounds, logs, labratTheme = 'clinical', onLogDose, onUndoDose, onUpdateCompound }: DailyDosingProps) {
   const [date, setDate] = useState(iso(new Date()));
   const [showManual, setShowManual] = useState(false);
   const [manualId, setManualId] = useState('');
@@ -79,8 +82,29 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
   const [adjustingId, setAdjustingId] = useState<string | null>(null);
   const [adjustDose, setAdjustDose] = useState('');
   const [adjustUnit, setAdjustUnit] = useState<Compound['doseUnit']>('mg');
+  const [guide, setGuide] = useState<{ kind: 'mix' | 'inject'; comp: Compound } | null>(null);
+  const [helpPicker, setHelpPicker] = useState<'mix' | 'inject' | null>(null);
+  const [confirmUndoId, setConfirmUndoId] = useState<string | null>(null);
 
   const active = compounds.filter(c => !c.isCompleted);
+  const helpCandidates = useMemo(() => {
+    const list = active.length ? active : compounds;
+    return list.slice().sort((a, b) => a.name.localeCompare(b.name));
+  }, [active, compounds]);
+  const openGuide = (kind: 'mix' | 'inject', comp: Compound) => {
+    triggerHaptic('light');
+    setHelpPicker(null);
+    setGuide({ kind, comp });
+  };
+  const startHelp = (kind: 'mix' | 'inject') => {
+    triggerHaptic('light');
+    if (helpCandidates.length === 0) return;
+    if (helpCandidates.length === 1) {
+      openGuide(kind, helpCandidates[0]);
+      return;
+    }
+    setHelpPicker(kind);
+  };
   const due = active.filter(c => getDoseScheduleForDate(c, date).isDue);
   const loggedFor = (c: Compound) => logs.find(l => l.compoundId === c.id && l.date === date);
   const remaining = due.filter(c => !loggedFor(c)).length;
@@ -127,7 +151,18 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
       isSkipped: true,
     });
   };
-  const undo = (c: Compound) => { const l = loggedFor(c); if (l) { triggerHaptic('warning'); onUndoDose(l.id); } };
+  const undo = (c: Compound) => {
+    const l = loggedFor(c);
+    if (!l) return;
+    if (confirmUndoId === l.id) {
+      triggerHaptic('warning');
+      onUndoDose(l.id);
+      setConfirmUndoId(null);
+      return;
+    }
+    triggerHaptic('warning');
+    setConfirmUndoId(l.id);
+  };
 
   const startAdjustment = (c: Compound) => {
     triggerHaptic('light');
@@ -203,12 +238,32 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
           )}
         </div>
         {logged ? (
-          <button onClick={() => undo(c)} title="Tap to undo"
-            aria-label={`Undo dose for ${c.name}`}
-            className={`shrink-0 min-w-[92px] sm:min-w-[118px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide hover:bg-rose-500/15 hover:text-rose-300 transition cursor-pointer group ${skipped ? 'bg-amber-500/12 text-amber-300' : 'bg-emerald-500/15 text-emerald-400'}`}>
-            <Check className="w-4.5 h-4.5 group-hover:hidden" /><RotateCcw className="w-4.5 h-4.5 hidden group-hover:inline" />
-            <span className="group-hover:hidden">{skipped ? 'Skipped' : 'Done'}</span><span className="hidden group-hover:inline">Undo</span>
-          </button>
+          (() => {
+            const confirming = confirmUndoId === loggedLog?.id;
+            return (
+              <button onClick={() => undo(c)} title={confirming ? 'Tap again to confirm undo' : 'Tap to undo'}
+                aria-label={`Undo dose for ${c.name}`}
+                className={`shrink-0 min-w-[92px] sm:min-w-[118px] h-12 sm:h-[52px] flex items-center justify-center gap-2 px-3 sm:px-5 rounded-xl text-[12px] sm:text-sm font-black uppercase tracking-wide transition cursor-pointer group ${
+                  confirming
+                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                    : skipped
+                      ? 'bg-amber-500/12 text-amber-300 hover:bg-rose-500/15 hover:text-rose-300'
+                      : 'bg-emerald-500/15 text-emerald-400 hover:bg-rose-500/15 hover:text-rose-300'
+                }`}>
+                {confirming ? (
+                  <>
+                    <RotateCcw className="w-4.5 h-4.5" />
+                    <span>Sure?</span>
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4.5 h-4.5 group-hover:hidden" /><RotateCcw className="w-4.5 h-4.5 hidden group-hover:inline" />
+                    <span className="group-hover:hidden">{skipped ? 'Skipped' : 'Done'}</span><span className="hidden group-hover:inline">Undo</span>
+                  </>
+                )}
+              </button>
+            );
+          })()
         ) : (
           <button onClick={() => logDose(c)}
             aria-label={`Log dose for ${c.name}`}
@@ -301,6 +356,47 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
           <button onClick={() => shiftDay(1)} disabled={isToday} className="p-2 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-[#1e293b]/60 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer" aria-label="Next day"><ChevronRight className="w-4 h-4" /></button>
         </div>
         </div>
+
+        {/* How-to guides — moved out of the old beginner shell and into Daily */}
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => startHelp('mix')}
+            disabled={helpCandidates.length === 0}
+            className="labrat-button-secondary px-3 py-2.5 text-left cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-start gap-2.5"
+            id="daily-help-mix"
+          >
+            <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+              <Droplets className="w-4 h-4" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[12px] font-black uppercase tracking-wide text-slate-100">Need help mixing?</span>
+              <span className="block text-[11px] text-slate-400 mt-0.5">Step-by-step reconstitution guide</span>
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => startHelp('inject')}
+            disabled={helpCandidates.length === 0}
+            className="labrat-button-secondary px-3 py-2.5 text-left cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-start gap-2.5"
+            id="daily-help-inject"
+          >
+            <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+              <Syringe className="w-4 h-4" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[12px] font-black uppercase tracking-wide text-slate-100">Need help dosing?</span>
+              <span className="block text-[11px] text-slate-400 mt-0.5">Draw & inject walkthrough with visuals</span>
+            </span>
+          </button>
+        </div>
+        {helpCandidates.length === 0 && (
+          <p className="mt-2 text-[11px] text-slate-500 flex items-center gap-1.5">
+            <HelpCircle className="w-3.5 h-3.5" />
+            Add a compound in Cycle to unlock the how-to guides.
+          </p>
+        )}
+
         {due.length > 0 && (
           <div className="mt-4">
             <div className="labrat-progress-track h-2 overflow-hidden">
@@ -392,10 +488,29 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
                       {' · '}{formatTimeTo12Hour(l.time)}
                     </p>
                   </div>
-                  <button onClick={() => { triggerHaptic('warning'); onUndoDose(l.id); }}
-                    className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-rose-400 px-2 py-1 rounded-lg hover:bg-rose-500/10 transition cursor-pointer">
-                    <RotateCcw className="w-3.5 h-3.5" /> Undo
-                  </button>
+                  {confirmUndoId === l.id ? (
+                    <div className="shrink-0 flex items-center gap-1 bg-rose-500/10 border border-rose-500/25 rounded-lg p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => { triggerHaptic('warning'); onUndoDose(l.id); setConfirmUndoId(null); }}
+                        className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[9px] font-bold uppercase cursor-pointer"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { triggerHaptic('light'); setConfirmUndoId(null); }}
+                        className="px-1.5 py-0.5 rounded text-slate-300 text-[9px] font-bold uppercase cursor-pointer"
+                      >
+                        No
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => { triggerHaptic('warning'); setConfirmUndoId(l.id); }}
+                      className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-rose-400 px-2 py-1 rounded-lg hover:bg-rose-500/10 transition cursor-pointer">
+                      <RotateCcw className="w-3.5 h-3.5" /> Undo
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -403,6 +518,61 @@ export default function DailyDosing({ compounds, logs, onLogDose, onUndoDose, on
         );
       })()}
       </div>
+
+      {helpPicker && (
+        <div className="fixed inset-0 z-[220] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Choose compound for guide">
+          <div className="w-full max-w-sm bg-[#0f172a] border border-slate-700/60 rounded-2xl p-4 shadow-2xl space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-cyan-400">How-to guide</p>
+                <h3 className="text-sm font-bold text-white mt-1">
+                  {helpPicker === 'mix' ? 'Which compound are you mixing?' : 'Which compound are you dosing?'}
+                </h3>
+              </div>
+              <button type="button" onClick={() => setHelpPicker(null)} className="p-1 text-slate-500 hover:text-slate-200 cursor-pointer" aria-label="Close">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="max-h-64 overflow-y-auto space-y-1.5">
+              {helpCandidates.map(c => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => openGuide(helpPicker, c)}
+                  className="w-full text-left px-3 py-2.5 rounded-xl border border-slate-800 bg-[#0b1222] hover:border-cyan-500/30 hover:bg-cyan-500/5 transition cursor-pointer"
+                >
+                  <span className="flex items-center gap-2 min-w-0">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: c.color }} />
+                    <span className="text-[13px] font-semibold text-slate-100 truncate">{c.name}</span>
+                  </span>
+                  <span className="block text-[11px] text-slate-500 mt-0.5 pl-[18px]">
+                    {c.doseAmount} {c.doseUnit}
+                    {drawInfo(c)?.label ? ` · ${drawInfo(c)?.label}` : ''}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {guide?.kind === 'mix' && (
+        <MixingGuide
+          compoundName={guide.comp.name}
+          vialSizeMg={guide.comp.vialSizeMg}
+          bacWaterMl={guide.comp.bacWaterMl}
+          theme={labratTheme}
+          onClose={() => setGuide(null)}
+        />
+      )}
+      {guide?.kind === 'inject' && (
+        <InjectionGuide
+          compoundName={guide.comp.name}
+          doseUnits={drawInfo(guide.comp)?.syringeUnits}
+          theme={labratTheme}
+          onClose={() => setGuide(null)}
+        />
+      )}
     </div>
   );
 }

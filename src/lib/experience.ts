@@ -1,31 +1,44 @@
-// Experience modes — a second, guided app-within-the-app.
+// Experience modes — choose which LabRat surface you land in.
 //
 // After each release everyone re-answers the experience prompt (gated by
 // EXPERIENCE_PROMPT_VERSION). Bump the version to force the prompt again.
 //
-//   'expert' → the full app, unchanged
-//   'guided' → the hand-holding experience (auto protocols + how-to guides)
-//   'store'  → shop only, no tracking
+// Canonical modes:
+//   'store'    → shop only, no tracking tabs
+//   'tracking' → Daily + Cycle protocol tracking
+//   'research' → Compound Research / education first
+//
+// Legacy aliases still accepted from older installs:
+//   'expert' → tracking
+//   'guided' → tracking
 import { localDateISO } from './date';
 import { PEPTIDE_GOAL_PRESETS, STEROID_GOAL_PRESETS, GoalPreset } from '../data/goalPresets';
 import { LibraryItem, Compound } from '../types';
 import { safeLocalStorage } from './storage';
 
-export type ExperienceMode = 'expert' | 'guided' | 'store';
+export type ExperienceMode = 'store' | 'tracking' | 'research';
 export type Intensity = 'slow' | 'recommended' | 'full';
 
 // Bump when a release should force everyone back through the picker.
-export const EXPERIENCE_PROMPT_VERSION = 1;
+export const EXPERIENCE_PROMPT_VERSION = 2;
 
 const MODE_KEY = 'labrat_experience_mode';
 const VER_KEY = 'labrat_experience_prompt_v';
+
+function normalizeExperienceMode(raw: string | null): ExperienceMode | null {
+  if (raw === 'store') return 'store';
+  if (raw === 'tracking' || raw === 'research') return raw;
+  // Map retired modes so old localStorage values still work after an update
+  // that doesn't force the picker (or until the user re-answers).
+  if (raw === 'expert' || raw === 'guided') return 'tracking';
+  return null;
+}
 
 export function getStoredExperienceMode(): ExperienceMode | null {
   const m = safeLocalStorage.getItem(MODE_KEY);
   const v = parseInt(safeLocalStorage.getItem(VER_KEY) || '0', 10);
   if (v !== EXPERIENCE_PROMPT_VERSION) return null; // needs (re)prompt after update
-  if (m === 'expert' || m === 'guided' || m === 'store') return m;
-  return null;
+  return normalizeExperienceMode(m);
 }
 
 export function setStoredExperienceMode(mode: ExperienceMode): void {

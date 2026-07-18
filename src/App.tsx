@@ -55,10 +55,8 @@ const CyclePlanner = lazy(() => import('./components/CyclePlanner'));
 const PeptideLibrary = lazy(() => import('./components/PeptideLibrary'));
 const MembersShop = lazy(() => import('./components/MembersShop'));
 const SettingsPage = lazy(() => import('./components/SettingsPage'));
-const GuidedExperience = lazy(() => import('./components/guided/GuidedExperience'));
 import {
   ExperienceMode, getStoredExperienceMode, setStoredExperienceMode,
-  matchLibraryItemsToProductNames,
 } from './lib/experience';
 
 // Firebase Setup
@@ -248,10 +246,9 @@ export default function App() {
   );
   const [trackingEnabled, setTrackingEnabled] = useState<boolean>(getInitialTrackingEnabled);
 
-  // Experience mode — expert (full app) | guided (hand-holding) | store (shop only).
+  // Experience mode — store | tracking | research.
   // Null means the gate hasn't been answered for this release yet.
   const [experienceMode, setExperienceMode] = useState<ExperienceMode | null>(() => getStoredExperienceMode());
-  const [purchasedItems, setPurchasedItems] = useState<LibraryItem[]>([]);
 
   const handleSelectExperience = useCallback((mode: ExperienceMode) => {
     setStoredExperienceMode(mode);
@@ -260,11 +257,12 @@ export default function App() {
       setTrackingEnabled(false);
       safeLocalStorage.setItem('labrat_tracking_enabled', 'false');
       setActiveTab('shop');
-    } else {
-      setTrackingEnabled(true);
-      safeLocalStorage.setItem('labrat_tracking_enabled', 'true');
-      setActiveTab('dashboard');
+      return;
     }
+    // tracking + research both unlock Daily/Cycle tools; research just lands in library.
+    setTrackingEnabled(true);
+    safeLocalStorage.setItem('labrat_tracking_enabled', 'true');
+    setActiveTab(mode === 'research' ? 'library' : 'dashboard');
   }, []);
 
   const handleToggleTracking = useCallback((enabled: boolean) => {
@@ -597,28 +595,6 @@ export default function App() {
       compounds: compoundReminders,
     }).catch(e => console.error('[push] Failed to sync push profile — reminders may not fire:', e));
   }, [user, reminderEnabled, reminderTime, compounds]);
-
-  // Guided mode: pull the user's order history and map purchased products to
-  // library compounds so we can pre-fill their protocol.
-  useEffect(() => {
-    if (experienceMode !== 'guided' || !user) { return; }
-    let cancelled = false;
-    (async () => {
-      try {
-        const snap = await getDocs(query(collection(db, 'orders'), where('userId', '==', user.uid)));
-        const names: string[] = [];
-        snap.forEach(d => {
-          const items = (d.data() as any)?.items || [];
-          items.forEach((it: any) => { if (it?.name) names.push(it.name); });
-        });
-        const matched = await matchLibraryItemsToProductNames(names);
-        if (!cancelled) setPurchasedItems(matched);
-      } catch (e) {
-        console.warn('[guided] could not load purchases:', e);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [experienceMode, user]);
 
   // Handle foreground FCM messages (app is open)
   useEffect(() => {
@@ -1206,18 +1182,6 @@ export default function App() {
     triggerNotification('Compound Scheduled', `Scheduled target parameters for ${comp.name}.`, 'success');
   };
 
-  // Batch add — used by the guided experience when generating a protocol.
-  const handleAddProtocols = (comps: Compound[]) => {
-    if (comps.length === 0) return;
-    const updated = [...compounds, ...comps];
-    setCompounds(updated);
-    safeLocalStorage.setItem('labrat_compounds', JSON.stringify(updated));
-    if (user) {
-      comps.forEach(c => saveUserCompound(user.uid, c).catch(e => console.error('[guided] save failed', e)));
-    }
-    triggerNotification('Protocol Built', `Added ${comps.length} compound${comps.length === 1 ? '' : 's'} to your plan.`, 'success');
-  };
-
   const handleUpdateCompound = (updatedComp: Compound) => {
     const updatedList = compounds.map(c => c.id === updatedComp.id ? updatedComp : c);
     setCompounds(updatedList);
@@ -1543,20 +1507,6 @@ export default function App() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 z-10 flex flex-col gap-6 overflow-hidden">
         <div className="flex-1 min-h-[300px]">
           <Suspense fallback={<div className="flex items-center justify-center py-24 text-slate-500"><Loader2 className="w-6 h-6 animate-spin" /></div>}>
-          {experienceMode === 'guided' && activeTab !== 'shop' && activeTab !== 'settings' ? (
-            <GuidedExperience
-              compounds={compounds}
-              logs={logs}
-              purchasedItems={purchasedItems}
-              theme={labratTheme}
-              onAddProtocols={handleAddProtocols}
-              onLogDose={handleLogDose}
-              onUndoDose={handleUndoDose}
-              onDeleteCompound={handleDeleteCompound}
-              onOpenShop={() => navigateTab('shop')}
-              onOpenSettings={() => navigateTab('settings')}
-            />
-          ) : (
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -1570,6 +1520,7 @@ export default function App() {
                 <DailyDosing
                   compounds={compounds}
                   logs={logs}
+                  labratTheme={labratTheme}
                   onLogDose={handleLogDose}
                   onUndoDose={handleUndoDose}
                   onUpdateCompound={handleUpdateCompound}
@@ -1648,7 +1599,6 @@ export default function App() {
               )}
             </motion.div>
           </AnimatePresence>
-          )}
           </Suspense>
         </div>
       </main>

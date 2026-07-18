@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GraduationCap, Sparkles, ShoppingBag, Check, ChevronRight } from 'lucide-react';
+import { ShoppingBag, Activity, BookOpen, Check, ChevronRight } from 'lucide-react';
 import { ExperienceMode } from '../lib/experience';
 import { triggerHaptic } from '../lib/haptics';
 
@@ -16,39 +16,39 @@ const OPTIONS: {
   accent: string;
 }[] = [
   {
-    mode: 'guided',
-    icon: <Sparkles className="w-6 h-6" />,
-    title: "I'm new to this",
-    tag: 'Guided',
-    accent: '#22d3ee',
-    points: [
-      'We build your protocol from what you own',
-      'Step-by-step mixing & injection guides',
-      'Pick your pace: Slow, Recommended, or Full Send',
-    ],
-  },
-  {
-    mode: 'expert',
-    icon: <GraduationCap className="w-6 h-6" />,
-    title: "I know what I'm doing",
-    tag: 'Expert',
-    accent: '#39ff14',
-    points: [
-      'The full labrat toolkit, nothing hidden',
-      'Manual cycle architect & dose logging',
-      'Reconstitution calculator, blood-work AI',
-    ],
-  },
-  {
     mode: 'store',
     icon: <ShoppingBag className="w-6 h-6" />,
-    title: 'Just here to shop',
-    tag: 'Store',
+    title: 'Store only',
+    tag: 'Shop',
     accent: '#a855f7',
     points: [
       'Straight to the members catalog',
-      'No tracking, no protocols',
-      'Switch on tracking anytime in Settings',
+      'No daily tracking or cycle tools',
+      'Turn on tracking anytime in Settings',
+    ],
+  },
+  {
+    mode: 'tracking',
+    icon: <Activity className="w-6 h-6" />,
+    title: 'Protocol tracking',
+    tag: 'Daily + Cycle',
+    accent: '#22d3ee',
+    points: [
+      'Log doses on Daily and manage cycles',
+      'How-to mix & inject guides when you need them',
+      'Full protocol tools without the beginner shell',
+    ],
+  },
+  {
+    mode: 'research',
+    icon: <BookOpen className="w-6 h-6" />,
+    title: 'Peptide research',
+    tag: 'Learn',
+    accent: '#34d399',
+    points: [
+      'Compound Research first — dosing, studies, safety',
+      'Jump into matching store SKUs when available',
+      'Tracking tools still available when you want them',
     ],
   },
 ];
@@ -70,16 +70,15 @@ export default function ExperienceGate({ onSelect }: ExperienceGateProps) {
       aria-label="Choose your experience"
       id="experience-gate"
     >
-      {/* ambient neon */}
       <div className="pointer-events-none fixed top-[-120px] left-1/3 w-[520px] h-[520px] bg-cyan-500/10 blur-[130px] rounded-full" />
       <div className="pointer-events-none fixed bottom-[-120px] right-1/4 w-[440px] h-[440px] bg-violet-500/10 blur-[130px] rounded-full" />
 
       <div className="relative max-w-5xl mx-auto px-5 py-10 sm:py-14 flex flex-col min-h-full">
         <div className="text-center mb-8 sm:mb-10">
           <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-cyan-400 mb-3">Welcome to labrat</p>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-balance">How much experience do you have?</h1>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-balance">What do you want to do?</h1>
           <p className="text-slate-400 text-sm sm:text-base mt-3 max-w-xl mx-auto leading-relaxed">
-            This tailors the whole app to you. You can change it anytime in Settings.
+            Pick a starting focus. You can switch anytime in Settings.
           </p>
         </div>
 

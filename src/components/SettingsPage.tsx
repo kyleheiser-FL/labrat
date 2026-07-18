@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Palette, Bell, BellRing, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X, Sparkles, Layers, ShoppingBag } from 'lucide-react';
+import { Palette, Bell, BellRing, ShieldAlert, Clock, Smartphone, Check, ChevronRight, Settings, Loader2, Trash2, X, Sparkles, Activity, BookOpen, ShoppingBag } from 'lucide-react';
 import { AppNotification } from '../types';
 import { ExperienceMode } from '../lib/experience';
 import { triggerHaptic } from '../lib/haptics';
@@ -34,9 +34,9 @@ interface SettingsPageProps {
 }
 
 const EXPERIENCES: { mode: ExperienceMode; label: string; desc: string; icon: typeof Sparkles; accent: string; ring: string }[] = [
-  { mode: 'guided', label: 'Guided', desc: 'Simple, hand-held dosing. Best for beginners.', icon: Sparkles, accent: 'text-emerald-300', ring: 'border-emerald-500/60 bg-emerald-500/10 shadow-[0_0_16px_rgba(16,185,129,0.12)]' },
-  { mode: 'expert', label: 'Expert', desc: 'Full app — cycles, stats, and controls.', icon: Layers, accent: 'text-cyan-300', ring: 'border-cyan-500/60 bg-cyan-500/10 shadow-[0_0_16px_rgba(34,211,238,0.12)]' },
-  { mode: 'store', label: 'Store Only', desc: 'Just browse and order. No tracking.', icon: ShoppingBag, accent: 'text-amber-300', ring: 'border-amber-500/60 bg-amber-500/10 shadow-[0_0_16px_rgba(245,158,11,0.12)]' },
+  { mode: 'store', label: 'Store only', desc: 'Shop and order. No daily tracking tabs.', icon: ShoppingBag, accent: 'text-amber-300', ring: 'border-amber-500/60 bg-amber-500/10 shadow-[0_0_16px_rgba(245,158,11,0.12)]' },
+  { mode: 'tracking', label: 'Protocol tracking', desc: 'Daily dosing + Cycle tools for active protocols.', icon: Activity, accent: 'text-cyan-300', ring: 'border-cyan-500/60 bg-cyan-500/10 shadow-[0_0_16px_rgba(34,211,238,0.12)]' },
+  { mode: 'research', label: 'Peptide research', desc: 'Compound Research first — learn, then shop or track.', icon: BookOpen, accent: 'text-emerald-300', ring: 'border-emerald-500/60 bg-emerald-500/10 shadow-[0_0_16px_rgba(16,185,129,0.12)]' },
 ];
 
 function ToggleSwitch({ enabled, onToggle }: { enabled: boolean; onToggle: () => void }) {

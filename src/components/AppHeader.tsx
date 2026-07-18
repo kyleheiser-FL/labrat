@@ -10,7 +10,6 @@ import {
   FlaskConical,
   ShoppingBag,
   Loader2,
-  Sparkles,
 } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { triggerHaptic } from '../lib/haptics';
@@ -30,7 +29,7 @@ interface AppHeaderProps {
   hideShop: boolean;
   trackingEnabled: boolean;
   tabBadges?: { dashboard: number; notifications: number };
-  experienceMode?: 'expert' | 'guided' | 'store' | null;
+  experienceMode?: 'store' | 'tracking' | 'research' | null;
 }
 
 export default function AppHeader({
@@ -185,16 +184,14 @@ export default function AppHeader({
         {/* Navigation Tab Rail — Shop-first for new visitors; tracking tabs unlock via Settings */}
         {(() => {
           const navTabs: { tab: Tab; icon: React.ReactNode; label: React.ReactNode; badge?: number }[] = [];
-          if (experienceMode === 'guided') {
-            // Minimal, hand-holding rail — the guided surface lives on 'dashboard'.
-            navTabs.push({ tab: 'dashboard', icon: <Sparkles className="w-3.5 h-3.5 shrink-0" />, label: <>Home</>, badge: tabBadges?.dashboard });
-          } else if (trackingEnabled) {
+          if (trackingEnabled) {
             navTabs.push({ tab: 'dashboard', icon: <CalendarDays className="w-3.5 h-3.5 shrink-0" />, label: <>Daily <span className="hidden sm:inline">Dosing</span></>, badge: tabBadges?.dashboard });
             navTabs.push({ tab: 'planner', icon: <Layers className="w-3.5 h-3.5 shrink-0" />, label: <>Cycle</> });
           }
           if (!hideShop) {
             navTabs.push({ tab: 'shop', icon: <ShoppingBag className="w-3.5 h-3.5 shrink-0" />, label: 'Shop' });
           }
+          // Research is reached from Shop; keep the rail simple on phones.
           const gridColsClass = navTabs.length <= 1 ? 'grid-cols-1' : navTabs.length === 2 ? 'grid-cols-2' : navTabs.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
           return (
             <nav className={`labrat-panel bg-[#0f172a]/70 border border-[#1e293b]/80 p-1.5 rounded-2xl sm:bg-transparent sm:border-0 sm:rounded-none sm:p-0 grid ${gridColsClass} sm:flex sm:flex-row gap-1.5 w-full overflow-visible`} id="navigation-tabs-rail">
