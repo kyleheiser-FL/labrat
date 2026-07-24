@@ -59,7 +59,7 @@ export default function AppHeader({
       {icon}
       <span className="truncate">{label}</span>
       {badge != null && badge > 0 && (
-        <span className={`absolute top-0.5 right-0.5 min-w-[15px] h-[15px] rounded-full flex items-center justify-center px-1 text-[8px] font-black leading-none shadow-md pointer-events-none ${
+        <span className={`labrat-tab-badge absolute top-0.5 right-0.5 min-w-[15px] h-[15px] rounded-full flex items-center justify-center px-1 text-[8px] font-black leading-none shadow-md pointer-events-none ${
           activeTab === tab
             ? 'bg-slate-950 text-cyan-400'
             : 'bg-cyan-500 text-slate-950'
@@ -113,7 +113,7 @@ export default function AppHeader({
             >
               <Settings className="w-[18px] h-[18px]" />
               {tabBadges && tabBadges.notifications > 0 && (
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-[#030712] animate-pulse" />
+                <span className="labrat-notification-dot absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-[#030712] animate-pulse" />
               )}
             </button>
 

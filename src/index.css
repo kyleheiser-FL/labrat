@@ -2766,6 +2766,16 @@ html[data-labrat-theme="clinical-light"] .labrat-frequency-chip {
   color: #1e3a8a !important;
 }
 
+html[data-labrat-theme="clinical-light"] .labrat-tab-badge {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-notification-dot {
+  background: #2563eb !important;
+  border-color: #ffffff !important;
+}
+
 html[data-labrat-theme="clinical-light"] .labrat-dose-chip {
   background: rgba(241, 245, 249, 0.92) !important;
   border-color: rgba(148, 163, 184, 0.42) !important;
