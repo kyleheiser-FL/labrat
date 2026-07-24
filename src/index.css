@@ -2748,9 +2748,16 @@ html[data-labrat-theme="clinical-light"] .labrat-button-secondary,
 html[data-labrat-theme="clinical-light"] .labrat-icon-button,
 html[data-labrat-theme="clinical-light"] .labrat-input,
 html[data-labrat-theme="clinical-light"] .labrat-status-badge {
-  background: rgba(248, 250, 252, 0.92) !important;
-  border-color: rgba(148, 163, 184, 0.38) !important;
-  color: #0f172a !important;
+  background: #eff6ff !important;
+  border-color: rgba(37, 99, 235, 0.34) !important;
+  color: #1e3a8a !important;
+}
+
+html[data-labrat-theme="clinical-light"] .labrat-button-secondary:hover,
+html[data-labrat-theme="clinical-light"] .labrat-icon-button:hover {
+  background: #dbeafe !important;
+  border-color: rgba(37, 99, 235, 0.56) !important;
+  color: #1d4ed8 !important;
 }
 
 html[data-labrat-theme="clinical-light"] .labrat-dose-chip {
