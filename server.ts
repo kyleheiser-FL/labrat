@@ -9,6 +9,7 @@ import {
   computePriceBook, computeWholesaleBook, DEFAULT_MARKUPS,
   type PricingMarkups, type PriceOverride,
 } from "./server/pricingData";
+import { getPricingRequestKey } from "./server/pricingAccess";
 import { SAMPLE_INVENTORY } from "./src/data/shopInventory";
 
 const app = express();
@@ -518,11 +519,12 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
     return { markups: DEFAULT_MARKUPS, overrides: {} };
   }
 
-  // Final sell prices for the shop — any signed-in user
+  // Final customer sell prices for the public catalog. Wholesale costs remain
+  // protected by /api/wholesale, and checkout recomputes prices independently.
   app.post('/api/prices', async (req, res) => {
     const caller = await verifyFirebaseToken(req);
-    if (!caller) return res.status(401).json({ error: 'Sign in required' });
-    if (rateLimited(`prices_${caller.uid}`, 30)) {
+    const requestKey = getPricingRequestKey(caller, req.ip || req.socket.remoteAddress || 'unknown');
+    if (rateLimited(requestKey, 30)) {
       return res.status(429).json({ error: 'Too many requests' });
     }
     const names: string[] = Array.isArray(req.body?.names) ? req.body.names.slice(0, 500) : [];

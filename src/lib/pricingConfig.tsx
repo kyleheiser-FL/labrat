@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { db, auth } from '../firebase';
+import { fetchCustomerPriceBook } from './pricingApi';
 
 export interface PriceOverride {
   norKit?: number;
@@ -55,6 +56,7 @@ const PricingContext = createContext<PricingConfig>(DEFAULT_PRICING);
 export function PricingProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<PricingConfig>(DEFAULT_PRICING);
   const [priceBook, setPriceBook] = useState<Record<string, ProductPrices>>({});
+  const [priceStatus, setPriceStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [user, setUser] = useState<User | null>(auth.currentUser);
   const [configVersion, setConfigVersion] = useState(0);
   const extraNames = useRef<Set<string>>(new Set());
@@ -80,21 +82,17 @@ export function PricingProvider({ children }: { children: ReactNode }) {
 
   // Fetch final sell prices from the server
   useEffect(() => {
-    if (!user) return;
     let cancelled = false;
     (async () => {
       try {
-        const token = await user.getIdToken();
-        const res = await fetch('/api/prices', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ names: [...extraNames.current] }),
-        });
-        if (!res.ok) throw new Error(`Server error ${res.status}`);
-        const data = await res.json();
-        if (!cancelled && data.priceBook) setPriceBook(data.priceBook);
+        const nextPriceBook = await fetchCustomerPriceBook(user, [...extraNames.current]);
+        if (!cancelled) {
+          setPriceBook(nextPriceBook);
+          setPriceStatus('ready');
+        }
       } catch (e) {
         console.error('[pricing] Failed to fetch price book — shop prices may be incomplete:', e);
+        if (!cancelled) setPriceStatus('error');
       }
     })();
     return () => { cancelled = true; };
@@ -112,6 +110,16 @@ export function PricingProvider({ children }: { children: ReactNode }) {
     () => ({ ...config, priceBook, ensureNames }),
     [config, priceBook, ensureNames]
   );
+
+  if (priceStatus !== 'ready') {
+    return (
+      <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-8 text-center text-sm text-slate-300">
+        {priceStatus === 'loading'
+          ? 'Loading current prices…'
+          : 'Current prices are temporarily unavailable. Please refresh to try again.'}
+      </div>
+    );
+  }
 
   return <PricingContext.Provider value={value}>{children}</PricingContext.Provider>;
 }
