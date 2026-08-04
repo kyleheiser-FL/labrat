@@ -584,6 +584,14 @@ export default function MembersShop({ onRequestAuth, onOpenResearch }: MembersSh
   const fetchProducts = async () => {
     setCatalogLoading(true);
     try {
+      // The bundled inventory is the public catalog source. Public Firestore
+      // reads are intentionally denied, so do not hold every visitor behind a
+      // request that can only fail. Admins still read/sync the managed copy.
+      if (!isAdminUser) {
+        setProducts(catalogFilter([...SAMPLE_INVENTORY]));
+        return;
+      }
+
       await fetchGlobalOrders();
 
       // Start from SAMPLE_INVENTORY so the catalog is always visible even if

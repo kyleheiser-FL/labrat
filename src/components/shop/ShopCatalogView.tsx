@@ -612,7 +612,7 @@ export default function ShopCatalogView({
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: Math.min(cardIdx * 0.045, 0.45), ease: 'easeOut' }}
-                    className="bg-[#0b1329] border border-[#1e293b] hover:border-cyan-500/30 rounded-2xl flex flex-col justify-between hover:shadow-[0_0_20px_rgba(6,182,212,0.04)] transition-all overflow-hidden group text-left"
+                    className="labrat-shop-product-card bg-[#0b1329] border border-[#1e293b] hover:border-cyan-500/30 rounded-2xl flex flex-col justify-between hover:shadow-[0_0_20px_rgba(6,182,212,0.04)] transition-all overflow-hidden group text-left"
                   >
                     {/* Tap image to open drawer */}
                     <div

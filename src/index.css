@@ -3935,3 +3935,11 @@ html[data-labrat-theme="clinical-light"] .bg-cyan-500.text-slate-950,
 html[data-labrat-theme="clinical-light"] .bg-cyan-500 .text-slate-950 {
   color: #ffffff !important;
 }
+
+/* The catalog can contain dozens of rich product cards. Let mobile browsers
+   defer layout and paint for cards below the viewport while preserving scroll
+   geometry, so the first products become interactive immediately. */
+.labrat-shop-product-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
+}

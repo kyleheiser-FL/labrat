@@ -46,14 +46,15 @@ import { triggerHaptic } from './lib/haptics';
 import { safeLocalStorage } from './lib/storage';
 import { getDoseScheduleForDate } from './lib/schedule';
 import DailyDosing from './components/DailyDosing';
-import { PricingProvider } from './lib/pricingConfig';
+import { PricingGate } from './lib/pricingConfig';
 import ExperienceGate from './components/ExperienceGate';
 // Heavy tab views are code-split so only the Daily screen ships in the boot
 // bundle. Each downloads the first time its tab is opened, then caches.
 const StatsView = lazy(() => import('./components/StatsView'));
 const CyclePlanner = lazy(() => import('./components/CyclePlanner'));
 const PeptideLibrary = lazy(() => import('./components/PeptideLibrary'));
-const MembersShop = lazy(() => import('./components/MembersShop'));
+const loadMembersShop = () => import('./components/MembersShop');
+const MembersShop = lazy(loadMembersShop);
 const SettingsPage = lazy(() => import('./components/SettingsPage'));
 import {
   ExperienceMode, getStoredExperienceMode, setStoredExperienceMode,
@@ -241,6 +242,13 @@ function repairTzLogs(logs: DoseLog[]): { logs: DoseLog[]; changed: DoseLog[] } 
 const TZ_FIX_KEY = 'labrat_tz_fix_v1';
 
 export default function App() {
+  // Warm the Shop bundle just after the first screen paints. This preserves a
+  // quick app shell while making the first Shop tap behave like a cached tab.
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void loadMembersShop(); }, 250);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const [activeTab, setActiveTab] = useState<'dashboard' | 'planner' | 'blood' | 'library' | 'stats' | 'shop' | 'settings'>(
     () => (getInitialTrackingEnabled() ? 'dashboard' : 'shop')
   );
@@ -1547,9 +1555,9 @@ export default function App() {
               )}
 
               {activeTab === 'shop' && !hideShop && (
-                <PricingProvider>
+                <PricingGate>
                   <MembersShop onRequestAuth={openAuthModal} onOpenResearch={() => navigateTab('library')} />
-                </PricingProvider>
+                </PricingGate>
               )}
 
               {activeTab === 'settings' && (
