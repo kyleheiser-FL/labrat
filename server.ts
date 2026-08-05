@@ -11,6 +11,7 @@ import {
 } from "./server/pricingData";
 import { getPricingRequestKey } from "./server/pricingAccess";
 import { SAMPLE_INVENTORY } from "./src/data/shopInventory";
+import { sanitizeCompounds, sanitizeDoseLogs } from "./server/pipContext";
 
 const app = express();
 const PORT = 3000;
@@ -660,6 +661,92 @@ ${row('Push Registration (VAPID)', checks.vapidKeySet,
     } catch (err: any) {
       console.error('[create-order] Error:', err);
       res.status(500).json({ error: err?.message || 'Order creation failed' });
+    }
+  });
+
+  async function pipOwner() {
+    const adminApp = getAdminApp();
+    if (!adminApp) throw new Error('Firebase Admin unavailable');
+    const { getAuth: getAdminAuth } = await import('firebase-admin/auth');
+    return getAdminAuth(adminApp).getUserByEmail(
+      process.env.PIP_OWNER_EMAIL || ADMIN_EMAIL,
+    );
+  }
+
+  function pipAuthorized(req: express.Request): boolean {
+    const supplied = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+    const expected = process.env.PIP_CONTEXT_TOKEN || '';
+    return !!expected && supplied === expected;
+  }
+
+  app.get('/api/pip/context', async (req, res) => {
+    if (!pipAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
+    try {
+      const adminApp = getAdminApp();
+      if (!adminApp) return res.status(503).json({ error: 'admin_unavailable' });
+      const owner = await pipOwner();
+      const db = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
+      const [compoundsSnap, logsSnap, pushProfile] = await Promise.all([
+        db.collection('users').doc(owner.uid).collection('compounds').get(),
+        db.collection('users').doc(owner.uid).collection('doseLogs')
+          .orderBy('date', 'desc').limit(30).get(),
+        db.collection('pushProfiles').doc(owner.uid).get(),
+      ]);
+      const compounds = compoundsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const logs = logsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.json({
+        generatedAt: new Date().toISOString(),
+        compounds: sanitizeCompounds(compounds),
+        recentDoseLogs: sanitizeDoseLogs(logs),
+        reminders: {
+          enabled: !!pushProfile.data()?.reminderEnabled,
+          time: pushProfile.data()?.reminderTime || null,
+        },
+      });
+    } catch (err) {
+      console.error('[pip-context] read failed', err);
+      res.status(500).json({ error: 'context_failed' });
+    }
+  });
+
+  app.post('/api/pip/dose', async (req, res) => {
+    if (!pipAuthorized(req)) return res.status(401).json({ error: 'unauthorized' });
+    if (req.body?.confirmed !== true) {
+      return res.status(409).json({ error: 'explicit_confirmation_required' });
+    }
+    try {
+      const adminApp = getAdminApp();
+      if (!adminApp) return res.status(503).json({ error: 'admin_unavailable' });
+      const owner = await pipOwner();
+      const db = getAdminFirestore(adminApp, firebaseConfig.firestoreDatabaseId);
+      const compoundId = String(req.body?.compoundId || '');
+      const compoundDoc = await db.collection('users').doc(owner.uid)
+        .collection('compounds').doc(compoundId).get();
+      if (!compoundDoc.exists) return res.status(404).json({ error: 'compound_not_found' });
+      const compound = compoundDoc.data() || {};
+      const now = new Date();
+      const date = String(req.body?.date || now.toISOString().slice(0, 10));
+      const time = String(req.body?.time || now.toTimeString().slice(0, 5));
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(time)) {
+        return res.status(400).json({ error: 'invalid_date_or_time' });
+      }
+      const ref = db.collection('users').doc(owner.uid).collection('doseLogs').doc();
+      const log = {
+        id: ref.id,
+        compoundId,
+        compoundName: String(compound.name || 'Compound'),
+        date,
+        time,
+        doseAmount: Number(compound.doseAmount || 0),
+        doseUnit: String(compound.doseUnit || ''),
+        isSkipped: false,
+        source: 'pip_confirmed',
+      };
+      await ref.set(log);
+      res.status(201).json({ ok: true, log });
+    } catch (err) {
+      console.error('[pip-context] dose write failed', err);
+      res.status(500).json({ error: 'dose_write_failed' });
     }
   });
 
